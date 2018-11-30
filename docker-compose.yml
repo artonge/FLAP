@@ -1,0 +1,72 @@
+version: "3"
+
+services:
+    # SERVICES
+    nginx:
+        image: nginx
+        restart: always
+        volumes:
+            - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+            - /etc/ssl/nginx:/etc/ssl/nginx:ro
+            - nextcloudDir:/var/www/nextcloud:ro
+        depends_on:
+            - nextcloud
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - nextcloud-net
+
+    postgresql:
+        image: postgres
+        env_file:
+            - ./environments/postgresql.env
+        restart: always
+        # volumes:
+        # - ./data/postgresql:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            postgresql-net:
+                aliases:
+                    - postgresql
+
+    redis:
+        image: redis
+        restart: always
+        volumes:
+            - ./config/redis/redis.conf:/etc/redis/redis.conf:ro
+        networks:
+            redis-net:
+                aliases:
+                    - redis
+
+    # APPS
+    nextcloud:
+        image: nextcloud:14.0-fpm
+        env_file:
+            - ./environments/nextcloud.env
+        restart: always
+        depends_on:
+            - postgresql
+            # - redis
+        volumes:
+            - nextcloudDir:/var/www/html
+            # - /data
+            # - ./data/nextcloud:/data
+        networks:
+            nextcloud-net:
+                aliases:
+                    - nextcloud
+            postgresql-net:
+            redis-net:
+
+networks:
+    postgresql-net:
+    redis-net:
+    nextcloud-net:
+
+volumes:
+    nextcloudDir:
+        driver: local
