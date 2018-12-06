@@ -6,8 +6,8 @@ services:
         image: nginx
         restart: always
         volumes:
-            - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-            - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
+            - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./configs/nginx/conf.d:/etc/nginx/conf.d:ro
             - /etc/ssl/nginx:/etc/ssl/nginx:ro
             - nextcloudDir:/var/www/nextcloud:ro
         depends_on:
@@ -21,7 +21,7 @@ services:
     postgresql:
         image: postgres
         env_file:
-            - ./environments/postgresql.env
+            - ./envs/postgresql.env
         restart: always
         # volumes:
         # - ./data/postgresql:/var/lib/postgresql/data
@@ -36,7 +36,7 @@ services:
         image: redis
         restart: always
         volumes:
-            - ./config/redis/redis.conf:/etc/redis/redis.conf:ro
+            - ./configs/redis/redis.conf:/etc/redis/redis.conf:ro
         networks:
             redis-net:
                 aliases:
@@ -46,7 +46,7 @@ services:
     nextcloud:
         image: nextcloud:14.0-fpm
         env_file:
-            - ./environments/nextcloud.env
+            - ./envs/nextcloud.env
         restart: always
         depends_on:
             - postgresql
