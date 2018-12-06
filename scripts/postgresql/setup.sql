@@ -1,0 +1,2 @@
+CREATE USER nextcloud WITH CREATEDB PASSWORD 'nextcloud';
+CREATE USER mastodon WITH CREATEDB PASSWORD 'mastodon';

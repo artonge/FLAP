@@ -3,6 +3,7 @@
 -   Dynamic env var
 -   Nginx DAV redirects
 -   SSO/LDAP
+-   Health check
 
 ---
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set -e
+
 # ENABLE APPS
 # docker-compose exec --user www-data nextcloud php occ app:enable user_ldap
 docker-compose exec --user www-data nextcloud php occ app:install calendar

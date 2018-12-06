@@ -11,61 +11,94 @@ services:
             - /etc/ssl/nginx:/etc/ssl/nginx:ro
             - nextcloudDir:/var/www/nextcloud:ro
         depends_on:
-            - nextcloud
+            # - nextcloud
+            - mastodon
+            - mastodon-sockets
+            - mastodon-cron
         ports:
             - "80:80"
             - "443:443"
         networks:
-            - nextcloud-net
+            - app-net
 
     postgresql:
-        image: postgres
-        env_file:
-            - ./envs/postgresql.env
+        image: postgres:11.1
+        env_file: [./envs/postgresql.env]
         restart: always
-        # volumes:
-        # - ./data/postgresql:/var/lib/postgresql/data
-        ports:
-            - "5432:5432"
+        volumes:
+            # - ./data/postgresql:/var/lib/postgresql/data
+            - ./scripts/postgresql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+        ports: ["5432:5432"]
         networks:
-            postgresql-net:
-                aliases:
-                    - postgresql
+            store-net:
+                aliases: [postgresql]
 
     redis:
-        image: redis
+        image: redis:5.0
         restart: always
         volumes:
             - ./configs/redis/redis.conf:/etc/redis/redis.conf:ro
         networks:
-            redis-net:
-                aliases:
-                    - redis
+            store-net:
+                aliases: [redis]
 
-    # APPS
+    # NEXTCLOUD
     nextcloud:
         image: nextcloud:14.0-fpm
-        env_file:
-            - ./envs/nextcloud.env
+        env_file: [./envs/nextcloud.env]
         restart: always
-        depends_on:
-            - postgresql
-            # - redis
+        depends_on: [postgresql, redis]
         volumes:
             - nextcloudDir:/var/www/html
             # - /data
             # - ./data/nextcloud:/data
         networks:
-            nextcloud-net:
-                aliases:
-                    - nextcloud
-            postgresql-net:
-            redis-net:
+            store-net:
+            app-net:
+                aliases: [nextcloud]
+
+    # MASTODON
+    mastodon:
+        image: tootsuite/mastodon:v2.6.5
+        restart: always
+        env_file: ./envs/mastodon.env
+        command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
+        depends_on: [postgresql, redis]
+        volumes:
+            - ./public/system:/mastodon/public/system
+        networks:
+            store-net:
+            app-net:
+                aliases: [mastodon]
+
+    mastodon-sockets:
+        image: tootsuite/mastodon:v2.6.5
+        restart: always
+        env_file: ./envs/mastodon.env
+        command: yarn start
+        depends_on: [postgresql, redis]
+        networks:
+            store-net:
+            app-net:
+                aliases: [mastodon-sockets]
+
+    mastodon-cron:
+        image: tootsuite/mastodon:v2.6.5
+        command: bundle exec sidekiq
+        restart: always
+        env_file: ./envs/mastodon.env
+        volumes:
+            - ./public/system:/mastodon/public/system
+        depends_on: [postgresql, redis]
+        networks:
+            store-net:
+            app-net:
+                aliases: [mastodon-cron]
 
 networks:
-    postgresql-net:
-    redis-net:
-    nextcloud-net:
+    app-net:
+    store-net:
+        internal: true
 
 volumes:
     nextcloudDir:
