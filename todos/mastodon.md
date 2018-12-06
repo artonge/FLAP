@@ -1,0 +1,7 @@
+-   Mail
+-   Secret keys in .env, what are they ?
+-   Dyn env vars
+-   Dyn nginx conf
+-   Fail2ban
+-   Health check
+-   SSO/LDAP
