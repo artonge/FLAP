@@ -57,6 +57,22 @@ services:
             app-net:
                 aliases: [nextcloud]
 
+    openhab:
+        image: openhab/openhab
+        env_file: [./envs/openhab.env]
+        restart: always
+        # depends_on: [mongodb]
+        volumes:
+            # - /etc/localtime:/etc/localtime:ro
+            # - /etc/timezone:/etc/timezone:ro
+            - ./data/openhab/userdata:/openhab/userdata
+            - ./data/openhab/addons:/openhab/addons
+            - ./data/openhab/openhab:/openhab/conf
+        networks:
+            store-net:
+            app-net:
+                aliases: [openhab]
+
     # MASTODON
     # mastodon:
     #     image: tootsuite/mastodon:v2.6.5
