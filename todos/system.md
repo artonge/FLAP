@@ -1,0 +1,1 @@
+-   Dyn setup script with custom domain name

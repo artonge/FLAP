@@ -5,3 +5,7 @@
 -   Fail2ban
 -   Health check
 -   SSO/LDAP
+
+---
+
+-   Create ARM docker image
