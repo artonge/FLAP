@@ -11,10 +11,10 @@ services:
             - /etc/ssl/nginx:/etc/ssl/nginx:ro
             - nextcloudDir:/var/www/nextcloud:ro
         depends_on:
-            # - nextcloud
-            - mastodon
-            - mastodon-sockets
-            - mastodon-cron
+            - nextcloud
+            # - mastodon
+            # - mastodon-sockets
+            # - mastodon-cron
         ports:
             - "80:80"
             - "443:443"
@@ -58,42 +58,42 @@ services:
                 aliases: [nextcloud]
 
     # MASTODON
-    mastodon:
-        image: tootsuite/mastodon:v2.6.5
-        restart: always
-        env_file: ./envs/mastodon.env
-        command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
-        depends_on: [postgresql, redis]
-        volumes:
-            - ./public/system:/mastodon/public/system
-        networks:
-            store-net:
-            app-net:
-                aliases: [mastodon]
-
-    mastodon-sockets:
-        image: tootsuite/mastodon:v2.6.5
-        restart: always
-        env_file: ./envs/mastodon.env
-        command: yarn start
-        depends_on: [postgresql, redis]
-        networks:
-            store-net:
-            app-net:
-                aliases: [mastodon-sockets]
-
-    mastodon-cron:
-        image: tootsuite/mastodon:v2.6.5
-        command: bundle exec sidekiq
-        restart: always
-        env_file: ./envs/mastodon.env
-        volumes:
-            - ./public/system:/mastodon/public/system
-        depends_on: [postgresql, redis]
-        networks:
-            store-net:
-            app-net:
-                aliases: [mastodon-cron]
+    # mastodon:
+    #     image: tootsuite/mastodon:v2.6.5
+    #     restart: always
+    #     env_file: ./envs/mastodon.env
+    #     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
+    #     depends_on: [postgresql, redis]
+    #     volumes:
+    #         - ./public/system:/mastodon/public/system
+    #     networks:
+    #         store-net:
+    #         app-net:
+    #             aliases: [mastodon]
+    #
+    # mastodon-sockets:
+    #     image: tootsuite/mastodon:v2.6.5
+    #     restart: always
+    #     env_file: ./envs/mastodon.env
+    #     command: yarn start
+    #     depends_on: [postgresql, redis]
+    #     networks:
+    #         store-net:
+    #         app-net:
+    #             aliases: [mastodon-sockets]
+    #
+    # mastodon-cron:
+    #     image: tootsuite/mastodon:v2.6.5
+    #     command: bundle exec sidekiq
+    #     restart: always
+    #     env_file: ./envs/mastodon.env
+    #     volumes:
+    #         - ./public/system:/mastodon/public/system
+    #     depends_on: [postgresql, redis]
+    #     networks:
+    #         store-net:
+    #         app-net:
+    #             aliases: [mastodon-cron]
 
 networks:
     app-net:
