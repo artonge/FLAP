@@ -52,21 +52,6 @@ services:
             store-net:
                 aliases: [ldap]
 
-    # NEXTCLOUD
-    nextcloud:
-        image: nextcloud:14.0-fpm
-        env_file: [./envs/nextcloud.env]
-        restart: always
-        depends_on: [postgresql, redis]
-        volumes:
-            - nextcloudDir:/var/www/html
-            # - /data
-            # - ./data/nextcloud:/data
-        networks:
-            store-net:
-            app-net:
-                aliases: [nextcloud]
-
     openhab:
         image: openhab/openhab:2.3.0
         env_file: [./envs/openhab.env]
