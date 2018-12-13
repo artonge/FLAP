@@ -42,6 +42,16 @@ services:
             store-net:
                 aliases: [redis]
 
+    ldap:
+        image: osixia/openldap:1.2.2
+        restart: always
+        volumes:
+            - ./data/slapd/database:/var/lib/ldap
+            - ./data/slapd/config:/etc/ldap/slapd.d
+        networks:
+            store-net:
+                aliases: [ldap]
+
     # NEXTCLOUD
     nextcloud:
         image: nextcloud:14.0-fpm
@@ -58,7 +68,7 @@ services:
                 aliases: [nextcloud]
 
     openhab:
-        image: openhab/openhab
+        image: openhab/openhab:2.3.0
         env_file: [./envs/openhab.env]
         restart: always
         # depends_on: [mongodb]
