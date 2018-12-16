@@ -57,10 +57,11 @@ services:
     # LDAP
     ldap:
         image: osixia/openldap:1.2.2
+        env_file: [./envs/ldap.env]
         restart: always
         volumes:
-            - ./data/slapd/database:/var/lib/ldap
-            - ./data/slapd/config:/etc/ldap/slapd.d
+            - ./data/ldap/database:/var/lib/ldap
+            - ./data/ldap/config:/etc/ldap/slapd.d
         networks:
             store-net:
                 aliases: [ldap]
@@ -78,7 +79,7 @@ services:
             - "8082:8082"
         volumes:
             - ./data/seafile:/shared
-            # - ./config/seafile/conf:shared/seafile/conf
+            - ./configs/seafile:/home/seafile/conf.addons
         networks:
             store-net:
             app-net:

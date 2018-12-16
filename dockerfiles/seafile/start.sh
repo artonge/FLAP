@@ -9,6 +9,7 @@ do
     sleep 2
 done
 
+# Setup seafile if it is not already setup
 if [ ! -f /home/seafile/installed ]
 then
 	echo "Seting up DB and file system"
@@ -16,9 +17,22 @@ then
 	# Specifying admin credentials for seafile to setup it up
 	echo "{\"email\": \"$SEAFILE_ADMIN_EMAIL\", \"password\":\"$SEAFILE_ADMIN_PASSWORD\"}" > conf/admin.txt
 
+	mv /home/seafile/conf /home/seafile/conf.base
+
 	# Mark the instance as installed so we don't go throught it again
 	touch /home/seafile/installed
 fi
+
+# Clean old conf folder
+rm -rf /home/seafile/conf
+mkdir /home/seafile/conf
+
+# Merge base and addon conf files
+cp /home/seafile/conf.base/* /home/seafile/conf/
+cat /home/seafile/conf.addons/ccnet.conf >> /home/seafile/conf/ccnet.conf
+cat /home/seafile/conf.addons/seafile.conf >> /home/seafile/conf/seafile.conf
+cat /home/seafile/conf.addons/seafdav.conf >> /home/seafile/conf/seafdav.conf
+cat /home/seafile/conf.addons/seahub_settings.py >> /home/seafile/conf/seahub_settings.py
 
 # Start seahub and seafile
 ./seafile-server-${SEAFILE_VERSION}/seafile.sh start
