@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-    # SERVICES
+    # NGINX
     nginx:
         image: nginx
         restart: always
@@ -9,9 +9,8 @@ services:
             - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./configs/nginx/conf.d:/etc/nginx/conf.d:ro
             - /etc/ssl/nginx:/etc/ssl/nginx:ro
-            - nextcloudDir:/var/www/nextcloud:ro
         depends_on:
-            - nextcloud
+            - seafile
             # - mastodon
             # - mastodon-sockets
             # - mastodon-cron
@@ -21,6 +20,19 @@ services:
         networks:
             - app-net
 
+    # MARIADB
+    mariadb:
+        image: mariadb:10.3
+        env_file: [./envs/mariadb.env]
+        restart: always
+        volumes:
+            # - ./data/mariadb:/var/lib/mariadb
+            - ./scripts/mariadb/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+        networks:
+            store-net:
+                aliases: [mariadb]
+
+    # POSTGRESQL
     postgresql:
         image: postgres:11.1
         env_file: [./envs/postgresql.env]
@@ -28,11 +40,11 @@ services:
         volumes:
             # - ./data/postgresql:/var/lib/postgresql/data
             - ./scripts/postgresql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
-        ports: ["5432:5432"]
         networks:
             store-net:
                 aliases: [postgresql]
 
+    # REDIS
     redis:
         image: redis:5.0
         restart: always
@@ -42,6 +54,7 @@ services:
             store-net:
                 aliases: [redis]
 
+    # LDAP
     ldap:
         image: osixia/openldap:1.2.2
         restart: always
@@ -52,6 +65,26 @@ services:
             store-net:
                 aliases: [ldap]
 
+    # SEAFILE
+    seafile:
+        build:
+            context: .
+            dockerfile: dockerfiles/seafile/Dockerfile
+        env_file: [./envs/seafile.env]
+        restart: always
+        depends_on: [mariadb]
+        ports:
+            - "8000:8000"
+            - "8082:8082"
+        volumes:
+            - ./data/seafile:/shared
+            # - ./config/seafile/conf:shared/seafile/conf
+        networks:
+            store-net:
+            app-net:
+                aliases: [seafile]
+
+    # OPENHAB
     openhab:
         image: openhab/openhab:2.3.0
         env_file: [./envs/openhab.env]
@@ -110,7 +143,3 @@ networks:
     app-net:
     store-net:
         internal: true
-
-volumes:
-    nextcloudDir:
-        driver: local
