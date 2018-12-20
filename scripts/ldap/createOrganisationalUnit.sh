@@ -2,15 +2,14 @@
 
 set -e
 
-USER_NAME=$1
-USER_FULL_NAME=$2
+ORGANISATION_NAME=$1
 
 # -x         Simple authentication
 # -D binddn  bind DN
 # -w passwd  bind password (for simple authentication)
 echo "# USER ENTRY
-dn: ou=users,dc=flap,dc=local
-ou: users
+dn: ou=$ORGANISATION_NAME,dc=flap,dc=local
+ou: $ORGANISATION_NAME
 objectClass: organizationalUnit
 " |
 docker-compose exec -T ldap ldapadd \
