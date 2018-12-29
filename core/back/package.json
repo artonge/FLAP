@@ -1,0 +1,41 @@
+{
+	"name": "flap-core",
+	"version": "0.0.1",
+	"description": "The core of a FLAP box.",
+	"main": "build/main.js",
+	"scripts": {
+		"test": "jest --forceExit --coverage --verbose",
+		"start": "node build/main.js",
+		"build": "tsc",
+		"serve": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon build/main.js\"",
+		"debug": "DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon --inspect build/main.js\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://gitlab.com/artonge/flap.git"
+	},
+	"keywords": [
+		"flap",
+		"core"
+	],
+	"author": "artonge",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://gitlab.com/artonge/flap/issues"
+	},
+	"homepage": "https://gitlab.com/artonge/flap#readme",
+	"dependencies": {
+		"argon2": "^0.20.0",
+		"body-parser": "^1.18.3",
+		"express": "^4.16.4",
+		"ldap": "^0.7.1",
+		"ldapjs": "^1.0.2"
+	},
+	"devDependencies": {
+		"@types/ldapjs": "^1.0.3",
+		"@types/express": "^4.16.0",
+		"concurrently": "^4.1.0",
+		"nodemon": "^1.18.9",
+		"typescript": "^3.2.2"
+	}
+}
