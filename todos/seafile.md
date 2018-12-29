@@ -1,8 +1,7 @@
 -   EMAIL
 -   port configuration
--   LDAP
 -   Fail2ban
--   Cron job
+-   Cron job (GC)
 -   SSO
 
 ---
