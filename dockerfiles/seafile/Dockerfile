@@ -31,7 +31,7 @@ RUN apt-get update && \
 RUN dpkg --print-architecture && \
     case "$(dpkg --print-architecture)" in \
         "amd64") curl -sSL -o - ${RELEASE_URL_AMD64} | tar xzf - -C . ;; \
-        "amrhf") curl -sSL -o - ${RELEASE_URL_ARMHF} | tar xzf - -C . ;; \
+        "armhf") curl -sSL -o - ${RELEASE_URL_ARMHF} | tar xzf - -C . ;; \
         *) echo "Unknown architecture" && exit 1 ;; \
     esac
 # Reduce final image size
