@@ -3,6 +3,7 @@
 -   Fail2ban
 -   Cron job (GC)
 -   SSO
+-   volumes
 
 ---
 

@@ -1,7 +1,11 @@
 # We need some python stuff so the python image is the best for us
 FROM python:2.7-slim-stretch
 
+EXPOSE 8000 8082 8080
+
 ENV SEAFILE_VERSION=6.3.4
+
+# Downloads URLs
 ENV RELEASE_URL_ARMHF=https://github.com/haiwen/seafile-rpi/releases/download/v${SEAFILE_VERSION}/seafile-server_${SEAFILE_VERSION}_stable_pi.tar.gz
 ENV RELEASE_URL_AMD64=https://download.seadrive.org/seafile-server_${SEAFILE_VERSION}_x86-64.tar.gz
 
@@ -26,16 +30,16 @@ RUN apt-get update && \
         urllib3 \
         requests \
         mysql \
-        python-memcached
+        python-memcached && \
 # Download seafile
-RUN dpkg --print-architecture && \
+	dpkg --print-architecture && \
     case "$(dpkg --print-architecture)" in \
         "amd64") curl -sSL -o - ${RELEASE_URL_AMD64} | tar xzf - -C . ;; \
         "armhf") curl -sSL -o - ${RELEASE_URL_ARMHF} | tar xzf - -C . ;; \
         *) echo "Unknown architecture" && exit 1 ;; \
-    esac
+    esac && \
 # Reduce final image size
-RUN apt-get remove -y \
+	apt-get remove -y \
         curl \
         gcc \
         libmariadbclient-dev && \
@@ -46,7 +50,5 @@ RUN apt-get remove -y \
 #	1. Setup DB if necessary
 #	2. Start seafile and seahub
 COPY ./start.sh ./start.sh
-
-EXPOSE 443 8082
 
 CMD ["./start.sh"]

@@ -38,7 +38,7 @@ cat /root/conf.addons/seahub_settings.py >> /root/conf/seahub_settings.py
 
 # Start seahub and seafile
 ./seafile-server-${SEAFILE_VERSION}/seafile.sh start
-./seafile-server-${SEAFILE_VERSION}/seahub.sh start 8001
+./seafile-server-${SEAFILE_VERSION}/seahub.sh start
 
 exit_script() {
 	# clear the trap
