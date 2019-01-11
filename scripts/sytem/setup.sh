@@ -51,6 +51,7 @@ createSSLCerts() {
 createSSLCerts "flap.localhost"
 createSSLCerts "files.flap.localhost"
 createSSLCerts "home.flap.localhost"
+createSSLCerts "sogo.flap.localhost"
 
 # Start FLAP
 dc up -d

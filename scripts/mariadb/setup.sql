@@ -8,3 +8,9 @@ CREATE DATABASE `seahub` CHARACTER SET = 'utf8';
 GRANT ALL PRIVILEGES ON `ccnet`.* TO `seafile`;
 GRANT ALL PRIVILEGES ON `seafile`.* TO `seafile`;
 GRANT ALL PRIVILEGES ON `seahub`.* TO `seafile`;
+
+
+-- SOGo
+CREATE USER 'sogo' IDENTIFIED BY 'sogo';
+CREATE DATABASE `sogo` CHARACTER SET = 'utf8mb4';
+GRANT ALL PRIVILEGES ON `sogo`.* TO `sogo`;
