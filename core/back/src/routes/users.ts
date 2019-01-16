@@ -8,70 +8,124 @@ import {
 	updateUser,
 } from "../lib"
 
-function handleError(
-	response: express.Response,
-	context: string,
-	error: { code: number; message: string } | any,
-) {
-	if (error.code && error.message) {
-		console.error(`Error while ${context}:`, error.message)
-		response.status(error.code).send(error.message)
-	} else {
-		console.error(`Error while ${context}:`, error)
-		response.status(500).send(error)
-	}
-}
+import {
+	handleError,
+	validate,
+	minLengthValidator,
+	maxLengthValidator,
+	requiredValidator,
+	Validator,
+} from "../tools"
 
-export const users = express
-	.Router()
+export const usersRouter = express.Router()
 
-	.get("/", async (_request, response) => {
+// Middlewares
+usersRouter
+	// Add the user object to the request
+	.param("userId", async (request, response, next) => {
+		try {
+			const validation = validate(request.params.userId, [
+				requiredValidator,
+				minLengthValidator(1),
+				maxLengthValidator(32),
+			])
+			if (validation !== null) {
+				throw {
+					code: 400,
+					message: `The userId is invalid (${validation.join()})`,
+				}
+			}
+
+			const user = await getUser(request.params.userId)
+			;(request as any).user = user
+			next()
+		} catch (error) {
+			handleError(request, response, error)
+		}
+	})
+
+// /
+usersRouter
+	.route("/")
+	.get(async (request, response) => {
 		try {
 			response.json(await searchUsers())
 		} catch (error) {
-			handleError(response, "searching for users", error)
+			handleError(request, response, error)
 		} finally {
 			response.end()
 		}
 	})
-
-	.post("/", async (request, response) => {
+	.post(async (request, response) => {
 		try {
+			// Check that all the needed properties are valid
+			validateBody(request.body)
 			await createUser(request.body)
 			response.status(201)
 		} catch (error) {
-			handleError(response, "creating a user", error)
+			handleError(request, response, error)
 		} finally {
 			response.end()
 		}
 	})
 
-	.get("/:userId", async (request, response) => {
+// /:userId
+usersRouter
+	.route("/:userId")
+	.get(async (request, response) => {
 		try {
-			response.json(await getUser(request.params.userId))
+			response.json((request as any).user)
 		} catch (error) {
-			handleError(response, "getting a user", error)
+			handleError(request, response, error)
 		} finally {
 			response.end()
 		}
 	})
-
-	.delete("/:userId", async (request, response) => {
+	.delete(async (request, response) => {
 		try {
 			await deleteUser(request.params.userId)
 		} catch (error) {
-			handleError(response, "deleting a user", error)
+			handleError(request, response, error)
+		} finally {
+			response.end()
+		}
+	})
+	.patch(async (request, response) => {
+		try {
+			// Check that all the needed properties are valid
+			validateBody(request.body)
+			response.json(await updateUser(request.params.userId, request.body))
+		} catch (error) {
+			handleError(request, response, error)
 		} finally {
 			response.end()
 		}
 	})
 
-	.patch("/:userId", async (request, response) => {
-		try {
-			response.json(await updateUser(request.params.userId, request.body))
-		} catch (error) {
-			handleError(response, "updating a user", error)
-		} finally {
-			response.end()
+function validateBody(body: any) {
+	// Check that all the needed properties are valid
+	const validations: [string, Validator[]][] = [
+		[
+			"username",
+			[requiredValidator, minLengthValidator(1), maxLengthValidator(32)],
+		],
+		[
+			"fullname",
+			[requiredValidator, minLengthValidator(3), maxLengthValidator(64)],
+		],
+		[
+			"password",
+			[requiredValidator, minLengthValidator(8), maxLengthValidator(256)],
+		],
+	]
+
+	validations.forEach(([key, validators]) => {
+		const validation = validate(body[key], validators)
+		if (validation !== null) {
+			throw {
+				code: 400,
+				message: `The property '${key}' is invalid (${validation.join()})`,
+			}
 		}
 	})
+}

@@ -1,132 +1,93 @@
-import * as ldap from "ldapjs"
+import { Change } from "ldapjs"
+import * as ldap from "./ldap"
 import * as argon2 from "argon2"
 
+const LDAP_HOST = "localhost:389"
 const BASE = "ou=users,dc=flap,dc=local"
-
-const client = ldap.createClient({
-	url: "ldap://localhost",
-})
-
-// We need to connect the client to the LDAP server using the admin account
-// TODO - Make password dynammicentry.object
-client.bind("cn=admin,dc=flap,dc=local", "admin", (error, _response) => {
-	if (error) {
-		console.error("Error while connecting to the LDAP server:", error)
-	}
-})
+const ADMIN_DN = "cn=admin,dc=flap,dc=local"
+const ADMIN_PWD = "admin"
 
 interface IUser {
 	fullname: string
 	username: string
+	email: string
 }
 
 export async function searchUsers(): Promise<IUser[]> {
-	return new Promise((resolve, reject) => {
-		let users: IUser[] = []
+	// Bind to the LDAP server
+	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	// Query the server
+	const entries = await ldap.search(client, BASE)
+	// Unbind from the LDAP server
+	await ldap.unbind(client)
 
-		client.search(BASE, { scope: "sub" }, (error, ldapResponse) => {
-			if (error) {
-				reject({ code: 500, message: error.message })
-			}
-
-			/** From the doc:
-			 * > Responses from the search method are an EventEmitter where you will get a notification for each searchEntry that comes back from the server.
-			 * > You will additionally be able to listen for a searchReference, error and end event.
-			 * > Note that the error event will only be for client/TCP errors, not LDAP error codes like the other APIs.
-			 * > You'll want to check the LDAP status code (likely for 0) on the end event to assert success.
-			 * > LDAP search results can give you a lot of status codes, such as time or size exceeded, busy, inappropriate matching, etc., which is why this method doesn't try to wrap up the code matching.
-			 **/
-			ldapResponse.on("searchEntry", entry => {
-				// The search return the organizationalUnit object, but we don't need it
-				if (entry.object.objectClass === "organizationalUnit") {
-					return
-				}
-
-				users.push({
-					fullname: entry.object.cn,
-					username: entry.object.sn,
-				})
-			})
-
-			ldapResponse.on("error", error => {
-				reject({ code: 500, message: error.message })
-			})
-
-			ldapResponse.on("end", result => {
-				if (result.status !== 0) {
-					reject({ code: 500, message: result.errorMessage })
-				} else {
-					resolve(users)
-				}
-			})
-		})
-	})
+	// Map users to our IUser interface
+	return entries.map((entry: any) => ({
+		fullname: entry.object.cn,
+		username: entry.object.sn,
+		email: entry.object.mail,
+	}))
 }
 
+// TODO - this should be improved so we don't have to loop through all the users
 export async function getUser(username: string): Promise<IUser> {
+	// Get all users
 	const users = await searchUsers()
-	const user = users.filter(user => user.username === username)[0]
+	// Search for the user with the passed username
+	const user = users.find(user => user.username === username)
 
-	if (!user) {
-		throw { code: 404, message: "Unkown user" }
+	if (user === undefined) {
+		throw new Error(`The user '${username}' does not exists`)
 	}
 
 	return user
 }
 
-export async function createUser(params: any): Promise<IUser> {
-	// Check that all the needed properties are present
-	;["username", "fullname", "password"].forEach(key => {
-		if (!Object.keys(params).includes(key)) {
-			throw { code: 400, message: `The property '${key}' is missing` }
-		}
-	})
+export async function createUser(params: {
+	username: string
+	fullname: string
+	password: string
+}): Promise<IUser> {
+	// Bind to the LDAP server
+	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
 
-	const hash = await argon2.hash(params.password, {
-		timeCost: 40,
-		memoryCost: 2 ** 16,
-		parallelism: 4,
-		type: argon2.argon2d,
-	})
-
-	const entry = {
+	// Send the new entry to the LDAP server
+	await ldap.add(client, `sn=${params.username},${BASE}`, {
+		objectClass: ["person", "mailAccount"],
 		cn: params.fullname,
 		sn: params.username,
-		userPassword: hash,
 		mail: `${params.username}@flap.local`,
-		objectClass: ["person", "mailAccount"],
-	}
-
-	return new Promise((resolve, reject) => {
-		client.add(`sn=${params.username},${BASE}`, entry, error => {
-			if (error) {
-				reject({ code: 500, message: error.message })
-			} else {
-				resolve({
-					fullname: params.fullname,
-					username: params.username,
-				})
-			}
-		})
+		// Hash the user's password
+		userPassword: await argon2.hash(params.password, {
+			timeCost: 40,
+			memoryCost: 2 ** 16,
+			parallelism: 4,
+			type: argon2.argon2d,
+		}),
 	})
+
+	// Unbind from the LDAP server
+	await ldap.unbind(client)
+
+	// Return the created user by searching it with its username
+	return await getUser(params.username)
 }
 
 // Allow the user to change its fullname and password.
 // The username is imutable because it implies changing the username in all services, which can break things.
 export async function updateUser(
 	username: string,
-	params: any,
+	params: { password?: string; fullname?: string },
 ): Promise<IUser> {
-	// Get the user to check if the user exist
-	const user = await getUser(username)
-
-	let changes: ldap.Change[] = []
+	let changes: Change[] = []
 
 	if (params.password) {
+		// Build Change object for the password
 		changes.push(
-			new ldap.Change({
+			new Change({
 				operation: "replace",
 				modification: {
+					// Hash the user's password
 					userPassword: await argon2.hash(params.password, {
 						timeCost: 40,
 						memoryCost: 2 ** 16,
@@ -139,8 +100,9 @@ export async function updateUser(
 	}
 
 	if (params.fullname) {
+		// Build Change object for the fullname
 		changes.push(
-			new ldap.Change({
+			new Change({
 				operation: "replace",
 				modification: {
 					cn: params.fullname,
@@ -149,28 +111,21 @@ export async function updateUser(
 		)
 	}
 
-	return new Promise((resolve, reject) => {
-		client.modify(`sn=${user.username},${BASE}`, changes, async error => {
-			if (error) {
-				reject({ code: 500, message: error.message })
-			} else {
-				resolve(await getUser(user.username))
-			}
-		})
-	})
+	// Bind to the LDAP server
+	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	// Send the changes to the LDAP server
+	await ldap.modify(client, `sn=${username},${BASE}`, changes)
+	// Unbind from the LDAP server
+	await ldap.unbind(client)
+
+	return await getUser(username)
 }
 
 export async function deleteUser(username: string): Promise<void> {
-	// Get the user to check if the user exist
-	const user = await getUser(username)
-
-	return new Promise((resolve, reject) => {
-		client.del(`sn=${user.username},${BASE}`, error => {
-			if (error) {
-				reject({ code: 500, message: error.message })
-			} else {
-				resolve()
-			}
-		})
-	})
+	// Bind to the LDAP server
+	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	// Send the deletion order the LDAP server
+	await ldap.del(client, `sn=${username},${BASE}`)
+	// Unbind from the LDAP server
+	await ldap.unbind(client)
 }
