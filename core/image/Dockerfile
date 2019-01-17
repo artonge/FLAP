@@ -1,20 +1,25 @@
-FROM node:10.15.0-stretch-slim as build
+FROM node:10.15.0-stretch-slim
 
 EXPOSE 80
 
 WORKDIR /flap
 
-# Build dependencies
-RUN apt update
-RUN apt install -y python
-RUN apt install -y build-essential
-
 COPY ./package*.json ./
-RUN npm install --only=production
-
-# Runtime dependencies
-RUN apt install -y argon2
-
 COPY ./build ./build
+
+RUN apt-get update && \
+    apt-get install -y \
+# Build dependencies
+        build-essential \
+        python \
+# Runtime dependencies
+        argon2 && \
+    npm install --only=production && \
+# Reduce final image size
+    apt-get remove -y \
+        python \
+        build-essential && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD ["npm", "start"]

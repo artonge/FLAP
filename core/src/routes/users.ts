@@ -82,7 +82,6 @@ usersRouter
 usersRouter
 	.route("/:userId")
 	.get(async (request, response) => {
-		console.log()
 		try {
 			response.json((request as any).user)
 		} catch (error) {
