@@ -1,9 +1,21 @@
 export type Validator = ((value: any) => null | string)
 
-export function validate(value: string, validators: Validator[]) {
-	return validators
+// Validate some value with the passed validators
+// This thows an error if the validation do not succeed
+export function validate(
+	value: string,
+	label = "a value",
+	validators: Validator[],
+) {
+	const validations = validators
 		.map(validator => validator(value))
 		.filter(result => result !== null)
+
+	if (validations.length > 0) {
+		throw new Error(
+			`The property '${label}' is invalid (${validations.join()})`,
+		)
+	}
 }
 
 export function minLengthValidator(number: number): Validator {

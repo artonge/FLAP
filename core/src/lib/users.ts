@@ -2,10 +2,10 @@ import { Change } from "ldapjs"
 import * as ldap from "./ldap"
 import * as argon2 from "argon2"
 
-const LDAP_HOST = "localhost:389"
-const BASE = "ou=users,dc=flap,dc=local"
-const ADMIN_DN = "cn=admin,dc=flap,dc=local"
-const ADMIN_PWD = "admin"
+const LDAP_HOST = process.env.LDAP_HOST || "ldap://localhost"
+const LDAP_BASE = process.env.LDAP_BASE || "ou=users,dc=flap,dc=local"
+const LDAP_ADMIN_DN = process.env.LDAP_ADMIN_DN || "cn=admin,dc=flap,dc=local"
+const LDAP_ADMIN_PWD = process.env.LDAP_ADMIN_PWD || "admin"
 
 interface IUser {
 	fullname: string
@@ -15,9 +15,9 @@ interface IUser {
 
 export async function searchUsers(): Promise<IUser[]> {
 	// Bind to the LDAP server
-	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 	// Query the server
-	const entries = await ldap.search(client, BASE)
+	const entries = await ldap.search(client, LDAP_BASE)
 	// Unbind from the LDAP server
 	await ldap.unbind(client)
 
@@ -49,10 +49,10 @@ export async function createUser(params: {
 	password: string
 }): Promise<IUser> {
 	// Bind to the LDAP server
-	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 
 	// Send the new entry to the LDAP server
-	await ldap.add(client, `sn=${params.username},${BASE}`, {
+	await ldap.add(client, `sn=${params.username},${LDAP_BASE}`, {
 		objectClass: ["person", "mailAccount"],
 		cn: params.fullname,
 		sn: params.username,
@@ -112,9 +112,9 @@ export async function updateUser(
 	}
 
 	// Bind to the LDAP server
-	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 	// Send the changes to the LDAP server
-	await ldap.modify(client, `sn=${username},${BASE}`, changes)
+	await ldap.modify(client, `sn=${username},${LDAP_BASE}`, changes)
 	// Unbind from the LDAP server
 	await ldap.unbind(client)
 
@@ -123,9 +123,9 @@ export async function updateUser(
 
 export async function deleteUser(username: string): Promise<void> {
 	// Bind to the LDAP server
-	const client = await ldap.bind(LDAP_HOST, ADMIN_DN, ADMIN_PWD)
+	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 	// Send the deletion order the LDAP server
-	await ldap.del(client, `sn=${username},${BASE}`)
+	await ldap.del(client, `sn=${username},${LDAP_BASE}`)
 	// Unbind from the LDAP server
 	await ldap.unbind(client)
 }

@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 
-const PRODUCTION = false
+const PRODUCTION = process.env.PRODUCTION || true
 
 export function handleError(
 	request: Request,
@@ -11,7 +11,7 @@ export function handleError(
 		error = { code: 500, message: error }
 	}
 
-	console.error(`Error in '${request.route}':`, error.message)
+	console.error(`Error in '${request.route.path}':`, error.message)
 
 	if (PRODUCTION) {
 		response.status(error.code)

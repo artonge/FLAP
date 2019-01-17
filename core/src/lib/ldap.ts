@@ -19,15 +19,13 @@ export function bind(
 	})
 }
 
-export function unbind(client: ldap.Client): Promise<ldap.Client> {
-	return new Promise((resolve, reject) => {
-		client.unbind(error => {
-			if (error) {
-				reject(error)
-			} else {
-				resolve(client)
-			}
-		})
+export function unbind(client: ldap.Client) {
+	// Unbind does not have response and does not call the callback on success
+	// So we can only log the error if their is one
+	client.unbind(error => {
+		if (error) {
+			console.log("Error while unbinding:", error)
+		}
 	})
 }
 

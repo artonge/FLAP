@@ -14,6 +14,7 @@ services:
         depends_on:
             - seafile
             - sogo
+            - core
         ports: ["80:80", "443:443"]
         networks: [apps-net]
 
@@ -59,6 +60,19 @@ services:
         networks:
             stores-net:
                 aliases: [ldap]
+
+    # FLAP CORE
+    core:
+        build:
+            context: ./core
+            dockerfile: ./image/Dockerfile
+        env_file: [./core/core.env]
+        restart: always
+        depends_on: [ldap]
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [core]
 
     # SEAFILE
     seafile:

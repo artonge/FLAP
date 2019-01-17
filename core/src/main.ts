@@ -1,13 +1,13 @@
 import * as express from "express"
 import * as bodyParser from "body-parser"
 
-import { apps, domain, users } from "./routes"
+import { apps, domain, usersRouter } from "./routes"
 
-const PORT = 8080 // TODO - make port dynamic
+const PORT = process.env.PORT || 80
 
 express()
 	.use(bodyParser.json())
 	.use("/apps", apps)
 	.use("/domain", domain)
-	.use("/users", users)
+	.use("/users", usersRouter)
 	.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))

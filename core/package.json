@@ -7,7 +7,7 @@
 		"test": "jest --forceExit --coverage --verbose",
 		"start": "node build/main.js",
 		"build": "tsc",
-		"serve": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon build/main.js\"",
+		"serve": "PRODUCTION=false PORT=8080 concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon build/main.js\"",
 		"debug": "DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon --inspect build/main.js\""
 	},
 	"repository": {

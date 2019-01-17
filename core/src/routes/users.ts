@@ -14,7 +14,6 @@ import {
 	minLengthValidator,
 	maxLengthValidator,
 	requiredValidator,
-	Validator,
 } from "../tools"
 
 export const usersRouter = express.Router()
@@ -24,15 +23,16 @@ usersRouter
 	// Add the user object to the request
 	.param("userId", async (request, response, next) => {
 		try {
-			const validation = validate(request.params.userId, [
-				requiredValidator,
-				minLengthValidator(1),
-				maxLengthValidator(32),
-			])
-			if (validation !== null) {
+			try {
+				validate(request.params.userId, "userId", [
+					requiredValidator,
+					minLengthValidator(1),
+					maxLengthValidator(32),
+				])
+			} catch (error) {
 				throw {
 					code: 400,
-					message: `The userId is invalid (${validation.join()})`,
+					message: error,
 				}
 			}
 
@@ -41,6 +41,7 @@ usersRouter
 			next()
 		} catch (error) {
 			handleError(request, response, error)
+			response.end()
 		}
 	})
 
@@ -58,7 +59,7 @@ usersRouter
 	})
 	.post(async (request, response) => {
 		try {
-			// Check that all the needed properties are valid
+			// Check that undefinedall the needed properties are valid
 			validateBody(request.body)
 			await createUser(request.body)
 			response.status(201)
@@ -73,6 +74,7 @@ usersRouter
 usersRouter
 	.route("/:userId")
 	.get(async (request, response) => {
+		console.log()
 		try {
 			response.json((request as any).user)
 		} catch (error) {
@@ -102,30 +104,29 @@ usersRouter
 		}
 	})
 
+// Helpers
 function validateBody(body: any) {
-	// Check that all the needed properties are valid
-	const validations: [string, Validator[]][] = [
-		[
-			"username",
-			[requiredValidator, minLengthValidator(1), maxLengthValidator(32)],
-		],
-		[
-			"fullname",
-			[requiredValidator, minLengthValidator(3), maxLengthValidator(64)],
-		],
-		[
-			"password",
-			[requiredValidator, minLengthValidator(8), maxLengthValidator(256)],
-		],
-	]
-
-	validations.forEach(([key, validators]) => {
-		const validation = validate(body[key], validators)
-		if (validation !== null) {
-			throw {
-				code: 400,
-				message: `The property '${key}' is invalid (${validation.join()})`,
-			}
+	// Check that all the needed properties are there and valid
+	try {
+		validate(body.username, "username", [
+			requiredValidator,
+			minLengthValidator(1),
+			maxLengthValidator(32),
+		])
+		validate(body.fullname, "fullname", [
+			requiredValidator,
+			minLengthValidator(3),
+			maxLengthValidator(64),
+		])
+		validate(body.password, "password", [
+			requiredValidator,
+			minLengthValidator(8),
+			maxLengthValidator(256),
+		])
+	} catch (error) {
+		throw {
+			code: 400,
+			message: error,
 		}
-	})
+	}
 }
