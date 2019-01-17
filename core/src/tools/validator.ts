@@ -12,9 +12,12 @@ export function validate(
 		.filter(result => result !== null)
 
 	if (validations.length > 0) {
-		throw new Error(
-			`The property '${label}' is invalid (${validations.join()})`,
-		)
+		throw {
+			code: 400,
+			message: new Error(
+				`The property '${label}' is invalid (${validations.join()})`,
+			),
+		}
 	}
 }
 

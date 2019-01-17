@@ -23,18 +23,11 @@ usersRouter
 	// Add the user object to the request
 	.param("userId", async (request, response, next) => {
 		try {
-			try {
-				validate(request.params.userId, "userId", [
-					requiredValidator,
-					minLengthValidator(1),
-					maxLengthValidator(32),
-				])
-			} catch (error) {
-				throw {
-					code: 400,
-					message: error,
-				}
-			}
+			validate(request.params.userId, "userId", [
+				requiredValidator,
+				minLengthValidator(1),
+				maxLengthValidator(32),
+			])
 
 			const user = await getUser(request.params.userId)
 			;(request as any).user = user
@@ -59,8 +52,23 @@ usersRouter
 	})
 	.post(async (request, response) => {
 		try {
-			// Check that undefinedall the needed properties are valid
-			validateBody(request.body)
+			// Check that all the needed properties are there and valid
+			validate(request.body.username, "username", [
+				requiredValidator,
+				minLengthValidator(1),
+				maxLengthValidator(32),
+			])
+			validate(request.body.fullname, "fullname", [
+				requiredValidator,
+				minLengthValidator(3),
+				maxLengthValidator(64),
+			])
+			validate(request.body.password, "password", [
+				requiredValidator,
+				minLengthValidator(8),
+				maxLengthValidator(256),
+			])
+
 			await createUser(request.body)
 			response.status(201)
 		} catch (error) {
@@ -94,8 +102,23 @@ usersRouter
 	})
 	.patch(async (request, response) => {
 		try {
-			// Check that all the needed properties are valid
-			validateBody(request.body)
+			// Check that all the needed properties are there and valid
+			validate(request.body.username, "username", [
+				requiredValidator,
+				minLengthValidator(1),
+				maxLengthValidator(32),
+			])
+			validate(request.body.fullname, "fullname", [
+				requiredValidator,
+				minLengthValidator(3),
+				maxLengthValidator(64),
+			])
+			validate(request.body.password, "password", [
+				requiredValidator,
+				minLengthValidator(8),
+				maxLengthValidator(256),
+			])
+
 			response.json(await updateUser(request.params.userId, request.body))
 		} catch (error) {
 			handleError(request, response, error)
@@ -103,30 +126,3 @@ usersRouter
 			response.end()
 		}
 	})
-
-// Helpers
-function validateBody(body: any) {
-	// Check that all the needed properties are there and valid
-	try {
-		validate(body.username, "username", [
-			requiredValidator,
-			minLengthValidator(1),
-			maxLengthValidator(32),
-		])
-		validate(body.fullname, "fullname", [
-			requiredValidator,
-			minLengthValidator(3),
-			maxLengthValidator(64),
-		])
-		validate(body.password, "password", [
-			requiredValidator,
-			minLengthValidator(8),
-			maxLengthValidator(256),
-		])
-	} catch (error) {
-		throw {
-			code: 400,
-			message: error,
-		}
-	}
-}
