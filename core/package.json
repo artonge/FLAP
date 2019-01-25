@@ -5,10 +5,10 @@
 	"main": "build/main.js",
 	"scripts": {
 		"test": "jest --forceExit --coverage --verbose",
-		"start": "node build/main.js",
+		"start": "NODE_ENV=production node build/main.js",
 		"build": "tsc",
-		"serve": "PRODUCTION=false PORT=8080 concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon build/main.js\"",
-		"debug": "DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w\" \"nodemon --inspect build/main.js\""
+		"serve": "PORT=8080 concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\"",
+		"debug": "PORT=8080 DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\""
 	},
 	"repository": {
 		"type": "git",
@@ -25,10 +25,8 @@
 	},
 	"homepage": "https://gitlab.com/artonge/flap#readme",
 	"dependencies": {
-		"argon2": "^0.20.0",
 		"body-parser": "^1.18.3",
 		"express": "^4.16.4",
-		"ldap": "^0.7.1",
 		"ldapjs": "^1.0.2"
 	},
 	"devDependencies": {

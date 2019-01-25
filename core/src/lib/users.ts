@@ -1,16 +1,23 @@
+import { promisify } from "util"
+import * as crypto from "crypto"
+import { promises as fs } from "fs"
+import * as path from "path"
+import * as os from "os"
+
 import { Change } from "ldapjs"
+
 import * as ldap from "./ldap"
-import * as argon2 from "argon2"
 
 const LDAP_HOST = process.env.LDAP_HOST || "ldap://localhost"
 const LDAP_BASE = process.env.LDAP_BASE || "ou=users,dc=flap,dc=local"
 const LDAP_ADMIN_DN = process.env.LDAP_ADMIN_DN || "cn=admin,dc=flap,dc=local"
 const LDAP_ADMIN_PWD = process.env.LDAP_ADMIN_PWD || "admin"
 
-interface IUser {
+export interface IUser {
 	fullname: string
 	username: string
 	email: string
+	password: string
 }
 
 export async function searchUsers(): Promise<IUser[]> {
@@ -26,6 +33,7 @@ export async function searchUsers(): Promise<IUser[]> {
 		fullname: entry.object.cn,
 		username: entry.object.sn,
 		email: entry.object.mail,
+		password: entry.object.userPassword,
 	}))
 }
 
@@ -53,17 +61,12 @@ export async function createUser(params: {
 
 	// Send the new entry to the LDAP server
 	await ldap.add(client, `sn=${params.username},${LDAP_BASE}`, {
-		objectClass: ["person", "mailAccount"],
+		// objectClass: ["person", "mailAccount"],
+		objectClass: ["person", "inetOrgPerson"],
 		cn: params.fullname,
 		sn: params.username,
 		mail: `${params.username}@flap.local`,
-		// Hash the user's password
-		userPassword: await argon2.hash(params.password, {
-			timeCost: 40,
-			memoryCost: 2 ** 16,
-			parallelism: 4,
-			type: argon2.argon2d,
-		}),
+		userPassword: await hashPwd(params.password),
 	})
 
 	// Unbind from the LDAP server
@@ -87,13 +90,7 @@ export async function updateUser(
 			new Change({
 				operation: "replace",
 				modification: {
-					// Hash the user's password
-					userPassword: await argon2.hash(params.password, {
-						timeCost: 40,
-						memoryCost: 2 ** 16,
-						parallelism: 4,
-						type: argon2.argon2d,
-					}),
+					userPassword: await hashPwd(params.password),
 				},
 			}),
 		)
@@ -128,4 +125,67 @@ export async function deleteUser(username: string): Promise<void> {
 	await ldap.del(client, `sn=${username},${LDAP_BASE}`)
 	// Unbind from the LDAP server
 	await ldap.unbind(client)
+}
+
+export async function getUserWithCredentials(
+	username: string,
+	password: string,
+): Promise<IUser | undefined> {
+	// Bind to the LDAP server
+	const client = await ldap.bind(
+		LDAP_HOST,
+		`sn=${username},${LDAP_BASE}`,
+		password,
+	)
+	// Query the server
+	const entries = await ldap.search(client, LDAP_BASE)
+	// Unbind from the LDAP server
+	await ldap.unbind(client)
+
+	// Map users to our IUser interface
+	return entries.map((entry: any) => ({
+		fullname: entry.object.cn,
+		username: entry.object.sn,
+		email: entry.object.mail,
+		password: entry.object.userPassword,
+	}))[0]
+}
+
+// Return a password hash compatible with crypt(3) format
+// The password is salted with a random hash
+// This uses the openssl's 'passwd' subcommand
+// To prevent passing user input directly to the exec call we store the password in a tmp file that will be passed to openssl
+// TODO - find a way to set the number of rounds
+export async function hashPwd(password: string) {
+	// Create a tmp dir
+	const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "flap-"))
+
+	let hash: string | undefined
+
+	// Wrapped in try/catch so we can delete the tmp dir even if there is an error
+	try {
+		// Write clear the text password in a password.txt file inside the tmp dir
+		await fs.writeFile(`${tmpDir}/password.txt`, password, "utf8")
+
+		const salt = crypto.randomBytes(16).toString("hex")
+
+		// Exec the shell command
+		const exec = promisify(require("child_process").exec)
+		const { stdout, stderr } = await exec(
+			`openssl passwd -6 -salt ${salt} --in ${tmpDir}/password.txt`,
+		)
+
+		if (stderr) {
+			throw new Error(stderr)
+		}
+
+		// Stdout have a \n at its end, trimEnd will remove it
+		// {CRYPT} is here to tell ldap it should use crypt(3) to hash password
+		hash = `{CRYPT}${stdout.trimEnd()}`
+	} finally {
+		await fs.unlink(`${tmpDir}/password.txt`)
+		await fs.rmdir(tmpDir)
+	}
+
+	return hash
 }
