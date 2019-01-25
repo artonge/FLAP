@@ -50,13 +50,16 @@ services:
 
     # LDAP
     ldap:
-        image: osixia/openldap:1.2.2
+        build:
+            context: ./ldap
+            dockerfile: ./image/Dockerfile
         env_file: [./ldap/ldap.env]
         restart: always
         ports: ["389:389"]
         volumes:
-            - ./ldap/data/config:/etc/ldap/slapd.d # Data
-            - ./ldap/data/database:/var/lib/ldap # Data
+            - ./ldap/prepopulate:/prepopulate:ro # Setup
+            - ./ldap/data/config:/etc/ldap # Config
+            - ./ldap/data/data:/var/lib/ldap # Data
         networks:
             stores-net:
                 aliases: [ldap]
@@ -112,4 +115,3 @@ networks:
 
 volumes:
     sogoStaticFiles:
-        driver: local

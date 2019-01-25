@@ -1,0 +1,3 @@
+dn: ou=users,dc=flap,dc=local
+ou: users
+objectClass: organizationalUnit
