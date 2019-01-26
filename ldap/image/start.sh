@@ -69,14 +69,19 @@ EOF
 	fi
 fi
 
-if [[ ! -f "/populated" && -d "/prepopulate" ]]; then
-	# Load prepopulation .ldif files
+# Load prepopulation .ldif files
+if [[ -d "/prepopulate" ]]; then
 	echo "Loading populate files..."
+	mkdir -p /etc/ldap/prepopulate
 	for file in `ls /prepopulate/*.ldif`; do
-		slapadd -F /etc/ldap/slapd.d -l "$file"
+		if [[ ! -f /etc/ldap${file}.done ]]; then
+			# Load the .ldif file and create /etc/ldap/prepopulate/$file.done to mark it as loaded
+			echo Loading $file
+			slapadd -F /etc/ldap/slapd.d -l "$file"
+			touch /etc/ldap${file}.done
+		fi
 	done
 
-	touch /populated
 fi
 
 echo "Starting slapd..."
