@@ -153,9 +153,8 @@ export async function getUserWithCredentials(
 
 // Return a password hash compatible with crypt(3) format
 // The password is salted with a random hash
-// This uses the openssl's 'passwd' subcommand
-// To prevent passing user input directly to the exec call we store the password in a tmp file that will be passed to openssl
-// TODO - find a way to set the number of rounds
+// This uses the mkpasswd command from the whois package
+// To prevent passing user input directly to the exec call we store the password in a tmp file that will be passed via stdin
 export async function hashPwd(password: string) {
 	// Create a tmp dir
 	const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "flap-"))
@@ -166,13 +165,11 @@ export async function hashPwd(password: string) {
 	try {
 		// Write clear the text password in a password.txt file inside the tmp dir
 		await fs.writeFile(`${tmpDir}/password.txt`, password, "utf8")
-
-		const salt = crypto.randomBytes(16).toString("hex")
-
 		// Exec the shell command
 		const exec = promisify(require("child_process").exec)
+
 		const { stdout, stderr } = await exec(
-			`openssl passwd -6 -salt ${salt} --in ${tmpDir}/password.txt`,
+			`mkpasswd --method=sha-512 --rounds 999999 --stdin < ${tmpDir}/password.txt`,
 		)
 
 		if (stderr) {
@@ -180,7 +177,7 @@ export async function hashPwd(password: string) {
 		}
 
 		// Stdout have a \n at its end, trimEnd will remove it
-		// {CRYPT} is here to tell ldap it should use crypt(3) to hash password
+		// {CRYPT} is here to tell ldap it should use crypt(3) to check the password
 		hash = `{CRYPT}${stdout.trimEnd()}`
 	} finally {
 		await fs.unlink(`${tmpDir}/password.txt`)

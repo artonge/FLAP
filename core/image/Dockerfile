@@ -13,7 +13,7 @@ RUN apt-get update && \
         build-essential \
         python \
 # Runtime dependencies
-        argon2 && \
+        whois && \
     npm install --only=production && \
 # Reduce final image size
     apt-get remove -y \
