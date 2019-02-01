@@ -1,0 +1,3 @@
+-   gzip
+-   authorized ssl cipher
+-   secure header (ex; Strict-Transport-Security)

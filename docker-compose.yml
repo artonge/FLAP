@@ -55,7 +55,7 @@ services:
             dockerfile: ./image/Dockerfile
         env_file: [./ldap/ldap.env]
         restart: always
-        ports: ["389:389"]
+        # ports: ["389:389"]
         volumes:
             - ./ldap/prepopulate:/prepopulate:ro # Setup
             - ./ldap/data/config:/etc/ldap # Config
@@ -63,6 +63,16 @@ services:
         networks:
             stores-net:
                 aliases: [ldap]
+    # DEV MODE
+    # ldapadmin:
+    #     image: osixia/phpldapadmin
+    #     restart: always
+    #     ports: ["6443:80"]
+    #     environment:
+    #         PHPLDAPADMIN_LDAP_HOSTS: ldap
+    #         PHPLDAPADMIN_HTTPS: "false"
+    #     networks:
+    #         stores-net:
 
     # FLAP CORE
     core:
@@ -71,11 +81,15 @@ services:
             dockerfile: ./image/Dockerfile
         env_file: [./core/core.env]
         restart: always
-        depends_on: [ldap]
+        depends_on: [ldap, redis]
         networks:
             stores-net:
             apps-net:
                 aliases: [core]
+        # DEV MODE
+        # ports: ["8080:8080", "9229:9229"]
+        # volumes: ["./core:/flap"]
+        # entrypoint: ["npm", "run", "serve"]
 
     # SEAFILE
     seafile:
@@ -93,6 +107,7 @@ services:
             apps-net:
                 aliases: [seafile]
 
+    # SOGO
     sogo:
         build:
             context: ./sogo/image

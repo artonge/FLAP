@@ -85,6 +85,6 @@ if [[ -d "/prepopulate" ]]; then
 fi
 
 echo "Starting slapd..."
-# Start ldap as user and group 'openldap'
-# -d is debug level, 0 means none, but without -d, slapd runs in background mode
-exec slapd -d 0 -u openldap -g openldap
+# -d is debug level: https://www.openldap.org/doc/admin24/slapdconfig.html
+# -u/g starts ldap as user and group 'openldap'
+exec slapd -d 256 -u openldap -g openldap
