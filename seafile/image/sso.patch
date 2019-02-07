@@ -1,0 +1,111 @@
+diff --git a/seahub/auth/middleware.py b/seahub/auth/middleware.py
+index ebf7f9282..acd341fc4 100644
+--- a/seahub/auth/middleware.py
++++ b/seahub/auth/middleware.py
+@@ -1,7 +1,10 @@
+ # Copyright (c) 2012-2016 Seafile Ltd.
+-from django.contrib import auth
++from seahub import auth
+ from django.core.exceptions import ImproperlyConfigured
+ 
++from django.conf import settings
++import logging
++logger = logging.getLogger(__name__)
+ 
+ class LazyUser(object):
+     def __get__(self, request, obj_type=None):
+@@ -30,15 +33,15 @@ class RemoteUserMiddleware(object):
+     If authentication is successful, the user is automatically logged in to
+     persist the user in the session.
+ 
+-    The header used is configurable and defaults to ``REMOTE_USER``.  Subclass
+-    this class and change the ``header`` attribute if you need to use a
+-    different header.
++    The header used is configurable and defaults to ``REMOTE_USER``. Set the
++    ``PROXY_AUTH_HEADER`` environment variable if you need to use a different
++    header.
+     """
+ 
+     # Name of request header to grab username from.  This will be the key as
+     # used in the request.META dictionary, i.e. the normalization of headers to
+     # all uppercase and the addition of "HTTP_" prefix apply.
+-    header = "REMOTE_USER"
++    header = getattr(settings, 'PROXY_AUTH_HEADER', "HTTP_REMOTE_USER")
+ 
+     def process_request(self, request):
+         # AuthenticationMiddleware is required so that request.user exists.
+diff --git a/seahub/base/accounts.py b/seahub/base/accounts.py
+index a9737c590..2c7e09374 100644
+--- a/seahub/base/accounts.py
++++ b/seahub/base/accounts.py
+@@ -522,6 +522,50 @@ class AuthBackend(object):
+         if user.check_password(password):
+             return user
+ 
++class ProxyRemoteUserBackend(AuthBackend):
++    """
++    This backend is to be used in conjunction with the ``RemoteUserMiddleware``
++    found in the middleware module of this package, and is used when the server
++    is handling authentication outside of Django.
++    By default, the ``authenticate`` method creates ``User`` objects for
++    usernames that don't already exist in the database.  Subclasses can disable
++    this behavior by setting the ``create_unknown_user`` attribute to
++    ``False``.
++    """
++    # Create a User object if not already in the database?
++    create_unknown_user = True
++
++    trust_proxy = getattr(settings, 'TRUST_PROXY_AUTHTENTICATION', False)
++
++    def authenticate(self, remote_user):
++        """
++        The username passed as ``remote_user`` is considered trusted.  This
++        method simply returns the ``User`` object with the given username,
++        creating a new ``User`` object if ``create_unknown_user`` is ``True``.
++        Returns None if ``create_unknown_user`` is ``False`` and a ``User``
++        object with the given username is not found in the database.
++        """
++        # End the remote user auth process if the proxy is not trusted
++        if not remote_user or not self.trust_proxy:
++            return
++        user = None
++        username = self.clean_username(remote_user)
++
++        # Note that this could be accomplished in one try-except clause, but
++        # instead we use get_or_create when creating unknown users since it has
++        # built-in safeguards for multiple threads.
++
++        user = self.get_user(username)
++        return user
++
++    def clean_username(self, username):
++        """
++        Performs any cleaning on the "username" prior to using it to get or
++        create the user object.  Returns the cleaned username.
++        By default, returns the username unchanged.
++        """
++        return username
++
+ ########## Register related
+ class RegistrationBackend(object):
+     """
+diff --git a/seahub/settings.py b/seahub/settings.py
+index 1ecc4e78e..ccd6c6721 100644
+--- a/seahub/settings.py
++++ b/seahub/settings.py
+@@ -116,6 +116,7 @@ MIDDLEWARE_CLASSES = (
+     'django.middleware.csrf.CsrfViewMiddleware',
+     'django.contrib.messages.middleware.MessageMiddleware',
+     'seahub.auth.middleware.AuthenticationMiddleware',
++    'seahub.auth.middleware.RemoteUserMiddleware',
+     'seahub.base.middleware.BaseMiddleware',
+     'seahub.base.middleware.InfobarMiddleware',
+     'seahub.password_session.middleware.CheckPasswordHash',
+@@ -260,6 +261,7 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+ CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
+ 
+ AUTHENTICATION_BACKENDS = (
++    'seahub.base.accounts.ProxyRemoteUserBackend',
+     'seahub.base.accounts.AuthBackend',
+     'seahub.oauth.backends.OauthRemoteUserBackend',
+ )

@@ -4,8 +4,8 @@ import { IUser } from "../lib"
 
 export const authRouter = express.Router()
 
-// /auth
 /**
+ * - /auth
  * This route can be called by the nginx auth_request directive for SSO
  * It sets an Basic Authorization HTTP header when the request comes with a valid flap-sso cookie
  * This header can then be used by the targeted application to authenticate the user
@@ -18,15 +18,15 @@ authRouter.route("/").get(async (request, response) => {
 		const user: IUser = request.user
 		// Set the Authorization HTTP header
 		// Authorization: Basic base64(username)
+		// Used in SOGo
 		response.setHeader(
 			"Authorization",
 			`Basic ${Buffer.from(`${user.username}`).toString("base64")}`,
 		)
 		// Set various identification HTTP headers
-		// response.setHeader("Auth-User", user.username)
-		// response.setHeader("Remote-User", user.username)
-		// response.setHeader("Email", user.email)
-		// response.setHeader("Name", user.fullname)
+		response.setHeader("Remote-User", user.username)
+		// Used in seafile
+		response.setHeader("Email", user.email)
 	}
 
 	// Always set the status to 200 because

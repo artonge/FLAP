@@ -27,7 +27,7 @@ services:
         volumes:
             - ./mariadb/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
             - ./mariadb/config/my.cnf:/etc/mysql/my.cnf # Config
-            - ./mariadb/data:/var/lib/mariadb # Data
+            - ./mariadb/data:/var/lib/mysql # Data
         networks:
             stores-net:
                 aliases: [mariadb]
@@ -101,7 +101,7 @@ services:
         depends_on: [mariadb, ldap]
         volumes:
             - ./seafile/data:/shared # Data
-            - ./seafile/config:/root/conf.addons # Config
+            - ./seafile/config:/conf.addons # Config
         networks:
             stores-net:
             apps-net:

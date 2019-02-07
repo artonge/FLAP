@@ -4,6 +4,8 @@
 -   Cron job (GC)
 -   SSO
 -   volumes
+-   memcached
+-   no deamon
 
 ---
 
