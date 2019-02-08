@@ -10,42 +10,47 @@ do
 done
 
 # Setup seafile if it is not already setup
-if [ ! -f /root/installed ]
+if [ ! -f /shared/installed ]
 then
-	echo "Seting up DB and file system"
-	./seafile-server-${SEAFILE_VERSION}/setup-seafile-mysql.sh auto --use-existing-db 1
-	# Specifying admin credentials for seafile to setup it up
-	echo "{\"email\": \"$SEAFILE_ADMIN_EMAIL\", \"password\":\"$SEAFILE_ADMIN_PASSWORD\"}" > conf/admin.txt
+	# Move the downloaded server in the persistant volume.
+	# It is necessary to copy this folder as seafile will alter it during setup.
+	cp -r /root/seafile-server-6.3.4 /shared/
 
-	mv /root/conf /root/conf.base
-	# Fix SERVICE_URL value
-	sed -i -e 's/SERVICE_URL = http:\/\/'$SERVER_IP':8000/SERVICE_URL = https:\/\/'$SERVER_IP'/g' /root/conf.base/ccnet.conf
+	echo "Seting up DB and file system"
+	/shared/seafile-server-${SEAFILE_VERSION}/setup-seafile-mysql.sh auto --use-existing-db 1
+
+	# Specifying admin credentials for seafile to setup it up
+	echo "{\"email\": \"$SEAFILE_ADMIN_EMAIL\", \"password\":\"$SEAFILE_ADMIN_PASSWORD\"}" > /shared/conf/admin.txt
+
+	# Save generated conf
+	mv /shared/conf /shared/conf.base
 
 	# Mark the instance as installed so we don't go throught the DB setup again
-	touch /root/installed
+	touch /shared/installed
 fi
 
 # Clean old conf folder
-rm -rf /root/conf
-mkdir /root/conf
+rm -rf /shared/conf
+mkdir /shared/conf
 
-# Merge base and addon conf files
-cp /root/conf.base/* /root/conf/
-cat /root/conf.addons/ccnet.conf >> /root/conf/ccnet.conf
-cat /root/conf.addons/seafile.conf >> /root/conf/seafile.conf
-cat /root/conf.addons/seafdav.conf >> /root/conf/seafdav.conf
-cat /root/conf.addons/seahub_settings.py >> /root/conf/seahub_settings.py
+# Merge generated and specified conf
+cp /shared/conf.base/* /shared/conf/
+cat /conf/ccnet.conf >> /shared/conf/ccnet.conf
+cat /conf/seafile.conf >> /shared/conf/seafile.conf
+cat /conf/seafdav.conf >> /shared/conf/seafdav.conf
+cat /conf/seafevents.conf >> /shared/conf/seafevents.conf
+cat /conf/seahub_settings.py >> /shared/conf/seahub_settings.py
 
 # Start seahub and seafile
-./seafile-server-${SEAFILE_VERSION}/seafile.sh start
-./seafile-server-${SEAFILE_VERSION}/seahub.sh start
+/shared/seafile-server-${SEAFILE_VERSION}/seafile.sh start
+/shared/seafile-server-${SEAFILE_VERSION}/seahub.sh start
 
 exit_script() {
 	# clear the trap
-    trap - SIGINT SIGTERM
+  trap - SIGINT SIGTERM
 	# Stop seafile and seahub
-	./seafile-server-${SEAFILE_VERSION}/seafile.sh stop
-	./seafile-server-${SEAFILE_VERSION}/seahub.sh stop
+	/shared/seafile-server-${SEAFILE_VERSION}/seafile.sh stop
+	/shared/seafile-server-${SEAFILE_VERSION}/seahub.sh stop
 }
 
 # Call exit_script on SIGINT or SIGTERM

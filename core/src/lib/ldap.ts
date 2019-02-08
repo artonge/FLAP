@@ -81,7 +81,7 @@ export function add(
 	return new Promise((resolve, reject) => {
 		client.add(dn, entry, error => {
 			if (error) {
-				reject(error.message)
+				reject(error)
 			} else {
 				resolve()
 			}

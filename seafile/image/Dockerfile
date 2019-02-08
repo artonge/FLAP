@@ -11,12 +11,18 @@ ENV RELEASE_URL_AMD64=https://download.seadrive.org/seafile-server_${SEAFILE_VER
 
 WORKDIR /root
 
+# Copy the patch for SSO support
+COPY ./sso.patch /sso.patch
+
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        python-mysqldb \
-        mariadb-client \
+        libldap2-dev \
         libmariadbclient-dev \
+        libmemcached-dev \
+        mariadb-client \
+        patch \
+        python-mysqldb \
 # pgrep is needed during `seafile.sh start`
         procps \
 # gcc is needed to build some python dependencies
@@ -24,31 +30,40 @@ RUN apt-get update && \
 # curl is needed to fetch seafile
         curl && \
     pip install \
-        Pillow==4.3.0 \
-        setuptools \
-        ldap \
-        urllib3 \
-        requests \
+        django-pylibmc \
         mysql \
-        python-memcached && \
+        Pillow==4.3.0 \
+        pylibmc \
+        python-ldap \
+        python-memcached \
+        requests \
+        setuptools \
+        urllib3 && \
 # Download seafile
-	dpkg --print-architecture && \
+    dpkg --print-architecture && \
     case "$(dpkg --print-architecture)" in \
         "amd64") curl -sSL -o - ${RELEASE_URL_AMD64} | tar xzf - -C . ;; \
         "armhf") curl -sSL -o - ${RELEASE_URL_ARMHF} | tar xzf - -C . ;; \
         *) echo "Unknown architecture" && exit 1 ;; \
     esac && \
 # Reduce final image size
-	apt-get remove -y \
-        curl \
-        gcc \
-        libmariadbclient-dev && \
-    apt-get autoremove -y && \
-	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get remove -y \
+          curl \
+          gcc \
+          libmariadbclient-dev \
+          libmemcached-dev && \
+      apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+# Apply patch for SSO
+# Credit: https://github.com/YunoHost-Apps/seafile_ynh/commit/40ec2d416c39b2aca3936f6ae4e7f4573bc6535d#diff-dc2801cb46a5d60e62234cff98084498
+    cd ./seafile-server-${SEAFILE_VERSION}/seahub && \
+    patch -p1 < /sso.patch
 
 # Copy the startup script. It will:
 #	1. Setup DB if necessary
 #	2. Start seafile and seahub
-COPY ./start.sh ./start.sh
+COPY ./start.sh /start.sh
 
-CMD ["./start.sh"]
+WORKDIR /shared
+
+CMD ["/start.sh"]

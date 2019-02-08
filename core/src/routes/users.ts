@@ -9,7 +9,6 @@ import {
 } from "../lib"
 
 import {
-	handleError,
 	validate,
 	minLengthValidator,
 	maxLengthValidator,
@@ -21,107 +20,78 @@ export const usersRouter = express.Router()
 // Middlewares
 usersRouter
 	// Add the user object to the request
-	.param("userId", async (request, response, next) => {
+	.param("userId", async (request, _response, next) => {
+		validate(request.params.userId, "userId", [
+			requiredValidator,
+			minLengthValidator(1),
+			maxLengthValidator(32),
+		])
 		try {
-			validate(request.params.userId, "userId", [
-				requiredValidator,
-				minLengthValidator(1),
-				maxLengthValidator(32),
-			])
-
 			const user = await getUser(request.params.userId)
-			;(request as any).user = user
+			;(request as any).targetedUser = user
 			next()
 		} catch (error) {
-			handleError(request, response, error)
-			response.end()
+			throw { code: 404, message: error }
 		}
 	})
 
-// /
+// /users
 usersRouter
 	.route("/")
-	.get(async (request, response) => {
-		try {
-			response.json(await searchUsers())
-		} catch (error) {
-			handleError(request, response, error)
-		} finally {
-			response.end()
-		}
+	.get(async (_request, response) => {
+		response.json(await searchUsers())
+		response.end()
 	})
 	.post(async (request, response) => {
-		try {
-			// Check that all the needed properties are there and valid
-			validate(request.body.username, "username", [
-				requiredValidator,
-				minLengthValidator(1),
-				maxLengthValidator(32),
-			])
-			validate(request.body.fullname, "fullname", [
-				requiredValidator,
-				minLengthValidator(3),
-				maxLengthValidator(64),
-			])
-			validate(request.body.password, "password", [
-				requiredValidator,
-				minLengthValidator(8),
-				maxLengthValidator(256),
-			])
+		// Check that all the needed properties are there and valid
+		validate(request.body.username, "username", [
+			requiredValidator,
+			minLengthValidator(1),
+			maxLengthValidator(32),
+		])
+		validate(request.body.fullname, "fullname", [
+			requiredValidator,
+			minLengthValidator(3),
+			maxLengthValidator(64),
+		])
+		validate(request.body.password, "password", [
+			requiredValidator,
+			minLengthValidator(8),
+			maxLengthValidator(256),
+		])
 
-			await createUser(request.body)
-			response.status(201)
-		} catch (error) {
-			handleError(request, response, error)
-		} finally {
-			response.end()
-		}
+		await createUser(request.body)
+		response.status(201)
+		response.end()
 	})
 
-// /:userId
+// /users/:userId
 usersRouter
 	.route("/:userId")
 	.get(async (request, response) => {
-		try {
-			response.json((request as any).user)
-		} catch (error) {
-			handleError(request, response, error)
-		} finally {
-			response.end()
-		}
+		response.json((request as any).targetedUser)
+		response.end()
 	})
 	.delete(async (request, response) => {
-		try {
-			await deleteUser(request.params.userId)
-		} catch (error) {
-			handleError(request, response, error)
-		} finally {
-			response.end()
-		}
+		await deleteUser(request.params.userId)
+		response.end()
 	})
 	.patch(async (request, response) => {
-		try {
-			// Check that all the needed properties are there and valid
-			validate(request.body.username, "username", [
-				requiredValidator,
-				minLengthValidator(1),
-				maxLengthValidator(32),
-			])
+		// Check that submited properties are valid
+		if (request.body.fullname) {
 			validate(request.body.fullname, "fullname", [
 				requiredValidator,
 				minLengthValidator(3),
 				maxLengthValidator(64),
 			])
+		}
+		if (request.body.password) {
 			validate(request.body.password, "password", [
 				requiredValidator,
 				minLengthValidator(8),
 				maxLengthValidator(256),
 			])
-
-			response.json(await updateUser(request.params.userId, request.body))
-		} catch (error) {
-			handleError(request, response, error)
-		} finally {
-			response.end()
 		}
+		response.json(await updateUser(request.params.userId, request.body))
+		response.end()
 	})

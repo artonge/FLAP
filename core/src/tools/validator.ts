@@ -15,20 +15,32 @@ export function validate(
 		throw {
 			code: 400,
 			message: new Error(
-				`The property '${label}' is invalid (${validations.join()})`,
+				`The property '${label}' is invalid (${validations.join(
+					", ",
+				)})`,
 			),
 		}
 	}
 }
 
 export function minLengthValidator(number: number): Validator {
-	return (value: string) =>
-		value.length < number ? "The value is too short" : null
+	return (value: string) => {
+		if (typeof value !== "string") {
+			return "The value is not a string"
+		}
+
+		return value.length < number ? "The value is too short" : null
+	}
 }
 
 export function maxLengthValidator(number: number): Validator {
-	return (value: string) =>
-		value.length > number ? "The value is too long" : null
+	return (value: string) => {
+		if (typeof value !== "string") {
+			return "The value is not a string"
+		}
+
+		return value.length > number ? "The value is too long" : null
+	}
 }
 
 export function requiredValidator(value: any) {

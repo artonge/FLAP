@@ -1,1 +1,3 @@
 -   Fine tuning
+-   app isolation
+-   app isolation (memcached)

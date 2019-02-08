@@ -1,9 +1,10 @@
 {
 	"compilerOptions": {
-		"target": "es5",
+		"target": "ES2018",
+		"module": "CommonJS",
 		"rootDir": "./src",
 		"outDir": "./build",
-		"sourceMap": true,
+		"inlineSourceMap": true,
 		"removeComments": true,
 		"strict": true,
 		"noUnusedLocals": true,

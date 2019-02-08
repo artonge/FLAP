@@ -1,5 +1,4 @@
 import { promisify } from "util"
-import * as crypto from "crypto"
 import { promises as fs } from "fs"
 import * as path from "path"
 import * as os from "os"

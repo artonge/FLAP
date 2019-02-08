@@ -1,9 +1,7 @@
 -   EMAIL
--   port configuration
 -   Fail2ban
 -   Cron job (GC)
--   SSO
--   volumes
+-   redirect login page
 
 ---
 
