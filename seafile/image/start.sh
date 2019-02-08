@@ -12,16 +12,18 @@ done
 # Setup seafile if it is not already setup
 if [ ! -f /shared/installed ]
 then
+	# Move the downloaded server in the persistant volume.
+	# It is necessary to copy this folder as seafile will alter it during setup.
 	cp -r /root/seafile-server-6.3.4 /shared/
 
 	echo "Seting up DB and file system"
 	/shared/seafile-server-${SEAFILE_VERSION}/setup-seafile-mysql.sh auto --use-existing-db 1
+
 	# Specifying admin credentials for seafile to setup it up
 	echo "{\"email\": \"$SEAFILE_ADMIN_EMAIL\", \"password\":\"$SEAFILE_ADMIN_PASSWORD\"}" > /shared/conf/admin.txt
 
+	# Save generated conf
 	mv /shared/conf /shared/conf.base
-	# Fix SERVICE_URL value
-	sed -i -e 's/SERVICE_URL = http:\/\/'$SERVER_IP':8000/SERVICE_URL = https:\/\/'$SERVER_IP'/g' /shared/conf.base/ccnet.conf
 
 	# Mark the instance as installed so we don't go throught the DB setup again
 	touch /shared/installed
@@ -31,12 +33,13 @@ fi
 rm -rf /shared/conf
 mkdir /shared/conf
 
-# Merge base and addon conf files
+# Merge generated and specified conf
 cp /shared/conf.base/* /shared/conf/
-cat /conf.addons/ccnet.conf >> /shared/conf/ccnet.conf
-cat /conf.addons/seafile.conf >> /shared/conf/seafile.conf
-cat /conf.addons/seafdav.conf >> /shared/conf/seafdav.conf
-cat /conf.addons/seahub_settings.py >> /shared/conf/seahub_settings.py
+cat /conf/ccnet.conf >> /shared/conf/ccnet.conf
+cat /conf/seafile.conf >> /shared/conf/seafile.conf
+cat /conf/seafdav.conf >> /shared/conf/seafdav.conf
+cat /conf/seafevents.conf >> /shared/conf/seafevents.conf
+cat /conf/seahub_settings.py >> /shared/conf/seahub_settings.py
 
 # Start seahub and seafile
 /shared/seafile-server-${SEAFILE_VERSION}/seafile.sh start

@@ -1,3 +1,4 @@
+# MEMCACHED
 CACHES = {
     'default': {
         'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
@@ -9,4 +10,12 @@ CACHES = {
 }
 COMPRESS_CACHE_BACKEND = 'locmem'
 
+# SEAFILE URL
+FILE_SERVER_ROOT = 'http://files.flap.localhost/seafhttp'
+
+# SSO
 TRUST_PROXY_AUTHTENTICATION = True
+
+# USER CONFIG
+ENABLE_DELETE_ACCOUNT = False
+ENABLE_UPDATE_USER_INFO = False

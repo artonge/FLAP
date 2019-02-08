@@ -36,6 +36,7 @@ services:
     redis:
         image: redis:5.0
         restart: always
+        # ports: ["6379:6379"]
         volumes:
             - ./redis/data:/data # Data
         networks:
@@ -46,6 +47,7 @@ services:
     memcached:
         image: memcached:1.5.12
         restart: always
+        # ports: ["11211:11211"]
         networks:
             stores-net:
                 aliases: [memcached]
@@ -89,7 +91,7 @@ services:
             apps-net:
                 aliases: [core]
         # DEV MODE
-        # ports: ["8080:8080", "9229:9229"]
+        # ports: ["8080:80", "9229:9229"]
         # volumes: ["./core:/flap"]
         # entrypoint: ["npm", "run", "serve"]
 
@@ -100,11 +102,11 @@ services:
             dockerfile: ./Dockerfile
         env_file: [./seafile/seafile.env]
         restart: always
-        depends_on: [mariadb, ldap]
+        # ports: ["8000:8000", "8082:8082"]
         depends_on: [mariadb, ldap, memcached]
         volumes:
             - ./seafile/data:/shared # Data
-            - ./seafile/config:/conf.addons # Config
+            - ./seafile/config:/conf # Config
         networks:
             stores-net:
             apps-net:
