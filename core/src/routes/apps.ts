@@ -17,10 +17,18 @@ export const apps = express
 				},
 				{
 					name: "Seafile",
-					description: "Sync all your files accross you all devices", // TODO - translate
+					description: "Sync your files accross all your devices", // TODO - translate
 					enabled: true,
 					url: `https://files.${DOMAIN_NAME}`,
 					icon: "seafileIcon", // TODO - use a real icon
+				},
+				{
+					name: "Sogo",
+					description:
+						"Manage and sync your contacts and calendars accross all your devices", // TODO - translate
+					enabled: true,
+					url: `https://sogo.${DOMAIN_NAME}`,
+					icon: "sogoIcon", // TODO - use a real icon
 				},
 			])
 			.end()
