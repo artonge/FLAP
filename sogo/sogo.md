@@ -4,6 +4,8 @@
 -   test Linux
 -   test MacOs
 -   test Windows
+-   redirect login page
+-   cal/card links
 
 ---
 
