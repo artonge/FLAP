@@ -36,6 +36,8 @@ services:
     redis:
         image: redis:5.0
         restart: always
+        volumes:
+            - ./redis/data:/data # Data
         networks:
             stores-net:
                 aliases: [redis]
@@ -57,7 +59,7 @@ services:
         restart: always
         # ports: ["389:389"]
         volumes:
-            - ./ldap/prepopulate:/prepopulate:ro # Setup
+            - ./ldap/prepopulate:/prepopulate:ro # Init
             - ./ldap/data/config:/etc/ldap # Config
             - ./ldap/data/data:/var/lib/ldap # Data
         networks:
@@ -99,6 +101,7 @@ services:
         env_file: [./seafile/seafile.env]
         restart: always
         depends_on: [mariadb, ldap]
+        depends_on: [mariadb, ldap, memcached]
         volumes:
             - ./seafile/data:/shared # Data
             - ./seafile/config:/conf.addons # Config
