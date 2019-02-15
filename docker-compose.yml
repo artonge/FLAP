@@ -92,9 +92,9 @@ services:
             apps-net:
                 aliases: [core]
         # DEV MODE
-        ports: ["8080:80", "9229:9229"]
-        volumes: ["./core:/flap"]
-        entrypoint: ["npm", "run", "serve"]
+        # ports: ["8080:80", "9229:9229"]
+        # volumes: ["./core:/flap"]
+        # entrypoint: ["npm", "run", "serve"]
 
     # SEAFILE
     seafile:
