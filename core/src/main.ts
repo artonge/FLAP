@@ -4,6 +4,7 @@ import * as express from "express"
 import * as bodyParser from "body-parser"
 import * as session from "express-session"
 import * as passport from "passport"
+import * as winston from "winston"
 
 import LdapStrategy = require("passport-ldapauth")
 const RedisStore = require("connect-redis")(session)
@@ -26,6 +27,17 @@ const LDAP_HOST = process.env.LDAP_HOST || "ldap://localhost"
 const LDAP_BASE = process.env.LDAP_BASE || "ou=users,dc=flap,dc=local"
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost"
+
+winston.configure({
+	level: process.env.LOG_LEVEL || "info",
+	transports: [new winston.transports.Console()],
+	format: winston.format.combine(
+		winston.format.timestamp(),
+		winston.format.printf(({ level, message, timestamp }) => {
+			return `[${timestamp}][${level.toUpperCase()}]	${message}`
+		}),
+	),
+})
 
 // Use the ldap strategy to authenticate users
 // It will try to bind to the ldap server using the username and password provided
@@ -124,8 +136,7 @@ express()
 			}
 
 			// Log for debugging
-			console.log(request.route)
-			console.error(
+			winston.error(
 				`Error (${error.code}) in '${request.route.path}':`,
 				error.message,
 			)
@@ -141,4 +152,4 @@ express()
 	)
 
 	// Start listening
-	.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+	.listen(PORT, () => winston.info(`Listening on port ${PORT}`))

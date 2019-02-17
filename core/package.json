@@ -8,8 +8,8 @@
 		"test:watch": "jest --watch",
 		"start": "NODE_ENV=production node build/main.js",
 		"build": "tsc",
-		"serve": "PORT=8080 DEBUG=node-ssdp:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\"",
-		"debug": "PORT=8080 DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\""
+		"serve": "PORT=8080 LOG_LEVEL=debug concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\"",
+		"debug": "PORT=8080 LOG_LEVEL=silly DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\""
 	},
 	"repository": {
 		"type": "git",
@@ -40,7 +40,8 @@
 		"node-ssdp": "^4.0.0",
 		"passport": "^0.4.0",
 		"passport-ldapauth": "^2.1.1",
-		"ts-jest": "^23.10.5"
+		"ts-jest": "^23.10.5",
+		"winston": "^3.2.1"
 	},
 	"devDependencies": {
 		"@types/passport": "^1.0.0",

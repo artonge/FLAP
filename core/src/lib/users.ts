@@ -4,6 +4,7 @@ import * as path from "path"
 import * as os from "os"
 
 import { Change } from "ldapjs"
+import * as winston from "winston"
 
 import * as ldap from "./ldap"
 
@@ -16,10 +17,10 @@ export interface IUser {
 	fullname: string
 	username: string
 	email: string
-	password: string
 }
 
 export async function searchUsers(): Promise<IUser[]> {
+	winston.debug(`Searching users in LDAP server`)
 	// Bind to the LDAP server
 	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 	// Query the server
@@ -28,16 +29,21 @@ export async function searchUsers(): Promise<IUser[]> {
 	await ldap.unbind(client)
 
 	// Map users to our IUser interface
-	return entries.map((entry: any) => ({
+	const users = entries.map((entry: any) => ({
 		fullname: entry.object.cn,
 		username: entry.object.sn,
 		email: entry.object.mail,
-		password: entry.object.userPassword,
 	}))
+
+	winston.debug(`Searching users in LDAP server`)
+	winston.debug(`Found ${users.length} users: ${JSON.stringify(users)}`)
+
+	return users
 }
 
 // TODO - this should be improved so we don't have to loop through all the users
 export async function getUser(username: string): Promise<IUser> {
+	winston.debug(`Getting user ${username}`)
 	// Get all users
 	const users = await searchUsers()
 	// Search for the user with the passed username
@@ -47,6 +53,8 @@ export async function getUser(username: string): Promise<IUser> {
 		throw new Error(`The user '${username}' does not exists`)
 	}
 
+	winston.debug(`User found ${JSON.stringify(user)}`)
+
 	return user
 }
 
@@ -55,6 +63,12 @@ export async function createUser(params: {
 	fullname: string
 	password: string
 }): Promise<IUser> {
+	winston.debug(
+		`Creating a new user ${params.username} with fullname: ${
+			params.fullname
+		} `,
+	)
+
 	// Bind to the LDAP server
 	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 
@@ -81,6 +95,7 @@ export async function updateUser(
 	username: string,
 	params: { password?: string; fullname?: string },
 ): Promise<IUser> {
+	winston.debug(`Updating user ${username} with`)
 	let changes: Change[] = []
 
 	if (params.password) {
@@ -118,6 +133,7 @@ export async function updateUser(
 }
 
 export async function deleteUser(username: string): Promise<void> {
+	winston.debug(`Deleting user ${username}`)
 	// Bind to the LDAP server
 	const client = await ldap.bind(LDAP_HOST, LDAP_ADMIN_DN, LDAP_ADMIN_PWD)
 	// Send the deletion order the LDAP server
@@ -130,6 +146,7 @@ export async function getUserWithCredentials(
 	username: string,
 	password: string,
 ): Promise<IUser | undefined> {
+	winston.debug(`Getting the user ${username} with its credentials`)
 	// Bind to the LDAP server
 	const client = await ldap.bind(
 		LDAP_HOST,
@@ -142,12 +159,15 @@ export async function getUserWithCredentials(
 	await ldap.unbind(client)
 
 	// Map users to our IUser interface
-	return entries.map((entry: any) => ({
+	const user = entries.map((entry: any) => ({
 		fullname: entry.object.cn,
 		username: entry.object.sn,
 		email: entry.object.mail,
-		password: entry.object.userPassword,
 	}))[0]
+
+	winston.debug(`User found: ${JSON.stringify(user)}`)
+
+	return user
 }
 
 // Return a password hash compatible with crypt(3) format
@@ -155,6 +175,7 @@ export async function getUserWithCredentials(
 // This uses the mkpasswd command from the whois package
 // To prevent passing user input directly to the exec call we store the password in a tmp file that will be passed via stdin
 export async function hashPwd(password: string) {
+	winston.silly(`Hashing password`)
 	// Create a tmp dir
 	const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "flap-"))
 
