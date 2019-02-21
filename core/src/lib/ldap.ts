@@ -1,13 +1,14 @@
-// Here we are proxying the ldapjs lib so we can use it with promises
+// In this file we are proxying the ldapjs lib so we can use it with promises
 import * as ldap from "ldapjs"
-import * as winston from "winston"
+
+import { logger } from "../tools"
 
 export function bind(
 	url: string,
 	dn: string,
 	password: string,
 ): Promise<ldap.Client> {
-	winston.silly(`Binding to LDAP server: ${dn}:${password}@${url}`)
+	logger.silly(`Binding to LDAP server: ${dn}:${password}@${url}`)
 
 	return new Promise((resolve, reject) => {
 		const client = ldap.createClient({ url })
@@ -23,7 +24,7 @@ export function bind(
 }
 
 export function unbind(client: ldap.Client) {
-	winston.silly(`Unbinding from LDAP server`)
+	logger.silly(`Unbinding from LDAP server`)
 
 	// Unbind does not have response and does not call the callback on success
 	// So we can only log the error if their is one
@@ -40,7 +41,7 @@ export function search(
 	filter?: string | ldap.Filter,
 ): Promise<any[]> {
 	return new Promise((resolve, reject) => {
-		winston.silly(
+		logger.silly(
 			`Searching the LDAP server with base: ${base} and filter: ${JSON.stringify(
 				filter,
 			)}`,
@@ -89,7 +90,7 @@ export function add(
 	dn: string,
 	entry: any,
 ): Promise<void> {
-	winston.silly(`Adding entry to LDAP server`)
+	logger.silly(`Adding entry to LDAP server`)
 	return new Promise((resolve, reject) => {
 		client.add(dn, entry, error => {
 			if (error) {
@@ -106,7 +107,7 @@ export function modify(
 	dn: string,
 	changes: ldap.Change[],
 ): Promise<any> {
-	winston.silly(`Modifying entry in LDAP server`)
+	logger.silly(`Modifying entry in LDAP server`)
 	return new Promise((resolve, reject) => {
 		client.modify(dn, changes, error => {
 			if (error) {
@@ -119,7 +120,7 @@ export function modify(
 }
 
 export function del(client: ldap.Client, dn: string): Promise<void> {
-	winston.silly(`Deleting entry from LDAP server`)
+	logger.silly(`Deleting entry from LDAP server`)
 	return new Promise((resolve, reject) => {
 		client.del(dn, error => {
 			if (error) {

@@ -5,28 +5,20 @@ import * as url from "url"
 import * as http from "http"
 
 import * as cheerio from "cheerio"
-import * as winston from "winston"
 
-import { parseResponse } from "./httpParser"
-
-// If in docker it might be usefull to pass the host's IP.
-// If not provided we use the first IP from a non internal IPv4 interface
-const HOST_IP =
-	process.env.HOST_IP ||
-	Object.values(os.networkInterfaces())
-		.flat()
-		.filter(i => !i.internal && i.family === "IPv4")
-		.map(i => i.address)[0]
+import { logger, sleep, parseResponse } from "../tools"
 
 // A recuring string to put in UPnP requests
 const WANIP = "urn:schemas-upnp-org:service:WANIPConnection:1"
 
-export async function upnp() {
+export async function pcp() {
 	const g = new PCP()
-
-	console.log(await g.getExternalIP())
-	// g.openPort(8080)
-	console.log(await g.getPortMappings())
+	await g.getExternalIP()
+	await g.getPortMappings()
+	await g.openPort(8081)
+	await g.getPortMappings()
+	await g.closePort(8081)
+	await g.getPortMappings()
 }
 
 // The PCP (Port Control Protocol) class allow to open, close, and list port mappings using the UPnP protocol
@@ -39,6 +31,11 @@ export class PCP {
 
 	private _wanIpConnectionPath?: string
 
+	private ip = Object.values(os.networkInterfaces())
+		.flat()
+		.filter(i => !i.internal && i.family === "IPv4")
+		.map(i => i.address)[0]
+
 	/**
 	 * Used to lazily get the IGD information
 	 * @return a void promise
@@ -48,7 +45,7 @@ export class PCP {
 			return
 		}
 
-		winston.debug(`Initialiasing PCP object`)
+		logger.debug(`Initialiasing PCP object`)
 
 		this.inited = true
 
@@ -70,7 +67,7 @@ export class PCP {
 		this.port = Number.parseInt(location.port)
 		this.path = location.path
 
-		winston.debug(
+		logger.debug(
 			`PCP object initialized with: ${this.hostname}:${this.port}${
 				this.path
 			}`,
@@ -84,7 +81,7 @@ export class PCP {
 	public async getExternalIP() {
 		await this.init()
 
-		winston.info(`Getting external IP`)
+		logger.info(`Getting external IP`)
 
 		const getExternalIPAddress = upnpQuery(
 			`<u:GetExternalIPAddress xmlns:u="${WANIP}"></u:GetExternalIPAddress>`,
@@ -110,7 +107,7 @@ export class PCP {
 			)("NewExternalIPAddress")
 			.text()
 
-		winston.debug(`External IP found: ${externalIp}`)
+		logger.debug(`External IP found: ${externalIp}`)
 
 		return externalIp
 	}
@@ -121,7 +118,7 @@ export class PCP {
 	 * @return a promise of an array containing port mappings
 	 */
 	public async getPortMappings() {
-		winston.info(`Listing port mappings`)
+		logger.info(`Listing port mappings`)
 
 		const portMappings: {
 			externalPort: string
@@ -143,7 +140,7 @@ export class PCP {
 	private async _getPortMapping(index: number) {
 		await this.init()
 
-		winston.silly(`Querying for port mapping at index: ${index}`)
+		logger.silly(`Querying for port mapping at index: ${index}`)
 
 		const getListOfPortMappings = upnpQuery(`
 			<u:GetGenericPortMappingEntry xmlns:u="${WANIP}">
@@ -174,7 +171,7 @@ export class PCP {
 			internalClient: xml("NewInternalClient").text(),
 		}
 
-		winston.debug(
+		logger.debug(
 			`Found a port mapping: ${portMapping.externalPort} => ${
 				portMapping.internalClient
 			}:${portMapping.internalPort}`,
@@ -191,7 +188,7 @@ export class PCP {
 	public async closePort(port: number) {
 		await this.init()
 
-		winston.info(`Closing port ${port}`)
+		logger.info(`Closing port ${port} to ${this.ip}`)
 
 		const deletePortMappingQuery = upnpQuery(`
 			<u:DeletePortMapping xmlns:u="${WANIP}">
@@ -225,7 +222,7 @@ export class PCP {
 	public async openPort(port: number) {
 		await this.init()
 
-		winston.info(`Openning port ${port}`)
+		logger.info(`Openning port ${port} to ${this.ip}`)
 
 		const addPortMappingQuery = upnpQuery(`
 			<u:AddPortMapping xmlns:u="${WANIP}">
@@ -233,7 +230,7 @@ export class PCP {
 				<NewExternalPort>${port}</NewExternalPort>
 				<NewProtocol>TCP</NewProtocol>
 				<NewInternalPort>${port}</NewInternalPort>
-				<NewInternalClient>${HOST_IP}</NewInternalClient>
+				<NewInternalClient>${this.ip}</NewInternalClient>
 				<NewEnabled>1</NewEnabled>
 				<NewPortMappingDescription>Open port ${port}</NewPortMappingDescription>
 				<NewLeaseDuration>0</NewLeaseDuration>
@@ -266,7 +263,7 @@ export class PCP {
 			return this._wanIpConnectionPath
 		}
 
-		winston.debug(`Getting wanIpConnectionPath`)
+		logger.debug(`Getting wanIpConnectionPath`)
 
 		let response = await fetch({
 			hostname: this.hostname,
@@ -290,7 +287,7 @@ export class PCP {
 
 		this._wanIpConnectionPath = wanIpConnectionPath
 
-		winston.debug(`WanIpConnectionPath found ${wanIpConnectionPath}`)
+		logger.debug(`WanIpConnectionPath found ${wanIpConnectionPath}`)
 
 		return wanIpConnectionPath
 	}
@@ -298,25 +295,33 @@ export class PCP {
 
 /**
  * Utility to find the IGD
- * Broadcast a M-SEARCH query and return the IFG.
+ * Broadcast a M-SEARCH query and return the IGD.
+ * The listening will timeout after 3 seconds.
  * @return a promise containing the IGD
  */
 export async function mSearch() {
-	winston.debug(`Searching for IGD`)
+	logger.debug(`Searching for IGD`)
 
-	return new Promise<url.UrlWithStringQuery>((resolve, reject) => {
+	return new Promise<url.UrlWithStringQuery>(async (resolve, reject) => {
 		const socket = createSocket("udp4")
 
 		socket.addListener("message", message => {
 			// UPNP is HTTP over UDP, so we need to parse the message as an HTTP response
-			const httpResponse = parseResponse(message.toString())
+			let httpResponse
+			try {
+				httpResponse = parseResponse(message.toString())
+			} catch (error) {
+				logger.error(error)
+				return
+			}
 
 			if (
 				httpResponse.code === "200" &&
+				httpResponse.headers.location !== undefined &&
+				httpResponse.headers.usn !== undefined &&
 				httpResponse.headers.usn.includes(
 					"urn:schemas-upnp-org:device:InternetGatewayDevice:1",
-				) &&
-				httpResponse.headers.location !== undefined
+				)
 			) {
 				socket.close()
 			} else {
@@ -334,7 +339,7 @@ export async function mSearch() {
 				)
 			}
 
-			winston.debug(`IGD found: ${parsedLocation.href}`)
+			logger.debug(`IGD found: ${parsedLocation.href}`)
 
 			resolve(parsedLocation)
 		})
@@ -345,7 +350,7 @@ export async function mSearch() {
 		})
 
 		socket.addListener("listening", () => {
-			winston.silly(`Broadcasting M-SEARCH query`)
+			logger.silly(`Broadcasting M-SEARCH query`)
 
 			// WARNING: do not unindent
 			// This is an HTTP request and it is white spaces sensitive
@@ -376,6 +381,14 @@ MX:1
 		})
 
 		socket.bind()
+
+		// Wait 3 seconds, then close the socket
+		await sleep(3000)
+		// Wrapped in a try/catch to avoid exception when the socket is already closed
+		try {
+			socket.close()
+			reject(new Error("M-SEARCH timeout after 3 seconds"))
+		} catch {}
 	})
 }
 
@@ -386,7 +399,7 @@ MX:1
  * @return         a promise containing the body of the response
  */
 async function fetch(options: http.RequestOptions, body?: string) {
-	winston.silly(
+	logger.silly(
 		`Fetching ${options.method} ${options.hostname}:${options.port || 80}${
 			options.path
 		}`,

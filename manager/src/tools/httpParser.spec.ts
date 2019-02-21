@@ -68,7 +68,7 @@ describe("httpParser", () => {
 					"content-length": "30",
 					connection: "keep-alive",
 				},
-				body: '\n{\n  "origin": "94.113.241.2"\n}',
+				body: '\n{\n	"origin": "94.113.241.2"\n}',
 			})
 		})
 

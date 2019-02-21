@@ -1,7 +1,7 @@
-import * as winston from "winston"
+import { logger } from "."
 
 export function parseRequest(requestString: string) {
-	winston.debug(`Parsing HTTP request`)
+	logger.debug(`Parsing HTTP request`)
 
 	if (requestString.length === 0) {
 		throw new Error("Empty HTTP request")
@@ -23,7 +23,7 @@ export function parseRequest(requestString: string) {
 }
 
 export function parseResponse(responseString: string) {
-	winston.debug(`Parsing HTTP response`)
+	logger.debug(`Parsing HTTP response`)
 
 	if (responseString.length === 0) {
 		throw new Error("Empty HTTP response")
@@ -41,7 +41,7 @@ export function parseResponse(responseString: string) {
 }
 
 function parseHeaders(headerLines: string[]) {
-	winston.silly(`Parsing HTTP headers: ${headerLines.join(", ")}`)
+	logger.silly(`Parsing HTTP headers: ${headerLines.join(", ")}`)
 
 	return headerLines
 		.map(line => line.split(":"))
@@ -57,7 +57,7 @@ function parseHeaders(headerLines: string[]) {
 }
 
 function parseStatusLine(statusLine: string) {
-	winston.silly(`Parsing HTTP status line: ${statusLine}`)
+	logger.silly(`Parsing HTTP status line: ${statusLine}`)
 
 	const parts = statusLine.match(/^(.+) ([0-9]{3}) (.*)$/)
 
@@ -73,7 +73,7 @@ function parseStatusLine(statusLine: string) {
 }
 
 function parseRequestLine(requestLine: string) {
-	winston.silly(`Parsing HTTP request line: ${requestLine}`)
+	logger.silly(`Parsing HTTP request line: ${requestLine}`)
 
 	const parts = requestLine.split(" ")
 
