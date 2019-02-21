@@ -1,10 +1,10 @@
 # BUILD STAGE
 FROM node:10.15.0-stretch-slim as builder
-WORKDIR /core
+WORKDIR /manager
 COPY ./ ./
 # Build dependencies
-RUN apt-get update
-RUN apt-get install -y build-essential python
+# RUN apt-get update
+# RUN apt-get install -y build-essential python
 RUN npm install
 # Build
 RUN npm run build
@@ -15,15 +15,14 @@ RUN npm install --only=production
 
 # RUNTIME STAGE
 FROM node:10.15.0-stretch-slim
-EXPOSE 8080
-WORKDIR /core
-COPY --from=builder /core/build ./build
-COPY --from=builder /core/package.json ./package.json
-COPY --from=builder /core/node_modules ./node_modules
-RUN apt-get update && \
+WORKDIR /manager
+COPY --from=builder /manager/build ./build
+COPY --from=builder /manager/package.json ./package.json
+COPY --from=builder /manager/node_modules ./node_modules
+# RUN apt-get update && \
 # Runtime dependencies
-    apt-get install -y whois && \
+# apt-get install -y whois && \
 # Reduce final image size
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# apt-get autoremove -y && \
+# rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 CMD ["npm", "start"]

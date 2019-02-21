@@ -1,15 +1,19 @@
-// Here we are proxying the ldapjs lib so we can use it with promises
+// In this file we are proxying the ldapjs lib so we can use it with promises
 import * as ldap from "ldapjs"
+
+import { logger } from "../tools"
 
 export function bind(
 	url: string,
 	dn: string,
-	pwd: string,
+	password: string,
 ): Promise<ldap.Client> {
+	logger.silly(`Binding to LDAP server: ${dn}:${password}@${url}`)
+
 	return new Promise((resolve, reject) => {
 		const client = ldap.createClient({ url })
 
-		client.bind(dn, pwd, (error, _response) => {
+		client.bind(dn, password, (error, _response) => {
 			if (error) {
 				reject(error)
 			} else {
@@ -20,11 +24,13 @@ export function bind(
 }
 
 export function unbind(client: ldap.Client) {
+	logger.silly(`Unbinding from LDAP server`)
+
 	// Unbind does not have response and does not call the callback on success
 	// So we can only log the error if their is one
 	client.unbind(error => {
 		if (error) {
-			console.log("Error while unbinding:", error)
+			throw error
 		}
 	})
 }
@@ -35,6 +41,12 @@ export function search(
 	filter?: string | ldap.Filter,
 ): Promise<any[]> {
 	return new Promise((resolve, reject) => {
+		logger.silly(
+			`Searching the LDAP server with base: ${base} and filter: ${JSON.stringify(
+				filter,
+			)}`,
+		)
+
 		let entries: any[] = []
 
 		client.search(base, { scope: "sub", filter }, (error, ldapResponse) => {
@@ -78,6 +90,7 @@ export function add(
 	dn: string,
 	entry: any,
 ): Promise<void> {
+	logger.silly(`Adding entry to LDAP server`)
 	return new Promise((resolve, reject) => {
 		client.add(dn, entry, error => {
 			if (error) {
@@ -94,6 +107,7 @@ export function modify(
 	dn: string,
 	changes: ldap.Change[],
 ): Promise<any> {
+	logger.silly(`Modifying entry in LDAP server`)
 	return new Promise((resolve, reject) => {
 		client.modify(dn, changes, error => {
 			if (error) {
@@ -106,6 +120,7 @@ export function modify(
 }
 
 export function del(client: ldap.Client, dn: string): Promise<void> {
+	logger.silly(`Deleting entry from LDAP server`)
 	return new Promise((resolve, reject) => {
 		client.del(dn, error => {
 			if (error) {

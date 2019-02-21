@@ -79,7 +79,7 @@ services:
     #     networks:
     #         stores-net:
 
-    # FLAP CORE
+    # FLAP CORE API
     core:
         build:
             context: ./core
@@ -92,8 +92,22 @@ services:
             apps-net:
                 aliases: [core]
         # DEV MODE
-        # ports: ["8080:80", "9229:9229"]
-        # volumes: ["./core:/flap"]
+        # ports: ["8080:80", "9230:9229"]
+        # volumes: ["./core:/core"]
+        # entrypoint: ["npm", "run", "serve"]
+
+    # FLAP MANAGER
+    manager:
+        build:
+            context: ./manager
+            dockerfile: ./image/Dockerfile
+        env_file: [./manager/manager.env]
+        restart: always
+        # Needed for UPnP
+        network_mode: host
+        # DEV MODE
+        # ports: ["9229:9229"]
+        # volumes: ["./manager:/manager"]
         # entrypoint: ["npm", "run", "serve"]
 
     # SEAFILE

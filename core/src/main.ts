@@ -1,3 +1,5 @@
+import "core-js"
+
 import * as express from "express"
 import * as bodyParser from "body-parser"
 import * as session from "express-session"
@@ -15,12 +17,16 @@ import {
 	logoutRouter,
 } from "./routes"
 import { getUser, IUser } from "./lib"
+import { logger } from "./tools"
 
+const PRODUCTION = process.env.NODE_ENV === "production"
 const PORT = process.env.PORT || 80
 const DOMAIN_NAME = process.env.DOMAIN_NAME || "localhost"
+
 const LDAP_HOST = process.env.LDAP_HOST || "ldap://localhost"
 const LDAP_BASE = process.env.LDAP_BASE || "ou=users,dc=flap,dc=local"
-const PRODUCTION = process.env.NODE_ENV === "production"
+
+const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
 // Use the ldap strategy to authenticate users
 // It will try to bind to the ldap server using the username and password provided
@@ -74,7 +80,7 @@ express()
 		// https://github.com/expressjs/session
 		session({
 			// https://github.com/tj/connect-redis
-			store: new RedisStore({ host: "redis", logErrors: true }),
+			store: new RedisStore({ host: REDIS_HOST, logErrors: true }),
 			secret: "flap sso", // Secret to sign the cookie
 			name: "flap-sso", // Name of the cookie
 			resave: false,
@@ -119,8 +125,7 @@ express()
 			}
 
 			// Log for debugging
-			console.log(request.route)
-			console.error(
+			logger.error(
 				`Error (${error.code}) in '${request.route.path}':`,
 				error.message,
 			)
@@ -136,4 +141,4 @@ express()
 	)
 
 	// Start listening
-	.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+	.listen(PORT, () => logger.info(`Listening on port ${PORT}`))
