@@ -37,7 +37,7 @@ services:
     redis:
         image: redis:5.0
         restart: always
-        ports: ["6379:6379"]
+        # ports: ["6379:6379"]
         volumes:
             - ./redis/data:/data # Data
         networks:
@@ -60,7 +60,7 @@ services:
             dockerfile: ./image/Dockerfile
         env_file: [./ldap/ldap.env]
         restart: always
-        ports: ["389:389"]
+        # ports: ["389:389"]
         volumes:
             - ./ldap/prepopulate:/prepopulate:ro # Init
             - ./ldap/data/config:/etc/ldap # Config
@@ -92,9 +92,9 @@ services:
             apps-net:
                 aliases: [core]
         # DEV MODE
-        ports: ["8080:80", "9230:9229"]
-        volumes: ["./core:/core"]
-        entrypoint: ["npm", "run", "serve"]
+        # ports: ["8080:80", "9230:9229"]
+        # volumes: ["./core:/core"]
+        # entrypoint: ["npm", "run", "serve"]
 
     # FLAP MANAGER
     manager:
@@ -106,9 +106,9 @@ services:
         # Needed for UPnP
         network_mode: host
         # DEV MODE
-        ports: ["9229:9229"]
-        volumes: ["./manager:/manager"]
-        entrypoint: ["npm", "run", "serve"]
+        # ports: ["9229:9229"]
+        # volumes: ["./manager:/manager"]
+        # entrypoint: ["npm", "run", "serve"]
 
     # SEAFILE
     seafile:
@@ -146,7 +146,7 @@ services:
 networks:
     apps-net:
     stores-net:
-        # internal: true
+        internal: true
 
 volumes:
     sogoStaticFiles:
