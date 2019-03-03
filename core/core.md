@@ -1,5 +1,0 @@
--   Auto generate SSL certs
--   Dyn setup script with custom domain name
--   better validation/sanitization for user inputs
--   docker secret
--   allow redirect on login

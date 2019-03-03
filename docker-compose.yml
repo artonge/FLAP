@@ -24,7 +24,6 @@ services:
         image: mariadb:10.3
         env_file: [./mariadb/mariadb.env]
         restart: always
-        # ports: ["3306:3306"]
         volumes:
             - ./mariadb/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
             - ./mariadb/config/my.cnf:/etc/mysql/my.cnf # Config
@@ -37,7 +36,6 @@ services:
     redis:
         image: redis:5.0
         restart: always
-        # ports: ["6379:6379"]
         volumes:
             - ./redis/data:/data # Data
         networks:
@@ -48,16 +46,13 @@ services:
     memcached:
         image: memcached:1.5.12
         restart: always
-        # ports: ["11211:11211"]
         networks:
             stores-net:
                 aliases: [memcached]
 
     # LDAP
     ldap:
-        build:
-            context: ./ldap
-            dockerfile: ./image/Dockerfile
+        image: registry.gitlab.com/flap-box/ldap:2.4.44
         env_file: [./ldap/ldap.env]
         restart: always
         # ports: ["389:389"]
@@ -68,22 +63,10 @@ services:
         networks:
             stores-net:
                 aliases: [ldap]
-    # DEV MODE
-    # ldapadmin:
-    #     image: osixia/phpldapadmin
-    #     restart: always
-    #     ports: ["6443:80"]
-    #     environment:
-    #         PHPLDAPADMIN_LDAP_HOSTS: ldap
-    #         PHPLDAPADMIN_HTTPS: "false"
-    #     networks:
-    #         stores-net:
 
     # FLAP CORE API
     core:
-        build:
-            context: ./core
-            dockerfile: ./image/Dockerfile
+        image: registry.gitlab.com/flap-box/core:0.3.0
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
@@ -91,33 +74,20 @@ services:
             stores-net:
             apps-net:
                 aliases: [core]
-        # DEV MODE
-        # ports: ["8080:80", "9230:9229"]
-        # volumes: ["./core:/core"]
-        # entrypoint: ["npm", "run", "serve"]
 
     # FLAP MANAGER
     manager:
-        build:
-            context: ./manager
-            dockerfile: ./image/Dockerfile
+        image: registry.gitlab.com/flap-box/manager:0.1.0
         env_file: [./manager/manager.env]
         restart: always
         # Needed for UPnP
         network_mode: host
-        # DEV MODE
-        # ports: ["9229:9229"]
-        # volumes: ["./manager:/manager"]
-        # entrypoint: ["npm", "run", "serve"]
 
     # SEAFILE
     seafile:
-        build:
-            context: ./seafile/image
-            dockerfile: ./Dockerfile
+        image: registry.gitlab.com/flap-box/seafile:6.3.4
         env_file: [./seafile/seafile.env]
         restart: always
-        # ports: ["8000:8000", "8082:8082"]
         depends_on: [mariadb, ldap, memcached]
         volumes:
             - ./seafile/data:/shared # Data
@@ -129,9 +99,7 @@ services:
 
     # SOGO
     sogo:
-        build:
-            context: ./sogo/image
-            dockerfile: ./Dockerfile
+        image: registry.gitlab.com/flap-box/sogo:4.0.7
         env_file: [./sogo/sogo.env]
         restart: always
         depends_on: [mariadb, ldap, memcached]
