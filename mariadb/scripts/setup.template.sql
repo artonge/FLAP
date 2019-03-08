@@ -1,5 +1,5 @@
 -- SEAFILE
-CREATE USER 'seafile' IDENTIFIED BY 'seafile';
+CREATE USER 'seafile' IDENTIFIED BY '$SEAFILE_DB_PWD';
 
 CREATE DATABASE `ccnet` CHARACTER SET = 'utf8';
 CREATE DATABASE `seafile` CHARACTER SET = 'utf8';
@@ -9,8 +9,7 @@ GRANT ALL PRIVILEGES ON `ccnet`.* TO `seafile`;
 GRANT ALL PRIVILEGES ON `seafile`.* TO `seafile`;
 GRANT ALL PRIVILEGES ON `seahub`.* TO `seafile`;
 
-
 -- SOGo
-CREATE USER 'sogo' IDENTIFIED BY 'sogo';
+CREATE USER 'sogo' IDENTIFIED BY '$SOGO_DB_PWD';
 CREATE DATABASE `sogo` CHARACTER SET = 'utf8mb4';
 GRANT ALL PRIVILEGES ON `sogo`.* TO `sogo`;

@@ -82,6 +82,10 @@ services:
         restart: always
         # Needed for UPnP
         network_mode: host
+        volumes:
+            - ./:/flap # Bind the whole FLAP directory so we can generate some config
+            - ./manager/data:/var/lib/manager # Manager's data
+            - /var/run/docker.sock:/var/run/docker.sock # Bind docker sock so manager can manage docker
 
     # SEAFILE
     seafile:
