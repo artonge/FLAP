@@ -1,3 +1,3 @@
 #### Todos
 
--   [ ] Dynamic domain name
+-   [x] Dynamic domain name
