@@ -82,6 +82,11 @@ services:
         restart: always
         # Needed for UPnP
         network_mode: host
+        volumes:
+            - ./:/flap # Bind the whole FLAP directory so we can generate some config
+            - ./manager/data:/var/lib/manager # Manager's data
+            - /var/run/docker.sock:/var/run/docker.sock # Bind docker sock so manager can manage docker
+            - /etc/ssl/nginx:/etc/ssl/nginx:ro # SSL certificates
 
     # SEAFILE
     seafile:
@@ -100,7 +105,6 @@ services:
     # SOGO
     sogo:
         image: registry.gitlab.com/flap-box/sogo:4.0.7
-        env_file: [./sogo/sogo.env]
         restart: always
         depends_on: [mariadb, ldap, memcached]
         volumes:

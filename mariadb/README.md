@@ -1,3 +1,3 @@
 #### Todos
 
--   [ ] Dynamic credentials
+-   [x] Dynamic credentials
