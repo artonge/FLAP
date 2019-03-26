@@ -13,9 +13,9 @@
 <script>
 import Users from 'components/Users/Index'
 import UsersAdd from 'components/Users/UsersAdd'
-import Header from 'components/Header/index'
-import Header2 from 'components/Header/index2'
-import Footer from 'components/Footer/index'
+import Header from 'components/Header/Index'
+import Header2 from 'components/Header/Index2'
+import Footer from 'components/Footer/Index'
 
 export default {
   components: {

@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import Home from 'components/Home/index'
-import Header from 'components/Header/index'
-import Header2 from 'components/Header/index2'
-import Footer from 'components/Footer/index'
+import Home from 'components/Home/Index'
+import Header from 'components/Header/Index'
+import Header2 from 'components/Header/Index2'
+import Footer from 'components/Footer/Index'
 
 export default {
   components: {

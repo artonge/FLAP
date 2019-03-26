@@ -73,6 +73,11 @@ module.exports = {
       from: utils.resolve('static/img'),
       to: utils.resolve('dist/static/img'),
       toType: 'dir'
+    }]),
+    new CopyWebpackPlugin([{
+      from: utils.resolve('assets/img'),
+      to: utils.resolve('dist/assets/img'),
+      toType: 'dir'
     }])
   ]
 }

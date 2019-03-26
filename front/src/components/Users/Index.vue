@@ -14,31 +14,39 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div>John Snow</div>
-                          </td>
-                          <td>
-                            <div>
-                              <input type="text" class="form-control" value="test@test.test" />
-                            </div>
-                          </td>
-                          <td>
-                            <select class="form-control custom-select">
-                              <option value="">Administrateur</option>
-                              <option value="">Utilisateur</option>
-                            </select>
-                          </td>
-                          <td>
-                            <div>
-                              <i class="fa fa-remove btn"></i>
-                              <i class="fa fa-edit btn"></i>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div>John Snow</div>
+                    </td>
+                    <td>
+                      <div>
+                        <input
+                          type="text"
+                          class="form-control"
+                          value="test@test.test"
+                        >
+                      </div>
+                    </td>
+                    <td>
+                      <select class="form-control custom-select">
+                        <option value="">
+                          Administrateur
+                        </option>
+                        <option value="">
+                          Utilisateur
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <div>
+                        <i class="fa fa-remove btn" />
+                        <i class="fa fa-edit btn" />
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -49,11 +57,11 @@
 
 <script>
 export default {
+  components: {
+  },
   data () {
     return {
     }
-  },
-  components: {
   }
 }
 </script>

@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import Profile from 'components/Profile/index.vue'
-import Header from 'components/Header/index'
-import Header2 from 'components/Header/index2'
-import Footer from 'components/Footer/index'
+import Profile from 'components/Profile/Index.vue'
+import Header from 'components/Header/Index'
+import Header2 from 'components/Header/Index2'
+import Footer from 'components/Footer/Index'
 
 export default {
   components: {
