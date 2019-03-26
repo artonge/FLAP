@@ -32,13 +32,6 @@ module.exports = {
           loader: 'babel-loader',
         }
       }, {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/,
-        options: {
-          appendTsSuffixTo: [/\.vue$/],
-        }
-      }, {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         use: {
           loader: 'url-loader',
@@ -77,13 +70,8 @@ module.exports = {
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin([{
-      from: utils.resolve('static/'),
-      to: utils.resolve('dist/static/'),
-      toType: 'dir'
-    }]),
-    new CopyWebpackPlugin([{
-      from: utils.resolve('assets/'),
-      to: utils.resolve('dist/assets/'),
+      from: utils.resolve('static/img'),
+      to: utils.resolve('dist/static/img'),
       toType: 'dir'
     }])
   ]
