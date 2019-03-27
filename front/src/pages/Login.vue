@@ -13,8 +13,7 @@
             </div>
             <form
               class="card"
-              action=""
-              method="post"
+              action="#"
             >
               <div class="card-body p-6">
                 <div class="card-title">
@@ -28,6 +27,7 @@
                     class="form-control"
                     aria-describedby="emailHelp"
                     placeholder="Enter email"
+                    required
                   >
                 </div>
                 <div class="form-group">
@@ -56,9 +56,8 @@
                 </div>
                 <div class="form-footer">
                   <button
-                    type="submit"
                     class="btn btn-primary btn-block"
-                    @click="autentification()"
+                    @click="authentification()"
                   >
                     Connexion
                   </button>

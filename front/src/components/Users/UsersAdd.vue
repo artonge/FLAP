@@ -1,10 +1,9 @@
 <template>
   <div class="my-3 my-md-5">
     <div class="container">
-      <a
-        href="#"
+      <router-link to="/users/add"
         class="btn btn-info"
-      >Ajouter un utilisateur</a>
+      >Ajouter un utilisateur</router-link>
     </div>
   </div>
 </template>

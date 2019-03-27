@@ -75,8 +75,8 @@ module.exports = {
       toType: 'dir'
     }]),
     new CopyWebpackPlugin([{
-      from: utils.resolve('assets/img'),
-      to: utils.resolve('dist/assets/img'),
+      from: utils.resolve('assets'),
+      to: utils.resolve('dist/assets'),
       toType: 'dir'
     }])
   ]
