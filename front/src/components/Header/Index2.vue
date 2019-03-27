@@ -17,6 +17,14 @@
             </li>
             <li class="nav-item">
               <router-link
+                to="/search"
+                class="nav-link"
+              >
+                <i class="fe fe-search" /> Recherche
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link
                 to="/users"
                 class="nav-link"
               >

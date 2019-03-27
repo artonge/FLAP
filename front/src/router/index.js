@@ -6,8 +6,9 @@ import Login from 'pages/Login'
 import Users from 'pages/Users'
 import Profile from 'pages/Profile'
 import Setup from 'pages/Setup'
-import Modal1 from 'components/Setup/Modal1'
-import Modal2 from 'components/Setup/Modal2'
+import Search from 'pages/Search'
+import Modal1 from 'components/Setup/ModalConfigUser'
+import Modal2 from 'components/Setup/ModalDomain'
 import UserList from 'components/Users/Index'
 import AddUser from 'components/Users/AddUser'
 
@@ -21,6 +22,10 @@ const routes = [
   {
     path: '/login',
     component: Login
+  },
+  {
+    path: '/search',
+    component: Search
   },
   {
     path: '/users',
@@ -46,11 +51,13 @@ const routes = [
     children: [
       {
         path: '/',
-        component: Modal1
+        component: Modal1,
+        props: true
       },
       {
         path: '2',
-        component: Modal2
+        component: Modal2,
+        props: true
       }
     ]
   }

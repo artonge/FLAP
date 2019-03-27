@@ -3,6 +3,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
+const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin")
 
 const utils = require('./utils')
 
@@ -63,6 +64,14 @@ module.exports = {
   },
 
   plugins: [
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'my-pwa-vue-app',
+      filename: 'service-worker-cache.js',
+      staticFileGlobs: ['dist/**/*.{js,css}', '/'],
+      minify: true,
+      stripPrefix: 'dist/',
+      dontCacheBustUrlsMatching: /\.\w{6}\./
+    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
@@ -70,8 +79,8 @@ module.exports = {
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin([{
-      from: utils.resolve('static/img'),
-      to: utils.resolve('dist/static/img'),
+      from: utils.resolve('static'),
+      to: utils.resolve('dist/static'),
       toType: 'dir'
     }]),
     new CopyWebpackPlugin([{
