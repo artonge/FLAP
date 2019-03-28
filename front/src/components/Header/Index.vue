@@ -65,6 +65,12 @@
                 >
                   <i class="dropdown-icon fe fe-user" /> Profil
                 </router-link>
+                <router-link
+                  class="dropdown-item"
+                  to="/users"
+                >
+                  <i class="dropdown-icon fe fe-users" /> Utilisateurs
+                </router-link>
                 <div class="dropdown-divider" />
                 <a
                   class="dropdown-item"

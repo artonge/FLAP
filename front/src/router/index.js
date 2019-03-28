@@ -6,11 +6,16 @@ import Login from 'pages/Login'
 import Users from 'pages/Users'
 import Profile from 'pages/Profile'
 import Setup from 'pages/Setup'
-import Search from 'pages/Search'
+import Mail from 'pages/Mail'
 import Modal1 from 'components/Setup/ModalConfigUser'
 import Modal2 from 'components/Setup/ModalDomain'
 import UserList from 'components/Users/Index'
 import AddUser from 'components/Users/AddUser'
+import Inbox from 'components/Mail/Inbox'
+import NewMail from 'components/Mail/NewMessage'
+import ImportantMail from 'components/Mail/Important'
+import SendMail from 'components/Mail/Send'
+import TrashMail from 'components/Mail/Trash'
 
 Vue.use(Router)
 
@@ -24,8 +29,30 @@ const routes = [
     component: Login
   },
   {
-    path: '/search',
-    component: Search
+    path: '/mail',
+    component: Mail,
+    children: [
+      {
+        path: '/',
+        component: Inbox
+      },
+      {
+        path: 'new',
+        component: NewMail
+      },
+      {
+        path: 'send',
+        component: SendMail
+      },
+      {
+        path: 'important',
+        component: ImportantMail
+      },
+      {
+        path: 'trash',
+        component: TrashMail
+      }
+    ]
   },
   {
     path: '/users',

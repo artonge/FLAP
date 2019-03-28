@@ -17,18 +17,10 @@
             </li>
             <li class="nav-item">
               <router-link
-                to="/search"
+                to="/mail"
                 class="nav-link"
               >
-                <i class="fe fe-search" /> Recherche
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link
-                to="/users"
-                class="nav-link"
-              >
-                <i class="fe fe-user" /> Utilisateurs
+                <i class="fe fe-mail" /> Mails
               </router-link>
             </li>
           </ul>

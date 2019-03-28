@@ -43,11 +43,11 @@
       <div class="form-group">
         <div class="input-icon mb-3">
           <input
-            v-on:keyup.enter="openBrowser()"
             v-model="search"
             type="text"
             class="form-control"
             placeholder="Recherche..."
+            @keyup.enter="openBrowser()"
           >
           <span class="input-icon-addon">
             <i class="fe fe-search" />
