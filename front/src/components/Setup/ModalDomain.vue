@@ -25,13 +25,19 @@
           <p>Il faut maintenant configurer un nom de domaine, nous vous proposons pour le moment un seul fournisseur de nom de domaine. Nous ajouterons par la suite plusieurs autres possibilités.</p>
         </div>
         <div class="form-group">
-          <select class="form-control custom-select" v-model="dns">
+          <select
+            v-model="dns"
+            class="form-control custom-select"
+          >
             <option value="duckdns">
               Duck Dns
             </option>
           </select>
         </div>
-        <div class="form-group" v-if="dns == 'duckdns'">
+        <div
+          v-if="dns == 'duckdns'"
+          class="form-group"
+        >
           <label class="form-label">Token duckdns<span class="form-required">*</span></label>
           <input
             v-if="dns == 'duckdns'"
