@@ -15,4 +15,4 @@ docker-compose run manager config
 docker-compose run manager tls
 
 # Start all services
-# docker-compose up -d
+docker-compose up -d
