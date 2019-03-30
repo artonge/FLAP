@@ -53,7 +53,6 @@ services:
             dockerfile: ./Dockerfile
         ports: ["9229:9229"]
         volumes: ["./manager:/manager"]
-        entrypoint: ["npm", "run", "serve"]
 
     # SEAFILE
     seafile:
