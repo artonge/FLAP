@@ -77,7 +77,7 @@ services:
 
     # FLAP MANAGER
     manager:
-        image: registry.gitlab.com/flap-box/manager:0.3.0
+        image: registry.gitlab.com/flap-box/manager:0.3.1
         # Needed for UPnP
         network_mode: host
         volumes:
