@@ -49,10 +49,15 @@ apt install -y git
 # Fetch git repository
 git clone --recursive git@gitlab.com:flap-box/flap.git
 ################################################################################
+echo "EXPOSING LOCAL DOMAIN NAME FOR GUI SETUP (flap.local)"
+hostname flap
+apt install avahi-daemon
+
+################################################################################
 echo "SETTING UP FLAP"
 cd /flap
 
-# 
+#
 ./system/setup.sh
 
 ################################################################################
