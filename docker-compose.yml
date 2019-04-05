@@ -21,7 +21,7 @@ services:
 
     # MARIADB
     mariadb:
-        image: mariadb:10.3
+        image: registry.gitlab.com/flap-box/mariadb:10.1.38
         env_file: [./mariadb/mariadb.env]
         restart: always
         volumes:

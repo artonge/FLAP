@@ -13,3 +13,6 @@
 [submodule "ldap"]
 	path = ldap
 	url = git@gitlab.com:flap-box/ldap.git
+[submodule "mariadb"]
+	path = mariadb
+	url = git@gitlab.com:artonge/mariadb.git

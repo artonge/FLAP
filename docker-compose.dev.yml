@@ -10,6 +10,9 @@ services:
 
     # MARIADB
     mariadb:
+        build:
+            context: ./mariadb
+            dockerfile: ./Dockerfile
         ports: ["3306:3306"]
 
     # POSTGRESQL
