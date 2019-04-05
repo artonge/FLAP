@@ -12,6 +12,10 @@ services:
     mariadb:
         ports: ["3306:3306"]
 
+    # POSTGRESQL
+    postgres:
+        ports: ["5432:5432"]
+
     # REDIS
     redis:
         ports: ["6379:6379"]

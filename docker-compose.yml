@@ -32,6 +32,18 @@ services:
             stores-net:
                 aliases: [mariadb]
 
+    postgres:
+        image: postgres:11.2
+        env_file: [./postgres/postgres.env]
+        restart: always
+        volumes:
+            - ./postgres/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
+            # - ./postgres/config/my.cnf:/etc/mysql/my.cnf # Config
+            - ./postgres/data:/var/lib/postgresql/data # Data
+        networks:
+            stores-net:
+                aliases: [postgres]
+
     # REDIS
     redis:
         image: redis:5.0
@@ -104,7 +116,7 @@ services:
     sogo:
         image: registry.gitlab.com/flap-box/sogo:4.0.7
         restart: always
-        depends_on: [mariadb, ldap, memcached]
+        depends_on: [postgres, ldap, memcached]
         volumes:
             - ./sogo/config/sogo.conf:/etc/sogo/sogo.conf # Config
             - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo # Static files needed by nginx
