@@ -10,8 +10,8 @@ do
 done
 
 # Start the manager a wait for it to return
-docker-compose run manager port
-docker-compose run manager config
+docker-compose run manager port --open 443
+docker-compose run manager config --generate
 docker-compose run manager tls
 
 # Start all services
