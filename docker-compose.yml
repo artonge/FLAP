@@ -26,7 +26,6 @@ services:
         restart: always
         volumes:
             - ./mariadb/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
-            - ./mariadb/config/my.cnf:/etc/mysql/my.cnf # Config
             - ./mariadb/data:/var/lib/mysql # Data
         networks:
             stores-net:
@@ -89,7 +88,7 @@ services:
 
     # FLAP MANAGER
     manager:
-        image: registry.gitlab.com/flap-box/manager:0.3.2
+        image: registry.gitlab.com/flap-box/manager:0.3.3
         # Needed for UPnP
         network_mode: host
         volumes:
