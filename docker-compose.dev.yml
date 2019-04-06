@@ -50,7 +50,7 @@ services:
             context: ./core
             dockerfile: ./Dockerfile
         ports: ["8080:8080", "9230:9229"]
-        volumes: ["./core:/core"]
+        volumes: ["./core/src:/core/src"]
         entrypoint: ["npm", "run", "serve"]
 
     # FLAP MANAGER
@@ -59,7 +59,7 @@ services:
             context: ./manager
             dockerfile: ./Dockerfile
         ports: ["9229:9229"]
-        volumes: ["./manager:/manager"]
+        volumes: ["./manager/src:/manager/src"]
 
     # SEAFILE
     seafile:
