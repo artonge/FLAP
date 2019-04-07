@@ -20,13 +20,14 @@
                   Connecte toi au compte
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Adresse email</label>
+                  <label class="form-label">Identifiant</label>
                   <input
                     id="exampleInputEmail1"
-                    type="email"
+                    type="text"
                     class="form-control"
                     aria-describedby="emailHelp"
-                    placeholder="Enter email"
+                    placeholder="Identifiant"
+                    v-model="username"
                     required
                   >
                 </div>
@@ -43,6 +44,7 @@
                     type="password"
                     class="form-control"
                     placeholder="Mot de passe"
+                    v-model="password"
                   >
                 </div>
                 <div class="form-group">
@@ -77,11 +79,17 @@
 <script>
 import authentification from '../script/authentification'
 export default {
+  data () {
+    return {
+      username: '',
+      password: ''
+    }
+  },
   components: {
   },
   methods: {
     authentification () {
-      authentification.login()
+      authentification.login(this.username, this.password)
     }
   }
 }

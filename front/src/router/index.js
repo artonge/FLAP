@@ -97,7 +97,7 @@ const router = new Router({
 
 router.afterEach((to, from) => {
   // undefined when no token
-  if (localStorage.token === 'test') {
+  if (localStorage.token === undefined) {
     router.push('/login')
   }
 })

@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="app">
     <RouterView />
     <notifications
       group="notif"

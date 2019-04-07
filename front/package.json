@@ -18,6 +18,7 @@
   "author": "Flap",
   "license": "",
   "dependencies": {
+    "axios": "^0.18.0",
     "file-loader": "^3.0.1",
     "tabler-ui": "0.0.32",
     "vue": "^2.6.10",

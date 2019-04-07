@@ -5,11 +5,27 @@ html, body {
 	margin: 0;
 }
 
-#app {
+
+.app {
+	height: 100%;
+}
+
+.page {
+	position: relative;
+	height: 100%;
+}
+
+.page-main {
+	margin-bottom: 4em;
 	height: 100%;
 }
 
 footer {
+	position: absolute;
+	right: 0;
 	bottom: 0;
+	left: 0;
 	width: 100%;
 }
+
+
