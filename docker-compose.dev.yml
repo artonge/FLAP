@@ -4,13 +4,13 @@ services:
     # NGINX
     nginx:
         depends_on:
-            - seafile
+            - nextcloud
             - sogo
             - core
 
-    # MARIADB
-    mariadb:
-        ports: ["3306:3306"]
+    # POSTGRESQL
+    postgres:
+        ports: ["5432:5432"]
 
     # REDIS
     redis:
@@ -43,7 +43,7 @@ services:
             context: ./core
             dockerfile: ./Dockerfile
         ports: ["8080:8080", "9230:9229"]
-        volumes: ["./core:/core"]
+        volumes: ["./core/src:/core/src"]
         entrypoint: ["npm", "run", "serve"]
 
     # FLAP MANAGER
@@ -52,15 +52,7 @@ services:
             context: ./manager
             dockerfile: ./Dockerfile
         ports: ["9229:9229"]
-        volumes: ["./manager:/manager"]
-        entrypoint: ["npm", "run", "serve"]
-
-    # SEAFILE
-    seafile:
-        build:
-            context: ./seafile
-            dockerfile: ./Dockerfile
-        ports: ["8000:8000", "8082:8082"]
+        volumes: ["./manager/src:/manager/src"]
 
     # SOGO
     sogo:

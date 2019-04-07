@@ -4,9 +4,6 @@
 [submodule "manager"]
 	path = manager
 	url = git@gitlab.com:flap-box/manager.git
-[submodule "seafile"]
-	path = seafile
-	url = git@gitlab.com:flap-box/seafile.git
 [submodule "sogo"]
 	path = sogo
 	url = git@gitlab.com:flap-box/sogo.git
