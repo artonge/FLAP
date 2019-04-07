@@ -43,7 +43,9 @@ services:
             context: ./core
             dockerfile: ./Dockerfile
         ports: ["8080:8080", "9230:9229"]
-        volumes: ["./core/src:/core/src"]
+        volumes:
+            - ./core/src:/core/src
+            - ./core/src/front/dist:/core/dist
         entrypoint: ["npm", "run", "serve"]
 
     # FLAP MANAGER
