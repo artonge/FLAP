@@ -11,25 +11,14 @@ services:
             - ./nginx/config/parts.d:/etc/nginx/parts.d:ro # NGINX parts conf files
             - tlsCertificates:/etc/ssl/nginx:ro # SSL certificates
 
-            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo # SOGo static files
+            - nextcloudStaticFiles:/var/www/nextcloud:ro # Nextcloud static files
+            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # SOGo static files
         depends_on:
-            - seafile
+            - nextcloud
             - sogo
             - core
         ports: ["80:80", "443:443"]
         networks: [apps-net]
-
-    # MARIADB
-    mariadb:
-        image: registry.gitlab.com/flap-box/mariadb:10.1
-        env_file: [./mariadb/mariadb.env]
-        restart: always
-        volumes:
-            - ./mariadb/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
-            - ./mariadb/data:/var/lib/mysql # Data
-        networks:
-            stores-net:
-                aliases: [mariadb]
 
     postgres:
         image: postgres:11.2
@@ -37,7 +26,6 @@ services:
         restart: always
         volumes:
             - ./postgres/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
-            # - ./postgres/config/my.cnf:/etc/mysql/my.cnf # Config
             - ./postgres/data:/var/lib/postgresql/data # Data
         networks:
             stores-net:
@@ -97,23 +85,24 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock # Bind docker sock so manager can manage docker
             - tlsCertificates:/etc/ssl/nginx # SSL certificates
 
-    # SEAFILE
-    seafile:
-        image: registry.gitlab.com/flap-box/seafile:6.3.4
-        env_file: [./seafile/seafile.env]
+    # NEXTCLOUD
+    nextcloud:
+        image: nextcloud:15.0.6-fpm
+        env_file: [./nextcloud/nextcloud.env]
         restart: always
-        depends_on: [mariadb, ldap, memcached]
+        depends_on: [postgres, redis, ldap]
         volumes:
-            - ./seafile/data:/shared # Data
-            - ./seafile/config:/conf # Config
+            - nextcloudStaticFiles:/var/www/html # Data
+            - ./nextcloud/scripts/setup.sh:/setup.sh # Setup
         networks:
             stores-net:
             apps-net:
-                aliases: [seafile]
+                aliases: [nextcloud]
 
     # SOGO
     sogo:
         image: registry.gitlab.com/flap-box/sogo:4.0.7
+        env_file: [./sogo/sogo.env]
         restart: always
         depends_on: [postgres, ldap, memcached]
         volumes:
@@ -131,4 +120,5 @@ networks:
 
 volumes:
     sogoStaticFiles:
+    nextcloudStaticFiles:
     tlsCertificates:

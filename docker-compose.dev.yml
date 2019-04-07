@@ -4,16 +4,9 @@ services:
     # NGINX
     nginx:
         depends_on:
-            - seafile
+            - nextcloud
             - sogo
             - core
-
-    # MARIADB
-    mariadb:
-        build:
-            context: ./mariadb
-            dockerfile: ./Dockerfile
-        ports: ["3306:3306"]
 
     # POSTGRESQL
     postgres:
@@ -60,13 +53,6 @@ services:
             dockerfile: ./Dockerfile
         ports: ["9229:9229"]
         volumes: ["./manager/src:/manager/src"]
-
-    # SEAFILE
-    seafile:
-        build:
-            context: ./seafile
-            dockerfile: ./Dockerfile
-        ports: ["8000:8000", "8082:8082"]
 
     # SOGO
     sogo:
