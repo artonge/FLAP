@@ -3,7 +3,7 @@
 # set -e
 
 # CHANGE DATA DIRECTORY
-php occ config:datadirectory /data
+php occ config:system:set datadirectory --value '/data'
 
 # ENABLE APPS
 php occ app:enable user_ldap
@@ -35,5 +35,5 @@ php occ ldap:set-config s01 ldapPort 389
 php occ ldap:set-config s01 ldapAgentName "cn=admin,dc=flap,dc=local"
 php occ ldap:set-config s01 ldapAgentPassword "$ADMIN_PWD"
 php occ ldap:set-config s01 ldapBase "$LDAP_BASE"
-php occ ldap:set-config s01 ldapLoginFilter "(&(objectclass=*)(|(mailPrimaryAddress=%uid)(mail=%uid)))"
+php occ ldap:set-config s01 ldapLoginFilter "(&(|(objectclass=inetOrgPerson))(|(mail=%uid)(sn=%uid)))"
 php occ ldap:test-config s01

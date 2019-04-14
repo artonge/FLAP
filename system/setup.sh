@@ -18,4 +18,5 @@ docker-compose run manager tls
 docker-compose up -d
 
 # Run post install script for nextcloud
+docker-compose exec nextcloud chown www-data:www-data /data
 docker-compose exec --user www-data nextcloud /setup.sh
