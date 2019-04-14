@@ -92,8 +92,9 @@ services:
         restart: always
         depends_on: [postgres, redis, ldap]
         volumes:
-            - nextcloudStaticFiles:/var/www/html # Data
-            - ./nextcloud/scripts/setup.sh:/setup.sh # Setup
+            - ./nextcloud/data:/data # Data
+            - nextcloudStaticFiles:/var/www/html # Static files needed by nginx
+            - ./nextcloud/scripts/setup.sh:/setup.sh # Setup script
         networks:
             stores-net:
             apps-net:

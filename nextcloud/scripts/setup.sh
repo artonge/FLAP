@@ -2,6 +2,9 @@
 
 # set -e
 
+# CHANGE DATA DIRECTORY
+php occ config:datadirectory /data
+
 # ENABLE APPS
 php occ app:enable user_ldap
 php occ app:install calendar
