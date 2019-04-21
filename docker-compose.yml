@@ -65,10 +65,12 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.3.3
+        image: registry.gitlab.com/flap-box/core:0.4.0
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
+        volumes:
+            - ./manager/data:/var/lib/manager # Manager's data
         networks:
             stores-net:
             apps-net:

@@ -42,7 +42,7 @@ services:
         build:
             context: ./core
             dockerfile: ./Dockerfile
-        ports: ["8080:8080", "9230:9229"]
+        ports: ["8080:8081", "9230:9229"]
         volumes:
             - ./core/src:/core/src
             - ./core/src/front/dist:/core/dist
