@@ -42,10 +42,12 @@ services:
         build:
             context: ./core
             dockerfile: ./Dockerfile
-        ports: ["8080:8081", "9230:9229"]
+        ports: ["9000:8080", "9230:9229"]
         volumes:
             - ./core/src:/core/src
-            - ./core/src/front/dist:/core/dist
+            - ./core/tsconfig.json:/core/tsconfig.json
+            - ./core/node_modules:/core/node_modules
+            - ./core/src/front/dist:/core/src/front/dist
         entrypoint: ["npm", "run", "serve"]
 
     # FLAP MANAGER
