@@ -35,5 +35,13 @@ php occ ldap:set-config s01 ldapPort 389
 php occ ldap:set-config s01 ldapAgentName "cn=admin,dc=flap,dc=local"
 php occ ldap:set-config s01 ldapAgentPassword "$ADMIN_PWD"
 php occ ldap:set-config s01 ldapBase "$LDAP_BASE"
+php occ ldap:set-config s01 ldapBaseUsers "$LDAP_BASE"
+php occ ldap:set-config s01 ldapBaseGroups "$LDAP_BASE"
+php occ ldap:set-config s01 ldapUserFilterObjectclass "inetOrgPerson"
+php occ ldap:set-config s01 ldapUserFilter "(|(objectclass=inetOrgPerson))"
+php occ ldap:set-config s01 ldapUserDisplayName "cn"
 php occ ldap:set-config s01 ldapLoginFilter "(&(|(objectclass=inetOrgPerson))(|(mail=%uid)(sn=%uid)))"
+php occ ldap:set-config s01 ldapConfigurationActive 1
+php occ ldap:set-config s01 ldapLoginFilterMode 1
+php occ ldap:set-config s01 ldapEmailAttribute mail
 php occ ldap:test-config s01

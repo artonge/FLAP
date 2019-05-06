@@ -19,4 +19,5 @@ docker-compose up -d
 
 # Run post install script for nextcloud
 docker-compose exec nextcloud chown www-data:www-data /data
+docker-compose exec nextcloud touch /data/.ocdata
 docker-compose exec --user www-data nextcloud /setup.sh
