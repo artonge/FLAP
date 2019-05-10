@@ -1,0 +1,2 @@
+@daily root /flap/system/scripts/update_system.sh
+@daily root /flap/system/scripts/update_flap.sh

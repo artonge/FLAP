@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ################################################################################
 echo "UPDATING SYSTEM"
 apt update
@@ -57,8 +59,37 @@ apt install avahi-daemon
 echo "SETTING UP FLAP"
 cd /flap
 
-#
-./system/setup.sh
+for service in $(ls)
+do
+    # Create .env files in each services
+    if [ -f ./${service}/${service}.template.env ]
+    then
+        cp ./${service}/${service}.template.env ./${service}/${service}.env
+    fi
+
+    # Create main cron file from each services cron files
+    if [ -f ./${service}/${service}.cron ]
+    then
+        cat ./${service}/${service}.cron main.cron
+    fi
+done
+
+# Execute configuration action with the manager
+docker-compose run manager port --open 443
+docker-compose run manager config --generate
+docker-compose run manager tls
+
+# Start all services
+docker-compose up -d
+
+# Run post setup scripts for each services
+for service in $(ls)
+do
+    if [ -f ./${service}/scripts/post_setup.sh ]
+    then
+        ./${service}/scripts/post_setup.sh
+    fi
+done
 
 ################################################################################
 echo "DONE"
