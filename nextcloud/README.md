@@ -1,12 +1,13 @@
 #### Todo
 
--   [ ] CRON
+-   [X] CRON
 -   [ ] Mail
 -   [x] Dynamic env var
 -   [x] Dyn nginx conf
--   [x] SSO/LDAP
+-   [ ] SSO/LDAP
 -   [ ] Health check
 -   [ ] Fail2ban
+-   [ ] Weird username
 
 ---
 

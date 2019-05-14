@@ -66,13 +66,9 @@ do
     then
         cp ./${service}/${service}.template.env ./${service}/${service}.env
     fi
-
-    # Create main cron file from each services cron files
-    if [ -f ./${service}/${service}.cron ]
-    then
-        cat ./${service}/${service}.cron main.cron
-    fi
 done
+
+./setup_cron.sh
 
 # Execute configuration action with the manager
 docker-compose run manager port --open 443
