@@ -59,6 +59,21 @@ This allow us to redefine services and to run them in a none production mode.
 
 For each services, you can look at their own README.md file to see what needs to be done.
 
+-   [x] Dynamic setup script with custom domain name
+-   [x] Auto generate SSL certs
+-   [x] Install nextcloud
+-   [x] Merge front
+-   [ ] RAID support
+-   [ ] Update script
+
+---
+
 -   [ ] Automatic build of arm docker images (https://gitlab.com/ulm0/gitlab-runner)
--   [ ] Dynamic setup script with custom domain name
--   [ ] Auto generate SSL certs
+-   [ ] RAID
+-   [x] fix sogo wait for postgres in start.sh
+-   [ ] remove mariadb and sefaile from submodule
+-   [ ] fix error 500 in upnp
+-   [ ] generate cert for each services or wildcard and root domain
+-   [ ] better manager cli
+-   [ ] generalized template generation
+-   [ ] move nginx conf in {service}/config

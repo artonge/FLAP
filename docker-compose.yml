@@ -9,28 +9,27 @@ services:
             - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro # NGINX main conf file
             - ./nginx/config/conf.d:/etc/nginx/conf.d:ro # NGINX sites conf files
             - ./nginx/config/parts.d:/etc/nginx/parts.d:ro # NGINX parts conf files
-            - /etc/ssl/nginx:/etc/ssl/nginx:ro # SSL certificates
+            - tlsCertificates:/etc/ssl/nginx:ro # SSL certificates
 
-            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo # SOGo static files
+            - nextcloudStaticFiles:/var/www/nextcloud:ro # Nextcloud static files
+            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # SOGo static files
         depends_on:
-            - seafile
+            - nextcloud
             - sogo
             - core
         ports: ["80:80", "443:443"]
         networks: [apps-net]
 
-    # MARIADB
-    mariadb:
-        image: mariadb:10.3
-        env_file: [./mariadb/mariadb.env]
+    postgres:
+        image: postgres:11.2
+        env_file: [./postgres/postgres.env]
         restart: always
         volumes:
-            - ./mariadb/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
-            - ./mariadb/config/my.cnf:/etc/mysql/my.cnf # Config
-            - ./mariadb/data:/var/lib/mysql # Data
+            - ./postgres/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql # Init
+            - ./postgres/data:/var/lib/postgresql/data # Data
         networks:
             stores-net:
-                aliases: [mariadb]
+                aliases: [postgres]
 
     # REDIS
     redis:
@@ -66,10 +65,12 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.3.0
+        image: registry.gitlab.com/flap-box/core:0.4.2
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
+        volumes:
+            - ./manager/data:/var/lib/manager # Manager's data
         networks:
             stores-net:
             apps-net:
@@ -77,36 +78,36 @@ services:
 
     # FLAP MANAGER
     manager:
-        image: registry.gitlab.com/flap-box/manager:0.1.0
-        env_file: [./manager/manager.env]
-        restart: always
+        image: registry.gitlab.com/flap-box/manager:0.3.3
         # Needed for UPnP
         network_mode: host
         volumes:
             - ./:/flap # Bind the whole FLAP directory so we can generate some config
             - ./manager/data:/var/lib/manager # Manager's data
             - /var/run/docker.sock:/var/run/docker.sock # Bind docker sock so manager can manage docker
-            - /etc/ssl/nginx:/etc/ssl/nginx:ro # SSL certificates
+            - tlsCertificates:/etc/ssl/nginx # SSL certificates
 
-    # SEAFILE
-    seafile:
-        image: registry.gitlab.com/flap-box/seafile:6.3.4
-        env_file: [./seafile/seafile.env]
+    # NEXTCLOUD
+    nextcloud:
+        image: nextcloud:15.0.6-fpm
+        env_file: [./nextcloud/nextcloud.env]
         restart: always
-        depends_on: [mariadb, ldap, memcached]
+        depends_on: [postgres, redis, ldap]
         volumes:
-            - ./seafile/data:/shared # Data
-            - ./seafile/config:/conf # Config
+            - ./nextcloud/data:/data # Data
+            - nextcloudStaticFiles:/var/www/html # Static files needed by nginx
+            - ./nextcloud/scripts/setup.sh:/setup.sh # Setup script
         networks:
             stores-net:
             apps-net:
-                aliases: [seafile]
+                aliases: [nextcloud]
 
     # SOGO
     sogo:
         image: registry.gitlab.com/flap-box/sogo:4.0.7
+        env_file: [./sogo/sogo.env]
         restart: always
-        depends_on: [mariadb, ldap, memcached]
+        depends_on: [postgres, ldap, memcached]
         volumes:
             - ./sogo/config/sogo.conf:/etc/sogo/sogo.conf # Config
             - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo # Static files needed by nginx
@@ -122,3 +123,5 @@ networks:
 
 volumes:
     sogoStaticFiles:
+    nextcloudStaticFiles:
+    tlsCertificates:

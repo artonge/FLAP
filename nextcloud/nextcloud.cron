@@ -1,0 +1,1 @@
+*/5 * * * *     docker-compose exec -u www-data nextcloud   php -f /var/www/html/cron.php
