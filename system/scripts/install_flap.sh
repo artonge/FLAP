@@ -10,7 +10,7 @@ apt upgrade
 ################################################################################
 echo "INSTALLING DOCKER"
 # Install dependencies
-apt install \
+apt install -y \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -53,7 +53,7 @@ git clone --recursive git@gitlab.com:flap-box/flap.git
 ################################################################################
 echo "EXPOSING LOCAL DOMAIN NAME FOR GUI SETUP (flap.local)"
 hostname flap
-apt install avahi-daemon
+apt install -y avahi-daemon
 
 ################################################################################
 echo "SETTING UP FLAP"
