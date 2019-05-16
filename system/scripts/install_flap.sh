@@ -10,7 +10,7 @@ apt upgrade
 ################################################################################
 echo "INSTALLING DOCKER"
 # Install dependencies
-apt install -y \
+apt install \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -18,7 +18,7 @@ apt install -y \
     software-properties-common
 
 # Add docker repository
-curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 apt-key fingerprint 0EBFCD88
 
 add-apt-repository "deb [arch=armhf] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
