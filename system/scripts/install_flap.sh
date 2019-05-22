@@ -7,9 +7,7 @@ echo "UPDATING SYSTEM"
 apt update
 apt upgrade -y
 
-################################################################################
-echo "INSTALLING DOCKER"
-# Install dependencies
+# Install tools
 apt install -y \
     apt-transport-https \
     ca-certificates \
@@ -17,6 +15,8 @@ apt install -y \
     gnupg-agent \
     software-properties-common
 
+################################################################################
+echo "INSTALLING DOCKER"
 # Add docker repository
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 apt-key fingerprint 0EBFCD88
@@ -40,13 +40,14 @@ pip3 install setuptools wheel docker-compose
 
 ################################################################################
 echo "CREATING ALIASES"
-alias dc='docker-compose'
-alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'
+echo "alias dc='docker-compose'" >> /root/.bashrc
+echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bashrc
+source /root/.bashrc
 
 ################################################################################
 echo "INSTALLING FLAP"
 # Install dependencies
-apt install -y git
+apt install -y git envsubst certbot upnpc
 
 # Fetch git repository
 git clone --recursive git@gitlab.com:flap-box/flap.git /flap
@@ -59,32 +60,26 @@ apt install -y avahi-daemon
 echo "SETTING UP FLAP"
 cd /flap
 
-for service in $(ls)
-do
-    # Create .env files in each services
-    if [ -f ./${service}/${service}.template.env ]
-    then
-        cp ./${service}/${service}.template.env ./${service}/${service}.env
-    fi
-done
-
-./system/scripts/setup_cron.sh
+export "export FLAP_DIR=/flap" >> /root/.bashrc
+echo "alias manager=$FLAP_DIR/system/cli/manager.sh" >> /root/.bashrc
+source /root/.bashrc
 
 # Execute configuration action with the manager
-docker-compose run manager port --open 80
-docker-compose run manager port --open 443
-docker-compose run manager config --generate
-docker-compose run manager tls
+manager ports open 80
+manager ports open 443
+manager config generate
+manager tls generate
+manager setup cron
 
 # Start all services
-docker-compose up -d
+dc up -d
 
 # Run post setup scripts for each services
-for service in $(ls)
+for service in $(ls FLAP_DIR)
 do
-    if [ -f ./${service}/scripts/post_setup.sh ]
+    if [ -f $service/scripts/post_setup.sh ]
     then
-        ./${service}/scripts/post_setup.sh
+        $service/scripts/post_setup.sh
     fi
 done
 

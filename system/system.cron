@@ -1,2 +1,7 @@
-@daily root /flap/system/scripts/update_system.sh
-@daily root /flap/system/scripts/update_flap.sh
+@midnight  root    manager update system
+@midnight  root    manager update flap
+
+@hourly root    manager healthcheck
+
+# Every minutes
+* * * * *   root    manager tls applychanges

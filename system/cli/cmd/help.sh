@@ -13,9 +13,9 @@ case $CMD in
 
         help_string=""
 
-        for cmd in $(ls ./cmd)
+        for cmd in $(ls $FLAP_DIR/system/cli/cmd)
         do
-            help_string+="  $(./cmd/${cmd} summarize)"$'\n'
+            help_string+="  $($FLAP_DIR/system/cli/cmd/$cmd summarize)"$'\n'
         done
         echo "$help_string" | column --table --separator "|"
         ;;

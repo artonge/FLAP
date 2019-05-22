@@ -14,13 +14,21 @@ mkdir -p /etc/ssl/nginx
 
 if [ "$PROVIDER" == "localhost" ] || [ "$PROVIDER" == "local" ]
 then
-    $(dirname "$0")/localhostAuthHook.sh $DOMAIN_NAME
+    $(dirname "$0")/localhost_auth_hook.sh $DOMAIN_NAME
 else
+    manager ports open 8443
+    manager ports open 8080
+
     certbot certonly \
         --standalone \
+        --tls-sni-01-port 8443 \
+        --http-01-port 8080 \
         --agree-tos \
         --email louis@chmn.me \
         --domain $DOMAIN_NAME
+
+    manager ports close 8443
+    manager ports close 8080
 
     certbot certonly \
         --non-interactive \
@@ -28,7 +36,7 @@ else
         --preferred-challenges dns \
         --agree-tos \
         --email louis@chmn.me \
-        --manual-auth-hook "$(dirname "$0")/${PROVIDER}AuthHook.sh $PROVIDER_ARG" \
+        --manual-auth-hook "$(dirname "$0")/${PROVIDER}_auth_hook.sh $PROVIDER_ARG" \
         --manual-public-ip-logging-ok \
         --domain *.$DOMAIN_NAME
 

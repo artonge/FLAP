@@ -70,22 +70,11 @@ services:
         restart: always
         depends_on: [ldap, redis]
         volumes:
-            - ./manager/data:/var/lib/manager # Manager's data
+            - /var/lib/flap:/var/lib/flap # Manager's data
         networks:
             stores-net:
             apps-net:
                 aliases: [core]
-
-    # FLAP MANAGER
-    manager:
-        image: registry.gitlab.com/flap-box/manager:0.3.3
-        # Needed for UPnP
-        network_mode: host
-        volumes:
-            - ./:/flap # Bind the whole FLAP directory so we can generate some config
-            - ./manager/data:/var/lib/manager # Manager's data
-            - /var/run/docker.sock:/var/run/docker.sock # Bind docker sock so manager can manage docker
-            - tlsCertificates:/etc/ssl/nginx # SSL certificates
 
     # NEXTCLOUD
     nextcloud:

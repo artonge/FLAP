@@ -6,11 +6,11 @@ set -e
 echo "" > ./main.cron
 
 # Fill main.cron from services cron files
-for service in $(ls)
+for service in $(ls $FLAP_DIR)
 do
-    if [ -f ./${service}/${service}.cron ]
+    if [ -f $FLAP_DIR/$service/$service.cron ]
     then
-        cat ./${service}/${service}.cron >> ./main.cron
+        cat $FLAP_DIR/$service/$service.cron >> ./main.cron
     fi
 done
 
