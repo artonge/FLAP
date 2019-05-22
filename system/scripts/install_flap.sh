@@ -5,7 +5,7 @@ set -e
 ################################################################################
 echo "UPDATING SYSTEM"
 apt update
-apt upgrade
+apt upgrade -y
 
 ################################################################################
 echo "INSTALLING DOCKER"
@@ -49,7 +49,7 @@ echo "INSTALLING FLAP"
 apt install -y git
 
 # Fetch git repository
-git clone --recursive git@gitlab.com:flap-box/flap.git
+git clone --recursive git@gitlab.com:flap-box/flap.git /flap
 ################################################################################
 echo "EXPOSING LOCAL DOMAIN NAME FOR GUI SETUP (flap.local)"
 hostname flap
@@ -68,9 +68,10 @@ do
     fi
 done
 
-./setup_cron.sh
+./system/scripts/setup_cron.sh
 
 # Execute configuration action with the manager
+docker-compose run manager port --open 80
 docker-compose run manager port --open 443
 docker-compose run manager config --generate
 docker-compose run manager tls

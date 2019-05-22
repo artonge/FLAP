@@ -3,4 +3,4 @@
 set -e
 
 apt update
-apt upgrade
+apt upgrade -y
