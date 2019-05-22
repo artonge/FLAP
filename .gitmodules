@@ -1,9 +1,6 @@
 [submodule "core"]
 	path = core
 	url = git@gitlab.com:flap-box/core.git
-[submodule "manager"]
-	path = manager
-	url = git@gitlab.com:flap-box/manager.git
 [submodule "sogo"]
 	path = sogo
 	url = git@gitlab.com:flap-box/sogo.git
