@@ -61,25 +61,26 @@ echo "SETTING UP FLAP"
 cd /flap
 
 export "export FLAP_DIR=/flap" >> /root/.bashrc
-echo "alias manager=$FLAP_DIR/system/cli/manager.sh" >> /root/.bashrc
+export "export FLAP_DATA=/var/lib/flap" >> /root/.bashrc
+echo "ln -s /bin/manager /flap/system/cli/manager.sh" >> /root/.bashrc
 source /root/.bashrc
 
-# Execute configuration action with the manager
+# Execute configuration actions with the manager
+# TLS certificates will be generated during setup
 manager ports open 80
 manager ports open 443
 manager config generate
-manager tls generate
 manager setup cron
 
 # Start all services
 dc up -d
 
 # Run post setup scripts for each services
-for service in $(ls FLAP_DIR)
+for service in $(ls $FLAP_DIR)
 do
-    if [ -f $service/scripts/post_setup.sh ]
+    if [ -f $FLAP_DIR/$service/scripts/post_setup.sh ]
     then
-        $service/scripts/post_setup.sh
+        $FLAP_DIR/$service/scripts/post_setup.sh
     fi
 done
 

@@ -7,7 +7,7 @@ CMD=$1
 # Read password from file.
 # If the file does not exists, create it and generate a password.
 readPwd() {
-    mkdir -p /var/lib/flap
+    mkdir -p $FLAP_DATA
 
     if [ ! -f $1 ]
     then
@@ -18,19 +18,19 @@ readPwd() {
 }
 
 # Create default domainInfo.txt if it is missing
-if [ ! -f /var/lib/flap/domainInfo.txt ]
+if [ ! -f $FLAP_DATA/domainInfo.txt ]
 then
-    mkdir -p /var/lib/flap
-    echo "flap.local local" > /var/lib/flap/domainInfo.txt
+    mkdir -p $FLAP_DATA
+    echo "flap.localhost localhost _" > $FLAP_DATA/domainInfo.txt
 fi
 
-DOMAIN_INFO=$(cat /var/lib/flap/domainInfo.txt)
+DOMAIN_INFO=$(cat $FLAP_DATA/domainInfo.txt)
 export DOMAIN_NAME=$(echo $DOMAIN_INFO | cut -d ' ' -f1)
 
 # Read passwords from files
-export ADMIN_PWD=$(readPwd /var/lib/flap/adminPwd.txt)
-export SOGO_DB_PWD=$(readPwd /var/lib/flap/sogoDbPwd.txt)
-export NEXTCLOUD_DB_PWD=$(readPwd /var/lib/flap/nextcloudDbPwd.txt)
+export ADMIN_PWD=$(readPwd $FLAP_DATA/adminPwd.txt)
+export SOGO_DB_PWD=$(readPwd $FLAP_DATA/sogoDbPwd.txt)
+export NEXTCLOUD_DB_PWD=$(readPwd $FLAP_DATA/nextcloudDbPwd.txt)
 
 case $CMD in
     generate)

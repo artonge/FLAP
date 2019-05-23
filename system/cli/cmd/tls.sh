@@ -6,28 +6,29 @@ CMD=$1
 
 case $CMD in
     generate)
-        # Create default domainInfo.txt if it is missing
-        if [ ! -f /var/lib/flap/domainInfo.txt ]
+        DOMAIN_INFO=$(manager config show | grep DOMAIN_INFO | cut -d '=' -f2)
+
+        IS_HANDLED=$(echo $DOMAIN_INFO | grep -E 'OK$' | cat)
+
+        # If the domain name is allready handled exit now,
+        # Else, add OK at the end of the domain info to mark it as handled
+        if [ "$IS_HANDLED" ]
         then
-            mkdir -p /var/lib/flap
-            echo "flap.local local" > /var/lib/flap/domainInfo.txt
+            echo $DOMAIN_INFO
+            exit 0
         fi
 
-        DOMAIN_INFO=$(cat /var/lib/flap/domainInfo.txt)
+        echo "$DOMAIN_INFO OK" > $FLAP_DATA/domainInfo.txt
 
         {
             # Generate TLS certificates
-            $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $DOMAIN_INFO
-            echo "Certificates generated."
-
-            # Add OK at the end of the domain info to mark it as handled
-            if [ echo $DOMAIN_INFO | grep OK ]
-            then
-                echo "$DOMAIN_INFO OK" > /var/lib/flap/domainInfo.txt
-            fi
+            $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $DOMAIN_INFO 2>&1
         } || { # Catch error
             echo "Failed to generate certificates."
+            exit 1
         }
+
+        echo "Certificates generated."
         ;;
     show)
         ls -1 /etc/ssl/nginx | grep ".crt"
