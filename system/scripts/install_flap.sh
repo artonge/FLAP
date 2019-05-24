@@ -62,7 +62,7 @@ cd /flap
 
 export "export FLAP_DIR=/flap" >> /root/.bashrc
 export "export FLAP_DATA=/var/lib/flap" >> /root/.bashrc
-echo "ln -s /bin/manager /flap/system/cli/manager.sh" >> /root/.bashrc
+echo "ln -s /flap/system/cli/manager.sh /bin/manager" >> /root/.bashrc
 source /root/.bashrc
 
 # Execute configuration actions with the manager
