@@ -16,6 +16,9 @@ system_test:
     FLAP_DIR: $CI_PROJECT_DIR
     FLAP_DATA: /var/lib/flap
   script:
+    - ln -s /bin/manager $FLAP_DIR/system/cli/manager.sh
+    - apt update
+    - apt install -y upnpc certbot envsubst
     - manager test
 
 integration_test:
