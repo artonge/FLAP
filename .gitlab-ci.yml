@@ -17,8 +17,9 @@ system_test:
     FLAP_DATA: /var/lib/flap
   script:
     - ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
-    - apk add certbot gettext miniupnpc
-    - manager test
+    - apk add certbot gettext miniupnpc bash openssl util-linux
+    - managet help
+    - manager test ---only tls setup
 
 integration_test:
   stage: test

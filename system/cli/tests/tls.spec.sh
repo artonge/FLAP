@@ -14,6 +14,7 @@ EXIT=0
     fi
 
     # Save user's certificates
+    mkdir -p /etc/ssl/nginx
     mv /etc/ssl/nginx /etc/ssl/nginx.bak
     mkdir /etc/ssl/nginx
 
@@ -54,6 +55,7 @@ EXIT=0
     fi
 
     # Save user's certificates
+    mkdir -p /etc/ssl/nginx
     mv /etc/ssl/nginx /etc/ssl/nginx.bak
     mkdir /etc/ssl/nginx
 
