@@ -19,7 +19,7 @@ system_test:
     - ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
     - apk add certbot gettext miniupnpc bash openssl util-linux
     - manager help
-    - manager test ---only tls setup
+    - manager test tls setup
 
 integration_test:
   stage: test
