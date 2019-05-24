@@ -1,0 +1,20 @@
+include:
+    # Auto devop
+    - template: Auto-DevOps.gitlab-ci.yml
+    # Image build script
+    - project: flap-box/flap
+      file: templates/gitlab-ci/build_image.yml
+
+system_test:
+  stage: test
+  variables:
+    FLAP_DIR: $CI_PROJECT_DIR
+    FLAP_DATA: /var/lib/flap
+  script:
+    - manager test
+
+integration_test:
+  stage: test
+  script:
+    - echo "OK"
+
