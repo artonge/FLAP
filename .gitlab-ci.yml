@@ -17,8 +17,7 @@ system_test:
     FLAP_DATA: /var/lib/flap
   script:
     - ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
-    - apt update
-    - apt install -y upnpc certbot envsubst
+    - apk add certbot gettext miniupnpc
     - manager test
 
 integration_test:
