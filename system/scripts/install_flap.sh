@@ -47,7 +47,7 @@ source /root/.bashrc
 ################################################################################
 echo "INSTALLING FLAP"
 # Install dependencies
-apt install -y git envsubst certbot upnpc
+apt install -y git gettext certbot upnpc
 
 # Fetch git repository
 git clone --recursive git@gitlab.com:flap-box/flap.git /flap
@@ -60,10 +60,10 @@ apt install -y avahi-daemon
 echo "SETTING UP FLAP"
 cd /flap
 
-export "export FLAP_DIR=/flap" >> /root/.bashrc
-export "export FLAP_DATA=/var/lib/flap" >> /root/.bashrc
-echo "ln -s /flap/system/cli/manager.sh /bin/manager" >> /root/.bashrc
+echo "export FLAP_DIR=/flap" >> /root/.bashrc
+echo "export FLAP_DATA=/var/lib/flap" >> /root/.bashrc
 source /root/.bashrc
+ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
 
 # Execute configuration actions with the manager
 # TLS certificates will be generated during setup

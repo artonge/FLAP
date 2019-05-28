@@ -33,7 +33,7 @@ case $CMD in
 
         {
             # Check that port mapping do not exist
-            manager ports list | grep -v ":$PORT" &&
+            (manager ports list || echo "") | grep -v ":$PORT" &&
             echo "Port mapping deleted ($PORT)."
         } || { # Catch error
             echo "Failed to delete port mapping ($PORT)."
