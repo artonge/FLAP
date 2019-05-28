@@ -50,14 +50,6 @@ services:
             - ./core/src/front/dist:/core/src/front/dist
         entrypoint: ["npm", "run", "serve"]
 
-    # FLAP MANAGER
-    manager:
-        build:
-            context: ./manager
-            dockerfile: ./Dockerfile
-        ports: ["9229:9229"]
-        volumes: ["./manager/src:/manager/src"]
-
     # SOGO
     sogo:
         build:
