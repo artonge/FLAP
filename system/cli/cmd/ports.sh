@@ -19,7 +19,7 @@ case $CMD in
             upnpc -e "$DESCRIPTION" -a $IP $PORT $PORT TCP > /dev/null &&
 
             # Check that port mapping exists
-            manager ports list | grep ":$PORT" &&
+            manager ports list | grep ":$PORT" > /dev/null &&
 
             echo "Port mapping created ($PORT)."
         } || { # Catch error
@@ -33,7 +33,7 @@ case $CMD in
 
         {
             # Check that port mapping do not exist
-            (manager ports list || echo "") | grep -v ":$PORT" &&
+            (manager ports list || echo "") | grep -v ":$PORT" > /dev/null &&
             echo "Port mapping deleted ($PORT)."
         } || { # Catch error
             echo "Failed to delete port mapping ($PORT)."
