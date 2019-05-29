@@ -15,3 +15,4 @@
 -   [ ] Setup recursive tasks for cert generation
 -   [ ] Ask for static IP to the gateway
 -   [ ] Handle WANPPPConnection (orange livebox pro)
+-   [ ] Detect when a reboot is required after an update
