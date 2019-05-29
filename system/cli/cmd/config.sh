@@ -36,27 +36,27 @@ case $CMD in
     generate)
         # Nginx
         echo "Generating configurations for Nginx"
-        envsubst < $FLAP_DIR/nginx/config/nginx.template.conf > $FLAP_DIR/nginx/config/nginx.conf
-        envsubst < $FLAP_DIR/nginx/config/conf.d/flap.template.conf > $FLAP_DIR/nginx/config/conf.d/flap.conf
-        envsubst < $FLAP_DIR/nginx/config/conf.d/sogo.template.conf > $FLAP_DIR/nginx/config/conf.d/sogo.conf
-        envsubst < $FLAP_DIR/nginx/config/conf.d/nextcloud.template.conf > $FLAP_DIR/nginx/config/conf.d/nextcloud.conf
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/nginx/config/nginx.template.conf > $FLAP_DIR/nginx/config/nginx.conf
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/nginx/config/conf.d/flap.template.conf > $FLAP_DIR/nginx/config/conf.d/flap.conf
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/nginx/config/conf.d/sogo.template.conf > $FLAP_DIR/nginx/config/conf.d/sogo.conf
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/nginx/config/conf.d/nextcloud.template.conf > $FLAP_DIR/nginx/config/conf.d/nextcloud.conf
         # PostgreSQL
         echo "Generating configurations for PostgreSQL"
-        envsubst < $FLAP_DIR/postgres/scripts/setup.template.sql > $FLAP_DIR/postgres/scripts/setup.sql
-        envsubst < $FLAP_DIR/postgres/postgres.template.env > $FLAP_DIR/postgres/postgres.env
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/postgres/scripts/setup.template.sql > $FLAP_DIR/postgres/scripts/setup.sql
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/postgres/postgres.template.env > $FLAP_DIR/postgres/postgres.env
         # LDAP
         echo "Generating configurations for LDAP"
-        envsubst < $FLAP_DIR/ldap/ldap.template.env > $FLAP_DIR/ldap/ldap.env
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/ldap/ldap.template.env > $FLAP_DIR/ldap/ldap.env
         # FLAP core
         echo "Generating configurations for FLAP core"
-        envsubst < $FLAP_DIR/core/core.template.env > $FLAP_DIR/core/core.env
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/core/core.template.env > $FLAP_DIR/core/core.env
         # Nextcloud
         echo "Generating configurations for nextcloud"
-        envsubst < $FLAP_DIR/nextcloud/nextcloud.template.env > $FLAP_DIR/nextcloud/nextcloud.env
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/nextcloud/nextcloud.template.env > $FLAP_DIR/nextcloud/nextcloud.env
         # SOGo
         echo "Generating configurations for SOGo"
-        envsubst < $FLAP_DIR/sogo/config/sogo.template.conf > $FLAP_DIR/sogo/config/sogo.conf
-        envsubst < $FLAP_DIR/sogo/sogo.template.env > $FLAP_DIR/sogo/sogo.env
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/sogo/config/sogo.template.conf > $FLAP_DIR/sogo/config/sogo.conf
+        envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < $FLAP_DIR/sogo/sogo.template.env > $FLAP_DIR/sogo/sogo.env
         ;;
     show)
         echo "DOMAIN_INFO=$DOMAIN_INFO"
