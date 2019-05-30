@@ -25,7 +25,7 @@ case $CMD in
                 echo "  + Running '$test'..."
                 {
                     $FLAP_DIR/system/cli/tests/$test.spec.sh &&
-                    echo "  ✅ All tests passes for '$test'."
+                    echo "  ✅ All tests passed for '$test'."
                 } || {
                     echo "  ❌ Some tests failed for '$test'."
                 }
