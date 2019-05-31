@@ -22,6 +22,7 @@
         ARCH: armv7
 
 create_manifest:
+    stage: build
     dependencies: ["build:amd64", "build:armv7"]
     script:
         - docker manifest create \
