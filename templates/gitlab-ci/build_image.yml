@@ -25,8 +25,9 @@ create_manifest:
     only: [master]
     image: docker:stable
     dependencies: ["build:amd64", "build:armv7"]
-    services: ["docker:dind"]
-    command: ["--experimental"]
+    services:
+      - name: docker:dind
+        command: ["--experimental"]
     script:
         - docker manifest create \
             $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
