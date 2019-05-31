@@ -1,4 +1,4 @@
-.build_image:
+.build_docker:
     stage: build
     only: [master]
     image: docker:stable
@@ -6,13 +6,31 @@
     script:
         - DOCKER_DRIVER=overlay2
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-        - docker build --tag $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) --tag $CI_REGISTRY_IMAGE:latest .
+        - docker build --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) --tag $CI_REGISTRY_IMAGE:$ARCH-latest .
         - docker push $CI_REGISTRY_IMAGE
 
-.build_image_intel:
-    extends: .build_image
+.build:adm64:
+    extends: .build_docker
     tags: [docker, gce]
+    variables:
+        ARCH: amd64
 
-.build_image_arm:
-    extends: .build_image
+.build:armv7:
+    extends: .build_docker
     tags: [docker, odroid]
+    variables:
+        ARCH: armv7
+
+create_manifest:
+    dependencies: [build:amd64, build:armv7]
+    script:
+        - docker manifest create \
+            $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
+            $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
+            $CI_REGISTRY_IMAGE:armv7-$(eval $VERSION_SCRIPT)
+        - docker manifest create \
+            $CI_REGISTRY_IMAGE:latest \
+            $CI_REGISTRY_IMAGE:amd64-latest \
+            $CI_REGISTRY_IMAGE:armv7-latest
+        - docker manifest push $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)
+        - docker manifest push $CI_REGISTRY_IMAGE:latest
