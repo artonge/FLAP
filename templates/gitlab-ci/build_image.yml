@@ -22,7 +22,7 @@
         ARCH: armv7
 
 create_manifest:
-    dependencies: [build:amd64, build:armv7]
+    dependencies: ["build:amd64", "build:armv7"]
     script:
         - docker manifest create \
             $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
