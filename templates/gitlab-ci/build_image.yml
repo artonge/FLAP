@@ -8,3 +8,11 @@
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
         - docker build --tag $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) --tag $CI_REGISTRY_IMAGE:latest .
         - docker push $CI_REGISTRY_IMAGE
+
+.build_image_intel:
+    extends: .build_image
+    tags: [gitlab-org]
+
+.build_image_arm:
+    extends: .build_image
+    tags: [odroid, arm]
