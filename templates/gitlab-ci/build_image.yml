@@ -31,14 +31,14 @@ create_manifest:
         - mkdir -p /root/.docker
         - echo "{}" | jq '.experimental = "enabled"' > ~/.docker/config.json
         - >
-            "docker manifest create \
+            docker manifest create \
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
                 $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
-                $CI_REGISTRY_IMAGE:armv7-$(eval $VERSION_SCRIPT)"
+                $CI_REGISTRY_IMAGE:armv7-$(eval $VERSION_SCRIPT)
         - >
-            "docker manifest create \
+            docker manifest create \
                 $CI_REGISTRY_IMAGE:latest \
                 $CI_REGISTRY_IMAGE:amd64-latest \
-                $CI_REGISTRY_IMAGE:armv7-latest"
+                $CI_REGISTRY_IMAGE:armv7-latest
         - "docker manifest push $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)"
         - "docker manifest push $CI_REGISTRY_IMAGE:latest"
