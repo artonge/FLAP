@@ -1,9 +1,6 @@
 include:
     # Auto devop
     - template: Auto-DevOps.gitlab-ci.yml
-    # Image build script
-    - project: flap-box/flap
-      file: templates/gitlab-ci/build_image.yml
 
 build:
   stage: build
