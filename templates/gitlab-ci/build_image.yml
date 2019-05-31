@@ -28,6 +28,7 @@ create_manifest:
     services: ["docker:dind"]
     script:
         - apk add jq
+        - mkdir -p /root/.docker
         - echo "{}" | jq '.experimental = "enable"' > ~/.docker/config.json
         - docker manifest create \
             $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
