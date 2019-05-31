@@ -11,8 +11,8 @@
 
 .build_image_intel:
     extends: .build_image
-    tags: [gitlab-org]
+    tags: [docker, gce]
 
 .build_image_arm:
     extends: .build_image
-    tags: [odroid, arm]
+    tags: [docker, odroid]
