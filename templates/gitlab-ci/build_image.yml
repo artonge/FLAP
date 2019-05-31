@@ -25,10 +25,10 @@ create_manifest:
     only: [master]
     image: docker:stable
     dependencies: ["build:amd64", "build:armv7"]
-    services:
-      - name: docker:dind
-        command: ["--experimental"]
+    services: ["docker:dind"]
     script:
+        - apk add jq
+        - echo "{}" | jq '.experimental = "enable"' > ~/.docker/config.json
         - docker manifest create \
             $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
             $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
