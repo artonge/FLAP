@@ -29,7 +29,7 @@ create_manifest:
     script:
         - apk add jq
         - mkdir -p /root/.docker
-        - echo "{}" | jq '.experimental = "enable"' > ~/.docker/config.json
+        - echo "{}" | jq '.experimental = "enabled"' > ~/.docker/config.json
         - docker manifest create \
             $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
             $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
