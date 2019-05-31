@@ -22,7 +22,6 @@
         ARCH: armv7
 
 create_manifest:
-    stage: build
     only: [master]
     image: docker:stable
     dependencies: ["build:amd64", "build:armv7"]
