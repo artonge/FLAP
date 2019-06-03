@@ -19,19 +19,18 @@ case $CMD in
 
         echo "$DOMAIN_INFO HANDLED" > $FLAP_DATA/domainInfo.txt
 
-        dc down
-
         {
             # Generate TLS certificates
+            docker-compose down &&
             $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $DOMAIN_INFO 2>&1 &&
-            echo "$DOMAIN_INFO OK" > $FLAP_DATA/domainInfo.txt
+            echo "$DOMAIN_INFO OK" > $FLAP_DATA/domainInfo.txt &&
+            docker-compose up -d
         } || { # Catch error
             echo "Failed to generate certificates."
             echo "$DOMAIN_INFO ERROR" > $FLAP_DATA/domainInfo.txt
+            docker-compose up -d
             exit 1
         }
-
-        dc up -d
 
         echo "Certificates generated."
         ;;
