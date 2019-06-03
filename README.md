@@ -64,16 +64,14 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] Install nextcloud
 -   [x] Merge front
 -   [ ] RAID support
--   [ ] Update script
 
 ---
 
--   [ ] Automatic build of arm docker images (https://gitlab.com/ulm0/gitlab-runner)
--   [ ] RAID
+-   [x] Automatic build of arm docker images (https://gitlab.com/ulm0/gitlab-runner)
 -   [x] fix sogo wait for postgres in start.sh
--   [ ] remove mariadb and sefaile from submodule
+-   [x] remove mariadb and sefaile from submodule
 -   [ ] fix error 500 in upnp
 -   [ ] generate cert for each services or wildcard and root domain
--   [ ] better manager cli
--   [ ] generalized template generation
--   [ ] move nginx conf in {service}/config
+-   [x] better manager cli
+-   [x] generalized template generation
+-   [ ] move nginx conf in {service}/config ?

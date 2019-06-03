@@ -35,9 +35,9 @@ case $CMD in
         fi
         ;;
     summarize)
-        echo "applychanges | | Apply changes to the configuration variables."
+        echo "applychanges | | Apply changes made to the configuration variables."
         ;;
     help|*)
-        echo "applychanges | | Apply changes to the configuration variables." | column --table --separator "|"
+        echo "applychanges | | Apply changes made to the configuration variables." | column --table --separator "|"
         ;;
 esac
