@@ -16,19 +16,12 @@ if [ "$PROVIDER" == "localhost" ] || [ "$PROVIDER" == "local" ]
 then
     $(dirname "$0")/localhost_auth_hook.sh $DOMAIN_NAME
 else
-    manager ports open 8443
-    manager ports open 8080
-
     certbot certonly \
+        --non-interactive \
         --standalone \
-        --tls-sni-01-port 8443 \
-        --http-01-port 8080 \
         --agree-tos \
         --email louis@chmn.me \
         --domain $DOMAIN_NAME
-
-    manager ports close 8443
-    manager ports close 8080
 
     certbot certonly \
         --non-interactive \

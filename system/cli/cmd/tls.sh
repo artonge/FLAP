@@ -19,6 +19,8 @@ case $CMD in
 
         echo "$DOMAIN_INFO HANDLED" > $FLAP_DATA/domainInfo.txt
 
+        dc down
+
         {
             # Generate TLS certificates
             $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $DOMAIN_INFO 2>&1 &&
@@ -28,6 +30,8 @@ case $CMD in
             echo "$DOMAIN_INFO ERROR" > $FLAP_DATA/domainInfo.txt
             exit 1
         }
+
+        dc up -d
 
         echo "Certificates generated."
         ;;
