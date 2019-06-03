@@ -3,4 +3,4 @@
 @hourly root    manager healthcheck
 
 # Every minutes
-* * * * *   root    manager tls applychanges
+* * * * *   root    manager applychanges
