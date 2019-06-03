@@ -88,6 +88,7 @@ echo "FLAP_DIR=/flap" >> /etc/environment
 echo "FLAP_DATA=/var/lib/flap" >> /etc/environment
 source /etc/environment
 ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
+mkdir -p /var/log/flap
 
 # Execute configuration actions with the manager
 # TLS certificates will be generated during setup

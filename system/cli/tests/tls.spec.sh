@@ -27,7 +27,7 @@ EXIT=0
         # Ensure certificates are detected
         manager tls show | grep "flap.localhost" > /dev/null &&
         # Ensure domainInfo.txt is marked as handled
-        cat $FLAP_DATA/domainInfo.txt | grep -E "HANDLED OK$" > /dev/null
+        cat $FLAP_DATA/domainInfo.txt | grep -E "OK$" > /dev/null
     } || {
         echo "     ❌ 'manager tls generate' failed to generate certificates."
         EXIT=1
@@ -60,7 +60,7 @@ EXIT=0
     mkdir /etc/ssl/nginx
 
     # Setting handled domain name
-    echo "flap.localhost localhost _ HANDLED OK" > $FLAP_DATA/domainInfo.txt
+    echo "flap.localhost localhost _ OK" > $FLAP_DATA/domainInfo.txt
 
     {
         manager tls generate > /dev/null &&
