@@ -14,7 +14,10 @@ mkdir -p /etc/ssl/nginx
 
 if [ "$PROVIDER" == "localhost" ] || [ "$PROVIDER" == "local" ]
 then
-    $(dirname "$0")/localhost_auth_hook.sh $DOMAIN_NAME
+	openssl req -x509 -out /etc/ssl/nginx/fullchain.crt -keyout /etc/ssl/nginx/privkey.key \
+			-newkey rsa:2048 -nodes -sha256 \
+			-subj "/CN=flap.localhost" -extensions EXT \
+			-config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
 else
     certbot certonly \
         --non-interactive \
