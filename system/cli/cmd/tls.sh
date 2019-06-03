@@ -9,10 +9,11 @@ case $CMD in
         DOMAIN_INFO=$(manager config show | grep DOMAIN_INFO | cut -d '=' -f2)
 
         IS_HANDLED=$(echo $DOMAIN_INFO | grep -E ' HANDLED ' | cat)
+        IS_OK=$(echo $DOMAIN_INFO | grep -E ' OK$' | cat)
 
         # If the domain name is allready handled exit now,
-        # Else, add OK at the end of the domain info to mark it as handled
-        if [ "$IS_HANDLED" ]
+        # Else, add HANDLED at the end of the domain info to mark it as handled
+        if [ "$IS_HANDLED" ] && [ "$IS_OK" ]
         then
             echo $DOMAIN_INFO
             exit 0

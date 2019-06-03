@@ -1,6 +1,6 @@
-@midnight  root    manager update flap
+@midnight    manager update flap
 
-@hourly root    manager healthcheck
+@hourly      manager healthcheck
 
 # Every minutes
-* * * * *   root    manager applychanges
+* * * * *    manager applychanges

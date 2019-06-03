@@ -1,1 +1,1 @@
-*/5 * * * *     docker-compose exec -u www-data nextcloud   php -f /var/www/html/cron.php
+*/5 * * * *     cd $FLAP_DIR; /usr/local/bin/docker-compose exec -T -u www-data nextcloud   php -f /var/www/html/cron.php

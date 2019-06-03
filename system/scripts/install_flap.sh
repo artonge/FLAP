@@ -84,9 +84,9 @@ APT::Periodic::Unattended-Upgrade '1';
 echo "SETTING UP FLAP"
 cd /flap
 
-echo "export FLAP_DIR=/flap" >> /root/.bashrc
-echo "export FLAP_DATA=/var/lib/flap" >> /root/.bashrc
-source /root/.bashrc
+echo "FLAP_DIR=/flap" >> /etc/environment
+echo "FLAP_DATA=/var/lib/flap" >> /etc/environment
+source /etc/environment
 ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
 
 # Execute configuration actions with the manager
