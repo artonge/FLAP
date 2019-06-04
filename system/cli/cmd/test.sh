@@ -37,6 +37,6 @@ case $CMD in
         echo "test | | Test manager's commands."
         ;;
     help)
-        echo "test | [--only <test_suite>] | Test manager's commands." | column --table --separator "|"
+        echo "test | [--only <test_suite>] | Test manager's commands." | column -t -s "|"
         ;;
 esac

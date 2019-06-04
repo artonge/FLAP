@@ -61,6 +61,6 @@ case $CMD in
 config | Generate the configuration for each services.
 Commands:
     generate | | Generate the services config files from the current config variables.
-    show | | Show the current config variables." | column --table --separator "|"
+    show | | Show the current config variables." | column -t -s "|"
         ;;
 esac

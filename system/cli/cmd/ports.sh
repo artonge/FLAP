@@ -53,6 +53,6 @@ ports | Manipulate ports forwarding.
 Commands:
     open | [port] | Open a port.
     close | [port] | Close a port.
-    list | | List port mappings." | column --table --separator "|"
+    list | | List port mappings." | column -t -s "|"
         ;;
 esac

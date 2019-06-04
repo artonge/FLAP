@@ -20,6 +20,6 @@ case $CMD in
 update | Handle update logique for the system and flap.
 Commands:
     system | | Update the system.
-    update | | Update FLAP." | column --table --separator "|"
+    update | | Update FLAP." | column -t -s "|"
         ;;
 esac

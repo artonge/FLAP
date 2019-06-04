@@ -18,17 +18,19 @@ case $CMD in
         fi
 
         echo "$DOMAIN_INFO HANDLED" > $FLAP_DATA/domainInfo.txt
+        cd $FLAP_DIR
 
         {
             # Generate TLS certificates
-            docker-compose down &&
+            /usr/local/bin/docker-compose down &&
             $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $DOMAIN_INFO 2>&1 &&
             echo "$DOMAIN_INFO OK" > $FLAP_DATA/domainInfo.txt &&
-            docker-compose up -d
+            manager config generate &&
+            /usr/local/bin/docker-compose up -d
         } || { # Catch error
             echo "Failed to generate certificates."
             echo "$DOMAIN_INFO ERROR" > $FLAP_DATA/domainInfo.txt
-            docker-compose up -d
+            /usr/local/bin/docker-compose up -d
             exit 1
         }
 
@@ -45,6 +47,6 @@ case $CMD in
 tls | Manage TLS certificates for Nginx.
 Commands:
     generate | | Generate certificates for the current domain name.
-    show | | Show the list of certificates." | column --table --separator "|"
+    show | | Show the list of certificates." | column -t -s "|"
         ;;
 esac

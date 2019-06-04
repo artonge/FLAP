@@ -19,6 +19,6 @@ case $CMD in
 ip | Get ip address.
 Commands:
     internal | | Show the internal ip.
-    external | | Show the external ip." | column --table --separator "|"
+    external | | Show the external ip." | column -t -s "|"
         ;;
 esac

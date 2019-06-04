@@ -38,6 +38,6 @@ case $CMD in
         echo "applychanges | | Apply changes made to the configuration variables."
         ;;
     help|*)
-        echo "applychanges | | Apply changes made to the configuration variables." | column --table --separator "|"
+        echo "applychanges | | Apply changes made to the configuration variables." | column -t -s "|"
         ;;
 esac

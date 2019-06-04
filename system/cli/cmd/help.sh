@@ -17,6 +17,6 @@ case $CMD in
         do
             help_string+="  $($FLAP_DIR/system/cli/cmd/$cmd summarize)"$'\n'
         done
-        echo "$help_string" | column --table --separator "|"
+        echo "$help_string" | column -t -s "|"
         ;;
 esac

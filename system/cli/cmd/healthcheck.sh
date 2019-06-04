@@ -19,6 +19,6 @@ case $CMD in
         ;;
     help|*)
         echo "
-healthcheck | Run services healthcheck." | column --table --separator "|"
+healthcheck | Run services healthcheck." | column -t -s "|"
         ;;
 esac

@@ -29,6 +29,6 @@ case $CMD in
         echo "
 setup | Setup FLAP composents.
 Commands:
-    cron | | Setup the cron from service's cron files." | column --table --separator "|"
+    cron | | Setup the cron from service's cron files." | column -t -s "|"
         ;;
 esac
