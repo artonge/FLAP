@@ -54,7 +54,6 @@ services:
         image: registry.gitlab.com/flap-box/ldap:2.4.44
         env_file: [./ldap/ldap.env]
         restart: always
-        # ports: ["389:389"]
         volumes:
             - ./ldap/prepopulate:/prepopulate:ro # Init
             - ./ldap/data/config:/etc/ldap # Config
@@ -65,7 +64,7 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.5.5
+        image: registry.gitlab.com/flap-box/core:0.5.6
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
