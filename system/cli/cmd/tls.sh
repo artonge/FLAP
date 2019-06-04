@@ -22,15 +22,15 @@ case $CMD in
 
         {
             # Generate TLS certificates
-            /usr/local/bin/docker-compose down &&
+            docker-compose down &&
             $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $DOMAIN_INFO 2>&1 &&
             echo "$DOMAIN_INFO OK" > $FLAP_DATA/domainInfo.txt &&
             manager config generate &&
-            /usr/local/bin/docker-compose up -d
+            docker-compose up -d
         } || { # Catch error
             echo "Failed to generate certificates."
             echo "$DOMAIN_INFO ERROR" > $FLAP_DATA/domainInfo.txt
-            /usr/local/bin/docker-compose up -d
+            docker-compose up -d
             exit 1
         }
 
