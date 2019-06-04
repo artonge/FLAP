@@ -2,6 +2,8 @@
 
 set -e
 
+cd $FLAP_DIR
+
 echo "FETCHING REPO"
 git pull
 git submodule update
