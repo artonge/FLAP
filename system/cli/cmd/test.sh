@@ -8,6 +8,8 @@ ARGS=${ARGS[@]:0}
 
 TEST_TO_RUN=$(ls $FLAP_DIR/system/cli/tests)
 
+EXIT=0
+
 if [ "$#" != "0" ]
 then
     TEST_TO_RUN=$ARGS
@@ -28,6 +30,7 @@ case $CMD in
                     echo "  ✅ All tests passed for '$test'."
                 } || {
                     echo "  ❌ Some tests failed for '$test'."
+                    EXIT=1
                 }
                 echo ""
             fi
@@ -40,3 +43,5 @@ case $CMD in
         echo "test | [--only <test_suite>] | Test manager's commands." | column -t -s "|"
         ;;
 esac
+
+exit $EXIT
