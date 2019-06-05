@@ -13,7 +13,7 @@ case $CMD in
 
         # Only process when the request is WAITING
         REQUEST_STATUS=$(cat $FLAP_DATA/domainRequestStatus.txt)
-        if [ "$REQUEST_STATUS" != "WAITING" ]
+        if [ "$REQUEST_STATUS" != "WAITING" ] || [ "$REQUEST_STATUS" != "" ]
         then
             exit 0
         fi
