@@ -15,6 +15,7 @@ EXIT=0
     # Save user's certificates
     mkdir -p /etc/ssl/nginx
     mv /etc/ssl/nginx /etc/ssl/nginx.bak
+    mkdir -p /etc/ssl/nginx
 
     # Setting test domain name
     echo "flap.localhost localhost _" > $FLAP_DATA/domainRequest.txt
