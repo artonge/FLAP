@@ -24,9 +24,11 @@ EXIT=0
     {
         # Generate certificates
         manager tls generate > /dev/null &&
-        # Ensure certificates are detected
-        manager tls show | grep "flap.localhost" > /dev/null &&
-        # Ensure domainInfo.txt is marked as handled
+        # Ensure certificates are created
+        ls /etc/ssl/nginx | grep "privkey.key" > /dev/null &&
+        ls /etc/ssl/nginx | grep "fullchain.crt" > /dev/null &&
+        ls /etc/ssl/nginx | grep "chain.pem" > /dev/null &&
+        # Ensure domainInfo.txt is marked as OK
         cat $FLAP_DATA/domainInfo.txt | grep -E "OK$" > /dev/null
     } || {
         echo "     ❌ 'manager tls generate' failed to generate certificates."
@@ -46,7 +48,7 @@ EXIT=0
 }
 
 {
-    echo "      - Generating TLS certificates of a handled domain"
+    echo "      - Generating TLS certificates of a OK domain"
 
     # Save current domainInfo.txt
     if [ -f $FLAP_DATA/domainInfo.txt ]
@@ -59,14 +61,14 @@ EXIT=0
     mv /etc/ssl/nginx /etc/ssl/nginx.bak
     mkdir /etc/ssl/nginx
 
-    # Setting handled domain name
+    # Setting OK domain name
     echo "flap.localhost localhost _ OK" > $FLAP_DATA/domainInfo.txt
 
     {
         manager tls generate > /dev/null &&
         (manager tls show || echo "") | grep -v "flap.localhost" > /dev/null
     } || {
-        echo "     ❌ 'manager tls generate' failed to generate certificates for a handled domain."
+        echo "     ❌ 'manager tls generate' failed to generate certificates for a OK domain."
         EXIT=1
     }
 

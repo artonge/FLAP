@@ -4,12 +4,14 @@
 
 #### Todos
 
+-   [ ] Send mail on user creation
 -   [ ] Prevent ssh key validation during git clone
 -   [ ] Test base install script
 -   [ ] Better update process
     -   [x] Base system update
-    -   [ ] FLAP update
+    -   [x] FLAP update
     -   [ ] Individual services update
+-   [ ] Handle multiple domain name
 -   [x] Generate cron based on each services or install one cron that will execute services cron
 -   [ ] Which email to use during certs generation ?
 -   [x] Setup recursive tasks for cert generation

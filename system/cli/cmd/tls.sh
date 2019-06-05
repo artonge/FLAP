@@ -18,6 +18,8 @@ case $CMD in
         fi
 
         echo "$DOMAIN_INFO HANDLED" > $FLAP_DATA/domainInfo.txt
+        # Allow the server to pick up the status change.
+        sleep 2
         cd $FLAP_DIR
 
         {
@@ -37,7 +39,7 @@ case $CMD in
         echo "Certificates generated."
         ;;
     show)
-        ls -1 /etc/ssl/nginx | grep ".crt"
+        ls -1 /etc/letsencrypt/live
         ;;
     summarize)
         echo "tls | [show, generate, help] | Manage TLS certificates for Nginx."

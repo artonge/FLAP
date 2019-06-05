@@ -18,6 +18,7 @@ then
 			-newkey rsa:2048 -nodes -sha256 \
 			-subj "/CN=flap.localhost" -extensions EXT \
 			-config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+	cp /etc/ssl/nginx/fullchain.crt /etc/ssl/nginx/chain.pem
 else
     certbot certonly \
         --non-interactive \
@@ -29,8 +30,8 @@ else
         --domain files.$DOMAIN_NAME \
         --domain sogo.$DOMAIN_NAME
 
-    # Nginx config for services expect dedicated ssl files
-    # ROOT
+    # Copy certificates to the nginx folder.
     cp /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem /etc/ssl/nginx/fullchain.crt
     cp /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem /etc/ssl/nginx/privkey.key
+    cp /etc/letsencrypt/live/$DOMAIN_NAME/chain.pem /etc/ssl/nginx/chain.pem
 fi
