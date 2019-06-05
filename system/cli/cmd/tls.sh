@@ -6,6 +6,11 @@ CMD=$1
 
 case $CMD in
     generate)
+        mkdir -p $FLAP_DATA
+        touch $FLAP_DATA/domainInfo.txt
+        touch $FLAP_DATA/domainRequest.txt
+        touch $FLAP_DATA/domainRequestStatus.txt
+
         # Only process when the request is WAITING
         REQUEST_STATUS=$(cat $FLAP_DATA/domainRequestStatus.txt)
         if [ "$REQUEST_STATUS" != "WAITING" ]
@@ -21,14 +26,12 @@ case $CMD in
 
         # Go to the flap directory to stop and start containers
         cd $FLAP_DIR
-
         {
             # Generate TLS certificates
             REQUEST=$(cat $FLAP_DATA/domainRequest.txt) &&
             docker-compose down &&
             $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $REQUEST 2>&1 &&
             echo $REQUEST > $FLAP_DATA/domainInfo.txt &&
-            echo "" > $FLAP_DATA/domainRequest.txt &&
             echo "OK" > $FLAP_DATA/domainRequestStatus.txt &&
             manager config generate &&
             docker-compose up -d

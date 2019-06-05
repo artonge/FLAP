@@ -31,6 +31,7 @@ else
         --domain sogo.$DOMAIN_NAME
 
     # Copy certificates to the nginx folder.
+    mkdir -p /etc/ssl/nginx
     cp /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem /etc/ssl/nginx/fullchain.crt
     cp /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem /etc/ssl/nginx/privkey.key
     cp /etc/letsencrypt/live/$DOMAIN_NAME/chain.pem /etc/ssl/nginx/chain.pem

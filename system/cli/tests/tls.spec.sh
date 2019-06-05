@@ -7,19 +7,18 @@ EXIT=0
 {
     echo "      - Generating TLS certificates"
 
-    # Save current domainInfo.txt
-    if [ -f $FLAP_DATA/domainInfo.txt ]
-    then
-        mv $FLAP_DATA/domainInfo.txt $FLAP_DATA/domainInfo.txt.bak
-    fi
+    # Save FLAP data
+    mkdir -p $FLAP_DATA
+    mv $FLAP_DATA $FLAP_DATA.bak
+    mkdir -p $FLAP_DATA
 
     # Save user's certificates
     mkdir -p /etc/ssl/nginx
     mv /etc/ssl/nginx /etc/ssl/nginx.bak
-    mkdir /etc/ssl/nginx
 
     # Setting test domain name
-    echo "flap.localhost localhost _" > $FLAP_DATA/domainInfo.txt
+    echo "flap.localhost localhost _" > $FLAP_DATA/domainRequest.txt
+    echo "WAITING" > $FLAP_DATA/domainRequestStatus.txt
 
     {
         # Generate certificates
@@ -28,19 +27,18 @@ EXIT=0
         ls /etc/ssl/nginx | grep "privkey.key" > /dev/null &&
         ls /etc/ssl/nginx | grep "fullchain.crt" > /dev/null &&
         ls /etc/ssl/nginx | grep "chain.pem" > /dev/null &&
-        # Ensure domainInfo.txt is marked as OK
-        cat $FLAP_DATA/domainInfo.txt | grep -E "OK$" > /dev/null
+        # Ensure request is same as domain
+        [ "$(cat $FLAP_DATA/domainInfo.txt)" == "$(cat $FLAP_DATA/domainRequest.txt)" ] &&
+        # Ensure request status is OK
+        [ "$(cat $FLAP_DATA/domainRequestStatus.txt)" == "OK" ]
     } || {
         echo "     ❌ 'manager tls generate' failed to generate certificates."
         EXIT=1
     }
 
     # Unsave domainInfo.txt
-    if [ -f $FLAP_DATA/domainInfo.txt.bak ]
-    then
-        rm $FLAP_DATA/domainInfo.txt
-        mv $FLAP_DATA/domainInfo.txt.bak $FLAP_DATA/domainInfo.txt
-    fi
+    rm -rf $FLAP_DATA
+    mv $FLAP_DATA.bak $FLAP_DATA
 
     # Unsave user's certificates
     rm -rf /etc/ssl/nginx
@@ -50,11 +48,10 @@ EXIT=0
 {
     echo "      - Generating TLS certificates of a OK domain"
 
-    # Save current domainInfo.txt
-    if [ -f $FLAP_DATA/domainInfo.txt ]
-    then
-        mv $FLAP_DATA/domainInfo.txt $FLAP_DATA/domainInfo.txt.bak
-    fi
+    # Save FLAP data
+    mkdir -p $FLAP_DATA
+    mv $FLAP_DATA $FLAP_DATA.bak
+    mkdir $FLAP_DATA
 
     # Save user's certificates
     mkdir -p /etc/ssl/nginx
@@ -62,22 +59,20 @@ EXIT=0
     mkdir /etc/ssl/nginx
 
     # Setting OK domain name
-    echo "flap.localhost localhost _ OK" > $FLAP_DATA/domainInfo.txt
+    echo "flap.localhost localhost _" > $FLAP_DATA/domainRequest.txt
+    echo "OK" > $FLAP_DATA/domainRequestStatus.txt
 
     {
         manager tls generate > /dev/null &&
-        (manager tls show || echo "") | grep -v "flap.localhost" > /dev/null
+        [ "$(cat $FLAP_DATA/domainRequestStatus.txt)" == "OK" ]
     } || {
         echo "     ❌ 'manager tls generate' failed to generate certificates for a OK domain."
         EXIT=1
     }
 
     # Unsave domainInfo.txt
-    if [ -f $FLAP_DATA/domainInfo.txt.bak ]
-    then
-        rm $FLAP_DATA/domainInfo.txt
-        mv $FLAP_DATA/domainInfo.txt.bak $FLAP_DATA/domainInfo.txt
-    fi
+    rm -rf $FLAP_DATA
+    mv $FLAP_DATA.bak $FLAP_DATA
 
     # Unsave user's certificates
     rm -rf /etc/ssl/nginx
