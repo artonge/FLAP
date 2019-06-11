@@ -77,7 +77,7 @@ services:
 
     # NEXTCLOUD
     nextcloud:
-        image: nextcloud:15.0.6-fpm
+        image: nextcloud:16.0.1-fpm
         env_file: [./nextcloud/nextcloud.env]
         restart: always
         depends_on: [postgres, redis, ldap]

@@ -1,14 +1,12 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 # CHANGE DATA DIRECTORY
 php occ config:system:set datadirectory --value '/data'
 
 # ENABLE APPS
-php occ app:enable user_ldap
-php occ app:install calendar
-php occ app:install contacts
+php occ app:enable user_ldap || true
 
 # CHOOSE CRON MODE
 php occ background:cron
@@ -21,9 +19,7 @@ php occ config:system:set updatechecker --value false --type boolean
 php occ config:system:set upgrade.disable-web --value true --type boolean
 php occ config:system:set appstoreenabled --value false --type boolean
 
-# CONNECT TO REDIS
-php occ config:system:set redis host --value redis
-php occ config:system:set redis port --value 6379 --type integer
+# CONFIGURE CACHE
 php occ config:system:set memcache.local --value '\OC\Memcache\Redis'
 php occ config:system:set memcache.locking --value '\OC\Memcache\Redis'
 
