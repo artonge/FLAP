@@ -26,7 +26,7 @@ case $CMD in
 
         REQUEST=$(cat $FLAP_DATA/domainRequest.txt)
 
-        cd $FLAP_DATA
+        cd $FLAP_DIR
 
         {
             docker-compose down &&
