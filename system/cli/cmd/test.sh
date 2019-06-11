@@ -16,6 +16,12 @@ then
 fi
 
 case $CMD in
+    summarize)
+        echo "test | | Test manager's commands."
+        ;;
+    help)
+        echo "test | [--only <test_suite>] | Test manager's commands." | column -t -s "|"
+        ;;
     ""|*)
         echo "Running tests..."
 
@@ -35,12 +41,6 @@ case $CMD in
                 echo ""
             fi
         done
-        ;;
-    summarize)
-        echo "test | | Test manager's commands."
-        ;;
-    help)
-        echo "test | [--only <test_suite>] | Test manager's commands." | column -t -s "|"
         ;;
 esac
 

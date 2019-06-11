@@ -34,13 +34,16 @@ export NEXTCLOUD_DB_PWD=$(readPwd $FLAP_DATA/nextcloudDbPwd.txt)
 
 case $CMD in
     generate)
+        cd $FLAP_DIR
+
+        # Transform each files matching *.template.*
         for template in $(find -name "*.template.*")
         do
-            dir=$(dirname $template)
-            name=$(basename $template)
+            dir=$(dirname $template) # Get template's directory
+            name=$(basename $template) # Get template's name (without the directory)
             ext="${name##*.}"
-            name="${name%.*}"
-            name="${name%.*}"
+            name="${name%.*}" # Remove extension
+            name="${name%.*}" # Remove ".template"
 
             echo $dir/$name.$ext
 

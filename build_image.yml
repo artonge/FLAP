@@ -24,7 +24,6 @@ build:armv7:
 create_manifest:
     only: [master]
     image: docker:stable
-    dependencies: ["build:amd64", "build:armv7"]
     services: ["docker:dind"]
     script:
         - apk add jq

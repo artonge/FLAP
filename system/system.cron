@@ -1,6 +1,6 @@
-@midnight    manager update flap > /var/log/flap/update.log
+@midnight    manager update > /var/log/flap/update.log
 
 @hourly      manager healthcheck > /var/log/flap/healthcheck.log
 
 # Every minutes
-* * * * *    manager tls generate > /var/log/flap/tls.log
+* * * * *    manager handle_domain_request > /var/log/flap/tls.log

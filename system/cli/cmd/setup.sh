@@ -8,15 +8,15 @@ DIR=$(dirname "$(readlink -f "$0")")
 case $CMD in
     cron)
         cron_string="############## ENV ##############"$'\n'
-        cron_string+="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"$'\n'
+        cron_string+="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"$'\n\n'
 
         # Build cron_string from services cron files
-        for service in $(ls $FLAP_DIR)
+        for service in $(ls -d $FLAP_DIR/*/)
         do
-            if [ -f $FLAP_DIR/$service/$service.cron ]
+            if [ -f $service/$(basename $service).cron ]
             then
                 cron_string+="############## $service ##############"$'\n'
-                cron_string+="$(cat $FLAP_DIR/$service/$service.cron)"$'\n\n'
+                cron_string+="$(cat $service/$(basename $service).cron)"$'\n\n'
             fi
         done
 
