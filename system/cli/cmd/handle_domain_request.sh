@@ -26,13 +26,15 @@ case $CMD in
 
         REQUEST=$(cat $FLAP_DATA/domainRequest.txt)
 
+        cd $FLAP_DATA
+
         {
-            docker-compose down &> /dev/null &&
-            manager tls generate $REQUEST > /dev/null &&
+            docker-compose down &&
+            manager tls generate $REQUEST &&
             echo $REQUEST > $FLAP_DATA/domainInfo.txt &&
             echo "OK" > $FLAP_DATA/domainRequestStatus.txt &&
             manager config generate &&
-            docker-compose up -d &> /dev/null &&
+            docker-compose up -d &&
             manager hooks post_domain_update
         } || { # Catch error
             echo "Failed to handle domain request."

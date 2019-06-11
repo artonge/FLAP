@@ -23,7 +23,7 @@ EXIT=0
 
     {
         # Generate certificates
-        manager tls generate > /dev/null &&
+        manager handle_domain_request &> /dev/null &&
         # Ensure certificates are created
         ls /etc/ssl/nginx | grep "privkey.key" > /dev/null &&
         ls /etc/ssl/nginx | grep "fullchain.crt" > /dev/null &&
@@ -33,7 +33,7 @@ EXIT=0
         # Ensure request status is OK
         [ "$(cat $FLAP_DATA/domainRequestStatus.txt)" == "OK" ]
     } || {
-        echo "     ❌ 'manager tls generate' failed to generate certificates."
+        echo "     ❌ 'manager handle_domain_request' failed to generate certificates."
         EXIT=1
     }
 
@@ -64,10 +64,10 @@ EXIT=0
     echo "OK" > $FLAP_DATA/domainRequestStatus.txt
 
     {
-        manager tls generate > /dev/null &&
+        manager handle_domain_request &> /dev/null &&
         [ "$(cat $FLAP_DATA/domainRequestStatus.txt)" == "OK" ]
     } || {
-        echo "     ❌ 'manager tls generate' failed to generate certificates for a OK domain."
+        echo "     ❌ 'manager handle_domain_request' failed to generate certificates for a OK domain."
         EXIT=1
     }
 
