@@ -126,11 +126,15 @@ done
 
 cd $FLAP_DIR
 
-# Start all services
-docker-compose up -d
+# Prevent starting containers
+if [ "$CI" != "" ]
+then
+    # Start all services
+    docker-compose up -d
 
-# Run post setup scripts for each services
-manager hooks post_install
+    # Run post setup scripts for each services
+    manager hooks post_install
+fi
 
 ################################################################################
 echo "DONE"

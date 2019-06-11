@@ -3,7 +3,7 @@
 set -e
 
 # Wait for nextcloud to be ready
-.$FLAP_DIR/nextcloud/scripts/wait_ready.sh
+$FLAP_DIR/nextcloud/scripts/wait_ready.sh
 
 # Run post install script for nextcloud
 docker-compose exec nextcloud chown www-data:www-data /data

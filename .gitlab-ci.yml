@@ -3,23 +3,40 @@ include:
     - template: Auto-DevOps.gitlab-ci.yml
 
 build:
-  stage: build
-  script:
-    - echo "OK"
+    stage: build
+    script:
+        - echo "OK"
 
 system_test:
-  stage: test
-  variables:
-    FLAP_DIR: $CI_PROJECT_DIR
-    FLAP_DATA: /var/lib/flap
-  script:
-    - ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
-    - apk add certbot gettext miniupnpc bash openssl util-linux
-    - manager help
-    - manager test tls setup
+    stage: test
+    variables:
+        FLAP_DIR: $CI_PROJECT_DIR
+        FLAP_DATA: /var/lib/flap
+    script:
+        - ln -s $FLAP_DIR/system/cli/manager.sh /bin/manager
+        - apk add certbot gettext miniupnpc bash openssl util-linux
+        - manager help
+        - manager test tls setup
 
 integration_test:
-  stage: test
-  script:
-    - echo "OK"
+    stage: test
+    script:
+        - echo "OK"
 
+install_test:
+    stage: test
+    image: docker:stable
+    services: ["docker:dind"]
+    script:
+        - >
+            docker run \
+                -it \
+                --rm \
+                --volume ~/.ssh:/root/.ssh \
+                --volume $FLAP_DIR/system/scripts:/scripts \
+                --volume $FLAP_DIR:$FLAP_DIR \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --env CI=$CI \
+                --env FLAP_DIR=$FLAP_DIR \
+                ubuntu \
+                /scripts/install_flap.sh
