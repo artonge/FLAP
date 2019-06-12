@@ -39,7 +39,7 @@ fi
 
 ################################################################################
 echo "INSTALLING DOCKER-COMPOSE"
-apt install -y python3-pip libffi-dev libss-dev
+apt install -y python3-pip libffi-dev libssl-dev
 pip3 install setuptools wheel docker-compose
 
 ################################################################################
