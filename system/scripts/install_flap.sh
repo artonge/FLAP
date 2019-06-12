@@ -37,9 +37,6 @@ then
     systemctl enable docker
 fi
 
-# Check that everything is working properly
-docker run hello-world
-
 ################################################################################
 echo "INSTALLING DOCKER-COMPOSE"
 apt install -y python3-pip libffi-dev
@@ -52,30 +49,9 @@ echo "alias dprune='docker container prune -f && docker volume prune -f && docke
 source /root/.bashrc
 
 ################################################################################
-echo "EXPOSING LOCAL DOMAIN NAME FOR GUI SETUP (flap.local)"
-# Prevent setting hostname in CI env.
-if [ "$CI" != "" ]
-then
-    hostname flap
-fi
-apt install -y avahi-daemon
-
-################################################################################
-echo "INSTALLING FLAP"
-# Install dependencies
-apt install -y git gettext certbot miniupnpc unattended-upgrades
-
-# Prevent key fingerprint cheking during git clone
-mkdir -p ~/.ssh/
-echo "|1|qWGcIFxLWr0h9SzQkmBcgT5IbAE=|d+v+RHzFM2if/RxyEoULgVbpfaI= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
-|1|2SQ3Snv+OKzpk7W07KYHfOUO7oc=|Cy0/SFy7JqLx8l3fBZ8ZGCXANEg= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
-" > ~/.ssh/known_hosts
-
-# Fetch git repository
-git clone --recursive https://gitlab.com/flap-box/flap.git /opt/flap
-
-################################################################################
 echo "ENABLING AUTO UPDATE"
+apt install -y unattended-upgrades
+
 echo "
 Unattended-Upgrade::Allowed-Origins {
         "${distro_id}:${distro_codename}";
@@ -98,43 +74,43 @@ APT::Periodic::Unattended-Upgrade '1';
 " > /etc/apt/apt.conf.d/20auto-upgrades
 
 ################################################################################
-echo "SETTING UP FLAP"
+echo "SETTING UP ENV VARS"
 # Allow to override FLAP_DIR.
 # Usefull in docker-in-docker env where we can't bind volumes from the current container but from the host.
-echo "export FLAP_DIR="${FLAP_DIR:-/opt/flap}"" >> /etc/environment
+echo "export FLAP_DIR=/opt/flap" >> /etc/environment
 echo "export FLAP_DATA=/flap/system" >> /etc/environment
 source /etc/environment
 ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
-mkdir -p /var/log/flap
 
-# Execute configuration actions with the manager.
-manager setup cron
-# Prevent openning ports in CI env.
-if [ "$CI" != "" ]
-then
-    manager ports open 80
-    manager ports open 443
-fi
-manager config generate
-manager tls generate flap.local local
+################################################################################
+echo "INSTALLING FLAP"
+# Install dependencies
+apt install -y git gettext certbot miniupnpc avahi-daemon bsdmainutils
 
+# Prevent key fingerprint cheking during git clone
+mkdir -p ~/.ssh/
+echo "|1|qWGcIFxLWr0h9SzQkmBcgT5IbAE=|d+v+RHzFM2if/RxyEoULgVbpfaI= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
+|1|2SQ3Snv+OKzpk7W07KYHfOUO7oc=|Cy0/SFy7JqLx8l3fBZ8ZGCXANEg= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
+" > ~/.ssh/known_hosts
+
+# Fetch git repository
+git clone --recursive https://gitlab.com/flap-box/flap.git $FLAP_DIR
+
+################################################################################
+echo "SETTING UP FLAP"
 # Create data directory for each services
 for service in $(ls -d $FLAP_DIR/*/)
 do
     mkdir -p /flap/$(basename $service)
 done
 
-cd $FLAP_DIR
+# Create log folder
+mkdir -p /var/log/flap
 
-# Prevent starting containers
-if [ "$CI" != "" ]
-then
-    # Start all services
-    docker-compose up -d
-
-    # Run post setup scripts for each services
-    manager hooks post_install
-fi
+# Execute configuration actions with the manager.
+manager setup cron
+manager config generate
+manager tls generate flap.local local
 
 ################################################################################
 echo "DONE"

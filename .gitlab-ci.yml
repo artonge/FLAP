@@ -1,11 +1,12 @@
 include:
     # Auto devop
     - template: Auto-DevOps.gitlab-ci.yml
+    # Image build script
+    - project: flap-box/flap
+      file: build_image.yml
 
-build:
-    stage: build
-    script:
-        - echo "OK"
+variables:
+    VERSION_SCRIPT: cat ./system/scripts/migrations/base_migration.txt
 
 system_test:
     stage: test
@@ -23,7 +24,7 @@ integration_test:
     script:
         - echo "OK"
 
-install_test:
+run_test:
     stage: test
     image: docker:stable
     services: ["docker:dind"]
@@ -31,12 +32,8 @@ install_test:
         - >
             docker run \
                 -it \
-                --rm \
-                --volume ~/.ssh:/root/.ssh \
-                --volume $FLAP_DIR/system/scripts:/scripts \
-                --volume $FLAP_DIR:$FLAP_DIR \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
-                --env CI=$CI \
-                --env FLAP_DIR=$FLAP_DIR \
-                ubuntu \
-                /scripts/install_flap.sh
+                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
+                --env FLAP_DIR=$CI_PROJECT_DIR \
+                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
+                $FLAP_DIR/system/scripts/start_flap.sh
