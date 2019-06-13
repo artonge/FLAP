@@ -64,12 +64,12 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.5.8
+        image: registry.gitlab.com/flap-box/core:0.5.9
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
         volumes:
-            - /flap/system/data:/var/lib/flap/system # [hd] <-> [core] Data
+            - /flap/system/data:/var/lib/flap # [hd] <-> [core] Data
         networks:
             stores-net:
             apps-net:
@@ -83,6 +83,7 @@ services:
         depends_on: [postgres, redis, ldap]
         volumes:
             - /flap/nextcloud/data:/data # [nextcloud] <-> [hd] Data
+            - /flap/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config
             - nextcloudStaticFiles:/var/www/html # [nextcloud] -> [nginx] Static files needed by nginx
             - ./nextcloud/scripts/generate_config.sh:/generate_config.sh # [emmc] <-> [nextcloud] Script to generate config.php
         networks:
