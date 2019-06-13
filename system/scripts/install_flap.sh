@@ -45,7 +45,7 @@ pip3 install setuptools wheel docker-compose
 ################################################################################
 echo "CREATING ALIASES"
 echo "alias dc='docker-compose'" >> /root/.bashrc
-echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bashrc
+echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -af'" >> /root/.bashrc
 source /root/.bashrc
 
 ################################################################################
@@ -78,7 +78,7 @@ echo "SETTING UP ENV VARS"
 # Allow to override FLAP_DIR.
 # Usefull in docker-in-docker env where we can't bind volumes from the current container but from the host.
 echo "export FLAP_DIR=/opt/flap" >> /etc/environment
-echo "export FLAP_DATA=/flap/system" >> /etc/environment
+echo "export FLAP_DATA=/flap" >> /etc/environment
 source /etc/environment
 ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
 
