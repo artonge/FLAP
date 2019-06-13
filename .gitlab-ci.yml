@@ -15,7 +15,6 @@ system_test:
     script:
         - >
             docker run \
-                -it \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
                 --env FLAP_DIR=$CI_PROJECT_DIR \
@@ -34,7 +33,6 @@ run_test:
     script:
         - >
             docker run \
-                -it \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
                 --env FLAP_DIR=$CI_PROJECT_DIR \
