@@ -7,6 +7,11 @@ echo "STARTING FLAP"
 # Go to FLAP_DIR for docker-compose
 cd $FLAP_DIR
 
+# Execute configuration actions with the manager.
+manager setup cron
+manager config generate
+manager tls generate flap.local local
+
 # Prevent network operations during CI.
 if [ "$CI" != "" ]
 then

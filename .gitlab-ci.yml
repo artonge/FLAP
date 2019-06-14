@@ -15,9 +15,22 @@ system_test:
     script:
         - >
             docker run \
-                --volume /var/run/docker.sock:/var/run/docker.sock \
-                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
-                --env FLAP_DIR=$CI_PROJECT_DIR \
+                --rm \ # Delete container when it exit
+                --volume /var/run/docker.sock:/var/run/docker.sock \ # So we can use docker
+                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \ # Get around dind limitations when binding volumes
+                --env FLAP_DIR=$CI_PROJECT_DIR \ # Set en var
+                --volume /flap:/flap \ # Save wathever operation is done
+                --env FLAP_DATA=/flap \ # Set en var
+                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
+                $CI_PROJECT_DIR/system/scripts/start_flap.sh
+
+            docker run \
+                --rm \ # Delete container when it exit
+                --volume /var/run/docker.sock:/var/run/docker.sock \ # So we can use docker
+                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \ # Get around dind limitations when binding volumes
+                --env FLAP_DIR=$CI_PROJECT_DIR \ # Set en var
+                --volume /flap:/flap \ # Save wathever operation is done
+                --env FLAP_DATA=/flap \ # Set en var
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
                 manager test setup tls
 
@@ -25,16 +38,3 @@ integration_test:
     stage: test
     script:
         - echo "OK"
-
-run_test:
-    stage: test
-    image: docker:stable
-    services: ["docker:dind"]
-    script:
-        - >
-            docker run \
-                --volume /var/run/docker.sock:/var/run/docker.sock \
-                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
-                --env FLAP_DIR=$CI_PROJECT_DIR \
-                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
-                $FLAP_DIR/system/scripts/start_flap.sh

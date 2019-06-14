@@ -75,8 +75,6 @@ APT::Periodic::Unattended-Upgrade '1';
 
 ################################################################################
 echo "SETTING UP ENV VARS"
-# Allow to override FLAP_DIR.
-# Usefull in docker-in-docker env where we can't bind volumes from the current container but from the host.
 echo "export FLAP_DIR=/opt/flap" >> /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
 source /etc/environment
@@ -106,11 +104,6 @@ done
 
 # Create log folder
 mkdir -p /var/log/flap
-
-# Execute configuration actions with the manager.
-manager setup cron
-manager config generate
-manager tls generate flap.local local
 
 ################################################################################
 echo "DONE"
