@@ -17,11 +17,11 @@ system_test:
     image: docker:stable
     services: ["docker:dind"]
     script:
+        # Delete container when it exit
+        # Bind docker.sock so we can get around dind limitations when binding volumes and use docker
+        # Set env var for FLAP_DIR to map with the host filesystem
+        # Bind $FLAP_DATA to save wathever operation is done
         - >
-            # Delete container when it exit
-            # Bind docker.sock so we can get around dind limitations when binding volumes and use docker
-            # Set env var for FLAP_DIR to map with the host filesystem
-            # Bind $FLAP_DATA to save wathever operation is done
             docker run \
                 --rm \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
