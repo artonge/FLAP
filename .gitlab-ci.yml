@@ -8,6 +8,10 @@ include:
 variables:
     VERSION_SCRIPT: cat ./system/scripts/migrations/base_migration.txt
 
+.build_docker:
+    script:
+        - echo ok
+
 system_test:
     stage: test
     image: docker:stable
@@ -23,7 +27,7 @@ system_test:
                 --env FLAP_DATA=/flap \ # Set en var
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
                 $CI_PROJECT_DIR/system/scripts/start_flap.sh
-
+        - >
             docker run \
                 --rm \ # Delete container when it exit
                 --volume /var/run/docker.sock:/var/run/docker.sock \ # So we can use docker
