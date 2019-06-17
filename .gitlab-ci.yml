@@ -18,23 +18,27 @@ system_test:
     services: ["docker:dind"]
     script:
         - >
+            # Delete container when it exit
+            # Bind docker.sock so we can get around dind limitations when binding volumes and use docker
+            # Set env var for FLAP_DIR to map with the host filesystem
+            # Bind $FLAP_DATA to save wathever operation is done
             docker run \
-                --rm \ # Delete container when it exit
-                --volume /var/run/docker.sock:/var/run/docker.sock \ # So we can use docker
-                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \ # Get around dind limitations when binding volumes
-                --env FLAP_DIR=$CI_PROJECT_DIR \ # Set en var
-                --volume /flap:/flap \ # Save wathever operation is done
-                --env FLAP_DATA=/flap \ # Set en var
+                --rm \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
+                --env FLAP_DIR=$CI_PROJECT_DIR \
+                --volume /flap:/flap \
+                --env FLAP_DATA=/flap \
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
                 $CI_PROJECT_DIR/system/scripts/start_flap.sh
         - >
             docker run \
-                --rm \ # Delete container when it exit
-                --volume /var/run/docker.sock:/var/run/docker.sock \ # So we can use docker
-                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \ # Get around dind limitations when binding volumes
-                --env FLAP_DIR=$CI_PROJECT_DIR \ # Set en var
-                --volume /flap:/flap \ # Save wathever operation is done
-                --env FLAP_DATA=/flap \ # Set en var
+                --rm \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
+                --env FLAP_DIR=$CI_PROJECT_DIR \
+                --volume /flap:/flap \
+                --env FLAP_DATA=/flap \
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
                 manager test setup tls
 
