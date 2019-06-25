@@ -9,10 +9,6 @@ variables:
     VERSION_SCRIPT: cat ./system/scripts/migrations/base_migration.txt
     GIT_SUBMODULE_STRATEGY: recursive
 
-.build_docker:
-    script:
-        - echo ok
-
 system_test:
     stage: test
     image: docker:stable
