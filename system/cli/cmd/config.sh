@@ -17,15 +17,9 @@ readPwd() {
     cat $1
 }
 
-# Create default domainInfo.txt if it is missing
-if [ ! -f $FLAP_DATA/system/data/domainInfo.txt ]
-then
-    mkdir -p $FLAP_DATA/system/data
-    echo "flap.localhost localhost _" > $FLAP_DATA/system/data/domainInfo.txt
-fi
-
-DOMAIN_INFO=$(cat $FLAP_DATA/system/data/domainInfo.txt)
-export DOMAIN_NAME=$(echo $DOMAIN_INFO | cut -d ' ' -f1)
+export DOMAIN_NAME=$(manager tls primary)
+export DOMAIN_NAMES=$(sudo -E manager tls list | grep OK | cut -d ' ' -f1 | paste -sd " " -)
+export ALL_DOMAIN_NAMES=$(sudo -E manager tls list_all | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 
 # Read passwords from files
 export ADMIN_PWD=$(readPwd $FLAP_DATA/system/data/adminPwd.txt)
@@ -47,11 +41,13 @@ case $CMD in
 
             echo $dir/$name.$ext
 
-            envsubst '${DOMAIN_NAME} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
+            envsubst '${DOMAIN_NAME} ${DOMAIN_NAMES} ${ALL_DOMAIN_NAMES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
         done
        ;;
     show)
-        echo "DOMAIN_INFO=$DOMAIN_INFO"
+        echo "DOMAIN_NAME=$DOMAIN_NAME"
+        echo "DOMAIN_NAMES=$DOMAIN_NAMES"
+        echo "ALL_DOMAIN_NAMES=$ALL_DOMAIN_NAMES"
         echo "ADMIN_PWD=$ADMIN_PWD"
         echo "SOGO_DB_PWD=$SOGO_DB_PWD"
         echo "NEXTCLOUD_DB_PWD=$NEXTCLOUD_DB_PWD"

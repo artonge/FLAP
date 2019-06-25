@@ -75,3 +75,4 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] better manager cli
 -   [x] generalized template generation
 -   [ ] move nginx conf in {service}/config ?
+-   [ ] move docker-compose conf in {service}/docker-compose.yml ?

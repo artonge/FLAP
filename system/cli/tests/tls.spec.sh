@@ -8,9 +8,105 @@ EXIT=0
     echo "      - Generating TLS certificates"
 
     # Save FLAP data
-    mkdir -p $FLAP_DATA/system/data
-    mv $FLAP_DATA/system/data $FLAP_DATA/system/data.bak
-    mkdir -p $FLAP_DATA/system/data
+    mkdir -p $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains $FLAP_DATA/system/data/domains.bak
+    mkdir -p $FLAP_DATA/system/data/domains
+
+    # Save user's certificates
+    mkdir -p /etc/ssl/nginx
+    mv /etc/ssl/nginx /etc/ssl/nginx.bak
+    mkdir -p /etc/ssl/nginx
+
+    # Mock certbot and cp
+    mkdir -p /tmp/bin
+    ln -sf $(which echo) /tmp/bin/certbot
+    ln -sf $(which echo) /tmp/bin/cp
+    export PATH=/tmp/bin:$PATH
+
+    # Setting test domain name n°1
+    mkdir $FLAP_DATA/system/data/domains/test1.duckdns.org
+    echo "WAITING" > $FLAP_DATA/system/data/domains/test1.duckdns.org/status.txt
+    echo "duckdns" > $FLAP_DATA/system/data/domains/test1.duckdns.org/provider.txt
+
+    # Setting test domain name n°2
+    mkdir $FLAP_DATA/system/data/domains/test2.duckdns.org
+    echo "WAITING" > $FLAP_DATA/system/data/domains/test2.duckdns.org/status.txt
+    echo "duckdns" > $FLAP_DATA/system/data/domains/test2.duckdns.org/provider.txt
+
+    {
+        # Generate certificates
+        manager tls handle_request &> /dev/null &&
+        # Ensure request status is OK
+        [ "$(cat $FLAP_DATA/system/data/domains/test1.duckdns.org/status.txt)" == "OK" ] &&
+        [ "$(cat $FLAP_DATA/system/data/domains/test2.duckdns.org/status.txt)" == "WAITING" ]
+    } || {
+        echo "     ❌ 'manager tls handle_request' failed to generate certificates."
+        EXIT=1
+    }
+
+    # Unsave .../domains
+    rm -rf $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
+
+    # Unsave user's certificates
+    rm -rf /etc/ssl/nginx
+    mv /etc/ssl/nginx.bak /etc/ssl/nginx
+
+    rm -rf /tmp/bin
+}
+
+{
+    echo "      - Error during TLS certificates generation"
+
+    # Save FLAP data
+    mkdir -p $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains $FLAP_DATA/system/data/domains.bak
+    mkdir -p $FLAP_DATA/system/data/domains
+
+    # Save user's certificates
+    mkdir -p /etc/ssl/nginx
+    mv /etc/ssl/nginx /etc/ssl/nginx.bak
+    mkdir -p /etc/ssl/nginx
+
+    # Setting test domain name n°1
+    mkdir $FLAP_DATA/system/data/domains/test1.duckdns.org
+    echo "WAITING" > $FLAP_DATA/system/data/domains/test1.duckdns.org/status.txt
+    echo "duckdns" > $FLAP_DATA/system/data/domains/test1.duckdns.org/provider.txt
+
+    # Setting test domain name n°2
+    mkdir $FLAP_DATA/system/data/domains/test2.duckdns.org
+    echo "WAITING" > $FLAP_DATA/system/data/domains/test2.duckdns.org/status.txt
+    echo "duckdns" > $FLAP_DATA/system/data/domains/test2.duckdns.org/provider.txt
+
+    {
+        # Generate certificates
+        ( manager tls handle_request &> /dev/null || true ) &&
+        # Ensure request status is ERROR
+        [ "$(cat $FLAP_DATA/system/data/domains/test1.duckdns.org/status.txt)" == "ERROR" ] &&
+        [ "$(cat $FLAP_DATA/system/data/domains/test2.duckdns.org/status.txt)" == "WAITING" ]
+    } || {
+        echo "     ❌ 'manager tls handle_request' failed to set error."
+        EXIT=1
+    }
+
+    # Unsave .../domains
+    rm -rf $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
+
+    # Unsave user's certificates
+    rm -rf /etc/ssl/nginx
+    mv /etc/ssl/nginx.bak /etc/ssl/nginx
+
+    rm -rf /tmp/bin
+}
+
+{
+    echo "      - Generating TLS certificates of a HANDLED domain"
+
+    # Save FLAP data
+    mkdir -p $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains $FLAP_DATA/system/data/domains.bak
+    mkdir -p $FLAP_DATA/system/data/domains
 
     # Save user's certificates
     mkdir -p /etc/ssl/nginx
@@ -18,28 +114,21 @@ EXIT=0
     mkdir -p /etc/ssl/nginx
 
     # Setting test domain name
-    echo "flap.localhost localhost _" > $FLAP_DATA/system/data/domainRequest.txt
-    echo "WAITING" > $FLAP_DATA/system/data/domainRequestStatus.txt
+    mkdir $FLAP_DATA/system/data/domains/test.duckdns
+    echo "HANDLED" > $FLAP_DATA/system/data/domains/test.duckdns/status.txt
+    echo "duckdns" > $FLAP_DATA/system/data/domains/test.duckdns/provider.txt
 
     {
-        # Generate certificates
-        manager handle_domain_request &> /dev/null &&
-        # Ensure certificates are created
-        ls /etc/ssl/nginx | grep "privkey.key" > /dev/null &&
-        ls /etc/ssl/nginx | grep "fullchain.crt" > /dev/null &&
-        ls /etc/ssl/nginx | grep "chain.pem" > /dev/null &&
-        # Ensure request is same as domain
-        [ "$(cat $FLAP_DATA/system/data/domainInfo.txt)" == "$(cat $FLAP_DATA/system/data/domainRequest.txt)" ] &&
-        # Ensure request status is OK
-        [ "$(cat $FLAP_DATA/system/data/domainRequestStatus.txt)" == "OK" ]
+        manager tls handle_request &> /dev/null &&
+        [ "$(cat $FLAP_DATA/system/data/domains/test.duckdns/status.txt)" == "HANDLED" ]
     } || {
-        echo "     ❌ 'manager handle_domain_request' failed to generate certificates."
+        echo "     ❌ 'manager tls handle_request' failed to generate certificates for a HANDLED domain."
         EXIT=1
     }
 
-    # Unsave domainInfo.txt
-    rm -rf $FLAP_DATA/system/data
-    mv $FLAP_DATA/system/data.bak $FLAP_DATA/system/data
+    # Unsave .../domains
+    rm -rf $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
 
     # Unsave user's certificates
     rm -rf /etc/ssl/nginx
@@ -50,30 +139,31 @@ EXIT=0
     echo "      - Generating TLS certificates of a OK domain"
 
     # Save FLAP data
-    mkdir -p $FLAP_DATA/system/data
-    mv $FLAP_DATA/system/data $FLAP_DATA/system/data.bak
-    mkdir $FLAP_DATA/system/data
+    mkdir -p $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains $FLAP_DATA/system/data/domains.bak
+    mkdir -p $FLAP_DATA/system/data/domains
 
     # Save user's certificates
     mkdir -p /etc/ssl/nginx
     mv /etc/ssl/nginx /etc/ssl/nginx.bak
-    mkdir /etc/ssl/nginx
+    mkdir -p /etc/ssl/nginx
 
-    # Setting OK domain name
-    echo "flap.localhost localhost _" > $FLAP_DATA/system/data/domainRequest.txt
-    echo "OK" > $FLAP_DATA/system/data/domainRequestStatus.txt
+    # Setting test domain name
+    mkdir $FLAP_DATA/system/data/domains/test.duckdns
+    echo "OK" > $FLAP_DATA/system/data/domains/test.duckdns/status.txt
+    echo "duckdns" > $FLAP_DATA/system/data/domains/test.duckdns/provider.txt
 
     {
-        manager handle_domain_request &> /dev/null &&
-        [ "$(cat $FLAP_DATA/system/data/domainRequestStatus.txt)" == "OK" ]
+        manager tls handle_request &> /dev/null &&
+        [ "$(cat $FLAP_DATA/system/data/domains/test.duckdns/status.txt)" == "OK" ]
     } || {
-        echo "     ❌ 'manager handle_domain_request' failed to generate certificates for a OK domain."
+        echo "     ❌ 'manager tls handle_request' failed to generate certificates for a OK domain."
         EXIT=1
     }
 
-    # Unsave domainInfo.txt
-    rm -rf $FLAP_DATA/system/data
-    mv $FLAP_DATA/system/data.bak $FLAP_DATA/system/data
+    # Unsave .../domains
+    rm -rf $FLAP_DATA/system/data/domains
+    mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
 
     # Unsave user's certificates
     rm -rf /etc/ssl/nginx

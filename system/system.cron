@@ -3,4 +3,4 @@
 @hourly      manager healthcheck >> /var/log/flap/healthcheck.log
 
 # Every minutes
-* * * * *    manager handle_domain_request >> /var/log/flap/tls.log
+* * * * *    manager tls handle_request >> /var/log/flap/tls.log

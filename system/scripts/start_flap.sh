@@ -9,8 +9,8 @@ cd $FLAP_DIR
 
 # Execute configuration actions with the manager.
 manager setup cron
+manager tls generate_local
 manager config generate
-manager tls generate flap.local local
 
 # Prevent network operations during CI.
 if [ "$CI" != "" ]

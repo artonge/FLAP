@@ -3,17 +3,6 @@
 set -e
 
 CMD=$1
-ARGS=($@)
-ARGS=${ARGS[@]:0}
-
-TEST_TO_RUN=$(ls $FLAP_DIR/system/cli/tests)
-
-EXIT=0
-
-if [ "$#" != "0" ]
-then
-    TEST_TO_RUN=$ARGS
-fi
 
 case $CMD in
     summarize)
@@ -24,6 +13,14 @@ case $CMD in
         ;;
     ""|*)
         echo "Running tests..."
+        EXIT=0
+
+        TEST_TO_RUN=$(ls $FLAP_DIR/system/cli/tests)
+
+        if [ "$#" != "0" ]
+        then
+            TEST_TO_RUN=($@)
+        fi
 
         for test in $TEST_TO_RUN
         do
