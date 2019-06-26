@@ -61,7 +61,7 @@ Commands:
             echo "Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
             $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh
             CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
-            echo $CURRENT_MIGRATION >> $FLAP_DATA/$SERVICE/current_migration.txt
+            echo $CURRENT_MIGRATION > $FLAP_DATA/$SERVICE/current_migration.txt
         done
         ;;
 esac

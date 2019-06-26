@@ -101,7 +101,7 @@ echo "SETTING UP FLAP"
 for service in $(ls -d $FLAP_DIR/*/)
 do
     mkdir -p $FLAP_DATA/$(basename $service)
-    cat $FLAP_DIR/$(basename $service)/scripts/migrations/base_migration.txt >> $FLAP_DATA/$(basename $service)/current_migration.txt
+    cat $FLAP_DIR/$(basename $service)/scripts/migrations/base_migration.txt > $FLAP_DATA/$(basename $service)/current_migration.txt
 done
 
 # Create log folder
