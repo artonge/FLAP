@@ -39,6 +39,7 @@ case $CMD in
             echo "local" > $FLAP_DATA/system/data/domains/flap.localhost/provider.txt
         fi
 
+        mkdir -p /etc/ssl/nginx
         if [ ! -f /etc/ssl/nginx/privkey.key ]
         then
             # Generate certificates for flap.localhost
