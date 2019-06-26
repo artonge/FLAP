@@ -97,9 +97,11 @@ git clone --recursive https://gitlab.com/flap-box/flap.git $FLAP_DIR
 ################################################################################
 echo "SETTING UP FLAP"
 # Create data directory for each services
+# And set current_migration.txt
 for service in $(ls -d $FLAP_DIR/*/)
 do
-    mkdir -p /flap/$(basename $service)
+    mkdir -p $FLAP_DATA/$(basename $service)
+    cat $FLAP_DIR/$(basename $service)/scripts/migrations/base_migration.txt >> $FLAP_DATA/$(basename $service)/current_migration.txt
 done
 
 # Create log folder

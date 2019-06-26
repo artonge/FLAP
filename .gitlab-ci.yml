@@ -14,10 +14,10 @@ system_test:
     image: docker:stable
     services: ["docker:dind"]
     script:
-        # Delete container when it exit
-        # Bind docker.sock so we can get around dind limitations when binding volumes and use docker
-        # Set env var for FLAP_DIR to map with the host filesystem
-        # Bind $FLAP_DATA to save wathever operation is done
+        # --rm - Delete container when it exit
+        # --volume - Bind docker.sock so we can get around dind limitations when binding volumes and use docker
+        # --env - Set env var for FLAP_DIR to map with the host filesystem
+        # --volume - Bind $FLAP_DATA to save wathever operation is done
         - >
             docker run \
                 --rm \
@@ -38,6 +38,50 @@ system_test:
                 --env FLAP_DATA=/flap \
                 $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
                 manager test setup tls
+
+update_test:
+    stage: test
+    image: docker:stable
+    services: ["docker:dind"]
+    script:
+        # Copy old FLAP_DIR into /tmp/flap_dir
+        - >
+            docker run \
+                --detach \
+                --name flap_old \
+                $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
+                registry.gitlab.com/flap-box/flap:amd64-0 \
+                /bin/sh -c "while true; do sleep 1000; done"
+        - docker cp flap_old:/opt/flap /tmp/flap_dir
+        - docker kill flap_old
+        - docker rm flap_old
+
+        # Start old FLAP install with /tmp/flap_dir
+        # Store data into /tmp/flap_data
+        - >
+            docker run \
+                --rm \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --volume /tmp/flap_dir:/tmp/flap_dir \
+                --volume /tmp/flap_data:/tmp/flap_data \
+                --env FLAP_DIR=/tmp/flap_dir \
+                --env FLAP_DATA=/tmp/flap_data \
+                $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
+                registry.gitlab.com/flap-box/flap:amd64-0  \
+                /tmp/flap_dir/system/scripts/start_flap.sh
+
+        # Start update procedure with old flap
+        - >
+            docker run \
+                --rm \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --volume /tmp/flap_dir:/tmp/flap_dir \
+                --volume /tmp/flap_data:/tmp/flap_data \
+                --env FLAP_DIR=/tmp/flap_dir \
+                --env FLAP_DATA=/tmp/flap_data \
+                $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
+                registry.gitlab.com/flap-box/flap:amd64-0  \
+                manager update
 
 integration_test:
     stage: test

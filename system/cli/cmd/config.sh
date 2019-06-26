@@ -18,8 +18,8 @@ readPwd() {
 }
 
 export DOMAIN_NAME=$(manager tls primary)
-export DOMAIN_NAMES=$(sudo -E manager tls list | grep OK | cut -d ' ' -f1 | paste -sd " " -)
-export ALL_DOMAIN_NAMES=$(sudo -E manager tls list_all | grep OK | cut -d ' ' -f1 | paste -sd " " -)
+export DOMAIN_NAMES=$(manager tls list | grep OK | cut -d ' ' -f1 | paste -sd " " -)
+export ALL_DOMAIN_NAMES=$(manager tls list_all | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 
 # Read passwords from files
 export ADMIN_PWD=$(readPwd $FLAP_DATA/system/data/adminPwd.txt)

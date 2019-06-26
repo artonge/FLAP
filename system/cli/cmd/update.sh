@@ -52,14 +52,8 @@ Commands:
         SERVICE=$CMD
 
         # Get the base migration for the service.
-        # The base migration is the migration that would be in place after a fresh install.
-        CURRENT_MIGRATION=$(cat /flap/$SERVICE/scripts/migrations/base_migration.txt)
-        # Get the current migration for the service.
-        # The current migration is the last migration that was run if it is not a fresh install.
-        if [ -f /flap/$SERVICE/current_migration.txt ]
-        then
-            CURRENT_MIGRATION=$(cat /flap/$SERVICE/current_migration.txt)
-        fi
+        # The current migration is the last migration that was run.
+        CURRENT_MIGRATION=$(cat $FLAP_DATA/$SERVICE/current_migration.txt)
 
         # Run migration scripts as long as there is some to run.
         while [ -f $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh ]
@@ -67,7 +61,7 @@ Commands:
             echo "Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
             $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh
             CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
-            echo $CURRENT_MIGRATION > /flap/$SERVICE/current_migration.txt
+            echo $CURRENT_MIGRATION >> $FLAP_DATA/$SERVICE/current_migration.txt
         done
         ;;
 esac
