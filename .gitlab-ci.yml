@@ -26,7 +26,7 @@ system_test:
                 --env FLAP_DIR=$CI_PROJECT_DIR \
                 --volume /flap:/flap \
                 --env FLAP_DATA=/flap \
-                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
+                $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
                 $CI_PROJECT_DIR/system/scripts/start_flap.sh
         - >
             docker run \
@@ -36,7 +36,7 @@ system_test:
                 --env FLAP_DIR=$CI_PROJECT_DIR \
                 --volume /flap:/flap \
                 --env FLAP_DATA=/flap \
-                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
+                $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
                 manager test setup tls
 
 integration_test:
