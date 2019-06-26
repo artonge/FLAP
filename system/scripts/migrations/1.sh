@@ -3,8 +3,8 @@
 set -e
 
 # Update env var
-echo "FLAP_DIR=/opt/flap" > /etc/environment
-echo "FLAP_DATA=/flap/system/data" >> /etc/environment
+echo "export FLAP_DIR=/opt/flap" > /etc/environment
+echo "export FLAP_DATA=/flap" >> /etc/environment
 source /etc/environment
 
 # Move flap directory

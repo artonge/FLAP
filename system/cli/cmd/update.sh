@@ -18,11 +18,15 @@ Commands:
         ;;
     "")
         echo "FETCHING REPO"
+        cd $FLAP_DIR
+
+        # Prevent crontabs from running
+        crontab -r
+
         git pull
         git submodule update
 
         # Fetch new docker images
-        cd $FLAP_DIR
         docker-compose pull
 
         echo "RUNNING SYSTEM MIGRATIONS"

@@ -64,6 +64,7 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] Install nextcloud
 -   [x] Merge front
 -   [ ] RAID support
+-   [ ] pip updates
 
 ---
 
