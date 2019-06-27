@@ -94,7 +94,7 @@ case $CMD in
         }
 
         # If primary domain is a local domain, set the handled domain as primary.
-        primary_is_local=$(manager tls primary | grep local | cat)
+        primary_is_local=$(manager tls primary | grep -v local | cat)
         if [ "$primary_is_local" == "" ]
         then
             echo "Set $DOMAIN as primary."
