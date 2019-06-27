@@ -92,6 +92,14 @@ case $CMD in
             docker-compose up -d
             exit 1
         }
+
+        # If primary domain is a local domain, set the handled domain as primary.
+        primary_is_local=$(manager tls primary | grep local | cat)
+        if [ "$primary_is_local" == "" ]
+        then
+            echo "Set $DOMAIN as primary."
+            echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt
+        fi
         ;;
     list)
         for domain in $(ls $FLAP_DATA/system/data/domains)
@@ -114,6 +122,7 @@ case $CMD in
         done
         ;;
     primary)
+        # If no primary is set, set the first one.
         if [ ! -f $FLAP_DATA/system/data/primary_domain.txt ] || [ "$(cat $FLAP_DATA/system/data/primary_domain.txt)" == "" ]
         then
             domains=($(manager tls list))
