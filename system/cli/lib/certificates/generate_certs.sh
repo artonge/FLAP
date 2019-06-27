@@ -14,10 +14,15 @@ do
     domains+="--domain sogo.$domain "
 done
 
+# Generate certificates for all domains using certbot.
+# https://certbot.eff.org/docs/using.html#standalone
+# --expand - allow to merge new domains to the existing ones in the same certificates.
+# --force-renewal - prevent certbot return 1 when the certificates is already generated.
 certbot certonly \
     --non-interactive \
     --standalone \
     --expand \
+    --force-renewal \
     --agree-tos \
     --email louis@chmn.me \
     $domains
