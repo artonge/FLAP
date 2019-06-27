@@ -11,8 +11,8 @@ variables:
 
 # Prevent build for arm because we don't need it
 build:armv7:
-    script:
-        - echo ok
+    tags: []
+    script: ["echo ok"]
 
 system_test:
     stage: test
