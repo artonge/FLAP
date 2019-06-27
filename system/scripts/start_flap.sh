@@ -12,8 +12,11 @@ manager setup cron
 manager tls generate_local
 manager config generate
 
+# Start all services
+docker-compose up -d
+
 # Prevent network operations during CI.
-if [ "$CI" != "" ]
+if [ -z $CI ]
 then
     # Set local domain name to flap.local
     hostname flap
@@ -23,8 +26,7 @@ then
     manager ports open 443
 fi
 
-# Start all services
-docker-compose up -d
-
 # Run post setup scripts for each services
 manager hooks post_install
+
+touch /flap/system/data/installation_done.txt
