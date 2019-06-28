@@ -64,7 +64,7 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.6.5
+        image: registry.gitlab.com/flap-box/core:0.6.7
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]

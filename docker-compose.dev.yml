@@ -43,6 +43,8 @@ services:
             context: ./core
             dockerfile: ./Dockerfile
         ports: ["9000:8080", "9230:9229"]
+        environment:
+            LOG_LEVEL: silly
         volumes:
             - ./core/src:/core/src
             - ./core/tsconfig.json:/core/tsconfig.json
