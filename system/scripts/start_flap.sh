@@ -29,7 +29,7 @@ manager config generate
 docker-compose up -d
 
 # Prevent network operations during CI.
-if [ -z ${CI+x} ]
+if [ ! $CI ]
 then
     # Set local domain name to flap.local
     hostname flap
