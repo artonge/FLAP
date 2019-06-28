@@ -12,7 +12,7 @@
     -   [x] FLAP update
     -   [ ] Detect when restart is necessary on update
     -   [x] Individual services update
--   [ ] Handle multiple domain name
+-   [x] Handle multiple domain name
 -   [ ] Handle certificates renewal
 -   [x] Generate cron based on each services or install one cron that will execute services cron
 -   [ ] Which email to use during certs generation ?
