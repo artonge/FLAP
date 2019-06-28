@@ -21,7 +21,7 @@ Commands:
         cd $FLAP_DIR
 
         # Prevent crontabs from running
-        crontab -r
+        crontab -r || true
 
         git pull
         git submodule update
@@ -51,6 +51,9 @@ Commands:
         echo "RUNNING POST-UPDATE HOOKS"
         # Run post_update hooks for each services
         manager hooks post_update
+
+        # Clean docker objects
+        docker system prune -af
         ;;
     *)
         SERVICE=$CMD

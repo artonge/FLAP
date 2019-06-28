@@ -45,7 +45,7 @@ pip3 install setuptools wheel docker-compose
 ################################################################################
 echo "CREATING ALIASES"
 echo "alias dc='docker-compose'" >> /root/.bashrc
-echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -af'" >> /root/.bashrc
+echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bashrc
 source /root/.bashrc
 
 ################################################################################
