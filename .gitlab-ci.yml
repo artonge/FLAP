@@ -14,6 +14,9 @@ build:armv7:
     tags: []
     script: ["echo ok"]
 
+create_manifest:
+    script: ["echo ok"]
+
 system_test:
     stage: test
     image: docker:stable
@@ -72,7 +75,7 @@ update_test:
                 --volume /tmp/flap_dir:/tmp/flap_dir \
                 --volume /tmp/flap_data:/tmp/flap_data \
                 --env FLAP_DIR=/tmp/flap_dir \
-                --env FLAP_DATA=/tmp/flap_data \*
+                --env FLAP_DATA=/tmp/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
                 /tmp/flap_dir/system/scripts/start_flap.sh
 
