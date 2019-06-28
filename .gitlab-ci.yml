@@ -57,7 +57,6 @@ update_test:
                 --detach \
                 --name flap_old \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
-                registry.gitlab.com/flap-box/flap:amd64-0 \
                 /bin/sh -c "while true; do sleep 1000; done"
         - docker cp flap_old:/opt/flap /tmp/flap_dir
         - docker kill flap_old
@@ -67,14 +66,14 @@ update_test:
         # Store data into /tmp/flap_data
         - >
             docker run \
+                --env CI=true
                 --rm \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume /tmp/flap_dir:/tmp/flap_dir \
                 --volume /tmp/flap_data:/tmp/flap_data \
                 --env FLAP_DIR=/tmp/flap_dir \
-                --env FLAP_DATA=/tmp/flap_data \
+                --env FLAP_DATA=/tmp/flap_data \*
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
-                registry.gitlab.com/flap-box/flap:amd64-0  \
                 /tmp/flap_dir/system/scripts/start_flap.sh
 
         # Start update procedure with old flap
@@ -87,7 +86,6 @@ update_test:
                 --env FLAP_DIR=/tmp/flap_dir \
                 --env FLAP_DATA=/tmp/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
-                registry.gitlab.com/flap-box/flap:amd64-0  \
                 manager update
 
 integration_test:
