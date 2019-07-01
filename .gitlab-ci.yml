@@ -69,7 +69,7 @@ update_test:
         # Store data into /tmp/flap_data
         - >
             docker run \
-                --env CI=true
+                --env CI=true \
                 --rm \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume /tmp/flap_dir:/tmp/flap_dir \
