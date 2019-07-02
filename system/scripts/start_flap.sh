@@ -4,6 +4,11 @@ set -e
 
 ################################################################################
 echo "SETTING UP DIRECTORIES"
+mkdir -p /flap
+mkdir -p /flap_backup
+
+manager disks setup
+
 # Create data directory for each services
 # And set current_migration.txt
 for service in $(ls -d $FLAP_DIR/*/)

@@ -5,6 +5,7 @@
 #### Todos
 
 -   [ ] Send mail on user creation
+-   [ ] Send mail when there is an error with disks
 -   [x] Prevent ssh key validation during git clone
 -   [ ] Test base install script
 -   [ ] Better update process

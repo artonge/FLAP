@@ -44,14 +44,13 @@ function remove_start
 
 function install_flap()
 {
-
-
-
+	curl https://gitlab.com/flap-box/flap/raw/master/system/scripts/install_flap.sh | bash
 }
 
 do_resize
 remove_start
 fix_ssh
 systemctl enable systemd-timesyncd.service
+install_flap
 sync
 reboot
