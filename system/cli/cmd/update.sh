@@ -29,6 +29,12 @@ Commands:
         # Fetch new docker images
         docker-compose pull
 
+        echo "STOPING CONTAINERS"
+        docker-compose down
+
+        echo "RUNNING DISKS SETUP"
+        manager disks setup
+
         echo "RUNNING SYSTEM MIGRATIONS"
         # We need to update the system in first because the other services migrations
         # might need the results of the system migration.
@@ -45,15 +51,14 @@ Commands:
         manager config generate
 
         echo "RESTARTING CONTAINERS"
-        docker-compose down
-        docker-compose up -d
+        docker-compose up --detach
 
         echo "RUNNING POST-UPDATE HOOKS"
         # Run post_update hooks for each services
         manager hooks post_update
 
         # Clean docker objects
-        docker system prune -af
+        docker system prune --all --force
         ;;
     *)
         SERVICE=$CMD
