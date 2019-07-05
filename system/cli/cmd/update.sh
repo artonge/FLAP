@@ -33,7 +33,11 @@ Commands:
         docker-compose down
 
         echo "RUNNING DISKS SETUP"
-        manager disks setup
+        # Prevent some operations during CI.
+        if [ ! $CI ]
+        then
+            manager disks setup
+        fi
 
         echo "RUNNING SYSTEM MIGRATIONS"
         # We need to update the system in first because the other services migrations
