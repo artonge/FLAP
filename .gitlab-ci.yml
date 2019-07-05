@@ -88,6 +88,7 @@ update_test:
         # Start update procedure with old flap
         - >
             docker run \
+                --env CI=true \
                 --rm \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
