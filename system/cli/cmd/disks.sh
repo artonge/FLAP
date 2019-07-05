@@ -55,6 +55,7 @@ case $CMD in
         # If the main disk is not plugged, send a warning, stop FLAP and exit now.
         if [ "$(manager disks list | grep disk | grep sda | cat)" == "" ]
         then
+            echo "Shutting down as there is no main disk."
             # TODO: Send warning
             # Go to FLAP_DIR for docker-compose
             cd $FLAP_DIR
@@ -65,12 +66,16 @@ case $CMD in
         # If the main disk is not mounted, mount it.
         if [ "$(manager disks list | grep sda1 | grep '/flap' | cat)" == "" ]
         then
-            mount /etc/sda1 /flap
+            echo "Mounting main disk."
+            rm -rf /flap
+            mkdir -p /flap
+            mount /dev/sda1 /flap
         fi
 
         # If the main disk is not formated for FLAP, format it and try to restore the data from the backup.
         if [ ! -f /flap/is_flap.txt ]
         then
+            echo "Formating main disk."
             manager disks format sda
             manager backup restore
         fi
@@ -78,21 +83,26 @@ case $CMD in
 
         # BACKUP DISK
         # If the backup disk is not plugged, send a warning and exit now.
-        if [ "$(manager disks list | grep disk | grep sdb | cat)" != "" ]
+        if [ "$(manager disks list | grep disk | grep sdb | cat)" == "" ]
         then
+            echo "Warning there is no backup disk."
             # TODO: Send warning
             exit 1
         fi
 
         # If the backup disk is not mounted, mount it.
-        if [ "$(manager disks list | grep part | grep sdb1 | grep '/flap_backup' | cat)" != "" ]
+        if [ "$(manager disks list | grep sdb1 | grep '/flap_backup' | cat)" == "" ]
         then
-            mount /etc/sdb /flap_backup
+            echo "Mounting backup disk."
+            rm -rf /flap_backup
+            mkdir -p /flap_backup
+            mount /dev/sdb /flap_backup
         fi
 
         # If the backup disk is not formated for FLAP, format it and create a backup.
         if [ ! -f /flap_backup/is_flap.txt ]
         then
+            echo "Formating backup disk."
             manager disks format sdb
             manager backup
         fi
