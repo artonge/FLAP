@@ -7,7 +7,18 @@ echo "SETTING UP DIRECTORIES"
 mkdir -p /flap
 mkdir -p /flap_backup
 
-manager disks setup
+# Prevent some operations during CI.
+if [ ! $CI ]
+then
+    manager disks setup
+
+    # Set local domain name to flap.local
+    hostname flap
+
+    # Create port mappings
+    manager ports open 80
+    manager ports open 443
+fi
 
 # Create data directory for each services
 # And set current_migration.txt
@@ -33,19 +44,8 @@ manager config generate
 # Start all services
 docker-compose up -d
 
-# Prevent network operations during CI.
-if [ ! $CI ]
-then
-    # Set local domain name to flap.local
-    hostname flap
-
-    # Create port mappings
-    manager ports open 80
-    manager ports open 443
-fi
-
 # Run post setup scripts for each services
 manager hooks post_install
 
 # Mark installation as done
-touch /flap/system/data/installation_done.txt
+touch $FLAP_DATA/system/data/installation_done.txt

@@ -17,11 +17,14 @@ build:armv7:
 create_manifest:
     script: ["echo ok"]
 
+# Run start_flap and CLI unit tests
 system_test:
     stage: test
     image: docker:stable
     services: ["docker:dind"]
     script:
+        # We need to put flap_data into $CI_BUILDS_DIR so subcontainers can "see" it.
+        # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
         # --rm - Delete container when it exit
         # --volume - Bind docker.sock so we can get around dind limitations when binding volumes and use docker
         # --env - Set env var for FLAP_DIR to map with the host filesystem
@@ -33,8 +36,8 @@ system_test:
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
                 --env FLAP_DIR=$CI_PROJECT_DIR \
-                --volume /flap:/flap \
-                --env FLAP_DATA=/flap \
+                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
                 $CI_PROJECT_DIR/system/scripts/start_flap.sh
         - >
@@ -44,50 +47,53 @@ system_test:
                 --volume /var/run/docker.sock:/var/run/docker.sock \
                 --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
                 --env FLAP_DIR=$CI_PROJECT_DIR \
-                --volume /flap:/flap \
-                --env FLAP_DATA=/flap \
+                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
                 manager test setup tls
 
+# Run start_flap then the update procedure
 update_test:
     stage: test
     image: docker:stable
     services: ["docker:dind"]
     script:
-        # Copy old FLAP_DIR into /tmp/flap_dir
+        # Copy old FLAP_DIR into $CI_BUILDS_DIR/flap_dir.
+        # We need to put it in $CI_BUILDS_DIR so subcontainers can "see" it.
+        # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
         - >
             docker run \
                 --detach \
                 --name flap_old \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
                 /bin/sh -c "while true; do sleep 1000; done"
-        - docker cp flap_old:/opt/flap /tmp/flap_dir
+        - docker cp flap_old:/opt/flap $CI_BUILDS_DIR/flap_dir
         - docker kill flap_old
         - docker rm flap_old
 
-        # Start old FLAP install with /tmp/flap_dir
-        # Store data into /tmp/flap_data
+        # Start old FLAP install with $CI_BUILDS_DIR/flap_dir
+        # Store data into $CI_BUILDS_DIR/flap_data
         - >
             docker run \
                 --env CI=true \
                 --rm \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
-                --volume /tmp/flap_dir:/tmp/flap_dir \
-                --volume /tmp/flap_data:/tmp/flap_data \
-                --env FLAP_DIR=/tmp/flap_dir \
-                --env FLAP_DATA=/tmp/flap_data \
+                --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
+                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
+                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
-                /tmp/flap_dir/system/scripts/start_flap.sh
+                $CI_BUILDS_DIR/flap_dir/system/scripts/start_flap.sh
 
         # Start update procedure with old flap
         - >
             docker run \
                 --rm \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
-                --volume /tmp/flap_dir:/tmp/flap_dir \
-                --volume /tmp/flap_data:/tmp/flap_data \
-                --env FLAP_DIR=/tmp/flap_dir \
-                --env FLAP_DATA=/tmp/flap_data \
+                --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
+                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
+                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
                 manager update
 
