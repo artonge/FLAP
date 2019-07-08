@@ -68,7 +68,7 @@ case $CMD in
         done
 
         # If there was no WAITING domain, exit
-        if [ "$DOMAIN" == "" ]
+        if [ -z "${DOMAIN:-}" ]
         then
             exit 0
         fi

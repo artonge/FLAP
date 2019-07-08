@@ -119,7 +119,7 @@ EXIT=0
     echo "duckdns" > $FLAP_DATA/system/data/domains/test.duckdns/provider.txt
 
     {
-        manager tls handle_request &> /dev/null &&
+        manager tls handle_request  &&
         [ "$(cat $FLAP_DATA/system/data/domains/test.duckdns/status.txt)" == "HANDLED" ]
     } || {
         echo "     ❌ 'manager tls handle_request' failed to generate certificates for a HANDLED domain."
@@ -154,7 +154,7 @@ EXIT=0
     echo "duckdns" > $FLAP_DATA/system/data/domains/test.duckdns/provider.txt
 
     {
-        manager tls handle_request &> /dev/null &&
+        manager tls handle_request  &&
         [ "$(cat $FLAP_DATA/system/data/domains/test.duckdns/status.txt)" == "OK" ]
     } || {
         echo "     ❌ 'manager tls handle_request' failed to generate certificates for a OK domain."
