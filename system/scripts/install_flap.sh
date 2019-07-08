@@ -54,19 +54,19 @@ set -u
 echo "ENABLING AUTO UPDATE"
 apt install -y unattended-upgrades
 
-echo "
+echo '
 Unattended-Upgrade::Allowed-Origins {
-        \"${distro_id}:${distro_codename}\";
-        \"${distro_id}:${distro_codename}-security\";
-        \"${distro_id}:${distro_codename}-updates\";
+        "${distro_id}:${distro_codename}";
+        "${distro_id}:${distro_codename}-security";
+        "${distro_id}:${distro_codename}-updates";
 };
-Unattended-Upgrade::Mail 'louis@chmn.me';
-Unattended-Upgrade::MinimalSteps 'true';
-Unattended-Upgrade::Remove-Unused-Kernel-Packages 'true';
-Unattended-Upgrade::Remove-Unused-Dependencies 'true';
-Unattended-Upgrade::Automatic-Reboot 'true';
-Unattended-Upgrade::Automatic-Reboot-Time '03:00';
-" > /etc/apt/apt.conf.d/50
+Unattended-Upgrade::Mail "louis@chmn.me";
+Unattended-Upgrade::MinimalSteps "true";
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "03:00";
+' > /etc/apt/apt.conf.d/50
 
 echo "
 APT::Periodic::Update-Package-Lists '1';
