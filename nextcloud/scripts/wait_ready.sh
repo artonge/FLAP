@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 until docker-compose logs nextcloud | grep "NOTICE: ready to handle connections"
 do

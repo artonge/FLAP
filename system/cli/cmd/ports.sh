@@ -1,9 +1,9 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
-PORT=$2
+CMD=${1:-}
+PORT=${2:-}
 DESCRIPTION="Port forwarding for the FLAP box."
 
 case $CMD in

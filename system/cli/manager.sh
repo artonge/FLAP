@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+CMD=${1:-}
 ARGS=($@)
 ARGS=${ARGS[@]:1}
 

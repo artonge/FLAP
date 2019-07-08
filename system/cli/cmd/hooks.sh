@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+CMD=${1:-}
 
 case $CMD in
     post_install|post_update|post_domain_update|health_check)

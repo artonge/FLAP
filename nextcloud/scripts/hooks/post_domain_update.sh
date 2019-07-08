@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 # Wait for nextcloud to be ready
 $FLAP_DIR/nextcloud/scripts/wait_ready.sh

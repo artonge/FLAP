@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+C£D=$1
 
 case $CMD in
     summarize)

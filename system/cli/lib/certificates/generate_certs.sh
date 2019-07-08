@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 # Usage: ./generate_certs.sh <domain name> [<domain name>, ...]
 

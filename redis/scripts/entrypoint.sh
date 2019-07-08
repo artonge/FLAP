@@ -4,7 +4,7 @@
 # slapd is absurdly high. See https://github.com/docker/docker/issues/8231
 ulimit -n 8192
 
-set -e
+set -eu
 
 if [[ ! -d /etc/ldap/slapd.d ]]; then
 	echo "Config initialisation..."

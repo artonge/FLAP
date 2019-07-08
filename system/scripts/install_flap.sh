@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 # Prevent interactions during apt install
 export DEBIAN_FRONTEND=noninteractive

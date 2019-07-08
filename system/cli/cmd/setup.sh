@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+CMD=${1:-}
 DIR=$(dirname "$(readlink -f "$0")")
 
 case $CMD in

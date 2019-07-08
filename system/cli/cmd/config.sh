@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+CMD=${1:-}
 
 # Read password from file.
 # If the file does not exists, create it and generate a password.

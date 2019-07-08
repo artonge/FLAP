@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 # First migration to make CI work
 echo OK

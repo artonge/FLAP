@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -eux
 
 # CHANGE DATA DIRECTORY
 php occ config:system:set datadirectory --value '/data'

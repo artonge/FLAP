@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 read -p "The clean.sh script will remove all off the user data. Continue ? [Y/N]" answer
 

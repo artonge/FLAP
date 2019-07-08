@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+CMD=${1:-}
 
 # Go to FLAP_DIR for docker-compose
 cd $FLAP_DIR

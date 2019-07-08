@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -eu
 
-CMD=$1
+CMD=${1:-}
 
 # Make sure the domains folder exists
 mkdir -p $FLAP_DATA/system/data/domains
