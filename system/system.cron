@@ -1,8 +1,6 @@
 @midnight    manager update >> /var/log/flap/update.log
 
 @hourly      manager healthcheck >> /var/log/flap/healthcheck.log
-@hourly      manager backup >> /var/log/flap/backup.log
 
 # Every minutes
 * * * * *    manager tls handle_request >> /var/log/flap/tls.log
-* * * * *    manager disks setup >> /var/log/flap/disks.log

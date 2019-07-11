@@ -85,7 +85,13 @@ ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
 ################################################################################
 echo "INSTALLING FLAP"
 # Install dependencies
-apt install -y git gettext certbot miniupnpc avahi-daemon bsdmainutils
+# git: fetch updates
+# certbot: generate TLS certificates
+# miniupnpc: open ports
+# avahi-daemon: set the mDNS name
+# bsdmainutls: ???
+# mdam: Setup RAID
+apt install -y git gettext certbot miniupnpc avahi-daemon bsdmainutils mdadm
 
 # Prevent key fingerprint cheking during git clone
 mkdir -p ~/.ssh/

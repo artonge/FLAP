@@ -63,7 +63,7 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] Auto generate SSL certs
 -   [x] Install nextcloud
 -   [x] Merge front
--   [ ] RAID support
+-   [x] RAID support
 -   [ ] pip updates
 
 ---
@@ -77,3 +77,6 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] generalized template generation
 -   [ ] move nginx conf in {service}/config ?
 -   [ ] move docker-compose conf in {service}/docker-compose.yml ?
+-   [ ] Handle cloud backups ? Or distributed backup accross FLAP boxes ?
+-   [ ] Handle instant revival with cloud solution ?
+-   [ ] Send mail to FLAP when one disk is out to send another one ?
