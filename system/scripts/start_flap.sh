@@ -8,7 +8,7 @@ mkdir -p /flap
 mkdir -p /flap_backup
 
 # Prevent some operations during CI.
-if [ ! $CI ]
+if [ ! ${CI:-false} ]
 then
     manager disks setup
 
