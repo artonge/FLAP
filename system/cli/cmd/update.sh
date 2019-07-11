@@ -34,7 +34,7 @@ Commands:
 
         echo "RUNNING DISKS SETUP"
         # Prevent some operations during CI.
-        if [ ! $CI ]
+        if [ ! ${CI:-false} ]
         then
             manager disks setup
         fi
