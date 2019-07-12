@@ -39,7 +39,7 @@ system_test:
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
-                $CI_PROJECT_DIR/system/scripts/start_flap.sh
+                manager start
         - >
             docker run \
                 --env CI=true \
@@ -83,7 +83,7 @@ update_test:
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
-                $CI_BUILDS_DIR/flap_dir/system/scripts/start_flap.sh
+                manager start
 
         # Start update procedure with old flap
         - >
