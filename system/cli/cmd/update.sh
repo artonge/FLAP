@@ -18,11 +18,11 @@ Commands:
         ;;
     "")
         echo "FETCHING REPO"
-        cd $FLAP_DIR
-
         # Prevent crontabs from running
         crontab -r || true
 
+        # Go to FLAP_DIR for git cmds
+        cd $FLAP_DIR
         git pull
         git submodule update
 
@@ -30,7 +30,7 @@ Commands:
         docker-compose pull
 
         echo "STOPING CONTAINERS"
-        docker-compose down
+        manager stop
 
         echo "RUNNING SYSTEM MIGRATIONS"
         # We need to update the system in first because the other services migrations
@@ -43,12 +43,11 @@ Commands:
             manager update $(basename $service)
         done
 
-        echo "GENERATING CONFIGURATION"
+        echo "UPDATE CRON"
         manager setup cron
-        manager config generate
 
         echo "RESTARTING CONTAINERS"
-        docker-compose up --detach
+        manager start
 
         echo "RUNNING POST-UPDATE HOOKS"
         # Run post_update hooks for each services

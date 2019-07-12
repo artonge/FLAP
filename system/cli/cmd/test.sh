@@ -38,7 +38,6 @@ case $CMD in
                 echo ""
             fi
         done
+        exit $EXIT
         ;;
 esac
-
-exit $EXIT

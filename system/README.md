@@ -21,4 +21,4 @@
 -   [ ] Ask for static IP to the gateway
 -   [ ] Handle WANPPPConnection (orange livebox pro)
 -   [x] Detect when a reboot is required after an update
--   [ ] Create a docker-compose proxy in manager cli to avoid path errors
+-   [x] Create a docker-compose proxy in manager cli to avoid path errors

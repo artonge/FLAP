@@ -76,20 +76,16 @@ case $CMD in
         # Give time to the server to pick up the status change.
         sleep 2
 
-        # Go to FLAP_DIR to use docker-compose
-        cd $FLAP_DIR
-
         {
-            docker-compose down &&
+            manager stop &&
             manager tls generate &> $FLAP_DATA/system/data/domains/$domain/logs.txt &&
             echo "OK" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt &&
-            manager config generate &&
-            docker-compose up -d &&
+            manager start &&
             manager hooks post_domain_update
         } || { # Catch error
             echo "Failed to handle domain request."
             echo "ERROR" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt
-            docker-compose up -d
+            manager start
             exit 1
         }
 

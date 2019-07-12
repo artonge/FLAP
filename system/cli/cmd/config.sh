@@ -30,6 +30,7 @@ export NEXTCLOUD_DB_PWD=$(readPwd $FLAP_DATA/system/data/nextcloudDbPwd.txt)
 
 case $CMD in
     generate)
+        # Go to FLAP_DIR to have access to template files.
         cd $FLAP_DIR
 
         # Transform each files matching *.template.*
