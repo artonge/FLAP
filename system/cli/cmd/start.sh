@@ -2,7 +2,7 @@
 
 set -eu
 
-CMD=$1
+CMD=${1:-}
 
 case $CMD in
     summarize)
