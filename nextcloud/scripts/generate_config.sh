@@ -12,9 +12,10 @@ php occ app:enable user_ldap || true
 php occ background:cron
 
 # SET TRUSTED DOMAINS
-for i in "${!DOMAIN_NAMES[@]}"
+DOMAINS=($DOMAIN_NAMES)
+for i in "${!DOMAINS[@]}"
 do
-    php occ config:system:set trusted_domains $i --value files.${DOMAIN_NAMES[$i]}
+    php occ config:system:set trusted_domains $i --value files.${DOMAINS[$i]}
 done
 
 # DISABLE FUNCTIONNALITIES
