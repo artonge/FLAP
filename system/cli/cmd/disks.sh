@@ -21,7 +21,7 @@ case $CMD in
 
             # Make the RAID array mount on boot.
             update-initramfs -u
-            echo '/dev/md0 /mnt/md0 ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
+            echo '/dev/md0 /flap ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
         fi
         ;;
     summarize)
