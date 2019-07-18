@@ -28,7 +28,7 @@ case $CMD in
         # Start all services.
         docker-compose up --detach
 
-        if [ -f $FLAP_DATA/system/data/installation_done.txt ]
+        if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
         then
             # Run post setup scripts for each services.
             manager hooks post_install
