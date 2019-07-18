@@ -5,15 +5,6 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
-    summarize)
-        echo "start | | Start flap services."
-    ;;
-    help|*)
-        echo "
-$(manager start summarize)
-Commands:
-    '' | | Start." | column -t -s "|"
-    ;;
     "")
         # Run post setup scripts for each services.
         if [ -f $FLAP_DATA/system/data/installation_done.txt ]
@@ -45,5 +36,14 @@ Commands:
             # Mark installation as done.
             touch $FLAP_DATA/system/data/installation_done.txt
         fi
+    ;;
+    summarize)
+        echo "start | | Start flap services."
+    ;;
+    help|*)
+        echo "
+$(manager start summarize)
+Commands:
+    '' | | Start." | column -t -s "|"
     ;;
 esac
