@@ -64,12 +64,13 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.6.9
+        image: registry.gitlab.com/flap-box/core:0.7.1
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
         volumes:
             - /flap/system/data:/var/lib/flap # [hd] <-> [core] Data
+            - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys # [eMMC] <-> [core] SSH authorized keys
         networks:
             stores-net:
             apps-net:
