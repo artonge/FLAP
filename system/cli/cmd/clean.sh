@@ -15,6 +15,9 @@ case $CMD in
 
         echo "Cleaning..."
 
+        # Remove crontab
+        crontab -r
+
         # Remove files listed in gitignore
         git clean -Xdf
         git submodule foreach "git clean -Xdf"
@@ -22,8 +25,8 @@ case $CMD in
         # Remove FLAP data files
         rm -rf /flap/*
 
-        # Remove docker volumes
-        dprune
+        # Remove docker objects
+        docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f
         ;;
     summarize)
         echo "clean | | Clean data on the FLAP box."

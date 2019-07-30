@@ -7,7 +7,7 @@ CMD=${1:-}
 case $CMD in
     post_install|post_update|post_domain_update|health_check)
         echo "Running $CMD hook:"
-        for service in $(ls -d $FLAP_DIR/*/)
+        for service in $(ls --directory $FLAP_DIR/*/)
         do
             if [ -f $service/scripts/hooks/$CMD.sh ]
             then

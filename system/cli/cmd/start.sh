@@ -13,8 +13,6 @@ case $CMD in
             manager setup raid
             manager setup network
             manager setup cron
-            # Execute configuration actions with the manager.
-            manager tls generate_local
         fi
 
         echo "STARTING FLAP"

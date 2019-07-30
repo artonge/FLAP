@@ -28,7 +28,7 @@ case $CMD in
 
         # Create data directory for each services
         # And set current_migration.txt
-        for service in $(ls -d $FLAP_DIR/*/)
+        for service in $(ls --directory $FLAP_DIR/*/)
         do
             mkdir -p $FLAP_DATA/$(basename $service)
             cat $FLAP_DIR/$(basename $service)/scripts/migrations/base_migration.txt > $FLAP_DATA/$(basename $service)/current_migration.txt
@@ -42,7 +42,7 @@ case $CMD in
         cron_string+="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"$'\n\n'
 
         # Build cron_string from services cron files
-        for service in $(ls -d $FLAP_DIR/*/)
+        for service in $(ls --directory $FLAP_DIR/*/)
         do
             if [ -f $service/$(basename $service).cron ]
             then

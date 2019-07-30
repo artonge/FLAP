@@ -30,33 +30,40 @@ case $CMD in
             exit 1
         }
         ;;
-    generate_local)
+    generate_localhost)
         # Create default flap.localhost domain if it is missing
-        if [ ! -f $FLAP_DATA/system/data/domains/flap.localhost ]
-        then
-            mkdir -p $FLAP_DATA/system/data/domains/flap.localhost
-            echo "OK" > $FLAP_DATA/system/data/domains/flap.localhost/status.txt
-            echo "local" > $FLAP_DATA/system/data/domains/flap.localhost/provider.txt
-        fi
+        mkdir -p $FLAP_DATA/system/data/domains/flap.localhost
+        echo "OK" > $FLAP_DATA/system/data/domains/flap.localhost/status.txt
+        echo "local" > $FLAP_DATA/system/data/domains/flap.localhost/provider.txt
+        touch $FLAP_DATA/system/data/domains/flap.localhost/authentication.txt
+        touch $FLAP_DATA/system/data/domains/flap.localhost/logs.txt
 
-        mkdir -p /etc/ssl/nginx
-        if [ ! -f /etc/ssl/nginx/privkey.key ]
-        then
-            # Generate certificates for flap.localhost
-            # When there is no configurated domain names, this certificates can be used by nginx.
-            openssl req -x509 -out /etc/ssl/nginx/fullchain.crt -keyout /etc/ssl/nginx/privkey.key \
-                -newkey rsa:2048 -nodes -sha256 \
-                -subj "/CN=flapen.localhost" -extensions EXT \
-                -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
-            cp /etc/ssl/nginx/fullchain.crt /etc/ssl/nginx/chain.pem
-        fi
+        # Generate certificates for flap.localhost.
+        mkdir -p /etc/letsencrypt/live/flap.localhost
+        openssl req \
+            -x509 \
+            -out /etc/letsencrypt/live/flap.localhost/fullchain.pem \
+            -keyout /etc/letsencrypt/live/flap.localhost/privkey.pem \
+            -newkey rsa:2048 -nodes -sha256 \
+            -subj "/CN=flap.localhost" -extensions EXT \
+            -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+        cp /etc/letsencrypt/live/flap.localhost/fullchain.pem /etc/letsencrypt/live/flap.localhost/chain.pem
         ;;
     handle_request)
         # Handle primary domain update
-        if [ -f $FLAP_DATA/system/data/primary_domain_update.txt ]
+        if [ -f $FLAP_DATA/system/data/domain_update_primary.txt ]
         then
             manager hooks post_domain_update
-            rm $FLAP_DATA/system/data/primary_domain_update.txt
+            manager restart
+            rm $FLAP_DATA/system/data/domain_update_primary.txt
+        fi
+
+        # Handle domain deletion request
+        if [ -f $FLAP_DATA/system/data/domain_update_delete.txt ]
+        then
+            manager hooks post_domain_update
+            manager restart
+            rm $FLAP_DATA/system/data/domain_update_delete.txt
         fi
 
         # Handle new domains
@@ -136,7 +143,7 @@ case $CMD in
         cat $FLAP_DATA/system/data/primary_domain.txt
         ;;
     summarize)
-        echo "tls | [generate, handle_request, list, list_all, primary, generate_local, help] | Manage TLS certificates for Nginx."
+        echo "tls | [generate, handle_request, list, list_all, primary, generate_localhost, help] | Manage TLS certificates for Nginx."
         ;;
     help|*)
         echo "
@@ -147,6 +154,6 @@ Commands:
     list | | Show the full list of domain names and their information.
     list_all | | Same as 'list' but with subdomains.
     primary | | Show the primary domain name.
-    generate_local | | Create flap.localhost domain and generate certificates if none exists." | column -t -s "|"
+    generate_localhost | | Create flap.localhost domain and generate certificates if none exists." | column -t -s "|"
         ;;
 esac

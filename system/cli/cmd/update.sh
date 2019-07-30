@@ -38,7 +38,7 @@ Commands:
         manager update system
 
         echo "RUNNING SERVICES MIGRATIONS"
-        for service in $(ls -d $FLAP_DIR/*/)
+        for service in $(ls --directory $FLAP_DIR/*/)
         do
             manager update $(basename $service)
         done

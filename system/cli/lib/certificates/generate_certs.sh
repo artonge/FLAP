@@ -26,9 +26,3 @@ certbot certonly \
     --agree-tos \
     --email louis@chmn.me \
     $domains
-
-# Copy certificates to the nginx folder.
-mkdir -p /etc/ssl/nginx
-cp /etc/letsencrypt/live/$1/fullchain.pem /etc/ssl/nginx/fullchain.crt
-cp /etc/letsencrypt/live/$1/privkey.pem /etc/ssl/nginx/privkey.key
-cp /etc/letsencrypt/live/$1/chain.pem /etc/ssl/nginx/chain.pem

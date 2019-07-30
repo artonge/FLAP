@@ -1,4 +1,3 @@
-config/nginx.conf
-config/conf.d/flap.conf
-config/conf.d/sogo.conf
-config/conf.d/nextcloud.conf
+config/conf.d/domains.conf
+config/conf.d/**/*.conf
+!config/conf.d/flap.local.conf
