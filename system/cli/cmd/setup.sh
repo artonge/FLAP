@@ -46,7 +46,7 @@ case $CMD in
         do
             if [ -f $service/$(basename $service).cron ]
             then
-                cron_string+="############## $service ##############"$'\n'
+                cron_string+="############## $(basename $service) ##############"$'\n'
                 cron_string+="$(cat $service/$(basename $service).cron)"$'\n\n'
             fi
         done
