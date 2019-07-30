@@ -52,6 +52,14 @@ case $CMD in
         fi
         ;;
     handle_request)
+        # Handle primary domain update
+        if [ -f $FLAP_DATA/system/data/primary_domain_update.txt ]
+        then
+            manager hooks post_domain_update
+            rm $FLAP_DATA/system/data/primary_domain_update.txt
+        fi
+
+        # Handle new domains
         mkdir -p $FLAP_DATA/system/data/domains
 
         # Select a WAITING domain
