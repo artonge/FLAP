@@ -50,22 +50,51 @@ case $CMD in
         cp /etc/letsencrypt/live/flap.localhost/fullchain.pem /etc/letsencrypt/live/flap.localhost/chain.pem
         ;;
     handle_request)
-        # Handle primary domain update
-        if [ -f $FLAP_DATA/system/data/domain_update_primary.txt ]
+        manager tls handle_request_primary_update
+        manager tls handle_request_domain_deletion
+        manager tls handle_request_primary_creation
+        ;;
+    handle_request_primary_update)
+        # Exit if their is no request
+        if [ ! -f $FLAP_DATA/system/data/domain_update_primary.txt ]
         then
-            manager hooks post_domain_update
-            manager restart
-            rm $FLAP_DATA/system/data/domain_update_primary.txt
+            exit 0
+        fi
+
+        # Exit if the request is HANDLED
+        status=$(cat $FLAP_DATA/system/data/domain_update_primary.txt)
+        if [ "$status" == "HANDLED" ]
+        then
+            exit 0
+        fi
+
+        # Handle primary domain update
+        echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt
+        manager hooks post_domain_update
+        manager restart
+        rm $FLAP_DATA/system/data/domain_update_primary.txt
+        ;;
+    handle_request_domain_deletion)
+        # Exit if their is no request
+        if [ ! -f $FLAP_DATA/system/data/domain_update_delete.txt ]
+        then
+            exit 0
+        fi
+
+        # Exit if the request is HANDLED
+        status=$(cat $FLAP_DATA/system/data/domain_update_delete.txt)
+        if [ "$status" == "HANDLED" ]
+        then
+            exit 0
         fi
 
         # Handle domain deletion request
-        if [ -f $FLAP_DATA/system/data/domain_update_delete.txt ]
-        then
-            manager hooks post_domain_update
-            manager restart
-            rm $FLAP_DATA/system/data/domain_update_delete.txt
-        fi
-
+        echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt
+        manager hooks post_domain_update
+        manager restart
+        rm $FLAP_DATA/system/data/domain_update_delete.txt
+        ;;
+    handle_request_domain_creation)
         # Handle new domains
         mkdir -p $FLAP_DATA/system/data/domains
 
