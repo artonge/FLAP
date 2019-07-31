@@ -13,9 +13,9 @@ EXIT=0
     mkdir -p $FLAP_DATA/system/data/domains
 
     # Save user's certificates
-    mkdir -p /etc/ssl/nginx
-    mv /etc/ssl/nginx /etc/ssl/nginx.bak
-    mkdir -p /etc/ssl/nginx
+    mkdir -p /etc/letsencrypt/live
+    mv /etc/letsencrypt/live /etc/letsencrypt/live.bak
+    mkdir -p /etc/letsencrypt/live
 
     # Mock certbot and cp
     mkdir -p /tmp/bin
@@ -49,8 +49,8 @@ EXIT=0
     mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
 
     # Unsave user's certificates
-    rm -rf /etc/ssl/nginx
-    mv /etc/ssl/nginx.bak /etc/ssl/nginx
+    rm -rf /etc/letsencrypt/live
+    mv /etc/letsencrypt/live.bak /etc/letsencrypt/live
 
     rm -rf /tmp/bin
 }
@@ -64,9 +64,9 @@ EXIT=0
     mkdir -p $FLAP_DATA/system/data/domains
 
     # Save user's certificates
-    mkdir -p /etc/ssl/nginx
-    mv /etc/ssl/nginx /etc/ssl/nginx.bak
-    mkdir -p /etc/ssl/nginx
+    mkdir -p /etc/letsencrypt/live
+    mv /etc/letsencrypt/live /etc/letsencrypt/live.bak
+    mkdir -p /etc/letsencrypt/live
 
     # Setting test domain name n°1
     mkdir $FLAP_DATA/system/data/domains/test1.duckdns.org
@@ -94,8 +94,8 @@ EXIT=0
     mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
 
     # Unsave user's certificates
-    rm -rf /etc/ssl/nginx
-    mv /etc/ssl/nginx.bak /etc/ssl/nginx
+    rm -rf /etc/letsencrypt/live
+    mv /etc/letsencrypt/live.bak /etc/letsencrypt/live
 
     rm -rf /tmp/bin
 }
@@ -109,9 +109,9 @@ EXIT=0
     mkdir -p $FLAP_DATA/system/data/domains
 
     # Save user's certificates
-    mkdir -p /etc/ssl/nginx
-    mv /etc/ssl/nginx /etc/ssl/nginx.bak
-    mkdir -p /etc/ssl/nginx
+    mkdir -p /etc/letsencrypt/live
+    mv /etc/letsencrypt/live /etc/letsencrypt/live.bak
+    mkdir -p /etc/letsencrypt/live
 
     # Setting test domain name
     mkdir $FLAP_DATA/system/data/domains/test.duckdns
@@ -131,8 +131,8 @@ EXIT=0
     mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
 
     # Unsave user's certificates
-    rm -rf /etc/ssl/nginx
-    mv /etc/ssl/nginx.bak /etc/ssl/nginx
+    rm -rf /etc/letsencrypt/live
+    mv /etc/letsencrypt/live.bak /etc/letsencrypt/live
 }
 
 {
@@ -144,9 +144,9 @@ EXIT=0
     mkdir -p $FLAP_DATA/system/data/domains
 
     # Save user's certificates
-    mkdir -p /etc/ssl/nginx
-    mv /etc/ssl/nginx /etc/ssl/nginx.bak
-    mkdir -p /etc/ssl/nginx
+    mkdir -p /etc/letsencrypt/live
+    mv /etc/letsencrypt/live /etc/letsencrypt/live.bak
+    mkdir -p /etc/letsencrypt/live
 
     # Setting test domain name
     mkdir $FLAP_DATA/system/data/domains/test.duckdns
@@ -166,8 +166,8 @@ EXIT=0
     mv $FLAP_DATA/system/data/domains.bak $FLAP_DATA/system/data/domains
 
     # Unsave user's certificates
-    rm -rf /etc/ssl/nginx
-    mv /etc/ssl/nginx.bak /etc/ssl/nginx
+    rm -rf /etc/letsencrypt/live
+    mv /etc/letsencrypt/live.bak /etc/letsencrypt/live
 }
 
 exit $EXIT
