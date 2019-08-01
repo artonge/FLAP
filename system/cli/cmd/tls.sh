@@ -52,7 +52,7 @@ case $CMD in
     handle_request)
         manager tls handle_request_primary_update
         manager tls handle_request_domain_deletion
-        manager tls handle_request_primary_creation
+        manager tls handle_request_domain_creation
         ;;
     handle_request_primary_update)
         # Exit if their is no request
@@ -69,10 +69,17 @@ case $CMD in
         fi
 
         # Handle primary domain update
-        echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt
-        manager hooks post_domain_update
-        manager restart
-        rm $FLAP_DATA/system/data/domain_update_primary.txt
+        {
+            echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt &&
+            manager hooks post_domain_update &&
+            manager restart &&
+            rm $FLAP_DATA/system/data/domain_update_primary.txt
+        } || { # Catch error
+            echo "" > $FLAP_DATA/system/data/domain_update_primary.txt
+            exit 1
+        }
+
+
         ;;
     handle_request_domain_deletion)
         # Exit if their is no request
@@ -89,10 +96,16 @@ case $CMD in
         fi
 
         # Handle domain deletion request
-        echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt
-        manager hooks post_domain_update
-        manager restart
-        rm $FLAP_DATA/system/data/domain_update_delete.txt
+        {
+            echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt &&
+            manager hooks post_domain_update &&
+            manager restart &&
+            rm $FLAP_DATA/system/data/domain_update_delete.txt
+        } || { # Catch error
+            echo "" > $FLAP_DATA/system/data/domain_update_delete.txt
+            exit 1
+        }
+
         ;;
     handle_request_domain_creation)
         # Handle new domains
