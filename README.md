@@ -65,6 +65,7 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] Merge front
 -   [x] RAID support
 -   [ ] pip updates
+-   [ ] limit access to setted domains
 
 ---
 
@@ -75,7 +76,7 @@ For each services, you can look at their own README.md file to see what needs to
 -   [x] generate cert for each services or wildcard and root domain
 -   [x] better manager cli
 -   [x] generalized template generation
--   [ ] move nginx conf in {service}/config ?
+-   [x] move nginx conf in {service}/config ?
 -   [ ] move docker-compose conf in {service}/docker-compose.yml ?
 -   [ ] Handle cloud backups ? Or distributed backup accross FLAP boxes ?
 -   [ ] Handle instant revival with cloud solution ?
