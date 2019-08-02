@@ -1,16 +1,25 @@
-# FLAP
+# FLAP - host your data
 
 ---
 
-## Development
+## Contributing
 
-FLAP is a composition of services, `nginx`, `mariadb`, `sogo`, etc. They are orchestrated by docker compose.
+You can take a look at the tasks board [here](https://gitlab.com/groups/flap-box/-/boards).
+
+## Development setup
+
+FLAP is a composition of services, `nginx`, `postgresql`, `sogo`, etc. They are orchestrated by docker compose.
 
 #### Cloning
 
 `git clone --recursive git@gitlab.com:flap-box/flap.git`
 
 We need the `--recursive` flag so submodules are also cloned.
+
+#### Installing
+
+You can follow the `system/scripts/install_flap.sh` and the `system/cli/cmd/start.sh` scripts to now what needs to be installed and setup.
+Or just follow the following paragraphs.
 
 #### Installing dependencies
 
@@ -21,29 +30,37 @@ You need to install the following dependencies in order to run FLAP:
 
 I advise to alias the `docker-compose` command to `dc` for ease of use.
 
-#### Generating certificates
+#### Installing the manager CLI
 
-`nginx` will upgrade all connections to HTTPS so you need to generate some certificates on your local machine. Just run the following script:
+The `manager` CLI is a tool to manage a FLAP install. You can install it on your dev machine to ease some procedures.
 
-`system/scripts/generateCerts.sh`
+The following script will:
 
-This will generate certs for `flap.localhost` and some sub-domains. You don't need to edit you `/etc/hosts` file because `.localhost` will already redirect to you local machine.
+-   Expose `$FLAP_DIR` and `$FLAP_DATA` as global env variables. You can change them to your convenience.
+-   Expose the `manager` CLI tool.
 
-**Warning:** Your browser will show a warning, it is safe to ignore it.
+```shell
+echo "export FLAP_DIR=/opt/flap" > /etc/environment
+echo "export FLAP_DATA=/flap" >> /etc/environment
+source /etc/environment
+ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
+```
 
 #### Running services
 
-To start service you need to run the following command:
+To start all services you can run:
+
+`manager start`
+
+To start a single service you can run:
 
 `docker-compose up [<service name> ...]`
 
-Dependencies exist between services, which means, for example, that starting `sogo` will also start `mariadb`, `ldap` and `memcached`.
+Dependencies exist between services, which means, for example, that starting `sogo` will also start `postrgres`, `ldap` and `memcached`.
 
-If you don't specify some services, this will start all services.
+**Warning:** The `nginx` service will bind to the port 80 and 443 of you machine, make sure they are free and that you are allowed to run them.
 
-**Warning:** The `nginx` service will bind to the port 80 and 443 of you machine, make sure they are free.
-
-#### Enabling development mode
+#### Enabling development settings
 
 Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. To do that, you can copy the `docker-compose.env.yml` to `docker-compose.override.yml`.
 
@@ -54,30 +71,3 @@ This allow us to redefine services and to run them in a none production mode.
 -   Use local docker images. **Warning**, it means that they will be built, which can take some time.
 -   Expose all services to localhost so you can access them directly.
 -   Bind the `core` and `manager` directories into their containers and change the start command so you can have live reload when editing local source files.
-
-## Todos
-
-For each services, you can look at their own README.md file to see what needs to be done.
-
--   [x] Dynamic setup script with custom domain name
--   [x] Auto generate SSL certs
--   [x] Install nextcloud
--   [x] Merge front
--   [x] RAID support
--   [ ] pip updates
--   [ ] limit access to setted domains
-
----
-
--   [x] Automatic build of arm docker images (https://gitlab.com/ulm0/gitlab-runner)
--   [x] fix sogo wait for postgres in start.sh
--   [x] remove mariadb and sefaile from submodule
--   [x] fix error 500 in upnp
--   [x] generate cert for each services or wildcard and root domain
--   [x] better manager cli
--   [x] generalized template generation
--   [x] move nginx conf in {service}/config ?
--   [ ] move docker-compose conf in {service}/docker-compose.yml ?
--   [ ] Handle cloud backups ? Or distributed backup accross FLAP boxes ?
--   [ ] Handle instant revival with cloud solution ?
--   [ ] Send mail to FLAP when one disk is out to send another one ?

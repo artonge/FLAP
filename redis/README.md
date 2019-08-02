@@ -1,5 +1,3 @@
-#### Todos
+# Redis for FLAP
 
--   [ ] Fine tuning
--   [ ] App data isolation
--   [ ] App data isolation (memcached)
+---
