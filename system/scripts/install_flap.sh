@@ -66,14 +66,14 @@ Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
 Unattended-Upgrade::Automatic-Reboot "true";
 Unattended-Upgrade::Automatic-Reboot-Time "03:00";
-' > /etc/apt/apt.conf.d/50
+' > /etc/apt/apt.conf.d/50unattended-upgrades
 
-echo "
-APT::Periodic::Update-Package-Lists '1';
-APT::Periodic::Download-Upgradeable-Packages '1';
-APT::Periodic::AutocleanInterval '7';
-APT::Periodic::Unattended-Upgrade '1';
-" > /etc/apt/apt.conf.d/20auto-upgrades
+echo '
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+' > /etc/apt/apt.conf.d/20auto-upgrades
 
 ################################################################################
 echo "SETTING UP ENV VARS"
