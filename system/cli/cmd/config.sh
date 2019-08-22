@@ -53,6 +53,8 @@ case $CMD in
         done
        ;;
     generate_nginx)
+        mkdir -p $FLAP_DIR/nginx/config/conf.d
+
         # Clean old domains includes files
         echo "" > $FLAP_DIR/nginx/config/conf.d/domains.conf
 
