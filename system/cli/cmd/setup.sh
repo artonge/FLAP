@@ -8,7 +8,7 @@ DIR=$(dirname "$(readlink -f "$0")")
 case $CMD in
     network)
         # Prevent some operations during CI.
-        if [ ! ${CI:-false} ]
+        if [ "${CI:-false}" == "false" ]
         then
             # Set local domain name to flap.local
             hostname flap
@@ -18,10 +18,8 @@ case $CMD in
         fi
     ;;
     raid)
-        mkdir -p /flap
-
         # Prevent some operations during CI.
-        if [ ! ${CI:-false} ]
+        if [ "${CI:-false}" == "false" ]
         then
             manager disks setup
         fi
