@@ -62,9 +62,9 @@ Dependencies exist between services, which means, for example, that starting `so
 
 #### Enabling development settings
 
-Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. To do that, you can copy the `docker-compose.env.yml` to `docker-compose.override.yml`.
+Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. To do that, you can copy the `docker-compose.dev.yml` to `docker-compose.override.yml`.
 
-This allow us to redefine services and to run them in a none production mode.
+This allows to redefine services and to run them in a none production mode.
 
 `docker-compose.dev.yml` will do three things:
 
