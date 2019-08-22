@@ -10,8 +10,8 @@ case $CMD in
         then
             mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
             mkfs.ext4 -F /dev/md0
-            mkdir -p /flap
-            mount /dev/md0 /flap
+            mkdir -p $FLAP_DATA
+            mount /dev/md0 $FLAP_DATA
 
             # Check that the RAID array is correctly mounted.
             df -h -x devtmpfs -x tmpfs | grep md0
@@ -21,7 +21,7 @@ case $CMD in
 
             # Make the RAID array mount on boot.
             update-initramfs -u
-            echo '/dev/md0 /flap ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
+            echo "/dev/md0 $FLAP_DATA ext4 defaults,nofail,discard 0 0" | sudo tee -a /etc/fstab
         fi
         ;;
     summarize)
