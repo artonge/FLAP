@@ -19,11 +19,12 @@ case $CMD in
         crontab -r
 
         # Remove files listed in gitignore
+        cd $FLAP_DIR
         git clean -Xdf
         git submodule foreach "git clean -Xdf"
 
         # Remove FLAP data files
-        rm -rf /flap/*
+        rm -rf $FLAP_DATA/*
 
         # Remove docker objects
         docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f
