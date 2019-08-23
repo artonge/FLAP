@@ -19,7 +19,6 @@ readPwd() {
 
 export PRIMARY_DOMAIN_NAME=$(manager tls primary)
 export DOMAIN_NAMES=$(manager tls list | grep OK | cut -d ' ' -f1 | paste -sd " " -)
-# export ALL_DOMAIN_NAMES=$(manager tls list_all | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 
 # Read passwords from files
 export ADMIN_PWD=$(readPwd $FLAP_DATA/system/data/adminPwd.txt)
@@ -35,6 +34,8 @@ case $CMD in
         manager config generate_nginx
     ;;
     generate_templates)
+        echo Generate template\'s final file from the current config
+
         # Go to FLAP_DIR to have access to template files.
         cd $FLAP_DIR
 
@@ -49,20 +50,20 @@ case $CMD in
 
             echo $dir/$name.$ext
 
-            envsubst '${DOMAIN_NAME} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ALL_DOMAIN_NAMES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
+            envsubst '${DOMAIN_NAME} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
         done
        ;;
     generate_nginx)
-        mkdir -p $FLAP_DIR/nginx/config/conf.d
+        echo Generate Nginx configurations files for each domains
+
+        # Create directory architecture
+        mkdir -p $FLAP_DIR/nginx/config/conf.d/domains
 
         # Clean old domains includes files
         echo "" > $FLAP_DIR/nginx/config/conf.d/domains.conf
 
         # Clean old domains service config files
-        for domain in $(ls --directory $FLAP_DIR/nginx/config/conf.d/*/)
-        do
-            rm -rf $domain
-        done
+        rm -rf $FLAP_DIR/nginx/config/conf.d/domains/*
 
         # Generate conf for each domains
         DOMAINS=($DOMAIN_NAMES)
@@ -70,8 +71,8 @@ case $CMD in
         do
             export DOMAIN_NAME=${DOMAINS[$i]}
             echo $DOMAIN_NAME
-            echo "include /etc/nginx/conf.d/$DOMAIN_NAME/*.conf;" >> $FLAP_DIR/nginx/config/conf.d/domains.conf
-            mkdir -p $FLAP_DIR/nginx/config/conf.d/$DOMAIN_NAME # Create domain's conf directory
+            echo "include /etc/nginx/conf.d/domains/$DOMAIN_NAME/*.conf;" >> $FLAP_DIR/nginx/config/conf.d/domains.conf
+            mkdir -p $FLAP_DIR/nginx/config/conf.d/domains/$DOMAIN_NAME # Create domain's conf directory
 
             for service_path in $(ls --directory $FLAP_DIR/*/) # Generate conf for each services
             do
@@ -79,7 +80,7 @@ case $CMD in
                 then
                     service=$(basename $service_path) # Get the service name
                     echo "  - $service"
-                    envsubst '${DOMAIN_NAME}' < $service_path/nginx.conf > $FLAP_DIR/nginx/config/conf.d/$DOMAIN_NAME/$service.conf
+                    envsubst '${DOMAIN_NAME}' < $service_path/nginx.conf > $FLAP_DIR/nginx/config/conf.d/domains/$DOMAIN_NAME/$service.conf
                 fi
             done
         done
@@ -87,7 +88,6 @@ case $CMD in
     show)
         echo "PRIMARY_DOMAIN_NAME=$PRIMARY_DOMAIN_NAME"
         echo "DOMAIN_NAMES=$DOMAIN_NAMES"
-        # echo "ALL_DOMAIN_NAMES=$ALL_DOMAIN_NAMES"
         echo "ADMIN_PWD=$ADMIN_PWD"
         echo "SOGO_DB_PWD=$SOGO_DB_PWD"
         echo "NEXTCLOUD_DB_PWD=$NEXTCLOUD_DB_PWD"

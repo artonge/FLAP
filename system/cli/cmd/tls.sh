@@ -175,13 +175,6 @@ case $CMD in
         done
         ;;
     primary)
-        # If no primary is set, set the first one.
-        if [ ! -f $FLAP_DATA/system/data/primary_domain.txt ] || [ "$(cat $FLAP_DATA/system/data/primary_domain.txt)" == "" ]
-        then
-            domains=($(manager tls list))
-            echo ${domains[0]} > $FLAP_DATA/system/data/primary_domain.txt
-        fi
-
         cat $FLAP_DATA/system/data/primary_domain.txt
         ;;
     summarize)
