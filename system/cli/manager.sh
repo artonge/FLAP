@@ -12,3 +12,9 @@ then
 else
     $FLAP_DIR/system/cli/cmd/help.sh $ARGS
 fi
+
+# Display "ERROR" when the cmd returned an error.
+if [ $? != 0 ]
+then
+    echo ERROR
+fi
