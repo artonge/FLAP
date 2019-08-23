@@ -7,7 +7,7 @@ CMD=${1:-}
 case $CMD in
     "")
         # Run post setup scripts for each services.
-        if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
+        if [ ! -d $FLAP_DATA/system ]
         then
             echo "SETTING UP"
             manager setup raid

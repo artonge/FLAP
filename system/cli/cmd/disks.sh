@@ -6,7 +6,7 @@ CMD=${1:-}
 
 case $CMD in
     setup)
-        if [ !  -f /dev/md0 ]
+        if [ ! -f /dev/md0 ]
         then
             mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
             mkfs.ext4 -F /dev/md0

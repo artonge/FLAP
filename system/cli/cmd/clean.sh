@@ -16,7 +16,7 @@ case $CMD in
         echo "Cleaning..."
 
         # Remove crontab
-        crontab -r
+        crontab -r || true
 
         # Remove files listed in gitignore
         cd $FLAP_DIR
