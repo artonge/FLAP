@@ -30,7 +30,7 @@ case $CMD in
 
         # Create data directory for each services
         # And set current_migration.txt
-        echo * Creating data directories architecture
+        echo '* Creating data directories architecture'
         for service in $(ls --directory $FLAP_DIR/*/)
         do
             mkdir -p $FLAP_DATA/$(basename $service)
