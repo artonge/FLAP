@@ -78,8 +78,6 @@ case $CMD in
             echo "" > $FLAP_DATA/system/data/domain_update_primary.txt
             exit 1
         }
-
-
         ;;
     handle_request_domain_deletion)
         # Exit if their is no request
@@ -146,9 +144,8 @@ case $CMD in
             exit 1
         }
 
-        # If primary domain is a local domain, set the handled domain as primary.
-        primary_is_local=$(manager tls primary | grep -v local | cat)
-        if [ "$primary_is_local" == "" ]
+        # If primary domain is emtpy, set the handled domain as primary.
+        if [ "$(manager tls primary)" == "" ]
         then
             echo "Set $DOMAIN as primary."
             echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt

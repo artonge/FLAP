@@ -89,9 +89,8 @@ echo "INSTALLING FLAP"
 # certbot: generate TLS certificates
 # miniupnpc: open ports
 # avahi-daemon: set the mDNS name
-# bsdmainutls: ???
 # mdam: Setup RAID
-apt install -y git gettext certbot miniupnpc avahi-daemon bsdmainutils mdadm
+apt install -y git gettext certbot miniupnpc avahi-daemon mdadm
 
 # Prevent key fingerprint cheking during git clone
 mkdir -p ~/.ssh/
