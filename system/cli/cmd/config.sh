@@ -34,7 +34,7 @@ case $CMD in
         manager config generate_nginx
     ;;
     generate_templates)
-        echo * Generate template\'s final files from the current config
+        echo '* Generate template final files from the current config'
 
         # Go to FLAP_DIR to have access to template files.
         cd $FLAP_DIR
@@ -54,7 +54,7 @@ case $CMD in
         done
        ;;
     generate_nginx)
-        echo * Generate Nginx configurations files for each domains
+        echo '* Generate Nginx configurations files for each domains'
 
         # Create directory architecture
         mkdir -p $FLAP_DIR/nginx/config/conf.d/domains

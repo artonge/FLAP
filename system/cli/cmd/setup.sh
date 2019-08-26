@@ -10,9 +10,11 @@ case $CMD in
         # Prevent some operations during CI.
         if [ "${CI:-false}" == "false" ]
         then
-            echo * Openning ports and setting hostname
+            echo '* Openning ports and setting hostname'
             # Set local domain name to flap.local
-            hostname flap
+            sudo hostnamectl --static set-hostname "flap.local"
+            sudo hostnamectl --transient set-hostname "flap.local"
+            sudo hostnamectl --pretty set-hostname "FLAP box (flap.local)"
             # Create port mappings
             manager ports open 80
             manager ports open 443
@@ -22,7 +24,7 @@ case $CMD in
         # Prevent some operations during CI.
         if [ "${CI:-false}" == "false" ]
         then
-            echo * Setting up RAID
+            echo '* Setting up RAID'
             manager disks setup
         fi
 
@@ -39,7 +41,7 @@ case $CMD in
         mkdir -p /var/log/flap
     ;;
     cron)
-        echo * Generating main cron file from services\'s cron files
+        echo '* Generating main cron file from services cron files'
 
         cron_string="############## ENV ##############"$'\n'
         cron_string+="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"$'\n\n'
