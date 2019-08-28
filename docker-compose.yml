@@ -64,7 +64,7 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.7.7
+        image: registry.gitlab.com/flap-box/core:0.7.9
         env_file: [./core/core.env]
         restart: always
         depends_on: [ldap, redis]
@@ -94,7 +94,7 @@ services:
 
     # SOGO
     sogo:
-        image: registry.gitlab.com/flap-box/sogo:4.0.7
+        image: registry.gitlab.com/flap-box/sogo:4.0.8
         env_file: [./sogo/sogo.env]
         restart: always
         depends_on: [postgres, ldap, memcached]
