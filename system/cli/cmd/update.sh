@@ -23,25 +23,28 @@ Commands:
 
         # Go to FLAP_DIR for git cmds
         cd $FLAP_DIR
-        git pull
-        git submodule update
 
-        # Fetch new docker images
-        docker-compose pull
+        {
+            # Update code.
+            git pull &&
+            git submodule update &&
 
-        echo "STOPING CONTAINERS"
-        manager stop
+            # Fetch new docker images.
+            docker-compose pull &&
 
-        echo "RUNNING SYSTEM MIGRATIONS"
-        # We need to update the system in first because the other services migrations
-        # might need the results of the system migration.
-        manager update system
+            echo "STOPING CONTAINERS"
+            manager stop &&
 
-        echo "RUNNING SERVICES MIGRATIONS"
-        for service in $(ls --directory $FLAP_DIR/*/)
-        do
-            manager update $(basename $service)
-        done
+            echo "RUNNING SYSTEM MIGRATIONS"
+            # We need to update the system first because the other services migrations
+            # might need the results of the system migration.
+            manager update system &&
+
+            echo "RUNNING SERVICES MIGRATIONS"
+            ls --directory $FLAP_DIR/*/ | xargs -I{} manager update $(basename ${})
+        } || {
+            echo Fail to update
+        }
 
         echo "UPDATE CRON"
         manager setup cron
