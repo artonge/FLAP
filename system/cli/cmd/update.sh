@@ -17,47 +17,63 @@ Commands:
     <service_name> | | Run migration scripts for the service." | column -t -s "|"
         ;;
     "")
-        echo "FETCHING REPO"
-        # Prevent crontabs from running
-        crontab -r || true
-
-        # Go to FLAP_DIR for git cmds
+        # Prevent crontabs from running.
+        crontab -r || true # "|| true" to prevent exiting the script on error.
+    
+        # Go to FLAP_DIR for git cmds.
         cd $FLAP_DIR
 
+        COMMIT=$(git rev-parse HEAD)
+
         {
-            # Update code.
+            echo '* Updating code.'
             git pull &&
             git submodule update &&
 
-            # Fetch new docker images.
-            docker-compose pull &&
-
-            echo "STOPING CONTAINERS"
-            manager stop &&
-
-            echo "RUNNING SYSTEM MIGRATIONS"
-            # We need to update the system first because the other services migrations
-            # might need the results of the system migration.
-            manager update system &&
-
-            echo "RUNNING SERVICES MIGRATIONS"
-            ls --directory $FLAP_DIR/*/ | xargs -I{} manager update $(basename {})
+            echo '* Updating docker images.'
+            docker-compose pull
         } || {
-            echo Fail to update
+            # When either the git update or the docker pull fails, it is safer to go back to the previous commit.
+            # This will prevent from:
+            # - starting without the docker images,
+            # - running migrations on unknown an state.
+            echo '* ERROR - Fail to update, going back to previous commit.'
+            git reset --hard $COMMIT
         }
 
-        echo "UPDATE CRON"
+        echo '* Stoping containers.'
+        manager stop || true # "|| true" to prevent exiting the script on error.
+
+        {
+            # We need to update the system first because the other services migrations
+            # might need the results of the system migration.
+            echo '* Running system migrations.'
+            manager update system &&
+
+            echo '* Running other services migrations.'
+            for service in $(ls --directory $FLAP_DIR/*/)
+            do
+                manager update $(basename $service)
+            done
+        } || {
+            echo '* ERROR - Fail to run migrations.'
+        }
+
+        {
+            echo '* Restarting containers.'
+            manager start &&
+
+            echo '* Running post-update hooks.'
+            manager hooks post_update &&
+
+            echo '* Cleanning docker objects.'
+            docker system prune --all --force
+        } || {
+            echo '* ERROR - Fail to restart containers.'
+        }
+
+        echo '* Setting up cron jobs.'
         manager setup cron
-
-        echo "RESTARTING CONTAINERS"
-        manager start
-
-        echo "RUNNING POST-UPDATE HOOKS"
-        # Run post_update hooks for each services
-        manager hooks post_update
-
-        # Clean docker objects
-        docker system prune --all --force
         ;;
     *)
         SERVICE=$CMD

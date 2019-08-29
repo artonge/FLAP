@@ -9,13 +9,13 @@ case $CMD in
         # Run post setup scripts for each services.
         if [ ! -d $FLAP_DATA/system ]
         then
-            echo "SETTING UP"
+            echo '* Setting up'
             manager setup raid
             manager setup network
             manager setup cron
         fi
 
-        echo "STARTING FLAP"
+        echo '* Starting flap'
 
         # Go to FLAP_DIR for docker-compose.
         cd $FLAP_DIR
