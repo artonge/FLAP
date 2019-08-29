@@ -41,7 +41,7 @@ Commands:
             manager update system &&
 
             echo "RUNNING SERVICES MIGRATIONS"
-            ls --directory $FLAP_DIR/*/ | xargs -I{} manager update $(basename ${})
+            ls --directory $FLAP_DIR/*/ | xargs -I{} manager update $(basename {})
         } || {
             echo Fail to update
         }
