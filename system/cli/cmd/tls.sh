@@ -9,6 +9,8 @@ mkdir -p $FLAP_DATA/system/data/domains
 
 case $CMD in
     generate)
+        echo '* Generating certificates for domain names'
+
         # Filter domains that are either OK or HANDLED and not for "local" or "localhost"
         domains=""
         for domain in $(ls $FLAP_DATA/system/data/domains)
@@ -31,6 +33,8 @@ case $CMD in
         }
         ;;
     generate_localhost)
+        echo '* Generating certificates for flap.localhost'
+
         # Create default flap.localhost domain if it is missing
         mkdir -p $FLAP_DATA/system/data/domains/flap.localhost
         echo "OK" > $FLAP_DATA/system/data/domains/flap.localhost/status.txt
@@ -50,6 +54,7 @@ case $CMD in
         cp /etc/letsencrypt/live/flap.localhost/fullchain.pem /etc/letsencrypt/live/flap.localhost/chain.pem
         ;;
     handle_request)
+        echo '* Handling domain requests'
         manager tls handle_request_primary_update
         manager tls handle_request_domain_deletion
         manager tls handle_request_domain_creation
@@ -68,6 +73,7 @@ case $CMD in
             exit 0
         fi
 
+        echo '* Handling domain update request'
         # Handle primary domain update
         {
             echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt &&
@@ -93,6 +99,7 @@ case $CMD in
             exit 0
         fi
 
+        echo '* Handling domain delete request'
         # Handle domain deletion request
         {
             echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt &&
@@ -127,6 +134,8 @@ case $CMD in
         then
             exit 0
         fi
+
+        echo '* Handling domain create request'
 
         # Give time to the server to pick up the status change.
         sleep 2

@@ -4,7 +4,7 @@ set -eu
 
 # Usage: ./generate_certs.sh <domain name> [<domain name>, ...]
 
-echo "Generating certificates for $@"
+echo '* Generating certificates for $@'
 
 domains=""
 for domain in $@
