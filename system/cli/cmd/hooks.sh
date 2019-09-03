@@ -6,7 +6,7 @@ CMD=${1:-}
 
 case $CMD in
     post_install|post_update|post_domain_update|health_check)
-        echo "Running $CMD hook:"
+        echo "* [hooks] Running $CMD hook:"
         
         # Go to FLAP_DIR to allow docker-compose cmds.
         cd $FLAP_DIR

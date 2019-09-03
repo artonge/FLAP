@@ -12,7 +12,7 @@ case $CMD in
         echo "test | [--only <test_suite>] | Test manager's commands." | column -t -s "|"
         ;;
     ""|*)
-        echo "Running tests..."
+        echo '* [test] Running tests.'
         EXIT=0
 
         TEST_TO_RUN=$(ls $FLAP_DIR/system/cli/tests)

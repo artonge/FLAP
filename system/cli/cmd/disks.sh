@@ -8,6 +8,7 @@ case $CMD in
     setup)
         if [ ! -e /dev/md0 ]
         then
+            echo "* [disks] Creating RAID array."
             mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
             mkfs.ext4 -F /dev/md0
             mkdir -p $FLAP_DATA

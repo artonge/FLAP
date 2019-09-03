@@ -6,6 +6,7 @@ CMD=${1:-}
 
 case $CMD in
     "")
+        echo "* [restart] Restarting services."
         manager stop
         manager start
     ;;

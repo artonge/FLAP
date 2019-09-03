@@ -9,7 +9,7 @@ mkdir -p $FLAP_DATA/system/data/domains
 
 case $CMD in
     generate)
-        echo '* Generating certificates for domain names'
+        echo '* [tls] Generating certificates for domain names'
 
         # Filter domains that are either OK or HANDLED and not for "local" or "localhost"
         domains=""
@@ -33,7 +33,7 @@ case $CMD in
         }
         ;;
     generate_localhost)
-        echo '* Generating certificates for flap.localhost'
+        echo '* [tls] Generating certificates for flap.localhost'
 
         # Create default flap.localhost domain if it is missing
         mkdir -p $FLAP_DATA/system/data/domains/flap.localhost
@@ -52,9 +52,13 @@ case $CMD in
             -subj "/CN=flap.localhost" -extensions EXT \
             -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
         cp /etc/letsencrypt/live/flap.localhost/fullchain.pem /etc/letsencrypt/live/flap.localhost/chain.pem
+
+        echo "flap.localhost" > $FLAP_DATA/system/data/primary_domain.txt
+
+        manager hooks post_domain_update
         ;;
     handle_request)
-        echo '* Handling domain requests'
+        echo '* [tls] Handling domain requests'
         manager tls handle_request_primary_update
         manager tls handle_request_domain_deletion
         manager tls handle_request_domain_creation
@@ -73,7 +77,7 @@ case $CMD in
             exit 0
         fi
 
-        echo '* Handling domain update request'
+        echo '* [tls] Handling domain update request'
         # Handle primary domain update
         {
             echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt &&
@@ -99,7 +103,7 @@ case $CMD in
             exit 0
         fi
 
-        echo '* Handling domain delete request'
+        echo '* [tls] Handling domain delete request'
         # Handle domain deletion request
         {
             echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt &&
@@ -135,7 +139,7 @@ case $CMD in
             exit 0
         fi
 
-        echo '* Handling domain create request'
+        echo '* [tls] Handling domain create request'
 
         # Give time to the server to pick up the status change.
         sleep 2

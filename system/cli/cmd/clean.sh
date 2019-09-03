@@ -4,16 +4,26 @@ set -eu
 
 CMD=${1:-}
 
-case $CMD in
-    "")
-        read -p "The clean.sh script will remove all off the user data. Continue ? [Y/N]" answer
+if [ "${2:-}" == "-y" ]
+then
+    FORCE_YES=1
+else
+    FORCE_YES=0
+fi
 
-        if [ "$answer" == "${answer#[Yy]}" ]
+case $CMD in
+    config)
+        if [ $FORCE_YES == 0 ]
         then
-            exit 0
+            read -p "This will remove all the configuration. Continue ? [Y/N]" answer
+
+            if [ "$answer" == "${answer#[Yy]}" ]
+            then
+                exit 0
+            fi
         fi
 
-        echo "Cleaning..."
+        echo '* [clean] Cleaning generated configuration.'
 
         # Remove crontab
         crontab -r || true
@@ -22,20 +32,68 @@ case $CMD in
         cd $FLAP_DIR
         git clean -Xdf
         git submodule foreach "git clean -Xdf"
+        ;;
+    data)
+        if [ $FORCE_YES == 0 ]
+        then
+            read -p "This will remove all the users data. Continue ? [Y/N]" answer
+
+            if [ "$answer" == "${answer#[Yy]}" ]
+            then
+                exit 0
+            fi
+        fi
+
+        echo '* [clean] Cleaning users data.'
 
         # Remove FLAP data files
         rm -rf $FLAP_DATA/*
+        ;;
+    docker)
+        if [ $FORCE_YES == 0 ]
+        then
+            read -p "This will remove all the docker objects. Continue ? [Y/N]" answer
+
+            if [ "$answer" == "${answer#[Yy]}" ]
+            then
+                exit 0
+            fi
+        fi
+
+        echo '* [clean] Cleaning docker objects.'
 
         # Remove docker objects
-        docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f
+        docker container prune -f
+        docker volume prune -f
+        docker network prune -f
+        docker image prune -f
+        ;;
+    ""|*)
+        if [ "${1:-}" != "-y" ]
+        then
+            read -p "This will remove ALL the FLAP data. Continue ? [Y/N]" answer
+
+            if [ "$answer" == "${answer#[Yy]}" ]
+            then
+                exit 0
+            fi
+        fi
+
+        echo '* [clean] Cleaning FLAP.'
+        manager clean config -y
+        manager clean data -y
+        manager clean docker -y
         ;;
     summarize)
-        echo "clean | | Clean data on the FLAP box."
+        echo "clean | [config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
         ;;
     help|*)
         printf "
 $(manager clean summarize)
 Commands:
-    '' | | Setup RAID 1 array." | column -t -s "|"
+    config | [-y] | Remove the generated configuration.
+    data | [-y] | Remove the users data.
+    docker | [-y] | Remove the docker objects.
+    '' | | Clean data on the FLAP box." | column -t -s "|"
         ;;
 esac

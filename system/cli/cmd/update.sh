@@ -26,53 +26,53 @@ Commands:
         COMMIT=$(git rev-parse HEAD)
 
         {
-            echo '* Updating code.'
+            echo '* [update] Updating code.'
             git pull &&
             git submodule update &&
 
-            echo '* Updating docker images.'
+            echo '* [update] Updating docker images.'
             docker-compose pull
         } || {
             # When either the git update or the docker pull fails, it is safer to go back to the previous commit.
             # This will prevent from:
             # - starting without the docker images,
             # - running migrations on unknown an state.
-            echo '* ERROR - Fail to update, going back to previous commit.'
+            echo '* [update] ERROR - Fail to update, going back to previous commit.'
             git reset --hard $COMMIT
         }
 
-        echo '* Stoping containers.'
+        echo '* [update] Stoping containers.'
         manager stop || true # "|| true" to prevent exiting the script on error.
 
         {
             # We need to update the system first because the other services migrations
             # might need the results of the system migration.
-            echo '* Running system migrations.'
+            echo '* [update] Running system migrations.'
             manager update system &&
 
-            echo '* Running other services migrations.'
+            echo '* [update] Running other services migrations.'
             for service in $(ls --directory $FLAP_DIR/*/)
             do
                 manager update $(basename $service)
             done
         } || {
-            echo '* ERROR - Fail to run migrations.'
+            echo '* [update] ERROR - Fail to run migrations.'
         }
 
         {
-            echo '* Restarting containers.'
+            echo '* [update] Restarting containers.'
             manager start &&
 
-            echo '* Running post-update hooks.'
+            echo '* [update] Running post-update hooks.'
             manager hooks post_update &&
 
-            echo '* Cleanning docker objects.'
+            echo '* [update] Cleanning docker objects.'
             docker system prune --all --force
         } || {
-            echo '* ERROR - Fail to restart containers.'
+            echo '* [update] ERROR - Fail to restart containers.'
         }
 
-        echo '* Setting up cron jobs.'
+        echo '* [update] Setting up cron jobs.'
         manager setup cron
         ;;
     *)
