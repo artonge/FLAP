@@ -68,7 +68,7 @@ case $CMD in
         docker network prune -f
         docker image prune -f
         ;;
-    ""|*)
+    ""|"-y")
         if [ "${1:-}" != "-y" ]
         then
             read -p "This will remove ALL the FLAP data. Continue ? [Y/N]" answer
