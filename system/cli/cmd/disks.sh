@@ -9,7 +9,7 @@ case $CMD in
         if [ ! -e /dev/md0 ]
         then
             echo "* [disks] Creating RAID array."
-            mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
+            mdadm --create --run /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
             mkfs.ext4 -F /dev/md0
             mkdir -p $FLAP_DATA
             mount /dev/md0 $FLAP_DATA
