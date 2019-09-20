@@ -19,7 +19,7 @@ Commands:
     "")
         # Prevent crontabs from running.
         crontab -r || true # "|| true" to prevent exiting the script on error.
-    
+
         # Go to FLAP_DIR for git cmds.
         cd $FLAP_DIR
 
@@ -30,7 +30,7 @@ Commands:
             git pull &&
             git submodule update &&
 
-            echo '* [update] Updating docker images.'
+            echo '* [update] Updating docker images.' &&
             docker-compose pull
         } || {
             # When either the git update or the docker pull fails, it is safer to go back to the previous commit.
