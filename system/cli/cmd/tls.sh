@@ -26,7 +26,7 @@ case $CMD in
 
         {
             # Generate TLS certificates
-            $FLAP_DIR/system/cli/lib/certificates/generate_certs.sh $domains
+            $FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh $domains
         } || { # Catch error
             echo "Failed to generate certificates."
             exit 1
@@ -146,7 +146,7 @@ case $CMD in
 
         {
             manager stop &&
-            manager tls generate &> $FLAP_DATA/system/data/domains/$domain/logs.txt &&
+            manager tls generate &&
             echo "OK" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt &&
             manager start &&
             manager hooks post_domain_update
@@ -163,6 +163,23 @@ case $CMD in
             echo "Set $DOMAIN as primary."
             echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt
         fi
+        ;;
+    update_dns_records)
+        # Execute update script for each OK domain.
+        for domain in $(ls $FLAP_DATA/system/data/domains)
+        do
+            status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
+            provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt)
+
+            if [ "$status" == "OK" ]
+            then
+                {
+                    $FLAP_DIR/system/cli/lib/tls/update/${provider}.sh $domain
+                } || { # Catch error
+                    echo "Failed to update $domain's DNS records."
+                }
+            fi
+        done
         ;;
     list)
         for domain in $(ls $FLAP_DATA/system/data/domains)

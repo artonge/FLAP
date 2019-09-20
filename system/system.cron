@@ -4,3 +4,4 @@
 
 # Every minutes
 * * * * *    manager tls handle_request &> /var/log/flap/tls.log
+* * * * *    manager tls update_dns_records &> /var/log/flap/tls.log
