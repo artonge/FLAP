@@ -31,6 +31,8 @@ Commands:
             git submodule update &&
 
             echo '* [update] Updating docker images.' &&
+            # docker-compose needs a generated config. In case a new module is added during update, its config will be missing, so we generate it here.
+            manager config generate_templates &&
             docker-compose pull
         } || {
             # When either the git update or the docker pull fails, it is safer to go back to the previous commit.
