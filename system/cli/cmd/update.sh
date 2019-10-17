@@ -28,13 +28,11 @@ Commands:
                 {
                     manager update migrate $(basename $service)
                 } || {
-                    echo "\* [update] ERROR - Fail to run migrations for $service."
+                    echo "* [update] ERROR - Fail to run migrations for $service."
                     EXIT_CODE=1
                 }
             done
         else
-            echo "* [update] Running migrations for $SERVICE."
-
             # Make config available in migrations.
             export $(manager config show)
 
@@ -54,7 +52,7 @@ Commands:
         ;;
     ""|*)
         # Optionnaly use the second argument as the targeted branch. Default to master.
-        BRANCH=${2:-master}
+        BRANCH=${1:-master}
 
         # Prevent crontabs from running.
         crontab -r || true # "|| true" to prevent exiting the script on error.
@@ -65,7 +63,7 @@ Commands:
         COMMIT=$(git rev-parse HEAD)
 
         {
-            echo '* [update] Updating code.'
+            echo "* [update] Updating code to branch $BRANCH."
             git pull origin $BRANCH &&
             git submodule update --init &&
 
