@@ -64,6 +64,7 @@ Commands:
 
         {
             echo "* [update] Updating code to branch $BRANCH."
+            git checkout $BRANCH &&
             git pull origin $BRANCH &&
             git submodule update --init &&
 
