@@ -43,7 +43,7 @@ Commands:
             # Run migration scripts as long as there is some to run.
             while [ -f $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh ]
             do
-                echo "Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
+                echo "* Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
                 $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh
                 CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
                 echo $CURRENT_MIGRATION > $FLAP_DATA/$SERVICE/current_migration.txt
@@ -79,6 +79,7 @@ Commands:
             # - running migrations on an unknown state.
             echo '* [update] ERROR - Fail to update, going back to previous commit.'
             git reset --hard $COMMIT
+            git submodule update --init
             EXIT_CODE=1
         }
 
