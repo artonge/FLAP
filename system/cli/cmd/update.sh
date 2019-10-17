@@ -66,7 +66,7 @@ Commands:
 
         {
             echo '* [update] Updating code.'
-            git pull $BRANCH &&
+            git pull origin $BRANCH &&
             git submodule update --init &&
 
             echo '* [update] Updating docker images.' &&
