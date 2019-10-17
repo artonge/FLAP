@@ -4,6 +4,8 @@ set -eu
 
 CMD=${1:-}
 
+EXIT_CODE=0
+
 case $CMD in
     summarize)
         echo "update | [<branch_name>, migrate [service_name], help] | Handle update logique for FLAP."
@@ -27,6 +29,7 @@ Commands:
                     manager update migrate $(basename $service)
                 } || {
                     echo "\* [update] ERROR - Fail to run migrations for $service."
+                    EXIT_CODE=1
                 }
             done
         else
@@ -77,6 +80,7 @@ Commands:
             # - running migrations on an unknown state.
             echo '* [update] ERROR - Fail to update, going back to previous commit.'
             git reset --hard $COMMIT
+            EXIT_CODE=1
         }
 
         echo '* [update] Stoping containers.'
@@ -89,6 +93,7 @@ Commands:
             manager update migrate
         } || {
             echo '* [update] ERROR - Fail to run migrations.'
+            EXIT_CODE=1
         }
 
         # Clean docker volumes to prevent persisting part of containers that should not be persisted.
@@ -105,9 +110,12 @@ Commands:
             docker system prune --all --force
         } || {
             echo '* [update] ERROR - Fail to restart containers.'
+            EXIT_CODE=1
         }
 
         echo '* [update] Setting up cron jobs.'
         manager setup cron
         ;;
 esac
+
+exit $EXIT_CODE
