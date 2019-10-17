@@ -38,7 +38,7 @@ system_test:
                 --env FLAP_DIR=$CI_PROJECT_DIR \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-                $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT)
+                $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
         - >
             docker run \
                 --env CI=true \
@@ -48,7 +48,7 @@ system_test:
                 --env FLAP_DIR=$CI_PROJECT_DIR \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-                $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
+                ${CI_REGISTRY_IMAGE}/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 manager test setup tls
 
 # Run start_flap then the update procedure
@@ -64,11 +64,16 @@ update_test:
             docker run \
                 --detach \
                 --name flap_old \
-                $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
+                --rm \
+                $CI_REGISTRY_IMAGE:amd64-latest \
                 /bin/sh -c "while true; do sleep 1000; done"
-        - docker cp flap_old:/opt/flap $CI_BUILDS_DIR/flap_dir
+
+        # Use tar to copy files so we keep dot files.
+        - mkdir $CI_BUILDS_DIR/flap_tmp
+        - docker cp flap_old:/opt/flap - | tar -x -C $CI_BUILDS_DIR/flap_tmp
+        - cp -rT $CI_BUILDS_DIR/flap_tmp/flap $CI_BUILDS_DIR/flap_dir
+
         - docker kill flap_old
-        - docker rm flap_old
 
         # Start old FLAP install with $CI_BUILDS_DIR/flap_dir
         # Store data into $CI_BUILDS_DIR/flap_data
@@ -81,7 +86,7 @@ update_test:
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-                $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1))
+                $CI_REGISTRY_IMAGE:amd64-latest
 
         # Start update procedure with old flap
         - >
@@ -93,8 +98,8 @@ update_test:
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-                $CI_REGISTRY_IMAGE:amd64-$(($( eval $VERSION_SCRIPT) - 1)) \
-                manager update
+                $CI_REGISTRY_IMAGE:amd64-latest \
+                manager update $CI_COMMIT_REF_NAME
 
 integration_test:
     stage: test
