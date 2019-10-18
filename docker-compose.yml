@@ -26,7 +26,7 @@ services:
         restart: always
         volumes:
             - ./postgres/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro # [emmc] -> [postgres] Init
-            - /flap/postgres/data/data:/var/lib/postgresql/data # [postgres] <-> [hd] Data
+            - $FLAP_DATA/postgres/data/data:/var/lib/postgresql/data # [postgres] <-> [hd] Data
         networks:
             stores-net:
                 aliases: [postgres]
@@ -36,7 +36,7 @@ services:
         image: redis:5.0
         restart: always
         volumes:
-            - /flap/redis/data:/data # [redis] <-> [hd] Data
+            - $FLAP_DATA/redis/data:/data # [redis] <-> [hd] Data
         networks:
             stores-net:
                 aliases: [redis]
@@ -56,8 +56,8 @@ services:
         restart: always
         volumes:
             - ./ldap/prepopulate:/prepopulate:ro # [emmc] -> [ldap] Init
-            - /flap/ldap/config:/etc/ldap # [ldap] <-> [hd] Config
-            - /flap/ldap/data:/var/lib/ldap # [ldap] <-> [hd] Data
+            - $FLAP_DATA/ldap/config:/etc/ldap # [ldap] <-> [hd] Config
+            - $FLAP_DATA/ldap/data:/var/lib/ldap # [ldap] <-> [hd] Data
         networks:
             stores-net:
                 aliases: [ldap]
@@ -69,7 +69,7 @@ services:
         restart: always
         depends_on: [ldap, redis]
         volumes:
-            - /flap/system/data:/var/lib/flap # [hd] <-> [core] Data
+            - $FLAP_DATA/system/data:/var/lib/flap # [hd] <-> [core] Data
             - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys # [eMMC] <-> [core] SSH authorized keys
         networks:
             stores-net:
@@ -83,8 +83,8 @@ services:
         restart: always
         depends_on: [postgres, redis, ldap]
         volumes:
-            - /flap/nextcloud/data:/data # [nextcloud] <-> [hd] Data
-            - /flap/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config
+            - $FLAP_DATA/nextcloud/data:/data # [nextcloud] <-> [hd] Data
+            - $FLAP_DATA/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config
             - nextcloudStaticFiles:/var/www/html # [nextcloud] -> [nginx] Static files needed by nginx
             - ./nextcloud/scripts/generate_config.sh:/generate_config.sh # [emmc] <-> [nextcloud] Script to generate config.php
         networks:
