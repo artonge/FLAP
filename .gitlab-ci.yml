@@ -1,21 +1,9 @@
 include:
     # Auto devop
     - template: Auto-DevOps.gitlab-ci.yml
-    # Image build script
-    - project: flap-box/flap
-      file: build_image.yml
 
 variables:
-    VERSION_SCRIPT: cat ./system/scripts/migrations/base_migration.txt
     GIT_SUBMODULE_STRATEGY: recursive
-
-# Prevent build for arm because we don't need it
-build:armv7:
-    tags: []
-    script: ["echo ok"]
-
-create_manifest:
-    script: ["echo ok"]
 
 # Run start_flap and CLI unit tests
 system_test:
@@ -73,7 +61,7 @@ update_test:
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
-                $CI_REGISTRY_IMAGE:amd64-latest \
+                $CI_REGISTRY_IMAGE/master:$(cat .git/refs/heads/master) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
         # Copy the code to the real folder.
