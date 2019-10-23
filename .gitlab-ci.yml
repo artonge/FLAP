@@ -61,7 +61,7 @@ update_test:
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
-                $CI_REGISTRY_IMAGE/master:$(cat .git/refs/heads/master) \
+                $CI_REGISTRY_IMAGE/master:$(cat $CI_PROJECT_DIR/.git/refs/heads/master) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
         # Copy the code to the real folder.
