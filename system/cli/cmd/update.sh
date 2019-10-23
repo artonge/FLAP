@@ -57,7 +57,7 @@ Commands:
             exit 0
         fi
 
-        echo "1" > $FLAP_DATA/system/data/updating.lock
+        touch $FLAP_DATA/system/data/updating.lock
 
         # Optionnaly use the second argument as the targeted branch. Default to the current branch.
         BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
@@ -120,7 +120,7 @@ Commands:
             EXIT_CODE=1
         }
 
-        echo "0" > $FLAP_DATA/system/data/updating.lock
+        rm $FLAP_DATA/system/data/updating.lock
         ;;
 esac
 
