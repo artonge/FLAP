@@ -93,6 +93,7 @@ case $CMD in
         # Generate conf for each domains
         for DOMAIN_NAME in $DOMAIN_NAMES
         do
+            export $DOMAIN_NAME
             echo $DOMAIN_NAME
             echo "include /etc/nginx/conf.d/domains/$DOMAIN_NAME/*.conf;" >> $FLAP_DIR/nginx/config/conf.d/domains.conf
             mkdir -p $FLAP_DIR/nginx/config/conf.d/domains/$DOMAIN_NAME # Create domain's conf directory
