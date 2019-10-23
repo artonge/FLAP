@@ -1,3 +1,6 @@
+@reboot      manager setup cron
+@reboot      manager setup network
+
 @midnight    manager update &> /var/log/flap/update.log
 
 @hourly      manager healthcheck &> /var/log/flap/healthcheck.log

@@ -9,6 +9,12 @@ mkdir -p $FLAP_DATA/system/data/domains
 
 case $CMD in
     generate)
+        # Exit during CI or on local DEV.
+        if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
+        then
+            exit
+        fi
+
         echo '* [tls] Generating certificates for domain names'
 
         # Filter domains that are either OK or HANDLED and not for "local" or "localhost"
@@ -42,20 +48,27 @@ case $CMD in
         touch $FLAP_DATA/system/data/domains/flap.localhost/authentication.txt
         touch $FLAP_DATA/system/data/domains/flap.localhost/logs.txt
 
-        # Generate certificates for flap.localhost.
-        mkdir -p /etc/letsencrypt/live/flap.localhost
-        openssl req \
-            -x509 \
-            -out /etc/letsencrypt/live/flap.localhost/fullchain.pem \
-            -keyout /etc/letsencrypt/live/flap.localhost/privkey.pem \
-            -newkey rsa:2048 -nodes -sha256 \
-            -subj "/CN=flap.localhost" -extensions EXT \
-            -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
-        cp /etc/letsencrypt/live/flap.localhost/fullchain.pem /etc/letsencrypt/live/flap.localhost/chain.pem
+        # Generate certificates for flap.localhost if they do not exists yet.
+        if [ ! -f /etc/letsencrypt/live/flap/fullchain.pem ]
+        then
+            mkdir -p /etc/letsencrypt/live/flap
+            openssl req \
+                -x509 \
+                -out /etc/letsencrypt/live/flap/fullchain.pem \
+                -keyout /etc/letsencrypt/live/flap/privkey.pem \
+                -newkey rsa:2048 -nodes -sha256 \
+                -subj "/CN=flap.localhost" -extensions EXT \
+                -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+            cp /etc/letsencrypt/live/flap/fullchain.pem /etc/letsencrypt/live/flap/chain.pem
+        fi
 
         echo "flap.localhost" > $FLAP_DATA/system/data/primary_domain.txt
 
+        manager restart
+
         manager hooks post_domain_update
+
+        manager restart
         ;;
     handle_request)
         echo '* [tls] Handling domain requests'
@@ -149,7 +162,8 @@ case $CMD in
             manager tls generate &&
             echo "OK" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt &&
             manager start &&
-            manager hooks post_domain_update
+            manager hooks post_domain_update &&
+            manager restart
         } || { # Catch error
             echo "Failed to handle domain request."
             echo "ERROR" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt
@@ -182,16 +196,10 @@ case $CMD in
         done
         ;;
     list)
-        for domain in $(ls $FLAP_DATA/system/data/domains)
-        do
-            status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
-            provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt | cut -d ' ' -f1)
-
-            echo "$domain - $status - $provider"
-        done
+        $FLAP_DIR/system/cli/lib/tls/list_domains.sh
         ;;
     list_all)
-        for domain in $(ls $FLAP_DATA/system/data/domains)
+        for domain in $DOMAIN_NAMES
         do
             status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
             provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt | cut -d ' ' -f1)
@@ -199,11 +207,11 @@ case $CMD in
             echo "$domain - $status - $provider"
             echo "files.$domain - $status - $provider - SUB"
             echo "sogo.$domain - $status - $provider - SUB"
+            echo "auth.$domain - $status - $provider - SUB"
         done
         ;;
     primary)
-        touch $FLAP_DATA/system/data/primary_domain.txt
-        cat $FLAP_DATA/system/data/primary_domain.txt
+        echo $PRIMARY_DOMAIN_NAME
         ;;
     summarize)
         echo "tls | [generate, handle_request, list, list_all, primary, generate_localhost, help] | Manage TLS certificates for Nginx."

@@ -6,7 +6,11 @@
     script:
         - DOCKER_DRIVER=overlay2
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-        - docker build --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) --tag $CI_REGISTRY_IMAGE:$ARCH-latest .
+        - >
+            docker build \
+                --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) \
+                --tag $CI_REGISTRY_IMAGE:$ARCH-latest \
+                --build-arg CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG} .
         - docker push $CI_REGISTRY_IMAGE
 
 build:amd64:
