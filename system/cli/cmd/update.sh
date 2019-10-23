@@ -59,11 +59,11 @@ Commands:
 
         touch $FLAP_DATA/system/data/updating.lock
 
-        # Optionnaly use the second argument as the targeted branch. Default to the current branch.
-        BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
-
         # Go to FLAP_DIR for git cmds.
         cd $FLAP_DIR
+
+        # Optionnaly use the second argument as the targeted branch. Default to the current branch.
+        BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
 
         COMMIT=$(git rev-parse HEAD)
 
