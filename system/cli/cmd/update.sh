@@ -2,6 +2,9 @@
 
 set -eu
 
+# This file handles the update logic of a FLAP box.
+# WARNING: If you change this file, the following update will not use the updated version. So make sure you don't break self calls.
+
 CMD=${1:-}
 
 EXIT_CODE=0
@@ -33,9 +36,6 @@ Commands:
                 }
             done
         else
-            # Make config available in migrations.
-            export $(manager config show)
-
             # Get the base migration for the service.
             # The current migration is the last migration that was run.
             CURRENT_MIGRATION=$(cat $FLAP_DATA/$SERVICE/current_migration.txt)
@@ -43,7 +43,7 @@ Commands:
             # Run migration scripts as long as there is some to run.
             while [ -f $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh ]
             do
-                echo "* Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
+                echo "* [update] Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
                 $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh
                 CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
                 echo $CURRENT_MIGRATION > $FLAP_DATA/$SERVICE/current_migration.txt
@@ -51,11 +51,16 @@ Commands:
         fi
         ;;
     ""|*)
-        # Optionnaly use the second argument as the targeted branch. Default to master.
-        BRANCH=${1:-master}
+        # Don't update if one is already in progress.
+        if [ -f $FLAP_DATA/system/data/updating.lock ]
+        then
+            exit 0
+        fi
 
-        # Prevent crontabs from running.
-        crontab -r || true # "|| true" to prevent exiting the script on error.
+        echo "1" > $FLAP_DATA/system/data/updating.lock
+
+        # Optionnaly use the second argument as the targeted branch. Default to the current branch.
+        BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
 
         # Go to FLAP_DIR for git cmds.
         cd $FLAP_DIR
@@ -71,7 +76,7 @@ Commands:
             echo '* [update] Updating docker images.' &&
             # docker-compose needs a generated config. In case a new module is added during update, its config will be missing, so we generate it here.
             manager config generate_templates &&
-            docker-compose pull
+            docker-compose --no-ansi pull
         } || {
             # When either the git update or the docker pull fails, it is safer to go back to the previous commit.
             # This will prevent from:
@@ -105,6 +110,8 @@ Commands:
 
             echo '* [update] Running post-update hooks.'
             manager hooks post_update &&
+            manager hooks post_domain_update &&
+            manager restart &&
 
             echo '* [update] Cleanning docker objects.'
             docker system prune --all --force
@@ -113,8 +120,7 @@ Commands:
             EXIT_CODE=1
         }
 
-        echo '* [update] Setting up cron jobs.'
-        manager setup cron
+        echo "0" > $FLAP_DATA/system/data/updating.lock
         ;;
 esac
 

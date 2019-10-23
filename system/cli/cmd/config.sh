@@ -4,31 +4,13 @@ set -eu
 
 CMD=${1:-}
 
-# Read password from file.
-# If the file does not exists, create it and generate a password.
-readPwd() {
-    mkdir -p $FLAP_DATA/system/data
-
-    if [ ! -f $1 ]
-    then
-        openssl rand --hex 32 > $1
-    fi
-
-    cat $1
-}
-
-export PRIMARY_DOMAIN_NAME=$(manager tls primary)
-export DOMAIN_NAMES=$(manager tls list | grep OK | cut -d ' ' -f1 | paste -sd " " -)
-
-# Read passwords from files
-export ADMIN_PWD=$(readPwd $FLAP_DATA/system/data/adminPwd.txt)
-export SOGO_DB_PWD=$(readPwd $FLAP_DATA/system/data/sogoDbPwd.txt)
-export NEXTCLOUD_DB_PWD=$(readPwd $FLAP_DATA/system/data/nextcloudDbPwd.txt)
-
 case $CMD in
     generate)
         # Generate services templates
         manager config generate_templates
+
+        # Generate lemonLDAP configuration file.
+        manager config generate_lemon
 
         # Generate nginx configurations
         manager config generate_nginx
@@ -50,9 +32,52 @@ case $CMD in
 
             echo $dir/$name.$ext
 
-            envsubst '${DOMAIN_NAME} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
+            envsubst '${PRIMARY_DOMAIN_NAME} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
         done
        ;;
+    generate_lemon)
+        echo '* [config] Generate lemonLDAP configuration file.'
+
+        # Alter lemonLDAP config using jq.
+
+        echo "* [config] Set SAML keys."
+        config=$(cat $FLAP_DIR/lemon/config/lmConf-1.json)
+        echo $config | \
+            jq --arg privateKey "`cat $FLAP_DATA/lemon/saml/private_key.pem`" '.samlServicePrivateKeySig=$privateKey' | \
+            jq --arg publicKey  "`cat $FLAP_DATA/lemon/saml/cert.pem`" '.samlServicePublicKeySig=$publicKey' \
+        > $FLAP_DIR/lemon/config/lmConf-1.json
+
+        echo "* [config] Add vhosts and SAML metadata to the lemonLDAP config."
+        for service in $(ls --directory $FLAP_DIR/*/)
+        do
+            service=$(basename $service)
+
+            for domain in $DOMAIN_NAMES
+            do
+                # Check if lemon config exists for the service.
+                if [ -f $FLAP_DIR/$service/config/lemon.jq ]
+                then
+                    echo "$service - $domain"
+                    vhostType=$([ "$PRIMARY_DOMAIN_NAME" ==  "$domain" ] && echo "Main" || echo "CDA")
+                    vhostType='CDA'
+                    [ -f $FLAP_DATA/$service/saml/metadata_$domain.xml ] && metadata=$(cat $FLAP_DATA/$service/saml/metadata_$domain.xml)
+                    config=$(cat $FLAP_DIR/lemon/config/lmConf-1.json)
+                    # Add a vhost for each domains.
+                    jq \
+                        --null-input \
+                        --arg domain "$domain" \
+                        --arg vhostType "$vhostType" \
+                        --arg samlMetadata "${metadata:-}" \
+                        --from-file $FLAP_DIR/$service/config/lemon.jq | \
+                    jq \
+                        --slurp \
+                        --argjson config \
+                        "$config" '.[0] * $config' \
+                    > $FLAP_DIR/lemon/config/lmConf-1.json
+                fi
+            done
+        done
+        ;;
     generate_nginx)
         echo '* [config] Generate Nginx configurations files for each domains'
 
@@ -66,10 +91,8 @@ case $CMD in
         rm -rf $FLAP_DIR/nginx/config/conf.d/domains/*
 
         # Generate conf for each domains
-        DOMAINS=($DOMAIN_NAMES)
-        for i in "${!DOMAINS[@]}"
+        for DOMAIN_NAME in $DOMAIN_NAMES
         do
-            export DOMAIN_NAME=${DOMAINS[$i]}
             echo $DOMAIN_NAME
             echo "include /etc/nginx/conf.d/domains/$DOMAIN_NAME/*.conf;" >> $FLAP_DIR/nginx/config/conf.d/domains.conf
             mkdir -p $FLAP_DIR/nginx/config/conf.d/domains/$DOMAIN_NAME # Create domain's conf directory

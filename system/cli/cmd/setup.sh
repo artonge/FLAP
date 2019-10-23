@@ -7,8 +7,8 @@ DIR=$(dirname "$(readlink -f "$0")")
 
 case $CMD in
     network)
-        # Prevent some operations during CI.
-        if [ "${CI:-false}" == "false" ]
+        # Prevent some operations during CI and DEV.
+        if [ "${CI:-false}" == "false" ] && [ "${DEV:-false}" == "false" ]
         then
             echo '* [setup] Openning ports and setting hostname'
             # Set local domain name to flap.local
@@ -21,8 +21,8 @@ case $CMD in
         fi
     ;;
     raid)
-        # Prevent some operations during CI.
-        if [ "${CI:-false}" == "false" ]
+        # Prevent some operations during CI and DEV.
+        if [ "${CI:-false}" == "false" ] && [ "${DEV:-false}" == "false" ]
         then
             echo '* [setup] Setting up RAID'
             manager disks setup
@@ -41,8 +41,8 @@ case $CMD in
         mkdir -p /var/log/flap
     ;;
     cron)
-        # Do not setup cron jobs on CI.
-        if [ "${CI:-false}" != "false" ]
+        # Do not setup cron jobs on CI and DEV.
+        if [ "${CI:-false}" != "false" ] && [ "${DEV:-false}" == "false" ]
         then
             exit 0
         fi

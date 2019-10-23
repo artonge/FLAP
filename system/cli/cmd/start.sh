@@ -6,10 +6,10 @@ CMD=${1:-}
 
 case $CMD in
     "")
-        # Run post setup scripts for each services.
-        if [ ! -d $FLAP_DATA/system ]
+        # Run some setup operation if the installation is not done.
+        if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
         then
-            echo '* [start] Setting up'
+            echo '* [start] Running setup operations.'
             manager setup raid
             manager setup network
             manager setup cron
@@ -23,22 +23,21 @@ case $CMD in
 
         # Start all services.
         echo '* [start] Starting services.'
-        docker-compose up --detach
+        docker-compose --no-ansi up --detach
 
         if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
         then
             # Run post setup scripts for each services.
             manager hooks post_install
 
-            # Mark installation as done.
+            # Mark the installation as done.
             touch $FLAP_DATA/system/data/installation_done.txt
         fi
 
         # Generate certificates for flap.localhost on CI mode.
-        if [ "${CI:-false}" != "false" ] && [ "$(manager tls primary)" == "" ]
+        if [ "${DEV:-false}" != "false" ] && [ "$(manager tls primary)" == "" ]
         then
             manager tls generate_localhost
-            manager restart
         fi
 
     ;;

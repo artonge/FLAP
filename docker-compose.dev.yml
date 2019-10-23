@@ -7,6 +7,15 @@ services:
             - nextcloud
             - sogo
             - core
+        volumes:
+            - ~/Downloads/lemonldap-ng-master-doc/doc:/lemon-doc # [emmc] -> [lemon] Scripts.
+
+    # LEMONLDAP-NG
+    lemon:
+        build:
+            context: ./lemon
+            dockerfile: ./Dockerfile
+        ports: ["9001:9000"]
 
     # POSTGRESQL
     postgres:

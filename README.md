@@ -46,6 +46,14 @@ source /etc/environment
 ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
 ```
 
+#### Mark the instance as a developpement one
+
+To inhibit some fonctionnalities that are not wanted on a dev machine, please expose the DEV environment variable.
+
+```shell
+echo "export DEV=true" > /etc/environment
+```
+
 #### Running services
 
 To start all services you can run:

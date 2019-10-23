@@ -2,6 +2,9 @@
 
 set -eu
 
+BRANCH=${1-master}
+echo "INSTALLING BRANCH: $BRANCH"
+
 # Prevent interactions during apt install
 export DEBIAN_FRONTEND=noninteractive
 
@@ -90,7 +93,17 @@ echo "INSTALLING FLAP"
 # miniupnpc: open ports
 # avahi-daemon: set the mDNS name
 # mdam: Setup RAID
-apt install -y git gettext certbot miniupnpc avahi-daemon mdadm
+# jq: manipulate json text files
+# psmisc: better cli output
+apt install -y \
+    git \
+    gettext \
+    certbot \
+    miniupnpc \
+    avahi-daemon \
+    mdadm \
+    jq \
+    psmisc
 
 # Prevent key fingerprint cheking during git clone
 mkdir -p ~/.ssh/
@@ -100,6 +113,16 @@ echo "|1|qWGcIFxLWr0h9SzQkmBcgT5IbAE=|d+v+RHzFM2if/RxyEoULgVbpfaI= ecdsa-sha2-ni
 
 # Fetch git repository
 git clone --recursive https://gitlab.com/flap-box/flap.git $FLAP_DIR
+
+if [ "$BRANCH" != 'master' ]
+then
+    echo "CHECKING OUT $BRANCH"
+    cd $FLAP_DIR
+    git checkout $BRANCH
+    git pull
+    git submodule update --init
+fi
+
 
 ################################################################################
 echo "DONE"
