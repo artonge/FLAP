@@ -47,11 +47,11 @@ update_test:
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
         - echo $CI_PROJECT_DIR
         - apk add git
+        - git fetch
         - ls -aslh $CI_PROJECT_DIR
         - ls -aslh $CI_PROJECT_DIR/.git
         - ls -aslh $CI_PROJECT_DIR/.git/refs
         - ls -aslh $CI_PROJECT_DIR/.git/refs/heads
-        - git fetch
         - cat $CI_PROJECT_DIR/.git/refs/heads/master
         - >
             docker run \
