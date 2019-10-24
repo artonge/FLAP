@@ -46,11 +46,11 @@ update_test:
         # We need mappings to real folders because docker will resolve its mappings using the real fils system.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
         - echo $CI_PROJECT_DIR
+        - apk add git
         - ls -aslh $CI_PROJECT_DIR
         - ls -aslh $CI_PROJECT_DIR/.git
         - ls -aslh $CI_PROJECT_DIR/.git/refs
         - ls -aslh $CI_PROJECT_DIR/.git/refs/heads
-        - apk add git
         - git fetch
         - cat $CI_PROJECT_DIR/.git/refs/heads/master
         - >
