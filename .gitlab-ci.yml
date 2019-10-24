@@ -45,9 +45,12 @@ update_test:
         # Start a flap instance with mappings to real folders.
         # We need mappings to real folders because docker will resolve its mappings using the real fils system.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
-        - ls -aslh .
-        - ls -aslh $CI_BUILDS_DIR
+        - echo $CI_PROJECT_DIR
         - ls -aslh $CI_PROJECT_DIR
+        - ls -aslh $CI_PROJECT_DIR/.git
+        - ls -aslh $CI_PROJECT_DIR/.git/refs
+        - ls -aslh $CI_PROJECT_DIR/.git/refs/heads
+        - cat $CI_PROJECT_DIR/.git/refs/heads/master
         - >
             docker run \
                 --detach \
