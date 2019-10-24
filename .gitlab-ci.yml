@@ -50,7 +50,7 @@ update_test:
         - ls -aslh $CI_PROJECT_DIR/.git
         - ls -aslh $CI_PROJECT_DIR/.git/refs
         - ls -aslh $CI_PROJECT_DIR/.git/refs/heads
-        - apt update && apt install git
+        - apk add git
         - git fetch
         - cat $CI_PROJECT_DIR/.git/refs/heads/master
         - >
