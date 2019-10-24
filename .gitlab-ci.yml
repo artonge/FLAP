@@ -50,6 +50,7 @@ update_test:
         - ls -aslh $CI_PROJECT_DIR/.git
         - ls -aslh $CI_PROJECT_DIR/.git/refs
         - ls -aslh $CI_PROJECT_DIR/.git/refs/heads
+        - git fetch
         - cat $CI_PROJECT_DIR/.git/refs/heads/master
         - >
             docker run \
