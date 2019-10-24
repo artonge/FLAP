@@ -120,6 +120,8 @@ Commands:
             EXIT_CODE=1
         }
 
+        manager setup cron
+
         rm $FLAP_DATA/system/data/updating.lock
         ;;
 esac
