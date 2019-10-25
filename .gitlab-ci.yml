@@ -45,6 +45,10 @@ update_test:
         # Start a flap instance with mappings to real folders.
         # We need mappings to real folders because docker will resolve its mappings using the real fils system.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
+        - apk add git
+        - git checkout master
+        - MASTER_COMMIT=$(git rev-parse HEAD)
+        - git checkout -B "$CI_BUILD_REF_NAME" "$CI_BUILD_REF"
         - >
             docker run \
                 --detach \
@@ -61,7 +65,7 @@ update_test:
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
-                $CI_REGISTRY_IMAGE/master:$(cat $CI_PROJECT_DIR/.git/refs/heads/master) \
+                $CI_REGISTRY_IMAGE/master:$MASTER_COMMIT \
                 /bin/sh -c "while true; do sleep 1000; done"
 
         # Copy the code to the real folder.
