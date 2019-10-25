@@ -35,7 +35,7 @@ case $CMD in
         fi
 
         # Generate certificates for flap.localhost on CI mode.
-        if [ "${DEV:-false}" != "false" ] && [ "$(manager tls primary)" == "" ]
+        if [[ ( "${DEV:-false}" == "false" || "${CI:-false}" != "false" ) && "$(manager tls primary)" == "" ]]
         then
             manager tls generate_localhost
         fi
