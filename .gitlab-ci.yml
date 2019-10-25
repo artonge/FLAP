@@ -48,6 +48,9 @@ update_test:
         - echo $CI_PROJECT_DIR
         - apk add git
         - git fetch
+        - git checkout master
+        - MASTER_COMMIT=$(git rev-parse HEAD)
+        - git checkout $CI_COMMIT_REF_NAME
         - ls -aslh $CI_PROJECT_DIR
         - ls -aslh $CI_PROJECT_DIR/.git
         - ls -aslh $CI_PROJECT_DIR/.git/refs
@@ -69,7 +72,7 @@ update_test:
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
-                $CI_REGISTRY_IMAGE/master:$(cat $CI_PROJECT_DIR/.git/refs/heads/master) \
+                $CI_REGISTRY_IMAGE/master:$MASTER_COMMIT \
                 /bin/sh -c "while true; do sleep 1000; done"
 
         # Copy the code to the real folder.
