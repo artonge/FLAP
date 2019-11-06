@@ -2,8 +2,8 @@
 
 set -eu
 
-BRANCH=${1-master}
-echo "INSTALLING BRANCH: $BRANCH"
+BRANCH_OR_TAG=${1:-master}
+echo "INSTALLING BRANCH_OR_TAG: $BRANCH_OR_TAG"
 
 # Prevent interactions during apt install
 export DEBIAN_FRONTEND=noninteractive
@@ -114,12 +114,12 @@ echo "|1|qWGcIFxLWr0h9SzQkmBcgT5IbAE=|d+v+RHzFM2if/RxyEoULgVbpfaI= ecdsa-sha2-ni
 # Fetch git repository
 git clone --recursive https://gitlab.com/flap-box/flap.git $FLAP_DIR
 
-if [ "$BRANCH" != 'master' ]
+if [ "$BRANCH_OR_TAG" != 'master' ]
 then
-    echo "CHECKING OUT $BRANCH"
+    echo "CHECKING OUT $BRANCH_OR_TAG"
     cd $FLAP_DIR
-    git checkout $BRANCH
-    git pull
+    git fetch --tags --prune
+    git checkout $BRANCH_OR_TAG
     git submodule update --init
 fi
 
