@@ -51,26 +51,33 @@ Commands:
         fi
         ;;
     ""|*)
-        # Don't update if one is already in progress.
-        if [ -f $FLAP_DATA/system/data/updating.lock ]
-        then
-            exit 0
-        fi
-
-        touch $FLAP_DATA/system/data/updating.lock
-
         # Go to FLAP_DIR for git cmds.
         cd $FLAP_DIR
 
-        # Optionnaly use the second argument as the targeted branch. Default to the current branch.
-        BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
+        CURRENT_TAG=$(git describe --tags --abbrev=0)
+        NEXT_TAG=$(git tag --sort version:refname | grep -A 1 $CURRENT_TAG | grep -v $CURRENT_TAG | cat)
+        ARG_TAG=${1:-}
+        TARGET_TAG=${ARG_TAG:-$NEXT_TAG}
 
-        COMMIT=$(git rev-parse HEAD)
+        # Abort update if there is no TARGET_TAG.
+        if [ "${TARGET_TAG:-0.0.0}" == '0.0.0' ]
+        then
+            echo '* [update] Nothing to update, exiting.'
+            exit 0
+        fi
+
+        # Don't update if an update is already in progress.
+        if [ -f /tmp/updating_flap.lock ]
+        then
+            echo '* [update] Update already in progress, exiting.'
+            exit 0
+        fi
+        touch /tmp/updating_flap.lock
 
         {
-            echo "* [update] Updating code to branch $BRANCH."
-            git checkout $BRANCH &&
-            git pull origin $BRANCH &&
+            echo "* [update] Updating code to $TARGET_TAG."
+            git fetch --tags --prune &&
+            git checkout $TARGET_TAG &&
             git submodule update --init &&
 
             echo '* [update] Updating docker images.' &&
@@ -78,12 +85,12 @@ Commands:
             manager config generate_templates &&
             docker-compose --no-ansi pull
         } || {
-            # When either the git update or the docker pull fails, it is safer to go back to the previous commit.
+            # When either the git update or the docker pull fails, it is safer to go back to the previous tag.
             # This will prevent from:
             # - starting without the docker images,
             # - running migrations on an unknown state.
             echo '* [update] ERROR - Fail to update, going back to previous commit.'
-            git reset --hard $COMMIT
+            git checkout $CURRENT_TAG
             git submodule update --init
             EXIT_CODE=1
         }
@@ -101,8 +108,8 @@ Commands:
             EXIT_CODE=1
         }
 
-        # Clean docker volumes to prevent persisting part of containers that should not be persisted.
-        docker volume prune -f
+        echo '* [update] Running clean hooks.'
+        manager hooks clean
 
         {
             echo '* [update] Restarting containers.'
@@ -122,7 +129,7 @@ Commands:
 
         manager setup cron
 
-        rm $FLAP_DATA/system/data/updating.lock
+        rm /tmp/updating_flap.lock
         ;;
 esac
 
