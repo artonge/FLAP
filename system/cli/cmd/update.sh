@@ -92,7 +92,8 @@ Commands:
             echo '* [update] ERROR - Fail to update, going back to previous commit.'
             git checkout $CURRENT_TAG
             git submodule update --init
-            EXIT_CODE=1
+            rm /tmp/updating_flap.lock
+            exit 1
         }
 
         echo '* [update] Stoping containers.'
