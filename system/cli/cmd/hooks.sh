@@ -5,7 +5,7 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
-    post_install|post_update|post_domain_update|health_check)
+    post_install|post_update|post_domain_update|health_check|clean)
         echo "* [hooks] Running $CMD hook:"
         
         # Go to FLAP_DIR to allow docker-compose cmds.
@@ -29,5 +29,5 @@ case $CMD in
         echo "
 hooks | Run hooks.
 Commands:
-    generate | <post_install, post_update, post_domain_update, health_check> | Run the provided hook." | column -t -s "|"
+    generate | <post_install, post_update, post_domain_update, health_check, clean> | Run the provided hook." | column -t -s "|"
 esac
