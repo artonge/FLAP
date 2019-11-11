@@ -54,6 +54,8 @@ Commands:
         # Go to FLAP_DIR for git cmds.
         cd $FLAP_DIR
 
+        git fetch --tags --prune
+
         CURRENT_TAG=$(git describe --tags --abbrev=0)
         NEXT_TAG=$(git tag --sort version:refname | grep -A 1 $CURRENT_TAG | grep -v $CURRENT_TAG | cat)
         ARG_TAG=${1:-}
@@ -76,7 +78,6 @@ Commands:
 
         {
             echo "* [update] Updating code to $TARGET_TAG."
-            git fetch --tags --prune &&
             git checkout $TARGET_TAG &&
             git submodule update --init &&
 
