@@ -23,7 +23,7 @@ case $CMD in
         done
         ;;
     summarize)
-        echo "hooks | [post_install, post_update, post_domain_update, health_check] | Run hooks."
+        echo "hooks | [post_install, post_update, post_domain_update, health_check, clean] | Run hooks."
         ;;
     help|*)
         echo "
