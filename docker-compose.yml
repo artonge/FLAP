@@ -13,7 +13,7 @@ services:
             # TLS Certificates.
             - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [nginx] SSL certificates
             # Static files from apps
-            - ${FLAP_DIR}/core/src/front/public/favicon.ico:/var/www/favicon.ico:ro # [emmc] -> [nginx] faveicon.ico so it can be used by every app.
+            - ${FLAP_DIR}/core/src/front/public/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.
             - nextcloudStaticFiles:/var/www/nextcloud:ro # [nextcloud] -> [nginx] Nextcloud static files
             - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files
             - lemonStaticFiles:/var/www/lemon:ro # [lemon] -> [nginx] Lemon static files.
@@ -88,7 +88,7 @@ services:
 
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.8.2
+        image: registry.gitlab.com/flap-box/core:0.9.0
         env_file: [$FLAP_DIR/core/core.env]
         restart: always
         depends_on: [ldap, redis]
