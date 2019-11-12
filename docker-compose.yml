@@ -102,7 +102,7 @@ services:
 
     # NEXTCLOUD
     nextcloud:
-        image: nextcloud:16.0.5-fpm
+        image: nextcloud:17.0.0-fpm
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always
         depends_on: [postgres, redis, ldap]
@@ -110,7 +110,6 @@ services:
             - ${FLAP_DATA}/nextcloud/saml:/saml/nextcloud # [hd] -> [nextcloud] nextcloud's SAML keys.
             - ${FLAP_DATA}/lemon/saml:/saml/idp # [hd] -> [nextcloud] IDP's SAML keys.
             - ${FLAP_DATA}/nextcloud/data:/data # [nextcloud] <-> [hd] Data.
-            - ${FLAP_DATA}/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config.
             - nextcloudStaticFiles:/var/www/html # [nextcloud] -> [nginx] Static files needed by nginx.
             - ${FLAP_DIR}/nextcloud/scripts/generate_config.sh:/generate_config.sh # [emmc] <-> [nextcloud] Script to generate config.php.
         networks:

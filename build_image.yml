@@ -9,8 +9,7 @@
         - >
             docker build \
                 --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) \
-                --tag $CI_REGISTRY_IMAGE:$ARCH-latest \
-                --build-arg CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG} .
+                --tag $CI_REGISTRY_IMAGE:$ARCH-latest
         - docker push $CI_REGISTRY_IMAGE
 
 build:amd64:
