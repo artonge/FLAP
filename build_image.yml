@@ -9,7 +9,8 @@
         - >
             docker build \
                 --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) \
-                --tag $CI_REGISTRY_IMAGE:$ARCH-latest
+                --tag $CI_REGISTRY_IMAGE:$ARCH-latest \
+                .
         - docker push $CI_REGISTRY_IMAGE
 
 build:amd64:
