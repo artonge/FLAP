@@ -14,7 +14,7 @@ services:
             - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [nginx] SSL certificates
             # Static files from apps
             - ${FLAP_DIR}/core/src/front/public/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.
-            - nextcloudStaticFiles:/var/www/nextcloud:ro # [nextcloud] -> [nginx] Nextcloud static files
+            - ${FLAP_DATA}/nextcloud/html:/var/www/nextcloud:ro # [nextcloud] -> [nginx] Nextcloud static files
             - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files
             - lemonStaticFiles:/var/www/lemon:ro # [lemon] -> [nginx] Lemon static files.
             - ${FLAP_DIR}/lemon/skin/flapskin:/var/www/lemon_flapskin:ro # [emmc] -> [nginx] Custom scripts and syles for flapskin.
@@ -102,16 +102,17 @@ services:
 
     # NEXTCLOUD
     nextcloud:
-        image: nextcloud:17.0.0-fpm
+        image: nextcloud:16.0.5-fpm
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always
         depends_on: [postgres, redis, ldap]
         volumes:
             - ${FLAP_DATA}/nextcloud/saml:/saml/nextcloud # [hd] -> [nextcloud] nextcloud's SAML keys.
             - ${FLAP_DATA}/lemon/saml:/saml/idp # [hd] -> [nextcloud] IDP's SAML keys.
-            - ${FLAP_DATA}/nextcloud/data:/data # [nextcloud] <-> [hd] Data.
-            - nextcloudStaticFiles:/var/www/html # [nextcloud] -> [nginx] Static files needed by nginx.
-            - ${FLAP_DIR}/nextcloud/scripts/generate_config.sh:/generate_config.sh # [emmc] <-> [nextcloud] Script to generate config.php.
+            - ${FLAP_DATA}/nextcloud/data:/data # [nextcloud] <-> [hd] Data
+            - ${FLAP_DATA}/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config
+            - ${FLAP_DATA}/nextcloud/html:/var/www/html # [nextcloud] <-> [hd] WWW
+            - ${FLAP_DIR}/nextcloud/scripts/generate_config.sh:/generate_config.sh # [emmc] <-> [nextcloud] Script to generate config.php
         networks:
             stores-net:
             apps-net:
