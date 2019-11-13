@@ -12,6 +12,21 @@ else
 fi
 
 case $CMD in
+    services)
+        if [ $FORCE_YES == 0 ]
+        then
+            read -p "This will remove all the users data. Continue ? [Y/N]: " answer
+
+            if [ "$answer" == "${answer#[Yy]}" ]
+            then
+                exit 0
+            fi
+        fi
+        
+        echo '* [clean] Running clean hook.'
+
+        manager hooks clean
+        ;;
     config)
         if [ $FORCE_YES == 0 ]
         then
@@ -64,7 +79,6 @@ case $CMD in
 
         # Remove docker objects
         docker container prune -f
-        docker volume prune -f
         docker network prune -f
         docker image prune -f
         ;;
@@ -80,17 +94,19 @@ case $CMD in
         fi
 
         echo '* [clean] Cleaning FLAP.'
+        manager clean services -y
         manager clean config -y
         manager clean data -y
         manager clean docker -y
         ;;
     summarize)
-        echo "clean | [config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
+        echo "clean | [service, config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
         ;;
     help|*)
         printf "
 $(manager clean summarize)
 Commands:
+    service | [-y] | Run clean hooks.
     config | [-y] | Remove the generated configuration.
     data | [-y] | Remove the users data.
     docker | [-y] | Remove the docker objects.
