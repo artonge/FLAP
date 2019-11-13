@@ -63,6 +63,7 @@ case $CMD in
 
         # Remove FLAP data files
         rm -rf $FLAP_DATA/*
+        docker volume prune -f
         ;;
     docker)
         if [ $FORCE_YES == 0 ]
