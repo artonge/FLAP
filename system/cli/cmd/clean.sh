@@ -100,13 +100,13 @@ case $CMD in
         manager clean docker -y
         ;;
     summarize)
-        echo "clean | [service, config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
+        echo "clean | [services, config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
         ;;
     help|*)
         printf "
 $(manager clean summarize)
 Commands:
-    service | [-y] | Run clean hooks.
+    services | [-y] | Run clean hooks.
     config | [-y] | Remove the generated configuration.
     data | [-y] | Remove the users data.
     docker | [-y] | Remove the docker objects.
