@@ -102,7 +102,7 @@ services:
 
     # NEXTCLOUD
     nextcloud:
-        image: nextcloud:16.0.5-fpm
+        image: nextcloud:17.0.1-fpm
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always
         depends_on: [postgres, redis, ldap]
