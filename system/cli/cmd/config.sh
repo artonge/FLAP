@@ -85,7 +85,7 @@ case $CMD in
         mkdir -p $FLAP_DIR/nginx/config/conf.d/domains
 
         # Clean old domains includes files
-        echo "" > $FLAP_DIR/nginx/config/conf.d/domains.conf
+        echo "include /etc/nginx/parts.d/tls.inc;" > $FLAP_DIR/nginx/config/conf.d/domains.conf
 
         # Clean old domains service config files
         rm -rf $FLAP_DIR/nginx/config/conf.d/domains/*
