@@ -31,7 +31,10 @@ add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -
 
 # Install docker
 apt update
-apt install -y docker-ce docker-ce-cli containerd.io
+apt install -y \
+    docker-ce=5:18.09.8~3-0~ubuntu-bionic \
+    docker-ce-cli=5:18.09.8~3-0~ubuntu-bionic \
+    containerd.io=1.2.6-3
 
 # Start docker on start
 systemctl_path=$(which systemctl || true)
@@ -92,9 +95,9 @@ echo "INSTALLING FLAP"
 # certbot: generate TLS certificates
 # miniupnpc: open ports
 # avahi-daemon: set the mDNS name
-# mdam: Setup RAID
+# mdam: setup RAID
 # jq: manipulate json text files
-# psmisc: better cli output
+# psmisc: better cli output with pstree
 apt install -y \
     git \
     gettext \
