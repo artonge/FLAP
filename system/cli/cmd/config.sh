@@ -85,7 +85,7 @@ case $CMD in
         mkdir -p $FLAP_DIR/nginx/config/conf.d/domains
 
         # Reset domains includes files.
-        if [ "$PRIMARY_DOMAIN" == "" ]
+        if [ "$PRIMARY_DOMAIN_NAME" == "" ]
         then
             echo "" > $FLAP_DIR/nginx/config/conf.d/domains.conf
         else
