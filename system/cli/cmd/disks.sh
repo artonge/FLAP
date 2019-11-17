@@ -18,11 +18,11 @@ case $CMD in
             df -h -x devtmpfs -x tmpfs | grep md0
 
             # Save the configuration.
-            mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
+            mdadm --detail --scan | tee -a /etc/mdadm/mdadm.conf
 
             # Make the RAID array mount on boot.
             update-initramfs -u
-            echo "/dev/md0 $FLAP_DATA ext4 defaults,nofail,discard 0 0" | sudo tee -a /etc/fstab
+            echo "/dev/md0 $FLAP_DATA ext4 defaults,nofail,discard 0 0" | tee -a /etc/fstab
         fi
         ;;
     summarize)

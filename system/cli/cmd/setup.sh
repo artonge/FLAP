@@ -12,9 +12,9 @@ case $CMD in
         then
             echo '* [setup] Openning ports and setting hostname'
             # Set local domain name to flap.local
-            sudo hostnamectl --static set-hostname "flap.local"
-            sudo hostnamectl --transient set-hostname "flap.local"
-            sudo hostnamectl --pretty set-hostname "FLAP box (flap.local)"
+            hostnamectl --static set-hostname "flap.local"
+            hostnamectl --transient set-hostname "flap.local"
+            hostnamectl --pretty set-hostname "FLAP box (flap.local)"
             # Create port mappings
             manager ports open 80
             manager ports open 443
