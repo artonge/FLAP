@@ -84,8 +84,13 @@ case $CMD in
         # Create directory architecture
         mkdir -p $FLAP_DIR/nginx/config/conf.d/domains
 
-        # Clean old domains includes files
-        echo "include /etc/nginx/parts.d/tls.inc;" > $FLAP_DIR/nginx/config/conf.d/domains.conf
+        # Reset domains includes files.
+        if [ "$PRIMARY_DOMAIN" == "" ]
+        then
+            echo "" > $FLAP_DIR/nginx/config/conf.d/domains.conf
+        else
+            echo "include /etc/nginx/parts.d/tls.inc;" > $FLAP_DIR/nginx/config/conf.d/domains.conf
+        fi
 
         # Clean old domains service config files
         rm -rf $FLAP_DIR/nginx/config/conf.d/domains/*
