@@ -4,7 +4,7 @@ set -eu
 
 # Usage: ./generate_certs.sh <domain name> [<domain name>, ...]
 
-echo '* Generating certificates for $@'
+echo "* Generating certificates for $@"
 
 domains=""
 for domain in $@
@@ -15,6 +15,12 @@ do
         domains+="--domain $subdomain.$domain "
     done
 done
+
+
+if [ -d /etc/letsencrypt/live/flap ]
+then
+    certbot delete --cert-name flap
+fi
 
 # Generate certificates for all domains using certbot.
 # https://certbot.eff.org/docs/using.html#standalone
