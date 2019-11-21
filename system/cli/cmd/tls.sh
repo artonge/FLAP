@@ -157,10 +157,19 @@ case $CMD in
         # Give time to the server to pick up the status change.
         sleep 2
 
+
         {
             manager stop &&
             manager tls generate &&
             echo "OK" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt &&
+            {
+                # If primary domain is emtpy, set the handled domain as primary.
+                if [ "$(manager tls primary)" == "" ]
+                then
+                    echo "* [tls] Set $DOMAIN as primary."
+                    echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt
+                fi
+            } &&
             manager start &&
             manager hooks post_domain_update &&
             manager restart
@@ -170,13 +179,6 @@ case $CMD in
             manager start
             exit 1
         }
-
-        # If primary domain is emtpy, set the handled domain as primary.
-        if [ "$(manager tls primary)" == "" ]
-        then
-            echo "Set $DOMAIN as primary."
-            echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt
-        fi
         ;;
     update_dns_records)
         # Execute update script for each OK domain.
