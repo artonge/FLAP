@@ -15,7 +15,8 @@ case $CMD in
     services)
         if [ $FORCE_YES == 0 ]
         then
-            read -p "This will remove all the users data. Continue ? [Y/N]: " answer
+            echo "* [clean] This will remove all the users data. Continue ? [Y/N]:"
+            read answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -30,7 +31,8 @@ case $CMD in
     config)
         if [ $FORCE_YES == 0 ]
         then
-            read -p "This will remove all the configuration. Continue ? [Y/N]: " answer
+            echo "* [clean] This will remove all the configuration. Continue ? [Y/N]:"
+            read answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -51,7 +53,8 @@ case $CMD in
     data)
         if [ $FORCE_YES == 0 ]
         then
-            read -p "This will remove all the users data. Continue ? [Y/N]: " answer
+            echo "* [clean] This will remove all the users data. Continue ? [Y/N]:"
+            read answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -68,7 +71,8 @@ case $CMD in
     docker)
         if [ $FORCE_YES == 0 ]
         then
-            read -p "This will remove all the docker objects. Continue ? [Y/N]: " answer
+            echo "* [clean] This will remove all the docker objects. Continue ? [Y/N]:"
+            read answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -86,7 +90,8 @@ case $CMD in
     ""|"-y")
         if [ "${1:-}" != "-y" ]
         then
-            read -p "This will remove ALL the FLAP data. Continue ? [Y/N]: " answer
+            echo "* [clean] This will remove ALL the FLAP data. Continue ? [Y/N]:"
+            read answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then

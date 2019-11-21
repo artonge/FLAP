@@ -40,7 +40,7 @@ then
 
     # --line-buffered allow grep line by line output instead of grep using a larger buffer.
     # --color=always allow for the color not to be overrided.
-    $FLAP_DIR/system/cli/cmd/$CMD.sh $ARGS &> /dev/stdout | grep --line-buffered --color=always -E "^(\| )*\* \[.+\].+|$"
+    $FLAP_DIR/system/cli/cmd/$CMD.sh $ARGS &> /dev/stdout | grep --line-buffered --color=always -E "^\* \[.+\].+|$"
 
     # Restore GREP_COLOR.
     export GREP_COLOR=$OLD_GREP_COLOR
