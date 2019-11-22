@@ -67,6 +67,9 @@ do
     php occ config:system:set trusted_domains $i --value files.${DOMAINS[$i]}
 done
 
+# ENABLE PREVIEW PRE-GENERATOR
+php occ app:enable previewgenerator
+
 # DISABLE FUNCTIONNALITIES
 php occ config:system:set updatechecker --value false --type boolean
 php occ config:system:set upgrade.disable-web --value true --type boolean
