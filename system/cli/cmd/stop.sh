@@ -12,9 +12,9 @@ case $CMD in
         # Generate configuration so docker-compose does not complains because of a missing config file.
         manager config generate_templates
 
-        # Start all services.
+        # Stop all services. If an error occures, the docker daemon will be restarted before retrying.
         echo '* [stop] Stopping services.' 
-        docker-compose --no-ansi down --remove-orphans
+        docker-compose --no-ansi down --remove-orphans || systemctl restart docker || docker-compose --no-ansi down --remove-orphans
     ;;
     summarize)
         echo "stop | | STOP flap services."

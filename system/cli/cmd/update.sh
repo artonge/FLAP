@@ -17,7 +17,7 @@ case $CMD in
         echo "
 $(manager update summarize)
 Commands:
-    update | [branch_name] | Update FLAP to to ost recent version. Specify <branch_name> if you want to update to a given branch.
+    update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch.
     migrate | [service_name] | Run migrations for all or only the specified service." | column -t -s "|"
         ;;
     migrate)
@@ -77,7 +77,7 @@ Commands:
         touch /tmp/updating_flap.lock
 
         {
-            echo "* [update] Updating code to $TARGET_TAG."
+            echo "* [update] Updating code to $TARGET_TAG." &&
             git checkout $TARGET_TAG &&
             git submodule update --init &&
 
@@ -110,19 +110,18 @@ Commands:
             EXIT_CODE=1
         }
 
-        echo '* [update] Running clean hooks.'
-        manager hooks clean
-
         {
-            echo '* [update] Restarting containers.'
+            manager hooks clean &&
+
+            echo '* [update] Starting containers.' &&
             manager start &&
 
-            echo '* [update] Running post-update hooks.'
+            echo '* [update] Running some hooks.' &&
             manager hooks post_update &&
             manager hooks post_domain_update &&
             manager restart &&
 
-            echo '* [update] Cleanning docker objects.'
+            echo '* [update] Cleanning docker objects.' &&
             docker system prune --all --force
         } || {
             echo '* [update] ERROR - Fail to restart containers.'

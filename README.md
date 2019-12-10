@@ -18,15 +18,18 @@ We need the `--recursive` flag so submodules are also cloned.
 
 #### Installing
 
-You can follow the `system/scripts/install_flap.sh` and the `system/cli/cmd/start.sh` scripts to now what needs to be installed and setup.
+You can follow the `system/scripts/install_flap.sh` script to know what needs to be installed.
 Or just follow the following paragraphs.
 
 #### Installing dependencies
 
-You need to install the following dependencies in order to run FLAP:
+You need to install the following dependencies in order to run FLAP locally:
 
 -   [docker](https://docs.docker.com/install)
 -   [docker-compose](https://docs.docker.com/compose/install)
+- `gettext`
+- `jq`
+- `psmisc` (for pstree)
 
 I advise to alias the `docker-compose` command to `dc` for ease of use.
 
@@ -37,7 +40,7 @@ The `manager` CLI is a tool to manage a FLAP install. You can install it on your
 The following script will:
 
 -   Expose `$FLAP_DIR` and `$FLAP_DATA` as global env variables. You can change them to your convenience.
--   Expose the `manager` CLI tool.
+-   Expose the `manager` CLI tool globally.
 
 ```shell
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
@@ -46,9 +49,16 @@ source /etc/environment
 ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
 ```
 
-#### Mark the instance as a developpement one
+#### Alias your `localhost` to `flap.localhost`
 
-To inhibit some fonctionnalities that are not wanted on a dev machine, please expose the DEV environment variable.
+Adding the following line to your `/etc/hosts` file:
+
+`127.0.0.1   flap.localhost auth.flap.localhost lemon.flap.localhost files.flap.localhost sogo.flap.localhost`
+
+
+#### Mark the instance as a development one
+
+To inhibit some functionality that are not wanted on a dev machine, please export the `$DEV` environment variable.
 
 ```shell
 echo "export DEV=true" > /etc/environment
@@ -58,11 +68,18 @@ echo "export DEV=true" > /etc/environment
 
 To start all services you can run:
 
-`manager start`
+```shell
+sudo -E manager start
+```
+
+*For now `sudo` is require to ease the manipulation of containers data. Any proposition to get rid of it is appreciated.*
 
 To start a single service you can run:
 
-`docker-compose up [<service name> ...]`
+```
+sudo -E manager config generate
+docker-compose up [<service name> ...]
+```
 
 Dependencies exist between services, which means, for example, that starting `sogo` will also start `postrgres`, `ldap` and `memcached`.
 
@@ -78,4 +95,4 @@ This allows to redefine services and to run them in a none production mode.
 
 -   Use local docker images. **Warning**, it means that they will be built, which can take some time.
 -   Expose all services to localhost so you can access them directly.
--   Bind the `core` and `manager` directories into their containers and change the start command so you can have live reload when editing local source files.
+-   Bind the `core` directory to its container and change the start command so you can have live reload when editing local source files.
