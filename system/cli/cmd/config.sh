@@ -32,7 +32,7 @@ case $CMD in
 
             echo $dir/$name.$ext
 
-            envsubst '${PRIMARY_DOMAIN_NAME} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
+            envsubst '${PRIMARY_DOMAIN_NAME} ${PRIMARY_DOMAIN_NAME} ${SECONDARY_DOMAIN_NAMES} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < ${FLAP_DIR}/$dir/$name.template.$ext > ${FLAP_DIR}/$dir/$name.$ext
         done
        ;;
     generate_lemon)
@@ -117,6 +117,7 @@ case $CMD in
     show)
         echo "PRIMARY_DOMAIN_NAME=$PRIMARY_DOMAIN_NAME"
         echo "DOMAIN_NAMES=$DOMAIN_NAMES"
+        echo "SECONDARY_DOMAIN_NAMES=$SECONDARY_DOMAIN_NAMES"
         echo "ADMIN_PWD=$ADMIN_PWD"
         echo "SOGO_DB_PWD=$SOGO_DB_PWD"
         echo "NEXTCLOUD_DB_PWD=$NEXTCLOUD_DB_PWD"

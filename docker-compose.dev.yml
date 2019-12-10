@@ -17,6 +17,15 @@ services:
             dockerfile: ./Dockerfile
         ports: ["9001:9000"]
 
+    # LEMONLDAP-NG
+    lemon:
+        volumes:
+            - ~/Downloads/lemonldap-ng-master-doc/doc:/usr/share/doc/lemonldap-ng-doc/doc # [emmc] -> [lemon] Scripts.
+        build:
+            context: ./lemon
+            dockerfile: ./Dockerfile
+        ports: ["9001:9000"]
+
     # POSTGRESQL
     postgres:
         ports: ["5432:5432"]
@@ -45,6 +54,11 @@ services:
             PHPLDAPADMIN_HTTPS: "false"
         networks:
             stores-net:
+
+    # MAIL.
+    mail:
+        environment:
+            DMS_DEBUG: 1
 
     # FLAP CORE API
     core:

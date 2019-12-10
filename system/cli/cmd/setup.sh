@@ -16,8 +16,11 @@ case $CMD in
             hostnamectl --transient set-hostname "flap.local"
             hostnamectl --pretty set-hostname "FLAP box (flap.local)"
             # Create port mappings
-            manager ports open 80
-            manager ports open 443
+            manager ports open 80 # HTTP
+            manager ports open 443 # HTTPS
+            manager ports open 25 # SMTP
+            manager ports open 587 # SMTP with STARTLS
+            manager ports open 143 # IMAP
         fi
     ;;
     raid)

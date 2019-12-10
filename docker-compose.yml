@@ -37,6 +37,7 @@ services:
             - ${FLAP_DIR}/lemon/skin/templates:/usr/share/lemonldap-ng/portal/templates/flapskin # [emmc] -> [lemmon] Custom skin for lemon'sportal.
             - ${FLAP_DATA}/lemon/data:/var/lib/lemonldap-ng # [hd] -> [lemon] LemonLDAP's data.
             - lemonStaticFiles:/usr/ # [lemon] -> [nginx] Lemon static files needed by nginx.
+        depends_on: [mail]
         networks:
             stores-net:
             apps-net:
@@ -74,21 +75,39 @@ services:
 
     # LDAP
     ldap:
-        image: registry.gitlab.com/flap-box/ldap:2.4.47-1
+        image: registry.gitlab.com/flap-box/ldap:2.4.47-3
         env_file: [$FLAP_DIR/ldap/ldap.env]
         restart: always
         volumes:
-            - ${FLAP_DIR}/ldap/config:/config:ro # [emmc] -> [ldap] Init
-            - ${FLAP_DIR}/ldap/prepopulate:/prepopulate:ro # [emmc] -> [ldap] Init
+            - ${FLAP_DIR}/ldap/config:/config:ro # [emmc] -> [ldap] Config files to load.
+            - ${FLAP_DIR}/ldap/schemas:/schemas:ro # [emmc] -> [ldap] Schemas files to load.
+            - ${FLAP_DIR}/ldap/prepopulate:/prepopulate:ro # [emmc] -> [ldap] Entities files to load.
             - ${FLAP_DATA}/ldap/config:/etc/ldap # [ldap] <-> [hd] Config
             - ${FLAP_DATA}/ldap/data:/var/lib/ldap # [ldap] <-> [hd] Data
         networks:
             stores-net:
                 aliases: [ldap]
 
+    # MAIL
+    mail:
+        image: tvial/docker-mailserver:release-v6.2.0
+        env_file: [./mail/mail.env]
+        restart: always
+        depends_on: [ldap]
+        ports: ["25:25", "143:143", "587:587"]
+        volumes:
+            - ${FLAP_DATA}/mail/data/mail:/var/mail # [mail] -> [hd] Mail.
+            - ${FLAP_DATA}/mail/data/state:/var/mail-state # [mail] -> [hd] State.
+            - ${FLAP_DIR}/mail/config/:/tmp/docker-mailserver/ # [emmc] -> [mail] Config.
+            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [mail] SSL certificates.
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [mail]
+
     # FLAP CORE API
     core:
-        image: registry.gitlab.com/flap-box/core:0.9.1
+        image: registry.gitlab.com/flap-box/core:0.9.3
         env_file: [$FLAP_DIR/core/core.env]
         restart: always
         depends_on: [ldap, redis]
@@ -105,7 +124,7 @@ services:
         image: nextcloud:17.0.1-fpm
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always
-        depends_on: [postgres, redis, ldap]
+        depends_on: [postgres, redis, ldap, mail]
         volumes:
             - ${FLAP_DATA}/nextcloud/saml:/saml/nextcloud # [hd] -> [nextcloud] nextcloud's SAML keys.
             - ${FLAP_DATA}/lemon/saml:/saml/idp # [hd] -> [nextcloud] IDP's SAML keys.
@@ -120,12 +139,13 @@ services:
 
     # SOGO
     sogo:
-        image: registry.gitlab.com/flap-box/sogo:4.0.8-1
+        image: registry.gitlab.com/flap-box/sogo:4.1.1-1
         env_file: [$FLAP_DIR/sogo/sogo.env]
         restart: always
-        depends_on: [postgres, ldap, memcached]
+        depends_on: [postgres, ldap, memcached, mail]
         volumes:
-            - ${FLAP_DIR}/sogo/config/sogo.conf:/etc/sogo/sogo.conf # [emmc] -> [sogo] Config
+            - ${FLAP_DIR}/sogo/config/sogo.conf:/etc/sogo/sogo.conf # [emmc] -> [sogo] SOGo's config.
+            - ${FLAP_DIR}/sogo/config/stunnel.conf:/etc/stunnel/sogo.conf # [emmc] -> [sogo] Stunnel's config.
             - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo # [sogo] -> [nginx] Static files needed by nginx
         networks:
             stores-net:
