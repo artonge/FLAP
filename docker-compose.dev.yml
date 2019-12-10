@@ -8,7 +8,7 @@ services:
             - sogo
             - core
         volumes:
-            - ~/Downloads/lemonldap-ng-master-doc/doc:/lemon-doc # [emmc] -> [lemon] Scripts.
+            - /home/louis/Downloads/lemonldap-ng-master-doc/doc:/lemon-doc # [emmc] -> [lemon] Scripts.
 
     # LEMONLDAP-NG
     lemon:
@@ -19,8 +19,6 @@ services:
 
     # LEMONLDAP-NG
     lemon:
-        volumes:
-            - ~/Downloads/lemonldap-ng-master-doc/doc:/usr/share/doc/lemonldap-ng-doc/doc # [emmc] -> [lemon] Scripts.
         build:
             context: ./lemon
             dockerfile: ./Dockerfile
