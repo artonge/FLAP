@@ -2,7 +2,8 @@
 
 set -eu
 
-# Generate DKIM.
+# Generate DKIM
+rm -rf $FLAP_DIR/mail/config/opendkim
 echo "" > $FLAP_DIR/mail/config/vhost.tmp
 for domain in $DOMAIN_NAMES
 do
