@@ -58,20 +58,20 @@ update_test:
             \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
             \
-                --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
+                --volume $CI_BUILDS_DIR/flap:$CI_BUILDS_DIR/flap \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
             \
-                --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
+                --env FLAP_DIR=$CI_BUILDS_DIR/flap \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
                 $CI_REGISTRY_IMAGE:latest \
                 /bin/sh -c "while true; do sleep 1000; done"
 
         # Copy the code to the real folder.
-        - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
+        - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap
 
         # Update the manager link so it maps to the new location.
-        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/manager.sh /bin/manager
+        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap/system/cli/manager.sh /bin/manager
 
         # Start the instance.
         - docker exec flap_old manager start
