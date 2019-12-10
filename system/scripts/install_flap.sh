@@ -108,6 +108,11 @@ apt install -y \
     jq \
     psmisc
 
+# Removing useless packages.
+apt remove -y postfix dovecot
+apt purge -y postfix dovecot
+apt autoremove
+
 # Prevent key fingerprint cheking during git clone
 mkdir -p ~/.ssh/
 echo "|1|qWGcIFxLWr0h9SzQkmBcgT5IbAE=|d+v+RHzFM2if/RxyEoULgVbpfaI= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=

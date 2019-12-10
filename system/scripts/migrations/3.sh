@@ -12,3 +12,8 @@ manager setup network
 
 # Regenerate TLS certificates for new subdomain: mail.{...}.
 manager tls generate
+
+# Uninstall postfix and dovecot.
+apt remove -y postfix dovecot
+apt purge -y postfix dovecot
+apt autoremove
