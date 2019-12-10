@@ -3,7 +3,7 @@
 set -eu
 
 # Generate DKIM.
-echo "" >> $FLAP_DIR/mail/config/vhost.tmp
+echo "" > $FLAP_DIR/mail/config/vhost.tmp
 for domain in $DOMAIN_NAMES
 do
     echo $domain >> $FLAP_DIR/mail/config/vhost.tmp
