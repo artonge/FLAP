@@ -14,5 +14,5 @@ location = /lmauth_basic {
 	fastcgi_param X_ORIGINAL_URI  $request_uri;
 
 	# Enable AuthBasic handler.
-	#fastcgi_param VHOSTTYPE AuthBasic;
+	fastcgi_param VHOSTTYPE AuthBasic;
 }
