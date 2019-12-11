@@ -77,7 +77,7 @@ case $CMD in
         manager tls handle_request_domain_creation
         ;;
     handle_request_primary_update)
-        # Exit if their is no request
+        # Exit if there is no request.
         if [ ! -f $FLAP_DATA/system/data/domain_update_primary.txt ]
         then
             exit 0
