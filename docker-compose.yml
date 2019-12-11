@@ -173,8 +173,5 @@ networks:
 
 volumes:
     sogoStaticFiles:
-        name: sogoStaticFiles
     nextcloudStaticFiles:
-        name: nextcloudStaticFiles
     lemonStaticFiles:
-        name: lemonStaticFiles
