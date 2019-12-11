@@ -44,7 +44,7 @@ services:
             stores-net:
             apps-net:
                 aliases: [lemon]
-                ipv4_address: 172.16.238.10
+                ipv4_address: 172.30.0.100
 
     # POSTGRESQL
     postgres:
@@ -165,11 +165,11 @@ services:
 
 networks:
     apps-net:
-    stores-net:
-        internal: true
         ipam:
             config:
-                - subnet: 172.25.0.0/24
+                - subnet: 172.30.0.0/24
+    stores-net:
+        internal: true
 
 volumes:
     sogoStaticFiles:
