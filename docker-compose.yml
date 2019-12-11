@@ -4,6 +4,7 @@ services:
     # NGINX
     nginx:
         image: nginx:1.17.1
+        container_name: flap_nginx
         restart: always
         volumes:
             # Nginx configurations.
@@ -28,8 +29,9 @@ services:
 
     # LEMONLDAP-NG
     lemon:
-        env_file: [$FLAP_DIR/lemon/lemon.env]
         image: registry.gitlab.com/flap-box/lemon:2.0.6-1
+        container_name: flap_lemon
+        env_file: [$FLAP_DIR/lemon/lemon.env]
         restart: always
         volumes:
             - ${FLAP_DIR}/lemon/config/lemonldap-ng.ini:/etc/lemonldap-ng/lemonldap-ng.ini # [emmc] -> [lemon] Main config.
@@ -42,10 +44,12 @@ services:
             stores-net:
             apps-net:
                 aliases: [lemon]
+                ipv4_address: 172.16.238.10
 
     # POSTGRESQL
     postgres:
         image: postgres:11.2
+        container_name: flap_postgres
         env_file: [$FLAP_DIR/postgres/postgres.env]
         restart: always
         volumes:
@@ -58,6 +62,7 @@ services:
     # REDIS
     redis:
         image: redis:5.0
+        container_name: flap_redis
         restart: always
         volumes:
             - ${FLAP_DATA}/redis/data:/data # [redis] <-> [hd] Data
@@ -68,6 +73,7 @@ services:
     # MEMCACHED
     memcached:
         image: memcached:1.5.12
+        container_name: flap_memcached
         restart: always
         networks:
             stores-net:
@@ -76,6 +82,7 @@ services:
     # LDAP
     ldap:
         image: registry.gitlab.com/flap-box/ldap:2.4.47-3
+        container_name: flap_ldap
         env_file: [$FLAP_DIR/ldap/ldap.env]
         restart: always
         volumes:
@@ -91,6 +98,7 @@ services:
     # MAIL
     mail:
         image: tvial/docker-mailserver:release-v6.2.0
+        container_name: flap_mail
         env_file: [./mail/mail.env]
         restart: always
         depends_on: [ldap]
@@ -108,6 +116,7 @@ services:
     # FLAP CORE API
     core:
         image: registry.gitlab.com/flap-box/core:0.9.3
+        container_name: flap_core
         env_file: [$FLAP_DIR/core/core.env]
         restart: always
         depends_on: [ldap, redis]
@@ -122,6 +131,7 @@ services:
     # NEXTCLOUD
     nextcloud:
         image: nextcloud:17.0.1-fpm
+        container_name: flap_nextcloud
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always
         depends_on: [postgres, redis, ldap, mail]
@@ -140,6 +150,7 @@ services:
     # SOGO
     sogo:
         image: registry.gitlab.com/flap-box/sogo:4.1.1-1
+        container_name: flap_sogo
         env_file: [$FLAP_DIR/sogo/sogo.env]
         restart: always
         depends_on: [postgres, ldap, memcached, mail]
@@ -156,8 +167,14 @@ networks:
     apps-net:
     stores-net:
         internal: true
+        ipam:
+            config:
+                - subnet: 172.25.0.0/24
 
 volumes:
     sogoStaticFiles:
+        name: sogoStaticFiles
     nextcloudStaticFiles:
+        name: nextcloudStaticFiles
     lemonStaticFiles:
+        name: lemonStaticFiles
