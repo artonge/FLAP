@@ -1,6 +1,6 @@
 .build_docker:
     stage: build
-    only: [master, tag]
+    only: [master, tags]
     image: docker:stable
     services: ["docker:dind"]
     script:
