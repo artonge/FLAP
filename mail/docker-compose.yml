@@ -1,0 +1,17 @@
+services:
+    mail:
+        image: tvial/docker-mailserver:release-v6.2.0
+        container_name: flap_mail
+        env_file: [./mail/mail.env]
+        restart: always
+        depends_on: [ldap]
+        ports: ["25:25", "143:143", "587:587"]
+        volumes:
+            - ${FLAP_DATA}/mail/data/mail:/var/mail # [mail] -> [hd] Mail.
+            - ${FLAP_DATA}/mail/data/state:/var/mail-state # [mail] -> [hd] State.
+            - ${FLAP_DIR}/mail/config/:/tmp/docker-mailserver/ # [emmc] -> [mail] Config.
+            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [mail] SSL certificates.
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [mail]

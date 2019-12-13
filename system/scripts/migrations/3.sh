@@ -17,3 +17,7 @@ manager tls generate
 apt remove -y postfix dovecot
 apt purge -y postfix dovecot
 apt autoremove
+
+
+# Install yq.
+pip3 install yq

@@ -108,6 +108,9 @@ apt install -y \
     jq \
     psmisc
 
+# yq: manipulate yaml text files.
+pip3 install yq
+
 # Removing useless packages.
 apt remove -y postfix dovecot
 apt purge -y postfix dovecot

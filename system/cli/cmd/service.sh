@@ -3,22 +3,18 @@
 set -eu
 
 CMD=${1:-}
+NAME=${2:-}
+DIR=$FLAP_DIR/$NAME
 
 case $CMD in
-	summarize)
-		echo "service | [summarize, help] | Create a service's file hierarchy."
+	all)
+		SUB_CMD=${2:-}
+		for service in $(ls --directory $FLAP_DIR/*/)
+		do
+			manager service $SUB_CMD $(basename $service)
+		done
 		;;
-	help)
-		echo "
-		ip | Get ip address.
-		Commands:
-			internal | | Show the internal ip.
-			external | | Show the external ip." | column -t -s "|"
-		;;
-	*)
-		NAME=$CMD
-		DIR=$FLAP_DIR/$NAME
-
+	default)
 		if [ -d $DIR ]
 		then
 			echo "* [service] Updating $NAME."
@@ -30,16 +26,16 @@ case $CMD in
 		cd $DIR
 
 		[ ! -f $DIR/README.md ] && echo "### $NAME for FLAP." > $DIR/README.md
-		cp $FLAP_DIR/LICENSE $DIR/LICENSE
-		[ ! -f $DIR/.gitignore ] && echo "${NAME}.env" > $DIR/.gitignore
-		touch $DIR/${NAME}.template.env
-		touch $DIR/Dockerfile
-		touch $DIR/docker-entrypoint.sh
-		chmod +x $DIR/docker-entrypoint.sh
+
+		touch $DIR/.gitignore
+
 		touch $DIR/docker-compose.yml
-		touch $DIR/nginx.conf
+		touch $DIR/docker-compose.override.yml
 
 		mkdir -p $DIR/scripts
+
+		mkdir -p $DIR/scripts/migrations
+		[ ! -f $DIR/scripts/migrations/base_migration.txt ] && echo "0" > $DIR/scripts/migrations/base_migration.txt
 
 		mkdir -p $DIR/scripts/hooks
 		touch $DIR/scripts/hooks/clean.sh
@@ -52,11 +48,29 @@ case $CMD in
 		chmod +x $DIR/scripts/hooks/post_install.sh
 		touch $DIR/scripts/hooks/post_update.sh
 		chmod +x $DIR/scripts/hooks/post_update.sh
+		;;
+	docker)
+		manager service default $NAME
 
-		mkdir -p $DIR/scripts/migrations
-		[ ! -f $DIR/scripts/migrations/base_migration.txt ] && echo "0" > $DIR/scripts/migrations/base_migration.txt
+		touch $DIR/Dockerfile
+		touch $DIR/docker-entrypoint.sh
+		chmod +x $DIR/docker-entrypoint.sh
+		touch $DIR/${NAME}.template.env
+		;;
+	submodule)
+		manager service default $NAME
 
-		mkdir -p $DIR/config
-		touch $DIR/config/lemon.jq
+		cp $FLAP_DIR/LICENSE $DIR/LICENSE
+		;;
+	summarize)
+		echo "service | [default, submodule, summarize, help] | Create or update a service's file hierarchy."
+		;;
+	help|*)
+		echo "
+$(manager service summarize)
+Commands:
+	default | | Create README.md, scripts, docker-compose.yml and .gitignore.
+	docker | | Create Dockerfile, docker-entrypoint.sh and .env.
+	submodule | | Init the git repository and create LICENSE." | column -t -s "|"
 		;;
 esac

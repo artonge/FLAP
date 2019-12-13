@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+    lemon:
+        build:
+            context: ./lemon
+            dockerfile: ./Dockerfile
+        ports: ["9001:9000"]

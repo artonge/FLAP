@@ -1,0 +1,8 @@
+services:
+    nginx:
+        depends_on:
+            - nextcloud
+            - sogo
+            - core
+        volumes:
+            - /home/louis/Downloads/lemonldap-ng-master-doc/doc:/lemon-doc # [emmc] -> [lemon] Scripts.

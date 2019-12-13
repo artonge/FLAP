@@ -1,0 +1,21 @@
+services:
+    nextcloud:
+        image: nextcloud:17.0.1-fpm
+        container_name: flap_nextcloud
+        env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
+        restart: always
+        depends_on: [postgres, redis, ldap, mail]
+        volumes:
+            - ${FLAP_DATA}/nextcloud/saml:/saml/nextcloud # [hd] -> [nextcloud] nextcloud's SAML keys.
+            - ${FLAP_DATA}/lemon/saml:/saml/idp # [hd] -> [nextcloud] IDP's SAML keys.
+            - ${FLAP_DATA}/nextcloud/data:/data # [nextcloud] <-> [hd] Data
+            - ${FLAP_DATA}/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config
+            - ${FLAP_DATA}/nextcloud/html:/var/www/html # [nextcloud] <-> [hd] WWW
+            - ${FLAP_DIR}/nextcloud/scripts/generate_config.sh:/generate_config.sh # [emmc] <-> [nextcloud] Script to generate config.php
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [nextcloud]
+
+volumes:
+    nextcloudStaticFiles:
