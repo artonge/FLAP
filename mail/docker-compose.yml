@@ -1,6 +1,6 @@
 services:
     mail:
-        image: tvial/docker-mailserver:release-v6.2.0
+        image: registry.gitlab.com/flap-box/mail:v6.2.0
         container_name: flap_mail
         env_file: [./mail/mail.env]
         restart: always
