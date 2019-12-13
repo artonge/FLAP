@@ -1,5 +1,5 @@
 mail.env
-config/postfix-main.cf
-config/postfix-aliases.cf
+config/*.cf*
+!config/*.template.cf
 config/opendkim
 config/vhost.tmp

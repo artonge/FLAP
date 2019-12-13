@@ -58,7 +58,6 @@ case $CMD in
                 if [ -f $FLAP_DIR/$service/config/lemon.jq ]
                 then
                     echo "$service - $domain"
-                    vhostType=$([ "$PRIMARY_DOMAIN_NAME" ==  "$domain" ] && echo "Main" || echo "CDA")
                     vhostType='CDA'
                     [ -f $FLAP_DATA/$service/saml/metadata_$domain.xml ] && metadata=$(cat $FLAP_DATA/$service/saml/metadata_$domain.xml)
                     config=$(cat $FLAP_DIR/lemon/config/lmConf-1.json)
