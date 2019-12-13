@@ -11,7 +11,7 @@ case $CMD in
 		SUB_CMD=${2:-}
 		for service in $(ls --directory $FLAP_DIR/*/)
 		do
-			manager service $SUB_CMD $(basename $service)
+			flapctl service $SUB_CMD $(basename $service)
 		done
 		;;
 	default)
@@ -50,7 +50,7 @@ case $CMD in
 		chmod +x $DIR/scripts/hooks/post_update.sh
 		;;
 	docker)
-		manager service default $NAME
+		flapctl service default $NAME
 
 		touch $DIR/Dockerfile
 		touch $DIR/docker-entrypoint.sh
@@ -58,7 +58,7 @@ case $CMD in
 		touch $DIR/${NAME}.template.env
 		;;
 	submodule)
-		manager service default $NAME
+		flapctl service default $NAME
 
 		cp $FLAP_DIR/LICENSE $DIR/LICENSE
 		;;
@@ -67,7 +67,7 @@ case $CMD in
 		;;
 	help|*)
 		echo "
-$(manager service summarize)
+$(flapctl service summarize)
 Commands:
 	default | | Create README.md, scripts, docker-compose.yml and .gitignore.
 	docker | | Create Dockerfile, docker-entrypoint.sh and .env.

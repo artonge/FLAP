@@ -1,3 +1,3 @@
-## The manager utility for FLAP
+## The flapctl utility for FLAP
 
 ---

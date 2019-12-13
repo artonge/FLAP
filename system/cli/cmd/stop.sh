@@ -10,7 +10,7 @@ case $CMD in
         cd $FLAP_DIR
 
         # Generate configuration so docker-compose does not complains because of a missing config file.
-        manager config generate_templates
+        flapctl config generate_templates
 
         # Stop all services. If an error occures, the docker daemon will be restarted before retrying.
         echo '* [stop] Stopping services.' 
@@ -21,7 +21,7 @@ case $CMD in
     ;;
     help|*)
         echo "
-$(manager stop summarize)
+$(flapctl stop summarize)
 Commands:
     '' | | STOP." | column -t -s "|"
     ;;

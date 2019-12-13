@@ -34,8 +34,8 @@ system_test:
                 $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 /bin/sh -c "while true; do sleep 1000; done"
 
-        - docker exec flap manager start
-        - docker exec flap manager test setup tls
+        - docker exec flap flapctl start
+        - docker exec flap flapctl test setup tls
 
 # Run start_flap then the update procedure
 update_test:
@@ -68,14 +68,14 @@ update_test:
         # Copy the code to the real folder.
         - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap
 
-        # Update the manager link so it maps to the new location.
-        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap/system/cli/manager.sh /bin/manager
+        # Update the flapctl link so it maps to the new location.
+        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap/system/cli/flapctl.sh /bin/flapctl
 
         # Start the instance.
-        - docker exec flap_old manager start
+        - docker exec flap_old flapctl start
 
         # Update the instance.
-        - docker exec flap_old manager update $CI_COMMIT_REF_NAME
+        - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME
 
 integration_test:
     stage: test

@@ -6,10 +6,10 @@ CMD=${1:-}
 
 case $CMD in
     summarize)
-        echo "test | | Test manager's commands."
+        echo "test | | Test flapctl's commands."
         ;;
     help)
-        echo "test | [--only <test_suite>] | Test manager's commands." | column -t -s "|"
+        echo "test | [--only <test_suite>] | Test flapctl's commands." | column -t -s "|"
         ;;
     ""|*)
         echo '* [test] Running tests.'

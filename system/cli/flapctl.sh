@@ -37,7 +37,7 @@ export NEXTCLOUD_DB_PWD=$(readPwd $FLAP_DATA/system/data/nextcloudDbPwd.txt)
 if [ -f $FLAP_DIR/system/cli/cmd/$CMD.sh ]
 then
     # Highlight FLAP's logs with grep.
-    let "i=29 + $(pstree -ls $$ | grep -o '\<manager\>' | wc -l)"
+    let "i=29 + $(pstree -ls $$ | grep -o '\<flapctl\>' | wc -l)"
     OLD_GREP_COLOR=${GREP_COLOR:-"1;$i"}
     export GREP_COLOR="1;$i"
 
@@ -55,6 +55,6 @@ fi
 # Display "ERROR" when the cmd returned an error.
 if [ $exit_code != 0 ]
 then
-    echo "* [manager:$CMD] ERROR"
+    echo "* [flapctl:$CMD] ERROR"
     exit $exit_code
 fi

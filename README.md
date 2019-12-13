@@ -33,20 +33,20 @@ You need to install the following dependencies in order to run FLAP locally:
 
 I advise to alias the `docker-compose` command to `dc` for ease of use.
 
-#### Installing the manager CLI
+#### Installing the flapctl CLI
 
-The `manager` CLI is a tool to manage a FLAP install. You can install it on your dev machine to ease some procedures.
+The `flapctl` CLI is a tool to manage a FLAP install. You can install it on your dev machine to ease some procedures.
 
 The following script will:
 
 -   Expose `$FLAP_DIR` and `$FLAP_DATA` as global env variables. You can change them to your convenience.
--   Expose the `manager` CLI tool globally.
+-   Expose the `flapctl` CLI tool globally.
 
 ```shell
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
 source /etc/environment
-ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
+ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 ```
 
 #### Alias your `localhost` to `flap.localhost`
@@ -69,7 +69,7 @@ echo "export DEV=true" > /etc/environment
 To start all services you can run:
 
 ```shell
-sudo -E manager start
+sudo -E flapctl start
 ```
 
 *For now `sudo` is require to ease the manipulation of containers data. Any proposition to get rid of it is appreciated.*
@@ -77,7 +77,7 @@ sudo -E manager start
 To start a single service you can run:
 
 ```
-sudo -E manager config generate
+sudo -E flapctl config generate
 docker-compose up [<service name> ...]
 ```
 

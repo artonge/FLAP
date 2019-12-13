@@ -26,7 +26,7 @@ case $CMD in
         
         echo '* [clean] Running clean hook.'
 
-        manager hooks clean
+        flapctl hooks clean
         ;;
     config)
         if [ $FORCE_YES == 0 ]
@@ -100,17 +100,17 @@ case $CMD in
         fi
 
         echo '* [clean] Cleaning FLAP.'
-        manager clean services -y
-        manager clean config -y
-        manager clean data -y
-        manager clean docker -y
+        flapctl clean services -y
+        flapctl clean config -y
+        flapctl clean data -y
+        flapctl clean docker -y
         ;;
     summarize)
         echo "clean | [services, config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
         ;;
     help|*)
         printf "
-$(manager clean summarize)
+$(flapctl clean summarize)
 Commands:
     services | [-y] | Run clean hooks.
     config | [-y] | Remove the generated configuration.

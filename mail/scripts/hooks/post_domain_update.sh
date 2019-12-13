@@ -13,4 +13,4 @@ docker-compose exec -T mail cp /tmp/docker-mailserver/vhost.tmp /tmp/vhost.tmp
 docker-compose exec -T mail generate-dkim-config
 
 # Update DNS records.
-manager tls update_dns_records
+flapctl tls update_dns_records

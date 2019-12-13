@@ -35,12 +35,12 @@ EXIT=0
 
     {
         # Generate certificates
-        manager tls handle_request &> /dev/null &&
+        flapctl tls handle_request &> /dev/null &&
         # Ensure request status is OK
         [ "$(cat $FLAP_DATA/system/data/domains/test1.duckdns.org/status.txt)" == "OK" ] &&
         [ "$(cat $FLAP_DATA/system/data/domains/test2.duckdns.org/status.txt)" == "WAITING" ]
     } || {
-        echo "     ❌ 'manager tls handle_request' failed to generate certificates."
+        echo "     ❌ 'flapctl tls handle_request' failed to generate certificates."
         EXIT=1
     }
 
@@ -80,12 +80,12 @@ EXIT=0
 
     {
         # Generate certificates
-        ( manager tls handle_request &> /dev/null || true ) &&
+        ( flapctl tls handle_request &> /dev/null || true ) &&
         # Ensure request status is ERROR
         [ "$(cat $FLAP_DATA/system/data/domains/test1.duckdns.org/status.txt)" == "ERROR" ] &&
         [ "$(cat $FLAP_DATA/system/data/domains/test2.duckdns.org/status.txt)" == "WAITING" ]
     } || {
-        echo "     ❌ 'manager tls handle_request' failed to set error."
+        echo "     ❌ 'flapctl tls handle_request' failed to set error."
         EXIT=1
     }
 
@@ -119,10 +119,10 @@ EXIT=0
     echo "duckdns" > $FLAP_DATA/system/data/domains/test.duckdns/provider.txt
 
     {
-        manager tls handle_request  &&
+        flapctl tls handle_request  &&
         [ "$(cat $FLAP_DATA/system/data/domains/test.duckdns/status.txt)" == "HANDLED" ]
     } || {
-        echo "     ❌ 'manager tls handle_request' failed to generate certificates for a HANDLED domain."
+        echo "     ❌ 'flapctl tls handle_request' failed to generate certificates for a HANDLED domain."
         EXIT=1
     }
 
@@ -154,10 +154,10 @@ EXIT=0
     echo "duckdns" > $FLAP_DATA/system/data/domains/test.duckdns/provider.txt
 
     {
-        manager tls handle_request  &&
+        flapctl tls handle_request  &&
         [ "$(cat $FLAP_DATA/system/data/domains/test.duckdns/status.txt)" == "OK" ]
     } || {
-        echo "     ❌ 'manager tls handle_request' failed to generate certificates for a OK domain."
+        echo "     ❌ 'flapctl tls handle_request' failed to generate certificates for a OK domain."
         EXIT=1
     }
 

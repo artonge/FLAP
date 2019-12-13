@@ -86,7 +86,7 @@ echo "SETTING UP ENV VARS"
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
 source /etc/environment
-ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
+ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
 ################################################################################
 echo "INSTALLING FLAP"

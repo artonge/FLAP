@@ -16,11 +16,11 @@ case $CMD in
             hostnamectl --transient set-hostname "flap.local"
             hostnamectl --pretty set-hostname "FLAP box (flap.local)"
             # Create port mappings
-            manager ports open 80 # HTTP
-            manager ports open 443 # HTTPS
-            manager ports open 25 # SMTP
-            manager ports open 587 # SMTP with STARTLS
-            manager ports open 143 # IMAP
+            flapctl ports open 80 # HTTP
+            flapctl ports open 443 # HTTPS
+            flapctl ports open 25 # SMTP
+            flapctl ports open 587 # SMTP with STARTLS
+            flapctl ports open 143 # IMAP
         fi
     ;;
     raid)
@@ -28,7 +28,7 @@ case $CMD in
         if [ "${CI:-false}" == "false" ] && [ "${DEV:-false}" == "false" ]
         then
             echo '* [setup] Setting up RAID'
-            manager disks setup
+            flapctl disks setup
         fi
 
         # Create data directory for each services

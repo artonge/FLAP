@@ -7,16 +7,16 @@ CMD=${1:-}
 case $CMD in
 	generate)
 		# Generate docker-compose.yml.
-		manager config generate_compose
+		flapctl config generate_compose
 
 		# Generate services templates
-		manager config generate_templates
+		flapctl config generate_templates
 
 		# Generate lemonLDAP configuration file.
-		manager config generate_lemon
+		flapctl config generate_lemon
 
 		# Generate nginx configurations
-		manager config generate_nginx
+		flapctl config generate_nginx
 	;;
 	generate_compose)
 		cat $FLAP_DIR/system/docker-compose.yml > $FLAP_DIR/docker-compose.yml
