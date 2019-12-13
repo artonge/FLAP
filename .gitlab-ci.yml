@@ -69,13 +69,13 @@ update_test:
         - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap
 
         # Update the flapctl link so it maps to the new location.
-        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap/system/cli/flapctl.sh /bin/flapctl
+        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap/system/cli/manager.sh /bin/manager
 
         # Start the instance.
-        - docker exec flap_old flapctl start
+        - docker exec flap_old manager start
 
         # Update the instance.
-        - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME
+        - docker exec flap_old manager update $CI_COMMIT_REF_NAME
 
 integration_test:
     stage: test
