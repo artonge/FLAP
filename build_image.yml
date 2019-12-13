@@ -26,7 +26,7 @@ build:armv7:
         ARCH: armv7
 
 create_manifest:
-    only: [master]
+    only: [master, tags]
     image: docker:stable
     services: ["docker:dind"]
     script:
