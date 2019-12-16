@@ -82,7 +82,8 @@ Commands:
             git submodule update --init &&
 
             echo '* [update] Updating docker images.' &&
-            # docker-compose needs a generated config. In case a new module is added during update, its config will be missing, so we generate it here.
+            # Update docker-compose.yml to pull all images.
+			flapctl config generate_compose &&
             flapctl config generate_templates &&
             docker-compose --no-ansi pull
         } || {
