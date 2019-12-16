@@ -19,11 +19,14 @@ case $CMD in
 		flapctl config generate_nginx
 	;;
 	generate_compose)
+		echo '* [config] Generate docker-compose.yml.'
 		cat $FLAP_DIR/system/docker-compose.yml > $FLAP_DIR/docker-compose.yml
 		cat $FLAP_DIR/system/docker-compose.override.yml > $FLAP_DIR/docker-compose.override.yml
 
 		for service in $(ls --directory $FLAP_DIR/*/)
 		do
+			echo - $(basename $service)
+
 			# Check if docker-compose.yml exists for the service.
 			if [ -f $service/docker-compose.yml ]
 			then
