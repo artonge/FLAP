@@ -12,9 +12,9 @@
         - apk add git
         - rm -rf $CI_PROJECT_DIR
         - git clone $CI_REPOSITORY_URL $CI_PROJECT_DIR
+        - cd $CI_PROJECT_DIR
         - git checkout $CI_COMMIT_REF_NAME
         - git submodule update --init
-        - cd $CI_PROJECT_DIR
         - >
             docker build \
                 --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) \
