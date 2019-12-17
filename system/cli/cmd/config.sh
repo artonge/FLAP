@@ -139,7 +139,7 @@ case $CMD in
 					service=$(basename $service_path) # Get the service name
 					echo "  - $service"
 					export DOMAIN_NAME=$domain
-					envsubst '${DOMAIN_NAME}' < $service_path/nginx.conf > $FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf
+					envsubst '${DOMAIN_NAME} ${PRIMARY_DOMAIN_NAME}' < $service_path/nginx.conf > $FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf
 				fi
 			done
 		done
