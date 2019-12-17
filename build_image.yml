@@ -3,9 +3,17 @@
     only: [master, tags]
     image: docker:stable
     services: ["docker:dind"]
+    variables:
+        # Until this issue is resolved: https://gitlab.com/gitlab-org/gitlab-runner/issues/1736
+        GIT_STRATEGY: none
     script:
         - DOCKER_DRIVER=overlay2
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+        - apk add git
+        - git clone $CI_REPOSITORY_URL $CI_PROJECT_DIR
+        - git checkout $CI_COMMIT_REF_NAME
+        - git submodule update --init
+        - cd $CI_PROJECT_DIR
         - >
             docker build \
                 --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) \
