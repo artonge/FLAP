@@ -68,7 +68,7 @@ do
 done
 
 # ENABLE PREVIEW PRE-GENERATOR
-php occ app:enable previewgenerator
+php occ app:enable previewgenerator || true
 
 # MAIL
 php occ config:system:set mail_smtpmode --value "smtp"
