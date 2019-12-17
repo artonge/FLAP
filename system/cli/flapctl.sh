@@ -25,7 +25,7 @@ readPwd() {
 # Export env var.
 export PRIMARY_DOMAIN_NAME=$($FLAP_DIR/system/cli/lib/tls/show_primary_domain.sh)
 export DOMAIN_NAMES=$($FLAP_DIR/system/cli/lib/tls/list_domains.sh | grep OK | cut -d ' ' -f1 | paste -sd " " -)
-export SECONDARY_DOMAIN_NAMES=$(echo $DOMAIN_NAMES | sed -e s/$PRIMARY_DOMAIN_NAME// )
+export SECONDARY_DOMAIN_NAMES=$(echo $DOMAIN_NAMES | sed -e s/${PRIMARY_DOMAIN_NAME:-"none"}// )
 export SUBDOMAINS="auth files mail"
 
 # Read passwords from files
