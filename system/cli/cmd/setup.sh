@@ -45,7 +45,7 @@ case $CMD in
     ;;
     cron)
         # Do not setup cron jobs on CI and DEV.
-        if [ "${CI:-false}" != "false" ] && [ "${DEV:-false}" == "false" ]
+        if [ "${CI:-false}" != "false" ] && [ "${DEV:-false}" != "false" ]
         then
             exit 0
         fi
