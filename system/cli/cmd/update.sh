@@ -81,7 +81,7 @@ Commands:
             git checkout $TARGET_TAG &&
 
             # Pull changes if we are on a branch.
-            if [ "$(git branch --show-current)" != "" ]
+            if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
             then
             	git pull
             fi
