@@ -3,7 +3,6 @@
 set -eu
 
 # Change manager's name for flapctl.
-rm /bin/manager
 ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
 # Run post_install script for mail.
