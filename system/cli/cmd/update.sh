@@ -79,6 +79,13 @@ Commands:
         {
             echo "* [update] Updating code to $TARGET_TAG." &&
             git checkout $TARGET_TAG &&
+
+            # Pull changes if we are on a branch.
+            if [ "$(git branch --show-current)" != "" ]
+            then
+            	git pull
+            fi
+
             git submodule update --init &&
 
             echo '* [update] Updating docker images.' &&
