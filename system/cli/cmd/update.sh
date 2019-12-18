@@ -90,7 +90,7 @@ Commands:
 
             echo '* [update] Updating docker images.' &&
             # Update docker-compose.yml to pull all images.
-			flapctl config generate_compose &&
+            flapctl config generate_compose &&
             flapctl config generate_templates &&
             docker-compose --no-ansi pull
         } || {
@@ -99,6 +99,12 @@ Commands:
             # - starting without the docker images,
             # - running migrations on an unknown state.
             echo '* [update] ERROR - Fail to update, going back to previous commit.'
+            git submodule foreach "git add ."
+            git submodule foreach "git reset --hard"
+            git submodule foreach "git clean -Xdf"
+            git add .
+            git reset --hard
+            git clean -Xdf
             git checkout $CURRENT_TAG
             git submodule update --init
             rm /tmp/updating_flap.lock

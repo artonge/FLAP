@@ -47,6 +47,10 @@ case $CMD in
 		done
 		;;
 	generate_templates)
+		# HACK: generate compose file here so v1.0.8 update does not complains.
+		# TODO: to remove for v1.0.10.
+		flapctl config generate_compose
+
 		echo '* [config] Generate template final files from the current config'
 
 		# Go to FLAP_DIR to have access to template files.
