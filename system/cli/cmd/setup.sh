@@ -16,6 +16,7 @@ case $CMD in
             hostnamectl --transient set-hostname "flap.local"
             hostnamectl --pretty set-hostname "FLAP box (flap.local)"
             # Create port mappings
+            flapctl ports open 22 # SSH
             flapctl ports open 80 # HTTP
             flapctl ports open 443 # HTTPS
             flapctl ports open 25 # SMTP
