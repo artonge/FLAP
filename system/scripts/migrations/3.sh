@@ -23,3 +23,6 @@ apt autoremove
 
 # Install yq.
 pip3 install yq
+
+# Increase compose timeout for slow connexion.
+echo "export COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment

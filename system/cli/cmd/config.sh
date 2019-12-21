@@ -6,18 +6,27 @@ CMD=${1:-}
 
 case $CMD in
 	generate)
-		# Generate docker-compose.yml.
 		flapctl config generate_compose
-
-		# Generate services templates
 		flapctl config generate_templates
-
-		# Generate lemonLDAP configuration file.
 		flapctl config generate_lemon
-
-		# Generate nginx configurations
 		flapctl config generate_nginx
-	;;
+		flapctl config generate_mails
+		;;
+	generate_mails)
+		echo '* [config] Generate authorized smtp senders map.'
+
+		rm $FLAP_DIR/mail/config/smtpd_sender
+
+		for username in $(flapctl users)
+		do
+			echo "$username@$PRIMARY_DOMAIN_NAME $username@$PRIMARY_DOMAIN_NAME" >> $FLAP_DIR/mail/config/smtpd_sender
+
+			for domain in $SECONDARY_DOMAIN_NAMES
+			do
+				echo "$username@$domain $username@$PRIMARY_DOMAIN_NAME" >> $FLAP_DIR/mail/config/smtpd_sender
+			done
+		done
+		;;
 	generate_compose)
 		echo '* [config] Generate docker-compose.yml.'
 		cat $FLAP_DIR/system/docker-compose.yml > $FLAP_DIR/docker-compose.yml

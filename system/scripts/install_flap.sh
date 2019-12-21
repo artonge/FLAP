@@ -85,6 +85,7 @@ APT::Periodic::Unattended-Upgrade "1";
 echo "SETTING UP ENV VARS"
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
+echo "export COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment
 source /etc/environment
 ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 

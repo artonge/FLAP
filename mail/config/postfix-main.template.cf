@@ -2,3 +2,4 @@ mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 virtual_mailbox_domains = ${SECONDARY_DOMAIN_NAMES}
 local_transport = lmtp:unix:/var/run/dovecot/lmtp
 local_recipient_maps = ldap:/etc/postfix/ldap-users.cf
+smtpd_sender_login_maps = hash:/tmp/docker-mailserver/smtpd_sender
