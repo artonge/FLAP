@@ -15,7 +15,7 @@ case $CMD in
 	generate_mails)
 		echo '* [config] Generate authorized smtp senders map.'
 
-		rm $FLAP_DIR/mail/config/smtpd_sender
+		rm --force $FLAP_DIR/mail/config/smtpd_sender
 
 		for username in $(flapctl users)
 		do
