@@ -1,10 +1,10 @@
-@reboot      manager setup cron
-@reboot      manager setup network
+@reboot      flapctl setup cron
 
-@midnight    manager update &> /var/log/flap/update.log
+@midnight    flapctl update &> /var/log/flap/update.log
 
-@hourly      manager healthcheck &> /var/log/flap/healthcheck.log
+@hourly      flapctl healthcheck &> /var/log/flap/healthcheck.log
+@hourly      flapctl setup network
 
 # Every minutes
-* * * * *    manager tls handle_request &> /var/log/flap/tls.log
-* * * * *    manager tls update_dns_records &> /var/log/flap/tls.log
+* * * * *    flapctl tls handle_request &> /var/log/flap/tls.log
+* * * * *    flapctl tls update_dns_records &> /var/log/flap/tls.log

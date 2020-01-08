@@ -77,7 +77,7 @@ case $CMD in
         manager tls handle_request_domain_creation
         ;;
     handle_request_primary_update)
-        # Exit if their is no request
+        # Exit if there is no request.
         if [ ! -f $FLAP_DATA/system/data/domain_update_primary.txt ]
         then
             exit 0
@@ -182,19 +182,15 @@ case $CMD in
         ;;
     update_dns_records)
         # Execute update script for each OK domain.
-        for domain in $(ls $FLAP_DATA/system/data/domains)
+        for domain in $DOMAIN_NAMES
         do
-            status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
             provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt)
 
-            if [ "$status" == "OK" ]
-            then
-                {
-                    $FLAP_DIR/system/cli/lib/tls/update/${provider}.sh $domain
-                } || { # Catch error
-                    echo "Failed to update $domain's DNS records."
-                }
-            fi
+            {
+                $FLAP_DIR/system/cli/lib/tls/update/${provider}.sh $domain
+            } || { # Catch error
+                echo "Failed to update $domain's DNS records."
+            }
         done
         ;;
     list)
@@ -207,9 +203,10 @@ case $CMD in
             provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt | cut -d ' ' -f1)
 
             echo "$domain - $status - $provider"
-            echo "files.$domain - $status - $provider - SUB"
-            echo "sogo.$domain - $status - $provider - SUB"
-            echo "auth.$domain - $status - $provider - SUB"
+            for subdomain in $SUBDOMAINS
+            do
+                echo "$subdomain.$domain - $status - $provider - SUB"
+            done
         done
         ;;
     primary)

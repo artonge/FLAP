@@ -36,9 +36,9 @@ apt install -y \
     docker-ce-cli=5:18.09.8~3-0~ubuntu-bionic \
     containerd.io=1.2.6-3
 
-# Start docker on start
-systemctl_path=$(which systemctl || true)
-if [ "$systemctl_path" != "" ]
+# Start docker on start.
+# Check if we are in a docker container with systemctl.
+if [ "$(which systemctl || true)" != "" ]
 then
     systemctl enable docker
 fi
@@ -50,8 +50,8 @@ pip3 install setuptools wheel docker-compose
 
 ################################################################################
 echo "CREATING ALIASES"
-echo "alias dc='docker-compose'" >> /root/.bashrc
-echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bashrc
+echo "alias dc='docker-compose'" > /root/.bash_aliases
+echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bash_aliases
 set +u # Prevent undefined variables to crash bashrc execution
 source /root/.bashrc
 set -u
@@ -85,8 +85,9 @@ APT::Periodic::Unattended-Upgrade "1";
 echo "SETTING UP ENV VARS"
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
+echo "export COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment
 source /etc/environment
-ln -sf $FLAP_DIR/system/cli/manager.sh /bin/manager
+ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
 ################################################################################
 echo "INSTALLING FLAP"
@@ -111,11 +112,10 @@ apt install -y \
 # yq: manipulate yaml text files.
 pip3 install yq
 
-# Prevent key fingerprint cheking during git clone
-mkdir -p ~/.ssh/
-echo "|1|qWGcIFxLWr0h9SzQkmBcgT5IbAE=|d+v+RHzFM2if/RxyEoULgVbpfaI= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
-|1|2SQ3Snv+OKzpk7W07KYHfOUO7oc=|Cy0/SFy7JqLx8l3fBZ8ZGCXANEg= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
-" > ~/.ssh/known_hosts
+# Removing useless packages.
+apt remove -y postfix dovecot
+apt purge -y postfix dovecot
+apt autoremove
 
 # Fetch git repository
 git clone --recursive https://gitlab.com/flap-box/flap.git $FLAP_DIR

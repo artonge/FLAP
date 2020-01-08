@@ -67,6 +67,23 @@ do
     php occ config:system:set trusted_domains $i --value files.${DOMAINS[$i]}
 done
 
+# ENABLE PREVIEW PRE-GENERATOR
+php occ app:enable previewgenerator || true
+
+# MAIL
+php occ config:system:set mail_smtpmode --value "smtp"
+php occ config:system:set mail_sendmailmode --value "smtp"
+php occ config:system:set mail_from_address --value "admin"
+php occ config:system:set mail_domain --value "$PRIMARY_DOMAIN_NAME"
+php occ config:system:set mail_smtpauthtype --value "PLAIN"
+php occ config:system:set mail_smtpauth --value 1 --type integer
+php occ config:system:set mail_smtphost --value "$PRIMARY_DOMAIN_NAME"
+php occ config:system:set mail_smtpport --value "587"
+php occ config:system:set mail_smtpname --value "admin"
+php occ config:system:set mail_smtppassword --value "$ADMIN_PWD"
+php occ config:system:set mail_smtpsecure --value "tls"
+
+
 # DISABLE FUNCTIONNALITIES
 php occ config:system:set updatechecker --value false --type boolean
 php occ config:system:set upgrade.disable-web --value true --type boolean

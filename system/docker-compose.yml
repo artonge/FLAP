@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+    memcached:
+        image: memcached:1.5.12
+        container_name: flap_memcached
+        restart: always
+        networks:
+            stores-net:
+                aliases: [memcached]
+
+networks:
+    apps-net:
+        ipam:
+            config:
+                - subnet: 172.30.0.0/24
+    stores-net:
+        internal: true
+        ipam:
+            config:
+                - subnet: 172.31.0.0/24

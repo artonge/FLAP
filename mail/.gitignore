@@ -1,0 +1,6 @@
+mail.env
+config/*.cf*
+!config/*.template.cf
+config/opendkim
+config/vhost.tmp
+smtpd_sender*

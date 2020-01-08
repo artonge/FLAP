@@ -1,0 +1,10 @@
+services:
+    redis:
+        image: redis:5.0
+        container_name: flap_redis
+        restart: always
+        volumes:
+            - ${FLAP_DATA}/redis/data:/data # [redis] <-> [hd] Data
+        networks:
+            stores-net:
+                aliases: [redis]

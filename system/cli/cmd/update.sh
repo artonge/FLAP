@@ -17,7 +17,7 @@ case $CMD in
         echo "
 $(manager update summarize)
 Commands:
-    update | [branch_name] | Update FLAP to to ost recent version. Specify <branch_name> if you want to update to a given branch.
+    update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch.
     migrate | [service_name] | Run migrations for all or only the specified service." | column -t -s "|"
         ;;
     migrate)
@@ -77,12 +77,20 @@ Commands:
         touch /tmp/updating_flap.lock
 
         {
-            echo "* [update] Updating code to $TARGET_TAG."
+            echo "* [update] Updating code to $TARGET_TAG." &&
             git checkout $TARGET_TAG &&
+
+            # Pull changes if we are on a branch.
+            if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+            then
+            	git pull
+            fi
+
             git submodule update --init &&
 
             echo '* [update] Updating docker images.' &&
-            # docker-compose needs a generated config. In case a new module is added during update, its config will be missing, so we generate it here.
+            # Update docker-compose.yml to pull all images.
+            manager config generate_compose &&
             manager config generate_templates &&
             docker-compose --no-ansi pull
         } || {
@@ -91,6 +99,12 @@ Commands:
             # - starting without the docker images,
             # - running migrations on an unknown state.
             echo '* [update] ERROR - Fail to update, going back to previous commit.'
+            git submodule foreach "git add ."
+            git submodule foreach "git reset --hard"
+            git submodule foreach "git clean -Xdf"
+            git add .
+            git reset --hard
+            git clean -Xdf
             git checkout $CURRENT_TAG
             git submodule update --init
             rm /tmp/updating_flap.lock
@@ -110,19 +124,18 @@ Commands:
             EXIT_CODE=1
         }
 
-        echo '* [update] Running clean hooks.'
-        manager hooks clean
-
         {
-            echo '* [update] Restarting containers.'
+            manager hooks clean &&
+
+            echo '* [update] Starting containers.' &&
             manager start &&
 
-            echo '* [update] Running post-update hooks.'
+            echo '* [update] Running some hooks.' &&
             manager hooks post_update &&
             manager hooks post_domain_update &&
             manager restart &&
 
-            echo '* [update] Cleanning docker objects.'
+            echo '* [update] Cleanning docker objects.' &&
             docker system prune --all --force
         } || {
             echo '* [update] ERROR - Fail to restart containers.'

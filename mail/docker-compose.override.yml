@@ -1,0 +1,4 @@
+services:
+    mail:
+        environment:
+            DMS_DEBUG: 1

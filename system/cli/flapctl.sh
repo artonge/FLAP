@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -u
+set -ue
+
+exit_code=0
 
 CMD=${1:-}
 ARGS=($@)
@@ -23,7 +25,8 @@ readPwd() {
 # Export env var.
 export PRIMARY_DOMAIN_NAME=$($FLAP_DIR/system/cli/lib/tls/show_primary_domain.sh)
 export DOMAIN_NAMES=$($FLAP_DIR/system/cli/lib/tls/list_domains.sh | grep OK | cut -d ' ' -f1 | paste -sd " " -)
-export SUBDOMAINS="auth files sogo"
+export SECONDARY_DOMAIN_NAMES=$(echo $DOMAIN_NAMES | sed -e s/${PRIMARY_DOMAIN_NAME:-"none"}// )
+export SUBDOMAINS="auth files mail"
 
 # Read passwords from files
 export ADMIN_PWD=$(readPwd $FLAP_DATA/system/data/adminPwd.txt)
@@ -40,7 +43,8 @@ then
 
     # --line-buffered allow grep line by line output instead of grep using a larger buffer.
     # --color=always allow for the color not to be overrided.
-    $FLAP_DIR/system/cli/cmd/$CMD.sh $ARGS &> /dev/stdout | grep --line-buffered --color=always -E "^\* \[.+\].+|$"
+    $FLAP_DIR/system/cli/cmd/$CMD.sh $ARGS &> /dev/stdout | grep --line-buffered --color=always -E "^\* \[.+\].+|$" | cat
+    exit_code=${PIPESTATUS[0]}
 
     # Restore GREP_COLOR.
     export GREP_COLOR=$OLD_GREP_COLOR
@@ -49,8 +53,8 @@ else
 fi
 
 # Display "ERROR" when the cmd returned an error.
-if [ $? != 0 ]
+if [ $exit_code != 0 ]
 then
-    echo "* [manager] ERROR"
-    exit 1
+    echo "* [manager:$CMD] ERROR"
+    exit $exit_code
 fi
