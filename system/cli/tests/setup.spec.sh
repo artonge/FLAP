@@ -17,11 +17,11 @@ EXIT=0
 #         # Ensure crontab is empty
 #         crontab -l | grep -v -E ".+" > /dev/null &&
 #         # Generate crontab
-#         flapctl setup cron &&
+#         manager setup cron &&
 #         # Ensure crontab is filled
 #         crontab -l | grep -E ".+" > /dev/null
 #     } || {
-#         echo "     ❌ 'flapctl setup' failed to create the main cron file."
+#         echo "     ❌ 'manager setup' failed to create the main cron file."
 #         EXIT=1
 #     }
 

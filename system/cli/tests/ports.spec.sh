@@ -9,9 +9,9 @@ PORT=$RANDOM
 {
     echo "      - Opening port $PORT"
     {
-        flapctl ports open $PORT > /dev/null
+        manager ports open $PORT > /dev/null
     } || {
-        echo "     ❌ 'flapctl ports open $PORT' failed to open the port."
+        echo "     ❌ 'manager ports open $PORT' failed to open the port."
         EXIT=1
     }
 }
@@ -19,9 +19,9 @@ PORT=$RANDOM
 {
     echo "      - Reopening port $PORT"
     {
-        flapctl ports open $PORT > /dev/null
+        manager ports open $PORT > /dev/null
     } || {
-        echo "     ❌ 'flapctl ports open $PORT' failed to reopen the port."
+        echo "     ❌ 'manager ports open $PORT' failed to reopen the port."
         EXIT=1
     }
 }
@@ -29,9 +29,9 @@ PORT=$RANDOM
 {
     echo "      - Listing port mappings"
     {
-        flapctl ports list | grep $PORT > /dev/null
+        manager ports list | grep $PORT > /dev/null
     } || {
-        echo "     ❌ 'flapctl ports list' failed to list the open port $PORT."
+        echo "     ❌ 'manager ports list' failed to list the open port $PORT."
         EXIT=1
     }
 }
@@ -39,9 +39,9 @@ PORT=$RANDOM
 {
     echo "      - Closing port $PORT"
     {
-        flapctl ports close $PORT > /dev/null
+        manager ports close $PORT > /dev/null
     } || {
-        echo "     ❌ 'flapctl ports close $PORT' failed to close the port."
+        echo "     ❌ 'manager ports close $PORT' failed to close the port."
         EXIT=1
     }
 }
@@ -49,9 +49,9 @@ PORT=$RANDOM
 {
     echo "      - Reclosing port $PORT"
     {
-        flapctl ports close $PORT > /dev/null
+        manager ports close $PORT > /dev/null
     } || {
-        echo "     ❌ 'flapctl ports close $PORT' failed to reclose the port."
+        echo "     ❌ 'manager ports close $PORT' failed to reclose the port."
         EXIT=1
     }
 }

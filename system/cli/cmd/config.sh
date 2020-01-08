@@ -6,18 +6,18 @@ CMD=${1:-}
 
 case $CMD in
 	generate)
-		flapctl config generate_compose
-		flapctl config generate_templates
-		flapctl config generate_lemon
-		flapctl config generate_nginx
-		flapctl config generate_mails
+		manager config generate_compose
+		manager config generate_templates
+		manager config generate_lemon
+		manager config generate_nginx
+		manager config generate_mails
 		;;
 	generate_mails)
 		echo '* [config] Generate authorized smtp senders map.'
 
 		rm --force $FLAP_DIR/mail/config/smtpd_sender
 
-		for username in $(flapctl users)
+		for username in $(manager users)
 		do
 			echo "$username@$PRIMARY_DOMAIN_NAME $username@$PRIMARY_DOMAIN_NAME" >> $FLAP_DIR/mail/config/smtpd_sender
 
@@ -58,7 +58,7 @@ case $CMD in
 	generate_templates)
 		# HACK: generate compose file here so v1.0.8 update does not complains.
 		# TODO: to remove for v1.0.10.
-		flapctl config generate_compose
+		manager config generate_compose
 
 		echo '* [config] Generate template final files from the current config'
 

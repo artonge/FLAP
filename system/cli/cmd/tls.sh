@@ -64,17 +64,17 @@ case $CMD in
 
         echo "flap.localhost" > $FLAP_DATA/system/data/primary_domain.txt
 
-        flapctl restart
+        manager restart
 
-        flapctl hooks post_domain_update
+        manager hooks post_domain_update
 
-        flapctl restart
+        manager restart
         ;;
     handle_request)
         echo '* [tls] Handling domain requests'
-        flapctl tls handle_request_primary_update
-        flapctl tls handle_request_domain_deletion
-        flapctl tls handle_request_domain_creation
+        manager tls handle_request_primary_update
+        manager tls handle_request_domain_deletion
+        manager tls handle_request_domain_creation
         ;;
     handle_request_primary_update)
         # Exit if there is no request.
@@ -94,8 +94,8 @@ case $CMD in
         # Handle primary domain update
         {
             echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt &&
-            flapctl hooks post_domain_update &&
-            flapctl restart &&
+            manager hooks post_domain_update &&
+            manager restart &&
             rm $FLAP_DATA/system/data/domain_update_primary.txt
         } || { # Catch error
             echo "" > $FLAP_DATA/system/data/domain_update_primary.txt
@@ -120,8 +120,8 @@ case $CMD in
         # Handle domain deletion request
         {
             echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt &&
-            flapctl hooks post_domain_update &&
-            flapctl restart &&
+            manager hooks post_domain_update &&
+            manager restart &&
             rm $FLAP_DATA/system/data/domain_update_delete.txt
         } || { # Catch error
             echo "" > $FLAP_DATA/system/data/domain_update_delete.txt
@@ -159,24 +159,24 @@ case $CMD in
 
 
         {
-            flapctl stop &&
-            flapctl tls generate &&
+            manager stop &&
+            manager tls generate &&
             echo "OK" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt &&
             {
                 # If primary domain is emtpy, set the handled domain as primary.
-                if [ "$(flapctl tls primary)" == "" ]
+                if [ "$(manager tls primary)" == "" ]
                 then
                     echo "* [tls] Set $DOMAIN as primary."
                     echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt
                 fi
             } &&
-            flapctl start &&
-            flapctl hooks post_domain_update &&
-            flapctl restart
+            manager start &&
+            manager hooks post_domain_update &&
+            manager restart
         } || { # Catch error
             echo "Failed to handle domain request."
             echo "ERROR" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt
-            flapctl start
+            manager start
             exit 1
         }
         ;;

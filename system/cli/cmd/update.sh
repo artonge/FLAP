@@ -15,7 +15,7 @@ case $CMD in
         ;;
     help)
         echo "
-$(flapctl update summarize)
+$(manager update summarize)
 Commands:
     update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch.
     migrate | [service_name] | Run migrations for all or only the specified service." | column -t -s "|"
@@ -29,7 +29,7 @@ Commands:
             for service in $(ls --directory $FLAP_DIR/*/)
             do
                 {
-                    flapctl update migrate $(basename $service)
+                    manager update migrate $(basename $service)
                 } || {
                     echo "* [update] ERROR - Fail to run migrations for $service."
                     EXIT_CODE=1
@@ -90,8 +90,8 @@ Commands:
 
             echo '* [update] Updating docker images.' &&
             # Update docker-compose.yml to pull all images.
-            flapctl config generate_compose &&
-            flapctl config generate_templates &&
+            manager config generate_compose &&
+            manager config generate_templates &&
             docker-compose --no-ansi pull
         } || {
             # When either the git update or the docker pull fails, it is safer to go back to the previous tag.
@@ -112,28 +112,28 @@ Commands:
         }
 
         echo '* [update] Stoping containers.'
-        flapctl stop || true # "|| true" to prevent exiting the script on error.
+        manager stop || true # "|| true" to prevent exiting the script on error.
 
         {
             # We need to update the system first because the other services migrations
             # might need the results of the system migration.
-            flapctl update migrate system &&
-            flapctl update migrate
+            manager update migrate system &&
+            manager update migrate
         } || {
             echo '* [update] ERROR - Fail to run migrations.'
             EXIT_CODE=1
         }
 
         {
-            flapctl hooks clean &&
+            manager hooks clean &&
 
             echo '* [update] Starting containers.' &&
-            flapctl start &&
+            manager start &&
 
             echo '* [update] Running some hooks.' &&
-            flapctl hooks post_update &&
-            flapctl hooks post_domain_update &&
-            flapctl restart &&
+            manager hooks post_update &&
+            manager hooks post_domain_update &&
+            manager restart &&
 
             echo '* [update] Cleanning docker objects.' &&
             docker system prune --all --force
@@ -142,7 +142,7 @@ Commands:
             EXIT_CODE=1
         }
 
-        flapctl setup cron
+        manager setup cron
 
         rm /tmp/updating_flap.lock
         ;;

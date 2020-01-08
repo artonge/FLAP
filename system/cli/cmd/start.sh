@@ -10,16 +10,16 @@ case $CMD in
         if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
         then
             echo '* [start] Running setup operations.'
-            flapctl setup raid
-            flapctl setup network
-            flapctl setup cron
+            manager setup raid
+            manager setup network
+            manager setup cron
         fi
 
         # Go to FLAP_DIR for docker-compose.
         cd $FLAP_DIR
 
         # Generate config
-        flapctl config generate
+        manager config generate
 
         # Start all services.
         echo '* [start] Starting services.'
@@ -28,16 +28,16 @@ case $CMD in
         if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
         then
             # Run post setup scripts for each services.
-            flapctl hooks post_install
+            manager hooks post_install
 
             # Mark the installation as done.
             touch $FLAP_DATA/system/data/installation_done.txt
         fi
 
         # Generate certificates for flap.localhost on CI mode.
-        if [[ ( "${DEV:-false}" != "false" || "${CI:-false}" != "false" ) && "$(flapctl tls primary)" == "" ]]
+        if [[ ( "${DEV:-false}" != "false" || "${CI:-false}" != "false" ) && "$(manager tls primary)" == "" ]]
         then
-            flapctl tls generate_localhost
+            manager tls generate_localhost
         fi
 
     ;;
@@ -46,7 +46,7 @@ case $CMD in
     ;;
     help|*)
         echo "
-$(flapctl start summarize)
+$(manager start summarize)
 Commands:
     '' | | Start." | column -t -s "|"
     ;;
