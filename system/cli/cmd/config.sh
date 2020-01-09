@@ -30,7 +30,13 @@ case $CMD in
 	generate_compose)
 		echo '* [config] Generate docker-compose.yml.'
 		cat $FLAP_DIR/system/docker-compose.yml > $FLAP_DIR/docker-compose.yml
-		cat $FLAP_DIR/system/docker-compose.override.yml > $FLAP_DIR/docker-compose.override.yml
+
+		if [ "${DEV:-false}" == "true" ]
+		then
+			cat $FLAP_DIR/system/docker-compose.override.yml > $FLAP_DIR/docker-compose.override.yml
+		else
+			rm -f $FLAP_DIR/docker-compose.override.yml
+		fi
 
 		for service in $(ls --directory $FLAP_DIR/*/)
 		do
