@@ -12,7 +12,7 @@ USERNAME=$(cat $FLAP_DATA/system/data/domains/$DOMAIN/username.txt)
 echo "* [dns-update:namecheap] Updating namecheap DNS for $DOMAIN."
 
 
-ip=$(manager ip external)
+ip=$(flapctl ip external)
 
 tld=$(echo $DOMAIN | sed s/[^.]*.//)
 sld=$(echo $DOMAIN | sed s/\.$tld//)

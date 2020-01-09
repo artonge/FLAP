@@ -12,4 +12,4 @@ cat $FLAP_DIR/lemon/scripts/migrations/base_migration.txt > $FLAP_DATA/lemon/cur
 $FLAP_DIR/lemon/scripts/hooks/post_install.sh
 
 # Generate auth.$DOMAIN tls certs.
-manager tls generate
+flapctl tls generate

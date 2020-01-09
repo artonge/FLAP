@@ -26,6 +26,6 @@ case $CMD in
 		echo "users | | List users."
 		;;
 	help|*)
-		manager users summarize
+		flapctl users summarize
 		;;
 esac
