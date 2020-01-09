@@ -34,8 +34,8 @@ system_test:
                 $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 /bin/sh -c "while true; do sleep 1000; done"
 
-        - docker exec flap manager start
-        - docker exec flap manager test setup tls
+        - docker exec flap flapctl start
+        - docker exec flap flapctl test setup tls
 
 # Run start from a previous flap version.
 # Then run the update procedure the the targeted commit or tag.
