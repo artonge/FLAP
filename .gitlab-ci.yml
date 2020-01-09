@@ -34,15 +34,18 @@ system_test:
                 $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 /bin/sh -c "while true; do sleep 1000; done"
 
-        - docker exec flap flapctl start
-        - docker exec flap flapctl test setup tls
+        - docker exec flap manager start
+        - docker exec flap manager test setup tls
 
-# Run start_flap then the update procedure
-update_test:
+# Run start from a previous flap version.
+# Then run the update procedure the the targeted commit or tag.
+.update_test:
     stage: test
     image: docker:stable
     services: ["docker:dind"]
     script:
+        - apk add git
+
         # Start a flap instance with mappings to real folders.
         # We need mappings to real folders because docker will resolve its mappings using the real fils system.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
@@ -56,26 +59,38 @@ update_test:
             \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
             \
-                --volume $CI_BUILDS_DIR/flap:$CI_BUILDS_DIR/flap \
+                --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
             \
-                --env FLAP_DIR=$CI_BUILDS_DIR/flap \
+                --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
-                $CI_REGISTRY_IMAGE:latest \
+                $CI_REGISTRY_IMAGE:$(eval $LATEST_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
         # Copy the code to the real folder.
-        - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap
+        - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
 
-        # Update the flapctl link so it maps to the new location.
-        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap/system/cli/manager.sh /bin/manager
+        # Update the manager link so it maps to the new location.
+        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/manager.sh /bin/manager
 
         # Start the instance.
         - docker exec flap_old manager start
 
         # Update the instance.
         - docker exec flap_old manager update $CI_COMMIT_REF_NAME
+
+test_update_to_commit:
+    extends: .update_test
+    only: [branches]
+    variables:
+        LATEST_TAG: git tag --sort version:refname | tail -1
+
+test_update_to_tag:
+    extends: .update_test
+    only: [tags]
+    variables:
+        LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
 
 integration_test:
     stage: test
