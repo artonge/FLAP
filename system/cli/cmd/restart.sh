@@ -7,15 +7,15 @@ CMD=${1:-}
 case $CMD in
     "")
         echo "* [restart] Restarting services."
-        manager stop
-        manager start
+        flapctl stop
+        flapctl start
     ;;
     summarize)
         echo "restart | | Restart flap services."
     ;;
     help|*)
         echo "
-$(manager restart summarize)
+$(flapctl restart summarize)
 Commands:
     '' | | Restart flap services." | column -t -s "|"
     ;;

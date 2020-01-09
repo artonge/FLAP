@@ -5,49 +5,53 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
-    "")
-        # Run some setup operation if the installation is not done.
-        if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
-        then
-            echo '* [start] Running setup operations.'
-            manager setup raid
-            manager setup network
-            manager setup cron
-        fi
+	"")
+		# Run some setup operation if the installation is not done.
+		if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
+		then
+			echo '* [start] Running setup operations.'
+			flapctl setup raid
+			flapctl setup network
+		fi
 
-        # Go to FLAP_DIR for docker-compose.
-        cd $FLAP_DIR
+		flapctl setup cron
+		flapctl setup fs
 
-        # Generate config
-        manager config generate
+		# Go to FLAP_DIR for docker-compose.
+		cd $FLAP_DIR
 
-        # Start all services.
-        echo '* [start] Starting services.'
-        docker-compose --no-ansi up --detach
+		# Generate config
+		flapctl config generate
 
-        if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
-        then
-            # Run post setup scripts for each services.
-            manager hooks post_install
+		# Clean volumes and networks of services.
+		flapctl hooks clean
 
-            # Mark the installation as done.
-            touch $FLAP_DATA/system/data/installation_done.txt
-        fi
+		# Start all services.
+		echo '* [start] Starting services.'
+		docker-compose --no-ansi up --detach
 
-        # Generate certificates for flap.localhost on CI mode.
-        if [[ ( "${DEV:-false}" != "false" || "${CI:-false}" != "false" ) && "$(manager tls primary)" == "" ]]
-        then
-            manager tls generate_localhost
-        fi
+		if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
+		then
+			# Run post setup scripts for each services.
+			flapctl hooks post_install
 
-    ;;
-    summarize)
-        echo "start | | Start flap services."
-    ;;
-    help|*)
-        echo "
-$(manager start summarize)
+			# Mark the installation as done.
+			touch $FLAP_DATA/system/data/installation_done.txt
+		fi
+
+		# Generate certificates for flap.localhost on CI and DEV mode.
+		if [[ ( "${DEV:-false}" == "true" || "${CI:-false}" == "true" ) && "$(flapctl tls primary)" == "" ]]
+		then
+			flapctl tls generate_localhost
+		fi
+		;;
+	summarize)
+		echo "start | | Start flap services."
+		;;
+	help|*)
+		echo "
+$(flapctl start summarize)
 Commands:
-    '' | | Start." | column -t -s "|"
-    ;;
+	'' | | Start." | column -t -s "|"
+	;;
 esac

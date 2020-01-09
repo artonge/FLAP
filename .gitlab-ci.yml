@@ -71,14 +71,28 @@ system_test:
         # Copy the code to the real folder.
         - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
 
+        # Update the flapctl link so it maps to the new location.
+        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
         # Update the manager link so it maps to the new location.
         - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/manager.sh /bin/manager
 
         # Start the instance.
-        - docker exec flap_old manager start
+        - docker exec flap_old flapctl start
 
         # Update the instance.
-        - docker exec flap_old manager update $CI_COMMIT_REF_NAME
+        - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME
+
+test_update_to_commit:
+    extends: .update_test
+    only: [branches]
+    variables:
+        LATEST_TAG: git tag --sort version:refname | tail -1
+
+test_update_to_tag:
+    extends: .update_test
+    only: [tags]
+    variables:
+        LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
 
 test_update_to_commit:
     extends: .update_test

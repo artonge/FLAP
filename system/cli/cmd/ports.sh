@@ -9,17 +9,17 @@ DESCRIPTION="Port forwarding for the FLAP box."
 case $CMD in
     open)
         # Delete port forwarding if any.
-        manager ports close $PORT > /dev/null | true
+        flapctl ports close $PORT > /dev/null | true
 
         {
             # Get the internal network IP
-            IP=$(manager ip internal) &&
+            IP=$(flapctl ip internal) &&
 
             # Create port mapping.
             upnpc -e "$DESCRIPTION" -a $IP $PORT $PORT TCP > /dev/null &&
 
             # Check that port mapping exists
-            manager ports list | grep ":$PORT" > /dev/null &&
+            flapctl ports list | grep ":$PORT" > /dev/null &&
 
             echo "* [ports] Port mapping created ($PORT)."
         } || { # Catch error
@@ -33,7 +33,7 @@ case $CMD in
 
         {
             # Check that port mapping do not exist
-            (manager ports list || echo "") | grep -v ":$PORT" > /dev/null &&
+            (flapctl ports list || echo "") | grep -v ":$PORT" > /dev/null &&
             echo "* [ports] Port mapping deleted ($PORT)."
         } || { # Catch error
             echo "* [ports] Failed to delete port mapping ($PORT)."
