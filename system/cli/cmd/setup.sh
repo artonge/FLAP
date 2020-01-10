@@ -39,18 +39,20 @@ case $CMD in
 		echo '* [setup] Creating data directories.'
 		for service in $(ls --directory $FLAP_DIR/*/)
 		do
+			service=$(basename $service)
+
 			# Create data directory for the service.
-			mkdir -p $FLAP_DATA/$(basename $service)
+			mkdir -p $FLAP_DATA/$service
 
 			# If current_migration is not set, set it based on the migrations scripts.
-			if [ ! -f $FLAP_DATA/$(basename $service)/current_migration.txt ]
+			if [ ! -f $FLAP_DATA/$service/current_migration.txt ]
 			then
-				CURRENT_MIGRATION="0"
-					while [ -f $FLAP_DIR/$service/scripts/migrations/$((CURRENT_MIGRATION+1)).sh ]
-					do
-						CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
-					done
-				echo $CURRENT_MIGRATION > $FLAP_DATA/$(basename $service)/current_migration.txt
+				current_migration="0"
+				while [ -f $FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh ]
+				do
+					current_migration=$((current_migration+1))
+				done
+				echo $current_migration > $FLAP_DATA/$service/current_migration.txt
 			fi
 		done
 	;;
