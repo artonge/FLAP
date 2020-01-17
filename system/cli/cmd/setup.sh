@@ -33,10 +33,11 @@ case $CMD in
 		fi
 	;;
 	fs)
+		echo '* [setup] Creating data directories.'
+
 		# Create log folder
 		mkdir -p /var/log/flap
 
-		echo '* [setup] Creating data directories.'
 		for service in $(ls --directory $FLAP_DIR/*/)
 		do
 			service=$(basename $service)

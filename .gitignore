@@ -1,4 +1,5 @@
 /docker-compose.yml
+/docker-compose.yml.tmp
 /docker-compose.dev.yml
 /docker-compose.override.yml
 

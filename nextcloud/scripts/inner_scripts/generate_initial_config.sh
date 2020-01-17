@@ -36,13 +36,6 @@ php occ config:app:set user_saml general-require_provisioned_account --value "1"
 php occ config:app:set user_saml general-uid_mapping --value "uid"
 php occ config:app:set user_saml general-idp0_display_name --value "FLAP SSO"
 php occ config:app:set user_saml providerIds --value "1"
-# HACK: there is a white space before the $(cat ...) because occ will interpret "-- BEGIN..." as a cli arg.
-php occ config:app:set user_saml idp-x509cert --value " $(cat /saml/idp/cert.pem)"
-php occ config:app:set user_saml sp-privateKey --value " $(cat /saml/nextcloud/private_key.pem)"
-php occ config:app:set user_saml sp-x509cert --value " $(cat /saml/nextcloud/cert.pem)"
-php occ config:app:set user_saml idp-entityId --value "https://auth.$PRIMARY_DOMAIN_NAME/saml/metadata"
-php occ config:app:set user_saml idp-singleSignOnService.url --value "https://auth.$PRIMARY_DOMAIN_NAME/saml/singleSignOn"
-php occ config:app:set user_saml idp-singleLogoutService.url --value "https://auth.$PRIMARY_DOMAIN_NAME/saml/singleLogout"
 php occ config:app:set user_saml sp-name-id-format --value "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
 php occ config:app:set user_saml security-wantMessagesSigned --value "1",
 php occ config:app:set user_saml security-logoutResponseSigned --value "1",
@@ -59,14 +52,6 @@ php occ config:app:set user_saml security-logoutRequestSigned --value "1"
 # CHOOSE CRON MODE
 php occ background:cron
 
-# SET TRUSTED DOMAINS
-php occ config:system:delete trusted_domains
-DOMAINS=($DOMAIN_NAMES)
-for i in "${!DOMAINS[@]}"
-do
-    php occ config:system:set trusted_domains $i --value files.${DOMAINS[$i]}
-done
-
 # ENABLE PREVIEW PRE-GENERATOR
 php occ app:enable previewgenerator || true
 
@@ -74,10 +59,8 @@ php occ app:enable previewgenerator || true
 php occ config:system:set mail_smtpmode --value "smtp"
 php occ config:system:set mail_sendmailmode --value "smtp"
 php occ config:system:set mail_from_address --value "admin"
-php occ config:system:set mail_domain --value "$PRIMARY_DOMAIN_NAME"
 php occ config:system:set mail_smtpauthtype --value "PLAIN"
 php occ config:system:set mail_smtpauth --value 1 --type integer
-php occ config:system:set mail_smtphost --value "$PRIMARY_DOMAIN_NAME"
 php occ config:system:set mail_smtpport --value "587"
 php occ config:system:set mail_smtpname --value "admin"
 php occ config:system:set mail_smtppassword --value "$ADMIN_PWD"

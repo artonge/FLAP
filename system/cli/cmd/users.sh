@@ -11,7 +11,7 @@ case $CMD in
 		# Start an ldap instance and redirect the output to null.
 		docker-compose run --detach --name flap_tmp_ldap ldap &> /dev/null
 
-		users=$(docker-compose run ldap slapcat | \
+		users=$(docker-compose run --rm ldap slapcat | \
 		grep '^uid:' | \
 		cut -d ' ' -f2 2> /dev/null)
 

@@ -6,14 +6,13 @@ CMD=${1:-}
 
 case $CMD in
 	"")
+		echo '* [start] Running setup operations.'
 		# Run some setup operation if the installation is not done.
 		if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
 		then
-			echo '* [start] Running setup operations.'
 			flapctl setup raid
 			flapctl setup network
 		fi
-
 		flapctl setup cron
 		flapctl setup fs
 

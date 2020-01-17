@@ -4,6 +4,8 @@ services:
         container_name: flap_mail
         env_file: [./mail/mail.env]
         restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
         depends_on: [ldap]
         ports: ["25:25", "143:143", "587:587"]
         volumes:
