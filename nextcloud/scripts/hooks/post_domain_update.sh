@@ -6,7 +6,7 @@ set -eu
 $FLAP_DIR/nextcloud/scripts/wait_ready.sh
 
 # Generate config.php with the new config
-docker-compose exec -T --user www-data nextcloud /generate_config.sh
+docker-compose exec -T --user www-data nextcloud /inner_scripts/generate_post_domain_update_config.sh
 
 # Don't do it during CI.
 if [ "${CI:-false}" == "false" ]

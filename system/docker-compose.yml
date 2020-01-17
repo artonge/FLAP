@@ -1,20 +1,24 @@
-version: "3"
+version: "3.7"
 
 services:
     memcached:
         image: memcached:1.5.12
         container_name: flap_memcached
         restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
         networks:
             stores-net:
                 aliases: [memcached]
 
 networks:
     apps-net:
+        name: flap_apps-net
         ipam:
             config:
                 - subnet: 172.30.0.0/24
     stores-net:
+        name: flap_stores-net
         internal: true
         ipam:
             config:
