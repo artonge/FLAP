@@ -25,12 +25,8 @@ case $CMD in
 		fi
 	;;
 	raid)
-		# Prevent some operations during CI and DEV.
-		if [ "${CI:-false}" == "false" ] && [ "${DEV:-false}" == "false" ]
-		then
-			echo '* [setup] Setting up RAID'
-			flapctl disks setup
-		fi
+		echo '* [setup] Setting up RAID'
+		flapctl disks setup
 	;;
 	fs)
 		echo '* [setup] Creating data directories.'
