@@ -1,4 +1,5 @@
 @reboot      flapctl setup cron
+@reboot      flapctl setup network
 
 @midnight    flapctl update &> /var/log/flap/update.log
 
