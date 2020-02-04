@@ -14,7 +14,7 @@
         - rm -rf $CI_PROJECT_DIR
         - git clone $CI_REPOSITORY_URL $CI_PROJECT_DIR
         - cd $CI_PROJECT_DIR
-        - git checkout $CI_COMMIT_REF_NAME
+        - git checkout $CI_COMMIT_SHA
         - git submodule update --init
         - >
             docker build \
