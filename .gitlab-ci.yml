@@ -5,6 +5,14 @@ include:
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
+# Check shell scripts
+shellcheck:
+    image: koalaman/shellcheck-alpine:latest
+    stage: test
+    script:
+        - apk add git
+        - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --shell=bash
+
 # Run start_flap and CLI unit tests
 system_test:
     only: [branches]
@@ -13,7 +21,7 @@ system_test:
     services: ["docker:dind"]
     script:
         # Start a flap instance with mappings to real folders.
-        # We need mappings to real folders because docker will resolve its mappings using the real fils system.
+        # We need mappings to real folders because docker will resolve its mappings using the real file system.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
         - >
             docker run \
@@ -48,7 +56,7 @@ system_test:
         - apk add git
 
         # Start a flap instance with mappings to real folders.
-        # We need mappings to real folders because docker will resolve its mappings using the real fils system.
+        # We need mappings to real folders because docker will resolve its mappings using the real file system.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
         - >
             docker run \
@@ -78,6 +86,7 @@ system_test:
 
         # Start the instance.
         - docker exec flap_old flapctl start
+        - docker exec flap_old flapctl tls generate_localhost
 
         # Update the instance.
         - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME

@@ -26,10 +26,15 @@ Commands:
         if [ "$SERVICE" == "all" ]
         then
             echo '* [update] Running migrations for all services.'
-            for service in $(ls --directory $FLAP_DIR/*/)
+            for service in "$FLAP_DIR"/*/
             do
+                if [ ! -d "$service" ]
+                then
+                    continue
+                fi
+
                 {
-                    flapctl update migrate $(basename $service)
+                    flapctl update migrate "$(basename "$service")"
                 } || {
                     echo "* [update] ERROR - Fail to run migrations for $service."
                     EXIT_CODE=1
@@ -38,26 +43,26 @@ Commands:
         else
             # Get the base migration for the service.
             # The current migration is the last migration that was run.
-            CURRENT_MIGRATION=$(cat $FLAP_DATA/$SERVICE/current_migration.txt)
+            CURRENT_MIGRATION=$(cat "$FLAP_DATA/$SERVICE/current_migration.txt")
 
             # Run migration scripts as long as there is some to run.
-            while [ -f $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh ]
+            while [ -f "$FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh" ]
             do
                 echo "* [update] Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
-                $FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh
+                "$FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh"
                 CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
-                echo $CURRENT_MIGRATION > $FLAP_DATA/$SERVICE/current_migration.txt
+                echo $CURRENT_MIGRATION > "$FLAP_DATA/$SERVICE/current_migration.txt"
             done
         fi
         ;;
     ""|*)
         # Go to FLAP_DIR for git cmds.
-        cd $FLAP_DIR
+        cd "$FLAP_DIR"
 
         git fetch --tags --prune
 
         CURRENT_TAG=$(git describe --tags --abbrev=0)
-        NEXT_TAG=$(git tag --sort version:refname | grep -A 1 $CURRENT_TAG | grep -v $CURRENT_TAG | cat)
+        NEXT_TAG=$(git tag --sort version:refname | grep -A 1 "$CURRENT_TAG" | grep -v "$CURRENT_TAG" | cat)
         ARG_TAG=${1:-}
         TARGET_TAG=${ARG_TAG:-$NEXT_TAG}
 
@@ -78,12 +83,12 @@ Commands:
 
         {
             echo "* [update] Updating code to $TARGET_TAG." &&
-            git checkout $TARGET_TAG &&
+            git checkout "$TARGET_TAG" &&
 
             # Pull changes if we are on a branch.
             if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
             then
-            	git pull
+                git pull
             fi
 
             git submodule update --init &&
@@ -105,7 +110,7 @@ Commands:
             git add .
             git reset --hard
             git clean -Xdf
-            git checkout $CURRENT_TAG
+            git checkout "$CURRENT_TAG"
             git submodule update --init
             rm /tmp/updating_flap.lock
             exit 1
@@ -132,11 +137,10 @@ Commands:
 
             echo '* [update] Running some hooks.' &&
             flapctl hooks post_update &&
-            flapctl hooks post_domain_update &&
             flapctl restart &&
 
             echo '* [update] Cleanning docker objects.' &&
-            docker system prune --all --force
+            flapctl clean docker -y
         } || {
             echo '* [update] ERROR - Fail to restart containers.'
             EXIT_CODE=1

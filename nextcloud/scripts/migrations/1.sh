@@ -3,19 +3,19 @@
 set -eu
 
 # Generate SAML keys for Netcloud.
-mkdir -p $FLAP_DATA/nextcloud/saml
+mkdir -p "$FLAP_DATA/nextcloud/saml"
 openssl req \
     -new \
     -newkey rsa:4096 \
-    -keyout $FLAP_DATA/nextcloud/saml/private_key.pem \
+    -keyout "$FLAP_DATA/nextcloud/saml/private_key.pem" \
     -nodes  \
-    -out $FLAP_DATA/nextcloud/saml/cert.pem \
+    -out "$FLAP_DATA"/nextcloud/saml/cert.pem \
     -x509 \
     -days 3650 \
     -subj "/"
 
 # Allow nextcloud container's www-data user to read the key.
-chmod og+r $FLAP_DATA/nextcloud/saml/private_key.pem
+chmod og+r "$FLAP_DATA"/nextcloud/saml/private_key.pem
 
 
 # Migrate user's folders.
@@ -45,7 +45,7 @@ do
 
     echo "UUID is $uuid"
 
-    mv $FLAP_DATA/nextcloud/data/$uuid $FLAP_DATA/nextcloud/data/$username || true
+    mv "$FLAP_DATA/nextcloud/data/$uuid" "$FLAP_DATA/nextcloud/data/$username" || true
 
     docker-compose exec -T postgres psql -U nextcloud -c "UPDATE oc_accounts SET uid = '$username' WHERE uid = '$uuid';"
     docker-compose exec -T postgres psql -U nextcloud -c "UPDATE oc_ldap_user_mapping SET owncloud_name = '$username' WHERE owncloud_name = '$uuid';"

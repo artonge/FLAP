@@ -1,2 +1,2 @@
 # 3h00 - Learn what is SPAM in every Junk folders.
-0 3 * * *       cd $FLAP_DIR; /usr/local/bin/docker-compose exec -T -u root mail sa-learn --spam /var/mail/*/.Junk --dbpath /var/mail-state/lib-amavis/.spamassassin
+0 3 * * *     docker exec --tty --user root flap_mail sa-learn --spam /var/mail/*/.Junk --dbpath /var/mail-state/lib-amavis/.spamassassin > /dev/null

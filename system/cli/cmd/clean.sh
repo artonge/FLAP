@@ -16,14 +16,14 @@ case $CMD in
         if [ $FORCE_YES == 0 ]
         then
             echo "* [clean] This will remove all the users data. Continue ? [Y/N]:"
-            read answer
+            read -r answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
                 exit 0
             fi
         fi
-        
+
         echo '* [clean] Running clean hook.'
 
         flapctl hooks clean
@@ -32,7 +32,7 @@ case $CMD in
         if [ $FORCE_YES == 0 ]
         then
             echo "* [clean] This will remove all the configuration. Continue ? [Y/N]:"
-            read answer
+            read -r answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -46,7 +46,7 @@ case $CMD in
         crontab -r || true
 
         # Remove files listed in gitignore
-        cd $FLAP_DIR
+        cd "$FLAP_DIR"
         git clean -Xdf
         git submodule foreach "git clean -Xdf"
         ;;
@@ -54,7 +54,7 @@ case $CMD in
         if [ $FORCE_YES == 0 ]
         then
             echo "* [clean] This will remove all the users data. Continue ? [Y/N]:"
-            read answer
+            read -r answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -65,14 +65,14 @@ case $CMD in
         echo '* [clean] Cleaning users data.'
 
         # Remove FLAP data files
-        rm -rf $FLAP_DATA/*
+        rm -rf "${FLAP_DATA:?}"/*
         docker volume prune -f
         ;;
     docker)
         if [ $FORCE_YES == 0 ]
         then
             echo "* [clean] This will remove all the docker objects. Continue ? [Y/N]:"
-            read answer
+            read -r answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -80,18 +80,25 @@ case $CMD in
             fi
         fi
 
+        # Prevent some operations during CI and DEV.
+        if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
+        then
+            echo "* [clean] Skip docker pruning during CI or DEV."
+            exit 0
+        fi
+
         echo '* [clean] Cleaning docker objects.'
 
         # Remove docker objects
-        docker container prune -f
-        docker network prune -f
-        docker image prune -f
+        docker container prune --force
+        docker network   prune --force
+        docker image     prune --force --all
         ;;
     ""|"-y")
         if [ "${1:-}" != "-y" ]
         then
             echo "* [clean] This will remove ALL the FLAP data. Continue ? [Y/N]:"
-            read answer
+            read -r answer
 
             if [ "$answer" == "${answer#[Yy]}" ]
             then
@@ -109,7 +116,7 @@ case $CMD in
         echo "clean | [services, config, data, docker] | Clean data on the FLAP box. -y to bypass the validation."
         ;;
     help|*)
-        printf "
+        echo "
 $(flapctl clean summarize)
 Commands:
     services | [-y] | Run clean hooks.

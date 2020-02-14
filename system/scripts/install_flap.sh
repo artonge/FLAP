@@ -38,7 +38,7 @@ apt install -y \
 
 # Start docker on start.
 # Check if we are in a docker container with systemctl.
-if [ "$(which systemctl || true)" != "" ]
+if [ "$(command -v systemctl || true)" != "" ]
 then
     systemctl enable docker
 fi
@@ -53,6 +53,7 @@ echo "CREATING ALIASES"
 echo "alias dc='docker-compose'" > /root/.bash_aliases
 echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bash_aliases
 set +u # Prevent undefined variables to crash bashrc execution
+# shellcheck disable=SC1091
 source /root/.bashrc
 set -u
 
@@ -60,6 +61,7 @@ set -u
 echo "ENABLING AUTO UPDATE"
 apt install -y unattended-upgrades
 
+# shellcheck disable=SC2016
 echo '
 Unattended-Upgrade::Allowed-Origins {
         "${distro_id}:${distro_codename}";
@@ -86,8 +88,9 @@ echo "SETTING UP ENV VARS"
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
 echo "export COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment
+# shellcheck disable=SC1091
 source /etc/environment
-ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
+ln -sf "$FLAP_DIR/system/cli/flapctl.sh" /bin/flapctl
 
 ################################################################################
 echo "INSTALLING FLAP"
@@ -96,9 +99,10 @@ echo "INSTALLING FLAP"
 # certbot: generate TLS certificates
 # miniupnpc: open ports
 # avahi-daemon: set the mDNS name
-# mdam: setup RAID
+# mdadm: setup RAID
 # jq: manipulate json text files
 # psmisc: better cli output with pstree
+# msmtp msmtp-mta: to send mail with sendmail
 apt install -y \
     git \
     gettext \
@@ -107,7 +111,8 @@ apt install -y \
     avahi-daemon \
     mdadm \
     jq \
-    psmisc
+    psmisc \
+    msmtp msmtp-mta
 
 # yq: manipulate yaml text files.
 pip3 install yq
@@ -118,14 +123,14 @@ apt purge -y postfix dovecot
 apt autoremove
 
 # Fetch git repository
-git clone --recursive https://gitlab.com/flap-box/flap.git $FLAP_DIR
+git clone --recursive https://gitlab.com/flap-box/flap.git "$FLAP_DIR"
 
 if [ "$BRANCH_OR_TAG" != 'master' ]
 then
     echo "CHECKING OUT $BRANCH_OR_TAG"
-    cd $FLAP_DIR
+    cd "$FLAP_DIR"
     git fetch --tags --prune
-    git checkout $BRANCH_OR_TAG
+    git checkout "$BRANCH_OR_TAG"
     git submodule update --init
 fi
 

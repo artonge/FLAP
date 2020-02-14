@@ -5,8 +5,8 @@ set -eu
 # Usage: ./duckdns.sh <domain name>
 
 DOMAIN=$1
-TOKEN=$(cat $FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt)
-USERNAME=$(cat $FLAP_DATA/system/data/domains/$DOMAIN/username.txt)
+TOKEN=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt")
+USERNAME=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/username.txt")
 
 
 echo "* [dns-update:namecheap] Updating namecheap DNS for $DOMAIN."
@@ -14,13 +14,14 @@ echo "* [dns-update:namecheap] Updating namecheap DNS for $DOMAIN."
 
 ip=$(flapctl ip external)
 
-tld=$(echo $DOMAIN | sed s/[^.]*.//)
-sld=$(echo $DOMAIN | sed s/\.$tld//)
+tld=${DOMAIN//[^.]*./}
+sld=${DOMAIN//\."$tld"/}
 
-dkim=$(cat $FLAP_DIR/opendkim/keys/$DOMAIN/mail.txt | tr "\n" " " | grep --only-matching --extended-regexp 'p=.+"' | tr '"\t' ' ' | sed 's/[[:space:]]//g')
+# shellcheck disable=SC2002
+dkim=$(cat "$FLAP_DIR/opendkim/keys/$DOMAIN/mail.txt" | tr "\n" " " | grep --only-matching --extended-regexp 'p=.+"' | tr '"\t' ' ' | sed 's/[[:space:]]//g')
 
 
-echo "https://api.namecheap.com/xml.response
+echo "https://api;.namecheap.com/xml.response
         ?apiuser=${USERNAME}
         &apikey=${TOKEN}
         &username=${USERNAME}

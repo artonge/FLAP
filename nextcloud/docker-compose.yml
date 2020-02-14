@@ -1,6 +1,8 @@
 services:
     nextcloud:
-        image: nextcloud:17.0.1-fpm
+        # Check "Critical changes..." issue before updating the version number.
+        # https://github.com/nextcloud/server/issues
+        image: nextcloud:17.0.2-fpm
         container_name: flap_nextcloud
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always
@@ -18,7 +20,3 @@ services:
             stores-net:
             apps-net:
                 aliases: [nextcloud]
-
-volumes:
-    nextcloudStaticFiles:
-        name: flap_nextcloudStaticFiles

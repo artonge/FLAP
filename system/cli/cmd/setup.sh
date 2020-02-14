@@ -3,29 +3,32 @@
 set -eu
 
 CMD=${1:-}
-DIR=$(dirname "$(readlink -f "$0")")
 
 case $CMD in
 	network)
 		# Prevent some operations during CI and DEV.
-		if [ "${CI:-false}" == "false" ] && [ "${DEV:-false}" == "false" ]
+		if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
 		then
-			echo '* [setup] Openning ports and setting hostname'
-			# Set local domain name to flap.local
-			hostnamectl --static set-hostname "flap.local"
-			hostnamectl --transient set-hostname "flap.local"
-			hostnamectl --pretty set-hostname "FLAP box (flap.local)"
-			# Create port mappings
-			flapctl ports open 22 # SSH
-			flapctl ports open 80 # HTTP
-			flapctl ports open 443 # HTTPS
-			flapctl ports open 25 # SMTP
-			flapctl ports open 587 # SMTP with STARTLS
-			flapctl ports open 143 # IMAP
+			echo "* [setup] Skip network setup during CI or DEV."
+			exit 0
 		fi
+
+		echo '* [setup] Setting hostname'
+		# Set local domain name to flap.local
+		hostnamectl --static set-hostname "flap.local"
+		hostnamectl --transient set-hostname "flap.local"
+		hostnamectl --pretty set-hostname "FLAP box (flap.local)"
+		echo '* [setup] Openning ports'
+		# Create port mappings
+		flapctl ports open 22 # SSH
+		flapctl ports open 80 # HTTP
+		flapctl ports open 443 # HTTPS
+		flapctl ports open 25 # SMTP
+		flapctl ports open 587 # SMTP with STARTLS
+		flapctl ports open 143 # IMAP
 	;;
 	raid)
-		echo '* [setup] Setting up RAID'
+		echo '* [setup] Setting up RAID.'
 		flapctl disks setup
 	;;
 	fs)
@@ -34,29 +37,43 @@ case $CMD in
 		# Create log folder
 		mkdir -p /var/log/flap
 
-		for service in $(ls --directory $FLAP_DIR/*/)
+		for service in "$FLAP_DIR"/*/
 		do
-			service=$(basename $service)
+			if [ ! -d "$service" ]
+			then
+				continue
+			fi
 
-			# Create data directory for the service.
-			mkdir -p $FLAP_DATA/$service
+			service=$(basename "$service")
+
+			echo - "$service"
+
+			# Skip if the directory is allready created.
+			if [ ! -d "$FLAP_DATA/$service" ]
+			then
+				# Create data directory for the service.
+				echo "	Create $FLAP_DATA/$service"
+				mkdir -p "$FLAP_DATA/$service"
+			fi
 
 			# If current_migration is not set, set it based on the migrations scripts.
-			if [ ! -f $FLAP_DATA/$service/current_migration.txt ]
+			if [ ! -f "$FLAP_DATA/$service/current_migration.txt" ]
 			then
 				current_migration="0"
-				while [ -f $FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh ]
+				while [ -f "$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh" ]
 				do
 					current_migration=$((current_migration+1))
 				done
-				echo $current_migration > $FLAP_DATA/$service/current_migration.txt
+				echo "	Setup base migration of $current_migration"
+				echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
 			fi
 		done
 	;;
 	cron)
 		# Do not setup cron jobs on CI and DEV.
-		if [ "${CI:-false}" != "false" ] && [ "${DEV:-false}" != "false" ]
+		if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
 		then
+			echo "* [setup] Skip cron generation during CI or DEV."
 			exit 0
 		fi
 
@@ -66,12 +83,18 @@ case $CMD in
 		cron_string+="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"$'\n\n'
 
 		# Build cron_string from services cron files
-		for service in $(ls --directory $FLAP_DIR/*/)
+		for service in "$FLAP_DIR"/*/
 		do
-			if [ -f $service/$(basename $service).cron ]
+			if [ ! -d "$service" ]
 			then
-				cron_string+="############## $(basename $service) ##############"$'\n'
-				cron_string+="$(cat $service/$(basename $service).cron)"$'\n\n'
+				continue
+			fi
+
+			if [ -f "$service/$(basename "$service").cron" ]
+			then
+				echo - "$(basename "$service").cron"
+				cron_string+="############## $(basename "$service") ##############"$'\n'
+				cron_string+="$(cat "$service/$(basename "$service").cron")"$'\n\n'
 			fi
 		done
 

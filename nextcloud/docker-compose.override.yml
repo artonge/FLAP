@@ -1,6 +1,2 @@
 services:
     nextcloud:
-
-volumes:
-    nextcloudStaticFiles:
-        name: flap_nextcloudStaticFiles
