@@ -4,10 +4,10 @@ set -eu
 
 # Usage: ./generate_certs.sh <domain name> [<domain name>, ...]
 
-echo "* Generating certificates for $@"
+echo "* Generating certificates for $*"
 
 domains=""
-for domain in $@
+for domain in "$@"
 do
     domains+="--domain $domain "
     for subdomain in $SUBDOMAINS
@@ -35,4 +35,4 @@ certbot certonly \
     --force-renewal \
     --agree-tos \
     --email louis@chmn.me \
-    $domains
+    "$domains"

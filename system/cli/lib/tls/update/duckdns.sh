@@ -5,7 +5,7 @@ set -eu
 # Usage: ./duckdns.sh <domain name>
 
 DOMAIN=$1
-TOKEN=$(cat $FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt)
+TOKEN=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt")
 
 echo "* [dns-update:duckdns] Updating duckdns DNS for $DOMAIN."
 

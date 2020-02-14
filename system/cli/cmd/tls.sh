@@ -5,34 +5,37 @@ set -eu
 CMD=${1:-}
 
 # Make sure the domains folder exists
-mkdir -p $FLAP_DATA/system/data/domains
+mkdir -p "$FLAP_DATA/system/data/domains"
 
 case $CMD in
     generate)
-        # Exit during CI or on local DEV.
-        if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
-        then
-            exit
-        fi
+		# Exit during CI, but not during tests.
+		if [ "${CI:-false}" == "true" ] || [ "${TEST:-false}" == "false" ]
+		then
+			echo '* [tls] Skip TLS generation during CI.'
+			exit
+		fi
 
-        echo '* [tls] Generating certificates for domain names'
+        echo '* [tls] Generating certificates for domain names.'
 
         # Filter domains that are either OK or HANDLED and not for "local" or "localhost"
         domains=""
-        for domain in $(ls $FLAP_DATA/system/data/domains)
+        for domain in "$FLAP_DATA"/system/data/domains/*
         do
-            status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
-            provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt | cut -d ' ' -f1)
+            [[ -e "$domain" ]] || break  # handle the case of no domain
 
-            if ( [ "$status" == "OK" ] || [ "$status" == "HANDLED" ] ) && [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
+            status=$(cat "$domain/status.txt")
+            provider=$(cat "$domain/provider.txt")
+
+            if { [ "$status" == "OK" ] || [ "$status" == "HANDLED" ]; } && [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
             then
-                domains+="$domain "
+                domains+="$(basename "$domain") "
             fi
         done
 
         {
             # Generate TLS certificates
-            $FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh $domains
+            "$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "$domains"
         } || { # Catch error
             echo "Failed to generate certificates."
             exit 1
@@ -42,11 +45,11 @@ case $CMD in
         echo '* [tls] Generating certificates for flap.localhost'
 
         # Create default flap.localhost domain if it is missing
-        mkdir -p $FLAP_DATA/system/data/domains/flap.localhost
-        echo "OK" > $FLAP_DATA/system/data/domains/flap.localhost/status.txt
-        echo "local" > $FLAP_DATA/system/data/domains/flap.localhost/provider.txt
-        touch $FLAP_DATA/system/data/domains/flap.localhost/authentication.txt
-        touch $FLAP_DATA/system/data/domains/flap.localhost/logs.txt
+        mkdir -p "$FLAP_DATA/system/data/domains/flap.localhost"
+        echo "OK" > "$FLAP_DATA/system/data/domains/flap.localhost/status.txt"
+        echo "local" > "$FLAP_DATA/system/data/domains/flap.localhost/provider.txt"
+        touch "$FLAP_DATA/system/data/domains/flap.localhost/authentication.txt"
+        touch "$FLAP_DATA/system/data/domains/flap.localhost/logs.txt"
 
         # Generate certificates for flap.localhost if they do not exists yet.
         if [ ! -f /etc/letsencrypt/live/flap/fullchain.pem ]
@@ -58,11 +61,11 @@ case $CMD in
                 -keyout /etc/letsencrypt/live/flap/privkey.pem \
                 -newkey rsa:2048 -nodes -sha256 \
                 -subj "/CN=flap.localhost" -extensions EXT \
-                -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:$1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+                -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:%s\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth" "$1")
             cp /etc/letsencrypt/live/flap/fullchain.pem /etc/letsencrypt/live/flap/chain.pem
         fi
 
-        echo "flap.localhost" > $FLAP_DATA/system/data/primary_domain.txt
+        echo "flap.localhost" > "$FLAP_DATA/system/data/primary_domain.txt"
 
         flapctl restart
 
@@ -78,13 +81,13 @@ case $CMD in
         ;;
     handle_request_primary_update)
         # Exit if there is no request.
-        if [ ! -f $FLAP_DATA/system/data/domain_update_primary.txt ]
+        if [ ! -f "$FLAP_DATA/system/data/domain_update_primary.txt" ]
         then
             exit 0
         fi
 
         # Exit if the request is HANDLED
-        status=$(cat $FLAP_DATA/system/data/domain_update_primary.txt)
+        status=$(cat "$FLAP_DATA/system/data/domain_update_primary.txt")
         if [ "$status" == "HANDLED" ]
         then
             exit 0
@@ -93,24 +96,24 @@ case $CMD in
         echo '* [tls] Handling domain update request'
         # Handle primary domain update
         {
-            echo "HANDLED" > $FLAP_DATA/system/data/domain_update_primary.txt &&
+            echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_primary.txt" &&
             flapctl hooks post_domain_update &&
             flapctl restart &&
-            rm $FLAP_DATA/system/data/domain_update_primary.txt
+            rm "$FLAP_DATA/system/data/domain_update_primary.txt"
         } || { # Catch error
-            echo "" > $FLAP_DATA/system/data/domain_update_primary.txt
+            echo "" > "$FLAP_DATA/system/data/domain_update_primary.txt"
             exit 1
         }
         ;;
     handle_request_domain_deletion)
         # Exit if their is no request
-        if [ ! -f $FLAP_DATA/system/data/domain_update_delete.txt ]
+        if [ ! -f "$FLAP_DATA/system/data/domain_update_delete.txt" ]
         then
             exit 0
         fi
 
         # Exit if the request is HANDLED
-        status=$(cat $FLAP_DATA/system/data/domain_update_delete.txt)
+        status=$(cat "$FLAP_DATA/system/data/domain_update_delete.txt")
         if [ "$status" == "HANDLED" ]
         then
             exit 0
@@ -119,29 +122,29 @@ case $CMD in
         echo '* [tls] Handling domain delete request'
         # Handle domain deletion request
         {
-            echo "HANDLED" > $FLAP_DATA/system/data/domain_update_delete.txt &&
+            echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_delete.txt" &&
             flapctl hooks post_domain_update &&
             flapctl restart &&
-            rm $FLAP_DATA/system/data/domain_update_delete.txt
+            rm "$FLAP_DATA/system/data/domain_update_delete.txt"
         } || { # Catch error
-            echo "" > $FLAP_DATA/system/data/domain_update_delete.txt
+            echo "" > "$FLAP_DATA/system/data/domain_update_delete.txt"
             exit 1
         }
 
         ;;
     handle_request_domain_creation)
         # Handle new domains
-        mkdir -p $FLAP_DATA/system/data/domains
+        mkdir -p "$FLAP_DATA/system/data/domains"
 
         # Select a WAITING domain
-        for domain in $(ls $FLAP_DATA/system/data/domains)
+        for domain in "$FLAP_DATA"/system/data/domains/*
         do
-            status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
+            [[ -e "$domain" ]] || break  # handle the case of no domain
 
-            if [ "$status" == "WAITING" ]
+            if [ "$(cat "$domain/status.txt")" == "WAITING" ]
             then
-                DOMAIN=$domain
-                echo "HANDLED" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt
+                DOMAIN=$(basename "$domain")
+                echo "HANDLED" > "$domain/status.txt"
                 break
             fi
         done
@@ -157,17 +160,16 @@ case $CMD in
         # Give time to the server to pick up the status change.
         sleep 2
 
-
         {
             flapctl stop &&
             flapctl tls generate &&
-            echo "OK" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt &&
+            echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
             {
                 # If primary domain is emtpy, set the handled domain as primary.
                 if [ "$(flapctl tls primary)" == "" ]
                 then
                     echo "* [tls] Set $DOMAIN as primary."
-                    echo $DOMAIN > $FLAP_DATA/system/data/primary_domain.txt
+                    echo "$DOMAIN" > "$FLAP_DATA/system/data/primary_domain.txt"
                 fi
             } &&
             flapctl start &&
@@ -175,7 +177,12 @@ case $CMD in
             flapctl restart
         } || { # Catch error
             echo "Failed to handle domain request."
-            echo "ERROR" > $FLAP_DATA/system/data/domains/$DOMAIN/status.txt
+            echo "ERROR" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt"
+            # Generate certificates if they were remove
+            if [ ! -d /etc/letsencrypt/live/flap ]
+            then
+                flapctl tls generate
+            fi
             flapctl start
             exit 1
         }
@@ -184,23 +191,23 @@ case $CMD in
         # Execute update script for each OK domain.
         for domain in $DOMAIN_NAMES
         do
-            provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt)
+            provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
             {
-                $FLAP_DIR/system/cli/lib/tls/update/${provider}.sh $domain
+                "$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
             } || { # Catch error
                 echo "Failed to update $domain's DNS records."
             }
         done
         ;;
     list)
-        $FLAP_DIR/system/cli/lib/tls/list_domains.sh
+        "$FLAP_DIR/system/cli/lib/tls/list_domains.sh"
         ;;
     list_all)
         for domain in $DOMAIN_NAMES
         do
-            status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
-            provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt | cut -d ' ' -f1)
+            status=$(cat "$FLAP_DATA/system/data/domains/$domain/status.txt")
+            provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
             echo "$domain - $status - $provider"
             for subdomain in $SUBDOMAINS
@@ -210,7 +217,7 @@ case $CMD in
         done
         ;;
     primary)
-        echo $PRIMARY_DOMAIN_NAME
+        echo "$PRIMARY_DOMAIN_NAME"
         ;;
     summarize)
         echo "tls | [generate, handle_request, list, list_all, primary, generate_localhost, help] | Manage TLS certificates for Nginx."

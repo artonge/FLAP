@@ -7,7 +7,7 @@ CMD=${1:-}
 case $CMD in
     "")
         # Go to FLAP_DIR for docker-compose.
-        cd $FLAP_DIR
+        cd "$FLAP_DIR"
 
         # Generate configuration so docker-compose does not complains because of a missing config file.
         flapctl config generate_compose

@@ -8,7 +8,7 @@ case $CMD in
 	"")
 		echo '* [start] Running setup operations.'
 		# Run some setup operation if the installation is not done.
-		if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
+		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
 			flapctl setup raid
 			flapctl setup network
@@ -17,7 +17,7 @@ case $CMD in
 		flapctl setup fs
 
 		# Go to FLAP_DIR for docker-compose.
-		cd $FLAP_DIR
+		cd "$FLAP_DIR"
 
 		# Generate config
 		flapctl config generate
@@ -29,17 +29,17 @@ case $CMD in
 		echo '* [start] Starting services.'
 		docker-compose --no-ansi up --detach
 
-		if [ ! -f $FLAP_DATA/system/data/installation_done.txt ]
+		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
 			# Run post setup scripts for each services.
 			flapctl hooks post_install
 
 			# Mark the installation as done.
-			touch $FLAP_DATA/system/data/installation_done.txt
+			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
 
-		# Generate certificates for flap.localhost on CI and DEV mode.
-		if [[ ( "${DEV:-false}" == "true" || "${CI:-false}" == "true" ) && "$(flapctl tls primary)" == "" ]]
+		# Generate certificates for flap.localhost on DEV mode, but not during tests.
+		if [ "${DEV:-false}" == "true" ] && [ "$(flapctl tls primary)" == "" ] && [ "${TEST:-false}" == "false" ]
 		then
 			flapctl tls generate_localhost
 		fi

@@ -1,6 +1,7 @@
 #!/bin/bash
 BOOT=/etc/rc.local
-BOOTDEVICE=`ls -l /dev/disk/by-uuid/ | grep 96C3-9298 | awk '{print $11}' | sed "s/\.\.\/\.\.\///" | sed "s/p1//"`
+# shellcheck disable=SC2010
+BOOTDEVICE=$(ls -l /dev/disk/by-uuid/ | grep 96C3-9298 | awk '{print $11}' | sed "s/\.\.\/\.\.\///" | sed "s/p1//")
 
 # https://raspberrypi.stackexchange.com/questions/499/how-can-i-resize-my-root-partition/501#501?newreg=52ef2c5dea084157b5cb420f87aef9c8
 function do_resize
@@ -10,11 +11,11 @@ function do_resize
 	echo "Saving the log to $rsflog"
 	sleep 4
 
-	p2_start=`fdisk -l /dev/$BOOTDEVICE | grep ${BOOTDEVICE}p2 | awk '{print $2}'`
-	p2_end=$(((`fdisk -l /dev/$BOOTDEVICE | head -n1 | grep -i bytes | awk '{print $5}'`/512)-20))
+	p2_start=$(fdisk -l "/dev/$BOOTDEVICE" | grep "${BOOTDEVICE}p2" | awk '{print $2}')
+	p2_end=$((($(fdisk -l "/dev/$BOOTDEVICE" | head -n1 | grep -i bytes | awk '{print $5}')/512)-20))
 	echo $p2_end
 
-	fdisk /dev/$BOOTDEVICE <<EOF &>> $rsflog
+	fdisk "/dev/$BOOTDEVICE" <<EOF &>> "$rsflog"
 p
 d
 2

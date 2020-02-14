@@ -1,10 +1,10 @@
-@reboot      flapctl setup cron
-@reboot      flapctl setup network
+@reboot      flapctl setup cron > /dev/null
+@reboot      flapctl setup network > /dev/null
 
 @midnight    flapctl update &> /var/log/flap/update.log
 
 @hourly      flapctl healthcheck &> /var/log/flap/healthcheck.log
-@hourly      flapctl setup network
+@hourly      flapctl setup network > /dev/null
 
 # Every minutes
 * * * * *    flapctl tls handle_request &> /var/log/flap/tls.log

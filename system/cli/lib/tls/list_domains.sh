@@ -2,12 +2,10 @@
 
 set -eu
 
-mkdir -p $FLAP_DATA/system/data/domains
+mkdir -p "$FLAP_DATA/system/data/domains"
 
-for domain in $(ls $FLAP_DATA/system/data/domains)
+for domain in "$FLAP_DATA"/system/data/domains/*
 do
-    status=$(cat $FLAP_DATA/system/data/domains/$domain/status.txt)
-    provider=$(cat $FLAP_DATA/system/data/domains/$domain/provider.txt | cut -d ' ' -f1)
-
-    echo "$domain - $status - $provider"
+	[[ -e "$domain" ]] || break  # handle the case of no domain
+    echo "$(basename "$domain") - $(cat "$domain/status.txt") - $(cat "$domain/provider.txt")"
 done
