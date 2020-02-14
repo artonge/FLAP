@@ -2,7 +2,7 @@
 
 set -eu
 
-until docker-compose exec -T -u www-data nextcloud php occ status | grep "installed: true"
+until docker-compose logs nextcloud | grep "NOTICE: ready to handle connections"
 do
     >&2 echo "Nextcloud is unavailable - sleeping"
     sleep 1
