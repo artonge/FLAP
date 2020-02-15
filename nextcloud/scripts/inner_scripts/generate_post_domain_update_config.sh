@@ -13,7 +13,7 @@ php occ config:app:set user_saml idp-singleLogoutService.url --value "https://au
 
 # SET TRUSTED DOMAINS
 php occ config:system:delete trusted_domains
-DOMAINS=("$DOMAIN_NAMES")
+read -r -a DOMAINS <<< "$DOMAIN_NAMES"
 for i in "${!DOMAINS[@]}"
 do
     php occ config:system:set trusted_domains "$i" --value files."${DOMAINS[$i]}"
