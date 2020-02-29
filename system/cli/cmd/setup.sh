@@ -6,10 +6,9 @@ CMD=${1:-}
 
 case $CMD in
 	network)
-		# Prevent some operations during CI and DEV.
-		if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
+		if [ "${FLAG_NO_NETWORK_SETUP:-}" == "true" ]
 		then
-			echo "* [setup] Skip network setup during CI or DEV."
+			echo "* [setup] Skip network setup."
 			exit 0
 		fi
 
@@ -70,10 +69,9 @@ case $CMD in
 		done
 	;;
 	cron)
-		# Do not setup cron jobs on CI and DEV.
-		if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
+		if [ "${FLAG_NO_CRON_SETUP:-}" == "true" ]
 		then
-			echo "* [setup] Skip cron generation during CI or DEV."
+			echo "* [setup:FEATURE_FLAG] Skip cron generation."
 			exit 0
 		fi
 

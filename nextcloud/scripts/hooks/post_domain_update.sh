@@ -8,15 +8,15 @@ set -eu
 # Generate config.php with the new config
 docker-compose exec -T --user www-data nextcloud /inner_scripts/generate_post_domain_update_config.sh
 
-# Don't do it during CI.
-if [ "${CI:-false}" == "false" ]
+if [ "${FLAG_NO_SAML_FETCH:-}" == "true" ]
 then
+	echo "Skip SAML metadata fetching for nextcloud."
+else
     # Get SAML metadata for each domains.
     echo "$DOMAIN_NAMES"
     for domain in $DOMAIN_NAMES
     do
-        # HACK: don't check TLS certificates during developement.
-        if [ "${DEV:-false}" == "true" ]
+		if [ "${FLAG_INSECURE_SAML_FETCH:-}" == "true" ]
         then
             curl "https://files.$domain/apps/user_saml/saml/metadata?idp=1" --insecure --output "$FLAP_DATA/nextcloud/saml//metadata_$domain.xml"
         else

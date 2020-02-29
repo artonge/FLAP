@@ -38,9 +38,9 @@ case $CMD in
 			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
 
-		# Generate certificates for flap.localhost on DEV mode, but not during tests.
-		if [ "${DEV:-false}" == "true" ] && [ "$(flapctl tls primary)" == "" ] && [ "${TEST:-false}" == "false" ]
+		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl tls primary)" == "" ]
 		then
+			# Generate certificates for flap.localhost.
 			flapctl tls generate_localhost
 		fi
 		;;

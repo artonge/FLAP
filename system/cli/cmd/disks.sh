@@ -6,10 +6,9 @@ CMD=${1:-}
 
 case $CMD in
 	setup)
-		# Prevent some operations during CI and DEV.
-		if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
+		if [ "${FLAG_NO_RAID_SETUP:-}" == "true" ]
 		then
-			echo "* [disks] Skip RAID array creation during CI or DEV."
+			echo "* [disks:FEATURE_FLAG] Skip RAID array creation."
 			exit 0
 		fi
 

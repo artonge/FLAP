@@ -80,10 +80,9 @@ case $CMD in
             fi
         fi
 
-        # Prevent some operations during CI and DEV.
-        if [ "${CI:-false}" == "true" ] || [ "${DEV:-false}" == "true" ]
+        if [ "${FLAG_NO_CLEAN_DOCKER:-}" == "true" ]
         then
-            echo "* [clean] Skip docker pruning during CI or DEV."
+            echo "* [clean:FEATURE_FLAG] Skip docker pruning."
             exit 0
         fi
 

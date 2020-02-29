@@ -27,12 +27,13 @@ You need to install the following dependencies in order to run FLAP locally:
 
 -   [docker](https://docs.docker.com/install)
 -   [docker-compose](https://docs.docker.com/compose/install)
--   `gettext`
--   `jq`
--   `yq`
--   `psmisc` (for pstree)
+-   `apt install gettext psmisc jq`
+-   `pip install yq`
 
 I advise to alias the `docker-compose` command to `dc` for ease of use.
+```shell
+echo "alias dc='docker-compose'" > ~/.bashrc
+```
 
 #### Installing the flapctl CLI
 
@@ -56,12 +57,11 @@ Adding the following line to your `/etc/hosts` file:
 
 `127.0.0.1 flap.localhost auth.flap.localhost lemon.flap.localhost files.flap.localhost mail.flap.localhost`
 
-#### Mark the instance as a development one
-
-To inhibit some functionality that are not wanted on a dev machine, please export the `$DEV` environment variable.
+#### ⚠ Setup feature flags
+ The `flapctl` cli use feature flag to inhibit some functionalists. Copy the `flapctl.example.env` to ` flapctl.env` file and setup the variables accordingly. A typical dev station would use all of them but not `FLAG_NO_SAML_FETCH`.
 
 ```shell
-echo "export DEV=true" > /etc/environment
+cp flapctl.example.env flapctl.env
 ```
 
 #### Running services
@@ -72,7 +72,7 @@ To start all services you can run:
 sudo -E flapctl start
 ```
 
-_For now `sudo` is require to ease the manipulation of containers data. Any proposition to get rid of it is appreciated._
+_For now `sudo` is required to allow the manipulation of containers data. Any proposition to get rid of would be appreciated._
 
 To start a single service you can run:
 
@@ -83,16 +83,16 @@ docker-compose up [<service name> ...]
 
 Dependencies exist between services, which means, for example, that starting `sogo` will also start `postrgres`, `ldap` and `memcached`.
 
-**Warning:** The `nginx` service will bind to the port 80 and 443 of you machine and the mail service will bind the port 25, 143 and 587, make sure they are free and that you are allowed to run them.
+**Warning:** The `nginx` service will bind to the port 80 and 443 of you machine and the mail service will bind the port 25, 143 and 587, make sure they are free and that you are allowed to use them.
 
 #### Enabling development settings
 
-Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. A default `docker-compose.override.yml` is generated in `$DEV` mode. You can tweak the services' own `docker-compose.override.yml` if you need to.
+Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. A default `docker-compose.override.yml` is generated with the `$FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE` feature flag. You can tweak the services' own `docker-compose.override.yml` if you need to.
 
-`docker-compose.override.yml` will currently some thins like:
+`docker-compose.override.yml` will currently do stuff like:
 
 -   Use local docker images.
--   Expose all services to `localhost` so you can access them directly.
--   Bind the `core` directory to its container and change the start command so you can have live reload when editing local source files.
+-   Expose all services to `localhost:some_port` so you can access them directly.
+-   Bind the `./core` directory to its container and change the start command so you can have live reload when editing local source files.
 -   Expose an phpLdapAdmin instance.
 -   Activate debug mode on some service.
