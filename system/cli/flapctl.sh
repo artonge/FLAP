@@ -8,6 +8,14 @@ CMD=${1:-}
 ARGS=("$@")
 ARGS=("${ARGS[@]:1}")
 
+# Load feature flags
+if [ -f "$FLAP_DIR/flapctl.env" ]
+then
+	# shellcheck source=flapctl.env
+	# shellcheck disable=SC1091
+	source "$FLAP_DIR/flapctl.env"
+fi
+
 # Read password from file.
 # If the file does not exists, create it and generate a password.
 readPwd() {
@@ -21,10 +29,12 @@ readPwd() {
     cat "$1"
 }
 
+FLAP_LIBS="$FLAP_DIR/system/cli/lib"
+
 # Export env var.
-PRIMARY_DOMAIN_NAME=$("$FLAP_DIR/system/cli/lib/tls/show_primary_domain.sh")
+PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 export PRIMARY_DOMAIN_NAME
-DOMAIN_NAMES=$("$FLAP_DIR/system/cli/lib/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
+DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 export DOMAIN_NAMES
 SECONDARY_DOMAIN_NAMES="${DOMAIN_NAMES//${PRIMARY_DOMAIN_NAME:-"none"}/}"
 export SECONDARY_DOMAIN_NAMES
@@ -38,7 +48,7 @@ export SOGO_DB_PWD
 NEXTCLOUD_DB_PWD=$(readPwd "$FLAP_DATA/system/data/nextcloudDbPwd.txt")
 export NEXTCLOUD_DB_PWD
 
-
+# Execute the $CMD.
 if [ -f "$FLAP_DIR/system/cli/cmd/$CMD.sh" ]
 then
 	# Choose color from the depth of the flapctl call.
@@ -59,6 +69,7 @@ then
     # Restore GREP_COLOR.
     export GREP_COLOR=$OLD_GREP_COLOR
 else
+	# Show the help if the command is not found.
     "$FLAP_DIR/system/cli/cmd/help.sh" "${ARGS[@]}"
 fi
 

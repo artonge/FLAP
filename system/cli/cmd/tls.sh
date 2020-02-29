@@ -9,10 +9,9 @@ mkdir -p "$FLAP_DATA/system/data/domains"
 
 case $CMD in
     generate)
-		# Exit during CI, but not during tests.
-		if [ "${CI:-false}" == "true" ] || [ "${TEST:-false}" == "false" ]
+		if [ "${FLAG_NO_TLS_GENERATION:-}" == "true" ]
 		then
-			echo '* [tls] Skip TLS generation during CI.'
+			echo '* [tls:FEATURE_FLAG] Skip TLS generation during CI.'
 			exit
 		fi
 

@@ -37,11 +37,11 @@ case $CMD in
 		echo '* [config] Generate docker-compose.yml.'
 		cat "$FLAP_DIR/system/docker-compose.yml" > "$FLAP_DIR/docker-compose.yml"
 
-		if [ "${DEV:-false}" == "true" ]
+		rm -f "$FLAP_DIR/docker-compose.override.yml"
+
+		if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ]
 		then
 			cat "$FLAP_DIR/system/docker-compose.override.yml" > "$FLAP_DIR/docker-compose.override.yml"
-		else
-			rm -f "$FLAP_DIR/docker-compose.override.yml"
 		fi
 
 		for service in "$FLAP_DIR"/*/
@@ -63,12 +63,15 @@ case $CMD in
 			fi
 
 			# Check if docker-compose.override.yml exists for the service.
-			if [ -f "$service/docker-compose.override.yml" ] && [ "${DEV:-false}" == "true" ]
+			if [ -f "$service/docker-compose.override.yml" ]
 			then
-				# Merge service's compose file into the main compose file.
-				"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
-					"$FLAP_DIR/docker-compose.override.yml" \
-					"$service/docker-compose.override.yml"
+				if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ]
+				then
+					# Merge service's compose file into the main compose file.
+					"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
+						"$FLAP_DIR/docker-compose.override.yml" \
+						"$service/docker-compose.override.yml"
+				fi
 			fi
 		done
 		;;
@@ -161,7 +164,7 @@ case $CMD in
 		# Generate conf for each domains
 		for domain in $DOMAIN_NAMES
 		do
-			echo "$domain"
+			echo "- $domain"
 			echo "include /etc/nginx/conf.d/domains/$domain/*.conf;" >> "$FLAP_DIR/nginx/config/conf.d/domains.conf"
 			mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains/$domain" # Create domain's conf directory
 
@@ -175,7 +178,7 @@ case $CMD in
 				if [ -f "$service_path/nginx.conf" ]
 				then
 					service=$(basename "$service_path") # Get the service name
-					echo "  - $service"
+					echo "  + $service"
 					export DOMAIN_NAME=$domain
 					# shellcheck disable=SC2016
 					envsubst '${DOMAIN_NAME} ${PRIMARY_DOMAIN_NAME}' < "$service_path/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
