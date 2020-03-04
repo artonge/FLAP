@@ -31,6 +31,11 @@ You need to install the following dependencies in order to run FLAP locally:
 -   `pip install yq`
 
 I advise to alias the `docker-compose` command to `dc` for ease of use.
+
+```shell
+echo "alias dc='docker-compose'" > ~/.bashrc
+```
+
 ```shell
 echo "alias dc='docker-compose'" > ~/.bashrc
 ```
@@ -58,7 +63,8 @@ Adding the following line to your `/etc/hosts` file:
 `127.0.0.1 flap.localhost auth.flap.localhost lemon.flap.localhost files.flap.localhost mail.flap.localhost`
 
 #### ⚠ Setup feature flags
- The `flapctl` cli use feature flag to inhibit some functionalists. Copy the `flapctl.example.env` to ` flapctl.env` file and setup the variables accordingly. A typical dev station would use all of them but not `FLAG_NO_SAML_FETCH`.
+
+The `flapctl` cli use feature flag to inhibit some functionality. Copy the `flapctl.example.env` to `flapctl.env` file and setup the variables accordingly. A typical dev station would use all of them but not `FLAG_NO_SAML_FETCH`.
 
 ```shell
 cp flapctl.example.env flapctl.env
@@ -72,7 +78,7 @@ To start all services you can run:
 sudo -E flapctl start
 ```
 
-_For now `sudo` is required to allow the manipulation of containers data. Any proposition to get rid of would be appreciated._
+_For now `sudo` is required to ease the manipulation of containers data. Any proposition to get rid of it would be appreciated._
 
 To start a single service you can run:
 

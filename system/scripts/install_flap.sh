@@ -103,6 +103,7 @@ echo "INSTALLING FLAP"
 # jq: manipulate json text files
 # psmisc: better cli output with pstree
 # msmtp msmtp-mta: to send mail with sendmail
+# wget: for clean http requests in flapctl
 apt install -y \
     git \
     gettext \
@@ -112,7 +113,8 @@ apt install -y \
     mdadm \
     jq \
     psmisc \
-    msmtp msmtp-mta
+    msmtp msmtp-mta \
+    wget
 
 # yq: manipulate yaml text files.
 pip3 install yq
@@ -121,6 +123,15 @@ pip3 install yq
 apt remove -y postfix dovecot
 apt purge -y postfix dovecot
 apt autoremove
+
+# Setting certbot hooks.
+mkdir -p /etc/letsencrypt/renewal-hooks/pre
+mkdir -p /etc/letsencrypt/renewal-hooks/post
+echo "flapctl stop" > /etc/letsencrypt/renewal-hooks/pre/stop_flap.sh
+echo "flapctl start" > /etc/letsencrypt/renewal-hooks/post/start_flap.sh
+chmod +x /etc/letsencrypt/renewal-hooks/pre/stop_flap.sh
+chmod +x /etc/letsencrypt/renewal-hooks/post/start_flap.sh
+
 
 # Fetch git repository
 git clone --recursive https://gitlab.com/flap-box/flap.git "$FLAP_DIR"
