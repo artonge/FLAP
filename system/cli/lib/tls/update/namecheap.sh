@@ -2,7 +2,7 @@
 
 set -eu
 
-# Usage: ./duckdns.sh <domain name>
+# Usage: ./namecheap.sh <domain name>
 
 DOMAIN=$1
 TOKEN=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt")

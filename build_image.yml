@@ -18,8 +18,8 @@
         - git submodule update --init
         - >
             docker build \
-                --tag $CI_REGISTRY_IMAGE:$ARCH-$(eval $VERSION_SCRIPT) \
-                --tag $CI_REGISTRY_IMAGE:$ARCH-latest \
+                --tag $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)-$ARCH \
+                --tag $CI_REGISTRY_IMAGE:latest-$ARCH \
                 .
         - docker push $CI_REGISTRY_IMAGE
 
@@ -47,12 +47,12 @@ create_manifest:
         - >
             docker manifest create \
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
-                $CI_REGISTRY_IMAGE:amd64-$(eval $VERSION_SCRIPT) \
-                $CI_REGISTRY_IMAGE:armv7-$(eval $VERSION_SCRIPT)
+                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)-amd64 \
+                $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)-armv7
         - >
             docker manifest create \
                 $CI_REGISTRY_IMAGE:latest \
-                $CI_REGISTRY_IMAGE:amd64-latest \
-                $CI_REGISTRY_IMAGE:armv7-latest
+                $CI_REGISTRY_IMAGE:latest-amd64 \
+                $CI_REGISTRY_IMAGE:latest-armv7
         - "docker manifest push $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)"
         - "docker manifest push $CI_REGISTRY_IMAGE:latest"

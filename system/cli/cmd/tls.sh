@@ -11,7 +11,7 @@ case $CMD in
     generate)
 		if [ "${FLAG_NO_TLS_GENERATION:-}" == "true" ]
 		then
-			echo '* [tls:FEATURE_FLAG] Skip TLS generation during CI.'
+			echo '* [tls:FEATURE_FLAG] Skipping TLS generation.'
 			exit
 		fi
 
@@ -41,36 +41,93 @@ case $CMD in
         }
         ;;
     generate_localhost)
-        echo '* [tls] Generating certificates for flap.localhost'
+        domain=${2:-flap.localhost}
+
+		echo "* [tls] Generating certificates for $domain"
 
         # Create default flap.localhost domain if it is missing
-        mkdir -p "$FLAP_DATA/system/data/domains/flap.localhost"
-        echo "OK" > "$FLAP_DATA/system/data/domains/flap.localhost/status.txt"
-        echo "local" > "$FLAP_DATA/system/data/domains/flap.localhost/provider.txt"
-        touch "$FLAP_DATA/system/data/domains/flap.localhost/authentication.txt"
-        touch "$FLAP_DATA/system/data/domains/flap.localhost/logs.txt"
+        mkdir -p "$FLAP_DATA/system/data/domains/$domain"
+        echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
+        echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
+        touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
+        touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
 
         # Generate certificates for flap.localhost if they do not exists yet.
-        if [ ! -f /etc/letsencrypt/live/flap/fullchain.pem ]
+		cert_path=/etc/letsencrypt/live/flap
+        if [ ! -f $cert_path/fullchain.pem ]
         then
-            mkdir -p /etc/letsencrypt/live/flap
-            openssl req \
-                -x509 \
-                -out /etc/letsencrypt/live/flap/fullchain.pem \
-                -keyout /etc/letsencrypt/live/flap/privkey.pem \
-                -newkey rsa:2048 -nodes -sha256 \
-                -subj "/CN=flap.localhost" -extensions EXT \
-                -config <(printf "[dn]\nCN=flap.localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:%s\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth" "$1")
-            cp /etc/letsencrypt/live/flap/fullchain.pem /etc/letsencrypt/live/flap/chain.pem
+            mkdir -p $cert_path
+
+			echo "[ req ]
+prompt             = no
+string_mask        = default
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+x509_extensions    = x509_ext
+[ req_distinguished_name ]
+organizationName = FLAP
+commonName = FLAP localhost Root CA
+[ x509_ext ]
+basicConstraints=critical,CA:true,pathlen:0
+keyUsage=critical,keyCertSign,cRLSign" > $cert_path/root_ca.conf
+
+			echo "[ req ]
+prompt             = no
+string_mask        = default
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+x509_extensions    = x509_ext
+[ req_distinguished_name ]
+organizationName = FLAP
+commonName = $domain
+[ x509_ext ]
+keyUsage=critical,digitalSignature,keyAgreement
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = $domain
+DNS.2 = files.$domain
+DNS.3 = mail.$domain
+DNS.4 = auth.$domain" > $cert_path/server_cert.conf
+
+			openssl req \
+				-nodes \
+				-x509 \
+				-new \
+				-keyout $cert_path/root.key \
+				-out $cert_path/root.cer \
+				-config $cert_path/root_ca.conf
+			openssl req \
+				-nodes \
+				-new \
+				-keyout $cert_path/server.key \
+				-out $cert_path/server.csr \
+				-config $cert_path/server_cert.conf
+			openssl x509 \
+				-days 3650 \
+				-req \
+				-in $cert_path/server.csr \
+				-CA $cert_path/root.cer \
+				-CAkey $cert_path/root.key \
+				-set_serial 123 \
+				-out $cert_path/server.cer \
+				-extfile $cert_path/server_cert.conf \
+				-extensions x509_ext
+
+			cp $cert_path/server.cer $cert_path/fullchain.pem
+			cp $cert_path/server.key $cert_path/privkey.pem
+			cp $cert_path/root.cer $cert_path/chain.pem
         fi
 
-        echo "flap.localhost" > "$FLAP_DATA/system/data/primary_domain.txt"
+        echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
 
         flapctl restart
 
         flapctl hooks post_domain_update
 
         flapctl restart
+
+		echo ""
+		echo "You can install the following CA in your browser to ease development: $cert_path/root.cer"
         ;;
     handle_request)
         echo '* [tls] Handling domain requests'
@@ -160,6 +217,7 @@ case $CMD in
         sleep 2
 
         {
+            flapctl tls register_domain "$DOMAIN" &&
             flapctl stop &&
             flapctl tls generate &&
             echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
@@ -186,9 +244,39 @@ case $CMD in
             exit 1
         }
         ;;
+    register_domain)
+        # Execute update script for each OK domain or the provided ones.
+        domain=${2:-}
+
+        if [ "$domain" == ""  ]
+        then
+            exit 0
+        fi
+
+        provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
+
+        if [ ! -f "$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" ]
+        then
+            exit 0
+        fi
+
+        {
+            "$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" "$domain"
+        } || { # Catch error
+            echo "Failed to register $domain."
+        }
+        ;;
     update_dns_records)
-        # Execute update script for each OK domain.
-        for domain in $DOMAIN_NAMES
+        # Execute update script for each OK domain or the provided ones.
+        read -r -a domains <<< "$DOMAIN_NAMES"
+
+        if [ "$#" -gt "1" ]
+        then
+            domains=("$@")
+            domains=("${domains[@]:1}")
+        fi
+
+        for domain in "${domains[@]}"
         do
             provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 

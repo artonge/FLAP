@@ -2,6 +2,9 @@
 /docker-compose.yml.tmp
 /docker-compose.dev.yml
 /docker-compose.override.yml
+/docker-compose.override.yml.tmp
+
+flapctl.env
 
 flapctl.env
 

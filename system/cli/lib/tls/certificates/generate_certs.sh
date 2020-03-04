@@ -6,13 +6,13 @@ set -eu
 
 echo "* Generating certificates for $*"
 
-domains=""
+domains=()
 for domain in "$@"
 do
-    domains+="--domain $domain "
+    domains+=(--domain "$domain")
     for subdomain in $SUBDOMAINS
     do
-        domains+="--domain $subdomain.$domain "
+        domains+=(--domain "$subdomain.$domain ")
     done
 done
 
@@ -35,4 +35,4 @@ certbot certonly \
     --force-renewal \
     --agree-tos \
     --email louis@chmn.me \
-    "$domains"
+    "${domains[@]}"
