@@ -129,6 +129,7 @@ test_update_to_tag:
 # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
 e2e:
     image: docker:stable
+    only: [branches]
     services:
         - name: docker:dind
           alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test
