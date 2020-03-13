@@ -18,7 +18,7 @@ case $CMD in
         echo '* [tls] Generating certificates for domain names.'
 
         # Filter domains that are either OK or HANDLED and not for "local" or "localhost"
-        domains=""
+        domains=()
         for domain in "$FLAP_DATA"/system/data/domains/*
         do
             [[ -e "$domain" ]] || break  # handle the case of no domain
@@ -28,13 +28,13 @@ case $CMD in
 
             if { [ "$status" == "OK" ] || [ "$status" == "HANDLED" ]; } && [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
             then
-                domains+="$(basename "$domain") "
+                domains+=("$(basename "$domain")")
             fi
         done
 
         {
             # Generate TLS certificates
-            "$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "$domains"
+            "$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
         } || { # Catch error
             echo "Failed to generate certificates."
             exit 1
