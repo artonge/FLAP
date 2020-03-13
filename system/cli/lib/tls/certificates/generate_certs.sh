@@ -16,7 +16,6 @@ do
     done
 done
 
-
 if [ -d /etc/letsencrypt/live/flap ]
 then
     certbot delete --cert-name flap
