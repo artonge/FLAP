@@ -5,13 +5,23 @@ include:
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
-# Check shell scripts
+# Check shell scripts sanity.
 shellcheck:
     image: koalaman/shellcheck-alpine:latest
     stage: test
     script:
         - apk add git
         - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --external-sources --shell=bash
+
+# Check shell scripts executability.
+test_script_executable:
+    image: ubuntu
+    stage: test
+    script:
+        - apt-get update
+        - apt-get install -y git
+        - git ls-files --exclude='*.sh' --ignored | xargs -I{} ls -aslh {}
+        - git ls-files --exclude='*.sh' --ignored | xargs -I{} test -x {}
 
 # Run start_flap and CLI unit tests
 system_test:
