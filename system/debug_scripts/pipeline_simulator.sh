@@ -62,6 +62,7 @@ docker run \
 	--env FLAG_NO_NETWORK_SETUP=true \
 	--env FLAG_NO_TLS_GENERATION=true \
 	--env FLAG_INSECURE_SAML_FETCH=true \
+	--env FLAG_USE_FIXED_IP=true \
 	--env LOG_DRIVER=json-file \
 	--network host \
 	--add-host="flap.local:$FLAP_IP" \
@@ -80,6 +81,9 @@ docker run \
 
 docker exec flap flapctl stop
 docker exec flap flapctl clean data -y
+
+mkdir -p "/flap_data/system/data"
+echo "0.0.0.0" > "/flap_data/system/data/fixed_ip.txt"
 
 docker exec flap flapctl start
 

@@ -2,7 +2,7 @@
 
 set -eu
 
-# Generate DKIM
+# Generate DKIM.
 rm -rf "$FLAP_DIR/mail/config/opendkim"
 echo "" > "$FLAP_DIR/mail/config/vhost.tmp"
 for domain in $DOMAIN_NAMES
@@ -15,5 +15,5 @@ docker-compose exec -T mail generate-dkim-config
 # Update DNS records.
 flapctl tls update_dns_records
 
-# Generate smtpd sender list
+# Generate smtpd sender list.
 flapctl config generate_mails

@@ -14,7 +14,7 @@ case $CMD in
 
 		echo '* [setup] Setting hostname'
 		# Set local domain name to flap.local
-		hostnamectl --static set-hostname "flap.local"
+		hostnamectl --static set-hostname "$PRIMARY_DOMAIN_NAME"
 		hostnamectl --transient set-hostname "flap.local"
 		hostnamectl --pretty set-hostname "FLAP box (flap.local)"
 		echo '* [setup] Openning ports'

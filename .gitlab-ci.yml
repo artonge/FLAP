@@ -89,6 +89,7 @@ system_test:
                 --env FLAG_NO_NETWORK_SETUP=true \
                 --env FLAG_NO_TLS_GENERATION=true \
                 --env FLAG_INSECURE_SAML_FETCH=true \
+                --env FLAG_USE_FIXED_IP=true \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -109,6 +110,9 @@ system_test:
             \
                 $CI_REGISTRY_IMAGE:$(eval $LATEST_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
+
+        - mkdir -p $CI_BUILD_DIR/flap_data/system/data
+        - echo "0.0.0.0" > $CI_BUILD_DIR/flap_data/system/data/fixed_ip.txt
 
         # Copy the code to the real folder.
         - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
@@ -167,6 +171,7 @@ e2e:
                 --env FLAG_NO_NETWORK_SETUP=true \
                 --env FLAG_NO_TLS_GENERATION=true \
                 --env FLAG_INSECURE_SAML_FETCH=true \
+                --env FLAG_USE_FIXED_IP=true \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -188,6 +193,9 @@ e2e:
             \
                 $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 /bin/sh -c "while true; do sleep 1000; done"
+
+        - mkdir -p $CI_BUILD_DIR/flap_data/system/data
+        - echo "0.0.0.0" > $CI_BUILD_DIR/flap_data/system/data/fixed_ip.txt
 
         - docker exec flap flapctl start
         - docker exec flap flapctl users create_admin
