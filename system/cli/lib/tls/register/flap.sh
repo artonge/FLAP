@@ -35,29 +35,3 @@ then
 	echo "* [dns-register:flap] Error while registering the domain."
 	exit "$exit_code"
 fi
-
-
-wget \
-	--method PATCH \
-	--header "Content-Type: application/json" \
-	--body-data "{
-		\"token\": \"$TOKEN\",
-		\"ip4\": \"$(flapctl ip external)\"
-	}" \
-	--quiet \
-	--output-document=- \
-	--content-on-error \
-	https://flap.id/domains/"$DOMAIN" | cat
-
-# Catch error code
-exit_code=${PIPESTATUS[0]}
-
-echo ""
-
-if [ "$exit_code" != 0 ]
-then
-	echo "* [dns-register:flap] Error while updating the domain."
-	exit "$exit_code"
-fi
-
-test "$(host "$DOMAIN")" == "$(flapctl ip external)"

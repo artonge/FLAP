@@ -9,8 +9,6 @@ TOKEN=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt")
 
 echo "* [dns-update:flap] Updating flap DNS for $DOMAIN."
 
-ip=$(flapctl ip external)
-
 # shellcheck disable=SC2002
 if [ -f "$FLAP_DIR/opendkim/keys/$DOMAIN/mail.txt" ]
 then
@@ -25,10 +23,10 @@ wget \
 	--method PATCH \
 	--header "Content-Type: application/json" \
 	--body-data "{
-			\"ip4\": \"$ip\",
-			\"dkim\": \"${dkim:-}\",
-			\"token\": \"$TOKEN\"
-		}" \
+		\"token\": \"$TOKEN\",
+		\"ip4\": \"$(flapctl ip external)\",
+		\"dkim\": \"${dkim:-}\"
+	}" \
 	--quiet \
 	--output-document=- \
 	--content-on-error \

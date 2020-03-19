@@ -9,7 +9,12 @@ case $CMD in
 		upnpc -l | grep "Local LAN" | cut -d ' '  -f6
 		;;
 	external)
-		upnpc -l | grep "ExternalIPAddress" | cut -d ' '  -f3
+		if "${FLAG_USE_FIXED_IP:-}" == "true"
+		then
+			cat "$FLAP_DATA/system/data/fixed_ip.txt"
+		else
+			upnpc -l | grep "ExternalIPAddress" | cut -d ' '  -f3
+		fi
 		;;
 	summarize)
 		echo "ip | [internal, external, help] | Get ip address."
