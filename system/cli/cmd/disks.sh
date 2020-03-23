@@ -21,8 +21,10 @@ case $CMD in
 
 		# Get the disks filenames from the usb ports.
 		# TODO: need better disk name guessing
-		disk1="$(ls "/sys/bus/usb/drivers/usb/4-1.1/4-1.1\:1.0/host0/target0\:0\:0/0\:0\:0\:0/block")"
-		disk2="$(ls "/sys/bus/usb/drivers/usb/4-1.2/4-1.2\:1.0/host1/target1\:0\:0/1\:0\:0\:0/block")"
+		# shellcheck disable=SC1001
+		disk1="$(ls /sys/bus/usb/drivers/usb/4-1.1/4-1.1\:1.0/host0/target0\:0\:0/0\:0\:0\:0/block)"
+		# shellcheck disable=SC1001
+		disk2="$(ls /sys/bus/usb/drivers/usb/4-1.2/4-1.2\:1.0/host1/target1\:0\:0/1\:0\:0\:0/block)"
 
 		echo "* [disks] Creating RAID array with $disk1 and $disk2."
 
