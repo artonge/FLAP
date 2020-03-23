@@ -90,6 +90,7 @@ system_test:
                 --env FLAG_NO_TLS_GENERATION=true \
                 --env FLAG_INSECURE_SAML_FETCH=true \
                 --env FLAG_USE_FIXED_IP=true \
+                --env FLAG_NO_DNS_RECORD_UPDATE=true \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -172,6 +173,7 @@ e2e:
                 --env FLAG_NO_TLS_GENERATION=true \
                 --env FLAG_INSECURE_SAML_FETCH=true \
                 --env FLAG_USE_FIXED_IP=true \
+                --env FLAG_NO_DNS_RECORD_UPDATE=true \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
