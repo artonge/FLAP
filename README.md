@@ -36,10 +36,6 @@ I advise to alias the `docker-compose` command to `dc` for ease of use.
 echo "alias dc='docker-compose'" > ~/.bashrc
 ```
 
-```shell
-echo "alias dc='docker-compose'" > ~/.bashrc
-```
-
 #### Installing the flapctl CLI
 
 The `flapctl` CLI is a tool to manage a FLAP install. You can install it on your dev machine to ease some procedures.
