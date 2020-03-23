@@ -13,12 +13,11 @@ case $CMD in
 		fi
 
 		echo '* [setup] Setting hostname'
-		# Set local domain name to flap.local
-		hostnamectl --static set-hostname "$PRIMARY_DOMAIN_NAME"
+		hostnamectl --static set-hostname "flap.local"
 		hostnamectl --transient set-hostname "flap.local"
-		hostnamectl --pretty set-hostname "FLAP box (flap.local)"
+		hostnamectl --pretty set-hostname "FLAP box (flap.local $DOMAIN_NAMES)"
+
 		echo '* [setup] Openning ports'
-		# Create port mappings
 		flapctl ports open 22 # SSH
 		flapctl ports open 80 # HTTP
 		flapctl ports open 443 # HTTPS

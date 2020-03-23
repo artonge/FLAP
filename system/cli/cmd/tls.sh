@@ -263,13 +263,13 @@ DNS.4 = auth.$domain" > $cert_path/server_cert.conf
         {
 			"$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" "$domain" &&
 			"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain" &&
-			test "$(host "$DOMAIN")" == "$(flapctl ip external)"
+			test "$(flapctl ip dns "$DOMAIN")" == "$(flapctl ip external)"
         } || { # Catch error
             echo "Failed to register $domain."
         }
         ;;
     update_dns_records)
-		if [ "${FLAG_NO_TLS_GENERATION:-}" == "true" ]
+		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] || [ "${FLAG_NO_DNS_RECORD_UPDATE:-}" == "true" ]
 		then
 			echo '* [tls:FEATURE_FLAG] Skipping DNS update.'
 			exit
@@ -290,9 +290,10 @@ DNS.4 = auth.$domain" > $cert_path/server_cert.conf
         for domain in "${domains[@]}"
         do
 			# Don't update DNS records if the ip is correct.
-			HOST_IP=$(host "$domain")
+			HOST_IP=$(flapctl ip dns "$domain")
 			if [ "$EXTERNAL_IP" == "$HOST_IP" ]
 			then
+				echo "* [tls] IP is ok for $domain, skipping."
 				continue
 			fi
 
