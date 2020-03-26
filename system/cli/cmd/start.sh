@@ -7,14 +7,29 @@ CMD=${1:-}
 case $CMD in
 	"")
 		echo '* [start] Running setup operations.'
-		# Run some setup operation if the installation is not done.
-		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
+
+		if [ -f /var/lib/flap/images ]
 		then
-			flapctl setup raid
-			flapctl setup network
+			echo "* [start] Load docker images."
+
+			for image in /var/lib/flap/images/*
+			do
+				docker load "$image"
+			done
+
+			rm -rf /var/lib/flap/images
 		fi
-		flapctl setup cron
+
+		# Run some setup operations if necessary.
+		flapctl setup raid
+		flapctl setup hostname
 		flapctl setup fs
+
+		if [ "${FLAG_NO_RAID_SETUP:-false}" == "false" ]
+		then
+			# Check that the RAID array is correctly mounted.
+			findmnt "$FLAP_DATA"
+		fi
 
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
@@ -31,6 +46,10 @@ case $CMD in
 
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
+			# Run other setup operations.
+			flapctl setup ports
+			flapctl setup cron
+
 			# Run post setup scripts for each services.
 			flapctl hooks post_install
 

@@ -2,5 +2,12 @@
 
 set -eu
 
-docker network rm flap_apps-net || true
-docker network rm flap_stores-net || true
+if docker network ls | grep flap_apps-net
+then
+	docker network rm flap_apps-net
+fi
+
+if docker network ls | grep flap_stores-net
+then
+	docker network rm flap_stores-net
+fi

@@ -66,7 +66,6 @@ php occ config:system:set mail_smtpname --value "admin"
 php occ config:system:set mail_smtppassword --value "$ADMIN_PWD"
 php occ config:system:set mail_smtpsecure --value "tls"
 
-
 # DISABLE FUNCTIONNALITIES
 php occ config:system:set updatechecker --value false --type boolean
 php occ config:system:set upgrade.disable-web --value true --type boolean

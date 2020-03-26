@@ -1,0 +1,16 @@
+[Unit]
+Description=FLAP services
+After=network-online.target docker.service
+# TODO: wait for disks, cron ? fstab ? mdadm ?
+Requires=network-online.target docker.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/flapctl start
+ExecReload=/bin/flapctl restart
+ExecStop=/bin/flapctl stop
+Restart=never
+
+[Install]
+WantedBy=multi-user.target

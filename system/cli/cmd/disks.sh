@@ -28,16 +28,18 @@ case $CMD in
 
 		echo "* [disks] Creating RAID array with $disk1 and $disk2."
 
-		mkfs.ext4 -F "/dev/$disk1"
-		mkfs.ext4 -F "/dev/$disk2"
-
-		mdadm --create --run /dev/md0 --level=1 --raid-devices=2 "/dev/$disk1" "/dev/$disk2"
+		# Create RAID array with the first disk.
+		mdadm --create --run /dev/md0 --level=1 --raid-devices=1 "/dev/$disk1" --force
 		mkfs.ext4 -F /dev/md0
 		mkdir --parents "$FLAP_DATA"
 		mount /dev/md0 "$FLAP_DATA"
 
 		# Check that the RAID array is correctly mounted.
-		df | grep md0
+		findmnt --mountpoint "$FLAP_DATA" --source /dev/md0
+
+		# Add the second disk.
+		mdadm /dev/md0 --add "/dev/$disk2"
+		mdadm --grow --raid-devices=2 /dev/md0
 
 		# Save the configuration.
 		mdadm --detail --scan | tee --append /etc/mdadm/mdadm.conf
@@ -64,6 +66,9 @@ case $CMD in
 		;;
 	check)
 		# mdadm --detail --test /dev/md0
+		# umount /dev/md0
+		# fsck -r -C -V /dev/md0
+		# mount /dev/md0 /flap
 		mapfile -t devices < <(mdadm --detail --brief --verbose /dev/md0 | tail -n 1 | cut -d '=' -f2 | tr ',' ' ')
 		echo "${devices[@]}"
 		;;
