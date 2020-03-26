@@ -19,10 +19,5 @@ services:
             - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files
             - lemonStaticFiles:/var/www/lemon:ro # [lemon] -> [nginx] Lemon static files.
             - ${FLAP_DIR}/lemon/skin/flapskin:/var/www/lemon_flapskin:ro # [emmc] -> [nginx] Custom scripts and syles for flapskin.
-        depends_on:
-            - nextcloud
-            - sogo
-            - core
-            - lemon
         ports: ["80:80", "443:443"]
         networks: [apps-net]

@@ -18,7 +18,7 @@ We need the `--recursive` flag so submodules are also cloned.
 
 #### Installing
 
-You can follow the `system/scripts/install_flap.sh` script to know what needs to be installed.
+You can follow the `system/img_build/userpatches/overlay/install_flap.sh` script to know what needs to be installed.
 Or just follow the following paragraphs.
 
 #### Installing dependencies

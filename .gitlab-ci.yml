@@ -68,7 +68,7 @@ system_test:
     image: docker:stable
     services:
         - name: docker:dind
-          alias: flap.local flap.localhost auth.flap.localhost files.flap.localhost mail.flap.localhost
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test
     script:
         # Get DinD's ip.
         - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
@@ -94,10 +94,10 @@ system_test:
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
-                --add-host="flap.localhost:$FLAP_IP" \
-                --add-host="auth.flap.localhost:$FLAP_IP" \
-                --add-host="files.flap.localhost:$FLAP_IP" \
-                --add-host="mail.flap.localhost:$FLAP_IP" \
+                --add-host="flap.test:$FLAP_IP" \
+                --add-host="auth.flap.test:$FLAP_IP" \
+                --add-host="files.flap.test:$FLAP_IP" \
+                --add-host="mail.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -105,6 +105,7 @@ system_test:
             \
                 --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
             \
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
@@ -124,7 +125,7 @@ system_test:
         # Start the instance.
         - docker exec flap_old flapctl start
         - docker exec flap_old flapctl users create_admin
-        # - docker exec flap_old flapctl tls generate_localhost
+        - docker exec flap_old flapctl tls generate_localhost flap.test
 
         # Update the instance.
         - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME
@@ -231,3 +232,50 @@ e2e:
     artifacts:
         reports:
             junit: core/output/result.xml
+
+
+build_disk_image:
+    stage: build
+    image: ubuntu:18.04
+    only: [tags]
+    artifacts:
+        name: "$CI_COMMIT_REF_NAME"
+    script:
+        # Setup ssh.
+        - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        - chmod 644 ~/.ssh/known_hosts
+
+        # Setting up armbian_build folder on the remote server if needed.
+        - ssh root@flap.id 'git clone --depth 1 https://github.com/armbian/build /mnt/volume1/armbian_build || true'
+
+        # Customize the userpatch install_flap script to use the current tag.
+        - sed -i "s/\$VERSION/${CI_COMMIT_REF_NAME/\//\\\/}/g" ./system/img_build/userpatches/customize-image.sh
+        - scp -r ./system/img_build/userpatches root@flap.id:/mnt/volume1/armbian_build/
+
+        # Download currently used docker images so they can be loaded in the final image.
+        # This is a long one-liner, sorry.
+        # - It gets the image names in each docker-compose.yml.
+        # - Then it ask docker to pull the image using the experimental flag "--platform"
+        # - It finally use the `docker save` cmd to extract and zip the image to a final 'userpatches/overlay/{image_name}.tar.gz' file.
+        # The final pull and extract is done on the remote server.
+        - apt install -y python3 python3-pip jq
+        - pip3 install yq
+        - ssh root@flap.id 'rm -rf /mnt/volume1/armbian_build/userpatches/overlay/*.tar.gz'
+        - find . -mindepth 2 -name docker-compose.yml | xargs -I{} yq -r '.services | to_entries[]| .value.image' {} | xargs -I{} ssh root@flap.id 'docker pull --platform=armhf {}; docker save {} | gzip > /mnt/volume1/armbian_build/userpatches/overlay/$(basename {}).tar.gz'
+
+        # Clean previous output folder.
+        - ssh root@flap.id 'rm -rf /mnt/volume1/armbian_build/output/images/*'
+
+        # Build the image on the remote server.
+        - ssh root@flap.id '/mnt/volume1/armbian_build/compile.sh BOARD=odroidxu4 BRANCH=current RELEASE=buster BUILD_MINIMAL=yes BUILD_DESKTOP=no KERNEL_ONLY=no KERNEL_CONFIGURE=no'
+
+        # Compresse the image.
+        - ssh root@flap.id 'gzip --fast --keep /mnt/volume1/armbian_build/output/images/Armbian_20.05.0-trunk_Odroidxu4_buster_current_5.4.23_minimal.img'
+
+        # Store the image file in the root account.
+        - ssh root@flap.id "mv /mnt/volume1/armbian_build/output/images/Armbian_20.05.0-trunk_Odroidxu4_buster_current_5.4.23_minimal.img.gz /root/flap-$CI_COMMIT_REF_SLUG-$(date +"%Y.%m.%d")-odroidxu4.img.gz"

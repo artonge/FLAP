@@ -5,7 +5,7 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
-	network)
+	hostname)
 		if [ "${FLAG_NO_NETWORK_SETUP:-}" == "true" ]
 		then
 			echo "* [setup] Skip network setup."
@@ -16,6 +16,13 @@ case $CMD in
 		hostnamectl --static set-hostname "flap.local"
 		hostnamectl --transient set-hostname "flap.local"
 		hostnamectl --pretty set-hostname "FLAP box (flap.local $DOMAIN_NAMES)"
+	;;
+	ports)
+		if [ "${FLAG_NO_NETWORK_SETUP:-}" == "true" ]
+		then
+			echo "* [setup] Skip network setup."
+			exit 0
+		fi
 
 		echo '* [setup] Openning ports'
 		flapctl ports open 22 # SSH

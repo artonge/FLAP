@@ -18,25 +18,25 @@ apt install -y \
     apt-transport-https \
     ca-certificates \
     curl \
-    gnupg-agent \
+    gnupg2 \
     software-properties-common
 
 ################################################################################
 echo "INSTALLING DOCKER"
 # Add docker repository
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 apt-key fingerprint 0EBFCD88
 
-add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+add-apt-repository "deb https://download.docker.com/linux/debian $(lsb_release -cs) stable"
 
 # Install docker
 apt update
 apt install -y \
-    docker-ce=5:18.09.8~3-0~ubuntu-bionic \
-    docker-ce-cli=5:18.09.8~3-0~ubuntu-bionic \
+    docker-ce=5:19.03.7~3-0~debian-buster \
+    docker-ce-cli=5:19.03.7~3-0~debian-buster \
     containerd.io=1.2.6-3
 
-# Start docker on start.
+# Start docker on boot.
 # Check if we are in a docker container with systemctl.
 if [ "$(command -v systemctl || true)" != "" ]
 then
@@ -45,8 +45,15 @@ fi
 
 ################################################################################
 echo "INSTALLING DOCKER-COMPOSE"
-apt install -y python3-pip libffi-dev libssl-dev
-pip3 install setuptools wheel docker-compose
+apt install -y \
+	python3 python3-pip \
+	python3-setuptools python3-wheel \
+	python3-dev build-essential libffi-dev libssl-dev \
+	libsodium23 libsodium-dev
+
+# Use system's libsodium to avoid long compile time.
+export SODIUM_INSTALL=system
+pip3 install docker-compose
 
 ################################################################################
 echo "CREATING ALIASES"
@@ -96,24 +103,29 @@ ln -sf "$FLAP_DIR/system/cli/flapctl.sh" /bin/flapctl
 echo "INSTALLING FLAP"
 # Install dependencies
 # git: fetch updates
+# gettext: envsubst
 # certbot: generate TLS certificates
+# cron: periodic tasks
 # miniupnpc: open ports
 # avahi-daemon: set the mDNS name
 # mdadm: setup RAID
 # jq: manipulate json text files
 # psmisc: better cli output with pstree
 # msmtp msmtp-mta: to send mail with sendmail
+# ssh: to allow remote connection
 # wget: for clean http requests in flapctl
 apt install -y \
     git \
     gettext \
     certbot \
+	cron \
     miniupnpc \
     avahi-daemon \
     mdadm \
     jq \
     psmisc \
     msmtp msmtp-mta \
+    ssh \
     wget
 
 # yq: manipulate yaml text files.
@@ -132,6 +144,8 @@ echo "flapctl start" > /etc/letsencrypt/renewal-hooks/post/start_flap.sh
 chmod +x /etc/letsencrypt/renewal-hooks/pre/stop_flap.sh
 chmod +x /etc/letsencrypt/renewal-hooks/post/start_flap.sh
 
+# Customize sshd config.
+sed -i 's/#\?PasswordAuthentication .*/PasswordAuthentication no/g' /etc/ssh/sshd_config
 
 # Fetch git repository
 git clone --recursive https://gitlab.com/flap-box/flap.git "$FLAP_DIR"
@@ -145,6 +159,8 @@ then
     git submodule update --init
 fi
 
+# Install flap systemd service.
+cp "$FLAP_DIR/system/flap.service" /etc/systemd/system
 
 ################################################################################
 echo "DONE"

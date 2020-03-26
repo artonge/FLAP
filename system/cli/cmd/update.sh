@@ -137,7 +137,6 @@ Commands:
 
             echo '* [update] Running some hooks.' &&
             flapctl hooks post_update &&
-            flapctl restart &&
 
             echo '* [update] Cleanning docker objects.' &&
             flapctl clean docker -y
