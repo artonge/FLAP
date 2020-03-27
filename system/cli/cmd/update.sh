@@ -119,6 +119,9 @@ Commands:
         echo '* [update] Stoping containers.'
         flapctl stop || true # "|| true" to prevent exiting the script on error.
 
+        # Setting up fs for new services.
+        flapctl setup fs
+
         {
             # We need to update the system first because the other services migrations
             # might need the results of the system migration.
