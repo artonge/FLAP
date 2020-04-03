@@ -158,7 +158,6 @@ e2e:
           alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test
     stage: test
     variables:
-        COMPOSE_HTTP_TIMEOUT: 120
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
     script:
@@ -184,6 +183,7 @@ e2e:
                 --env FLAG_USE_FIXED_IP=true \
                 --env FLAG_NO_DNS_RECORD_UPDATE=true \
                 --env FLAG_GENERATE_DOCKER_COMPOSE_CI=true \
+                --env COMPOSE_HTTP_TIMEOUT=120 \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
