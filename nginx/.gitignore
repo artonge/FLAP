@@ -1,3 +1,4 @@
 config/conf.d/domains.conf
 config/conf.d/**/*.conf
 !config/conf.d/flap.local.conf
+docker-compose.yml

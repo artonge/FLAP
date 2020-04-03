@@ -25,24 +25,24 @@ case $CMD in
 		flapctl setup hostname
 		flapctl setup fs
 
-		if [ "${FLAG_NO_RAID_SETUP:-false}" == "false" ]
-		then
-			# Check that the RAID array is correctly mounted.
-			findmnt "$FLAP_DATA"
-		fi
-
-		# Go to FLAP_DIR for docker-compose.
-		cd "$FLAP_DIR"
-
 		# Generate config
 		flapctl config generate
+
+		# Run init and install hooks.
+		flapctl hooks init_db
+		flapctl hooks pre_install
 
 		# Clean volumes and networks of services.
 		flapctl hooks clean
 
-		# Start all services.
+		# Go to FLAP_DIR for docker-compose.
+		cd "$FLAP_DIR"
+
 		echo '* [start] Starting services.'
 		docker-compose --no-ansi up --detach
+
+		# Run post install hooks.
+		flapctl hooks post_install
 
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
@@ -50,17 +50,16 @@ case $CMD in
 			flapctl setup ports
 			flapctl setup cron
 
-			# Run post setup scripts for each services.
-			flapctl hooks post_install
-
 			# Mark the installation as done.
 			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
 
 		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl tls primary)" == "" ]
 		then
-			# Generate certificates for flap.localhost.
+			# Generate certificates for flap.test.
 			flapctl tls generate_localhost
+			flapctl restart
+			flapctl hooks post_domain_update
 		fi
 		;;
 	summarize)

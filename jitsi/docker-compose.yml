@@ -1,0 +1,65 @@
+services:
+    # Frontend
+    jitsi:
+        image: jitsi/web:4101-2
+        container_name: flap_jitsi
+        volumes:
+            - ${FLAP_DATA}/jitsi/jitsi:/config
+        env_file: [$FLAP_DIR/jitsi/jitsi.env]
+        networks:
+            apps-net:
+                aliases:
+                    - meet.jitsi
+
+    # XMPP server
+    prosody:
+        image: jitsi/prosody:4101-2
+        container_name: flap_prosody
+        expose: ["5222", "5347", "5280"]
+        volumes:
+            - ${FLAP_DATA}/jitsi/prosody:/config
+        env_file: [$FLAP_DIR/jitsi/jitsi.env]
+        networks:
+            apps-net:
+                aliases:
+                    - xmpp.meet.jitsi
+
+    # Focus component
+    jicofo:
+        image: jitsi/jicofo:4101-2
+        container_name: flap_jicofo
+        volumes:
+            - ${FLAP_DATA}/jitsi/jicofo:/config
+        env_file: [$FLAP_DIR/jitsi/jitsi.env]
+        depends_on: [prosody]
+        networks:
+            apps-net:
+
+    # Video bridge
+    jvb:
+        image: jitsi/jvb:4101-2
+        container_name: flap_jvb
+        ports:
+            - "10000:10000/udp"
+            - "4443:4443"
+        volumes:
+            - ${FLAP_DATA}/jitsi/jvb:/config
+        env_file: [$FLAP_DIR/jitsi/jitsi.env]
+        depends_on: [prosody]
+        networks:
+            apps-net:
+
+    coturn:
+        image: instrumentisto/coturn:4.5.1
+        container_name: flap_coturn
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        volumes:
+            - ${FLAP_DIR}/jitsi/config/coturn.conf:/etc/coturn/turnserver.conf # [emmc] -> [coturn] Coturn config.
+            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [coturn] SSL certificates.
+        tmpfs: /var/lib/coturn
+        network_mode: host
+
+networks:
+    apps-net:

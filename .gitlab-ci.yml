@@ -68,7 +68,7 @@ system_test:
     image: docker:stable
     services:
         - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test
     script:
         # Get DinD's ip.
         - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
@@ -91,6 +91,7 @@ system_test:
                 --env FLAG_INSECURE_SAML_FETCH=true \
                 --env FLAG_USE_FIXED_IP=true \
                 --env FLAG_NO_DNS_RECORD_UPDATE=true \
+                --env FLAG_GENERATE_DOCKER_COMPOSE_CI=true \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -98,6 +99,9 @@ system_test:
                 --add-host="auth.flap.test:$FLAP_IP" \
                 --add-host="files.flap.test:$FLAP_IP" \
                 --add-host="mail.flap.test:$FLAP_IP" \
+                --add-host="matrix.flap.test:$FLAP_IP" \
+                --add-host="chat.flap.test:$FLAP_IP" \
+                --add-host="jitsi.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -126,6 +130,8 @@ system_test:
         - docker exec flap_old flapctl start
         - docker exec flap_old flapctl users create_admin
         - docker exec flap_old flapctl tls generate_localhost flap.test
+        - docker exec flap_old flapctl restart
+        - docker exec flap_old flapctl hooks post_domain_update
 
         # Update the instance.
         - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME
@@ -148,9 +154,10 @@ e2e:
     only: [branches]
     services:
         - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test
     stage: test
     variables:
+        COMPOSE_HTTP_TIMEOUT: 120
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
     script:
@@ -175,6 +182,7 @@ e2e:
                 --env FLAG_INSECURE_SAML_FETCH=true \
                 --env FLAG_USE_FIXED_IP=true \
                 --env FLAG_NO_DNS_RECORD_UPDATE=true \
+                --env FLAG_GENERATE_DOCKER_COMPOSE_CI=true \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -182,6 +190,9 @@ e2e:
                 --add-host="auth.flap.test:$FLAP_IP" \
                 --add-host="files.flap.test:$FLAP_IP" \
                 --add-host="mail.flap.test:$FLAP_IP" \
+                --add-host="matrix.flap.test:$FLAP_IP" \
+                --add-host="chat.flap.test:$FLAP_IP" \
+                --add-host="jitsi.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -202,7 +213,9 @@ e2e:
 
         - docker exec flap flapctl start
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost flap.test
+        - docker exec flap flapctl tls generate_localhost
+        - docker exec flap flapctl restart
+        - docker exec flap flapctl hooks post_domain_update
 
         # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
         - >
@@ -232,7 +245,6 @@ e2e:
     artifacts:
         reports:
             junit: core/output/result.xml
-
 
 build_disk_image:
     stage: build

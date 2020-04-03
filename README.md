@@ -56,15 +56,17 @@ ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
 Adding the following line to your `/etc/hosts` file:
 
-`127.0.0.1 flap.localhost auth.flap.localhost lemon.flap.localhost files.flap.localhost mail.flap.localhost`
+`127.0.0.1 flap.localhost auth.flap.localhost lemon.flap.localhost files.flap.localhost mail.flap.localhost matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test`
 
 #### ⚠ Setup feature flags
 
-The `flapctl` cli use feature flag to inhibit some functionality. Copy the `flapctl.example.env` to `flapctl.env` file and setup the variables accordingly. A typical dev station would use all of them but not `FLAG_NO_SAML_FETCH`.
+The `flapctl` cli use feature flag to inhibit or change some functionality. Copy the `flapctl.example.env` to `flapctl.env` file and setup the variables accordingly. A typical dev station would use all of them but not `FLAG_NO_SAML_FETCH`.
 
 ```shell
 cp flapctl.example.env flapctl.env
 ```
+
+Every services can also support feature flags. Take a look at `$FLAP_DIR/<service>/flags.env`.
 
 #### Running services
 

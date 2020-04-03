@@ -113,6 +113,7 @@ echo "INSTALLING FLAP"
 # psmisc: better cli output with pstree
 # msmtp msmtp-mta: to send mail with sendmail
 # ssh: to allow remote connection
+# ufw: firewall
 # wget: for clean http requests in flapctl
 apt install -y \
     git \
@@ -126,6 +127,7 @@ apt install -y \
     psmisc \
     msmtp msmtp-mta \
     ssh \
+    ufw \
     wget
 
 # yq: manipulate yaml text files.

@@ -25,16 +25,37 @@ case $CMD in
 		fi
 
 		echo '* [setup] Openning ports'
+
+		# Reset ufw
+		ufw --force reset
+		ufw --force enable
+		ufw default deny incoming
+		ufw default allow outgoing
+
+		# System.
 		flapctl ports open 22 # SSH
+		# Nginx.
 		flapctl ports open 80 # HTTP
 		flapctl ports open 443 # HTTPS
+		# Mail.
 		flapctl ports open 25 # SMTP
 		flapctl ports open 587 # SMTP with STARTLS
 		flapctl ports open 143 # IMAP
+		# Matrix.
+		flapctl ports open 8448 # FEDERATION
+		# Jitsi
+		flapctl ports open 10000 UDP # RTP UDP
+		flapctl ports open 4443 # RTP TCP failback
 	;;
 	raid)
 		echo '* [setup] Setting up RAID.'
 		flapctl disks setup
+
+		if [ "${FLAG_NO_RAID_SETUP:-false}" == "false" ]
+		then
+			# Check that the RAID array is correctly mounted.
+			findmnt "$FLAP_DATA"
+		fi
 	;;
 	fs)
 		echo '* [setup] Creating data directories.'
@@ -51,14 +72,12 @@ case $CMD in
 
 			service=$(basename "$service")
 
-			echo - "$service"
-
 			# Skip if the directory is allready created.
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
 				# Create data directory for the service.
-				echo "	Create $FLAP_DATA/$service"
-				mkdir -p "$FLAP_DATA/$service"
+				echo "Create $FLAP_DATA/$service"
+				mkdir --parents "$FLAP_DATA/$service"
 			fi
 
 			# If current_migration is not set, set it based on the migrations scripts.
@@ -69,7 +88,7 @@ case $CMD in
 				do
 					current_migration=$((current_migration+1))
 				done
-				echo "	Setup base migration of $current_migration"
+				echo "Setup base migration of $current_migration for $service"
 				echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
 			fi
 		done

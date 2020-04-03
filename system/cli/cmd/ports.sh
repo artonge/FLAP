@@ -4,6 +4,8 @@ set -eu
 
 CMD=${1:-}
 PORT=${2:-}
+PROTOCOL=${3:-TCP}
+protocol=$(echo "$PROTOCOL" | tr '[:upper:]' '[:lower:]')
 DESCRIPTION="Port forwarding for the FLAP box."
 
 case $CMD in
@@ -16,7 +18,10 @@ case $CMD in
             IP=$(flapctl ip internal) &&
 
             # Create port mapping.
-            upnpc -e "$DESCRIPTION" -a "$IP" "$PORT" "$PORT" TCP > /dev/null &&
+            upnpc -e "$DESCRIPTION" -a "$IP" "$PORT" "$PORT" "$PROTOCOL" > /dev/null &&
+
+            # Open firewall.
+            ufw allow "$PORT"/"$protocol"
 
             # Check that port mapping exists
             flapctl ports list | grep ":$PORT" > /dev/null &&
@@ -29,7 +34,7 @@ case $CMD in
         ;;
     close)
         # Delete port mapping if any
-        upnpc -d "$PORT" TCP > /dev/null || true
+        upnpc -d "$PORT" "$PROTOCOL" > /dev/null || true
 
         {
             # Check that port mapping do not exist

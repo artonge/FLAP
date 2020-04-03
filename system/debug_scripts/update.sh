@@ -37,5 +37,7 @@ docker exec flap_update ln -sf /flap_dir/system/cli/flapctl.sh /bin/flapctl
 
 docker exec flap_update flapctl start
 docker exec flap_update flapctl tls generate_localhost
+docker exec flap_update flapctl restart
+docker exec flap_update flapctl hooks post_domain_update
 
 docker exec flap_update flapctl update "$TO"

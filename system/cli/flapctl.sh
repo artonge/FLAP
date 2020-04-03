@@ -8,7 +8,7 @@ CMD=${1:-}
 ARGS=("$@")
 ARGS=("${ARGS[@]:1}")
 
-# Load feature flags
+# Load feature flags.
 if [ -f "$FLAP_DIR/flapctl.env" ]
 then
 	# shellcheck source=flapctl.env
@@ -19,7 +19,7 @@ fi
 # Read password from file.
 # If the file does not exists, create it and generate a password.
 readPwd() {
-    mkdir -p "$FLAP_DATA/system/data"
+    mkdir --parents "$FLAP_DATA/system/data"
 
     if [ ! -f "$1" ]
     then
@@ -29,24 +29,59 @@ readPwd() {
     cat "$1"
 }
 
+# generatePassword <service> <var_name>
+# Will store a password in a file in the service's `passwd` directory.
+generatePassword() {
+	if [ ! -f "$FLAP_DATA/$1/passwd/$2.txt" ]
+	then
+		echo "Generate $2 for $1."
+		mkdir --parents "$FLAP_DATA/$1/passwd"
+		openssl rand --hex 32 > "$FLAP_DATA/$1/passwd/$2.txt"
+	fi
+
+	cat "$FLAP_DATA/$1/passwd/$2.txt"
+}
+export -f generatePassword
+
 FLAP_LIBS="$FLAP_DIR/system/cli/lib"
 
 # Export env var.
-PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 export PRIMARY_DOMAIN_NAME
-DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 export DOMAIN_NAMES
-SECONDARY_DOMAIN_NAMES="${DOMAIN_NAMES//${PRIMARY_DOMAIN_NAME:-"none"}/}"
 export SECONDARY_DOMAIN_NAMES
-export SUBDOMAINS="auth files mail"
+export SUBDOMAINS
 
-# Read passwords from files
-ADMIN_PWD=$(readPwd "$FLAP_DATA/system/data/adminPwd.txt")
+PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
+DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
+SECONDARY_DOMAIN_NAMES="${DOMAIN_NAMES//${PRIMARY_DOMAIN_NAME:-"none"}/}"
+SUBDOMAINS="auth files mail"
+
+# Read passwords from files.
 export ADMIN_PWD
-SOGO_DB_PWD=$(readPwd "$FLAP_DATA/system/data/sogoDbPwd.txt")
+ADMIN_PWD=$(readPwd "$FLAP_DATA/system/data/adminPwd.txt")
+
 export SOGO_DB_PWD
-NEXTCLOUD_DB_PWD=$(readPwd "$FLAP_DATA/system/data/nextcloudDbPwd.txt")
+SOGO_DB_PWD=$(readPwd "$FLAP_DATA/system/data/sogoDbPwd.txt")
+
 export NEXTCLOUD_DB_PWD
+NEXTCLOUD_DB_PWD=$(readPwd "$FLAP_DATA/system/data/nextcloudDbPwd.txt")
+
+# Load services env vars.
+export FLAP_ENV_VARS
+FLAP_ENV_VARS="\${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${ADMIN_PWD} \${SOGO_DB_PWD} \${NEXTCLOUD_DB_PWD}"
+
+# Load services environement variables.
+# This will populate FLAP_ENV_VARS and SUBDOMAINES.
+for service in "$FLAP_DIR"/*
+do
+	if [ ! -f "$service/scripts/hooks/load_env.sh" ]
+	then
+		continue
+	fi
+
+	# shellcheck source=jitsi/scripts/hooks/load_env.sh
+	source "$service/scripts/hooks/load_env.sh"
+done
 
 # Execute the $CMD.
 if [ -f "$FLAP_DIR/system/cli/cmd/$CMD.sh" ]
