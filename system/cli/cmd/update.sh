@@ -93,10 +93,10 @@ Commands:
 
             git submodule update --init &&
 
-            echo '* [update] Updating docker images.' &&
-            # Update docker-compose.yml to pull all images.
+            # Update docker-compose.yml to pull new images.
             flapctl config generate_compose &&
             flapctl config generate_templates &&
+            echo '* [update] Pulling new docker images.' &&
             docker-compose --no-ansi pull
         } || {
             # When either the git update or the docker pull fails, it is safer to go back to the previous tag.
@@ -138,7 +138,6 @@ Commands:
             echo '* [update] Starting containers.' &&
             flapctl start &&
 
-            echo '* [update] Running some hooks.' &&
             flapctl hooks post_update &&
 
             echo '* [update] Cleanning docker objects.' &&

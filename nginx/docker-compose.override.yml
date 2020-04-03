@@ -5,4 +5,4 @@ services:
             - sogo
             - core
         volumes:
-            - /home/louis/Downloads/lemonldap-ng-master-doc/doc:/lemon-doc # [emmc] -> [lemon] Scripts.
+            - /home/louis/Desktop/flap/lemonldap-ng-master-doc/doc:/lemon-doc # [emmc] -> [lemon] Scripts.

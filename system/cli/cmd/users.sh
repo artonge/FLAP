@@ -48,9 +48,9 @@ case $CMD in
 			cut -d ' ' -f2 2> /dev/null
 		)
 
-		# Stop and remove the ldap instance and redirect the output to null.
 		if [ "$was_up" != "0" ]
 		then
+			# Remove networks.
 			flapctl hooks clean system &> /dev/null
 		fi
 

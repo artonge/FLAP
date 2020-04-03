@@ -10,3 +10,6 @@
 [submodule "lemon"]
 	path = lemon
 	url = https://gitlab.com/flap-box/lemon.git
+[submodule "matrix"]
+	path = matrix
+	url = https://gitlab.com/flap-box/matrix

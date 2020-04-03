@@ -41,24 +41,22 @@ case $CMD in
         }
         ;;
     generate_localhost)
-        domain=${2:-flap.localhost}
+		domain=${2:-flap.test}
+		cert_path=/etc/letsencrypt/live/flap
+
+		# Create default flap.localhost domain if it is missing
+		mkdir -p "$FLAP_DATA/system/data/domains/$domain"
+		echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
+		echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
+		touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
+		touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
 
 		echo "* [tls] Generating certificates for $domain"
 
-        # Create default flap.localhost domain if it is missing
-        mkdir -p "$FLAP_DATA/system/data/domains/$domain"
-        echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
-        echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
-        touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
-        touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
+		mkdir -p $cert_path
 
-        # Generate certificates for flap.localhost if they do not exists yet.
-		cert_path=/etc/letsencrypt/live/flap
-        if [ ! -f $cert_path/fullchain.pem ]
-        then
-            mkdir -p $cert_path
-
-			echo "[ req ]
+		# Write root CA configuration file.
+		echo "[ req ]
 prompt             = no
 string_mask        = default
 default_bits       = 2048
@@ -71,7 +69,21 @@ commonName = FLAP localhost Root CA
 basicConstraints=critical,CA:true,pathlen:0
 keyUsage=critical,keyCertSign,cRLSign" > $cert_path/root_ca.conf
 
-			echo "[ req ]
+		# Prevent overriding existing root CA.
+		if [ ! -f $cert_path/root.cer ]
+		then
+			# Creating root CA.
+			openssl req \
+				-nodes \
+				-x509 \
+				-new \
+				-keyout $cert_path/root.key \
+				-out $cert_path/root.cer \
+				-config $cert_path/root_ca.conf
+		fi
+
+		# Write certificates configuration file.
+		echo "[ req ]
 prompt             = no
 string_mask        = default
 default_bits       = 2048
@@ -84,51 +96,48 @@ commonName = $domain
 keyUsage=critical,digitalSignature,keyAgreement
 subjectAltName = @alt_names
 [alt_names]
-DNS.1 = $domain
-DNS.2 = files.$domain
-DNS.3 = mail.$domain
-DNS.4 = auth.$domain" > $cert_path/server_cert.conf
+DNS.1 = $domain" > $cert_path/server_cert.conf
 
-			openssl req \
-				-nodes \
-				-x509 \
-				-new \
-				-keyout $cert_path/root.key \
-				-out $cert_path/root.cer \
-				-config $cert_path/root_ca.conf
-			openssl req \
-				-nodes \
-				-new \
-				-keyout $cert_path/server.key \
-				-out $cert_path/server.csr \
-				-config $cert_path/server_cert.conf
-			openssl x509 \
-				-days 3650 \
-				-req \
-				-in $cert_path/server.csr \
-				-CA $cert_path/root.cer \
-				-CAkey $cert_path/root.key \
-				-set_serial 123 \
-				-out $cert_path/server.cer \
-				-extfile $cert_path/server_cert.conf \
-				-extensions x509_ext
+		# Add all subdomains to the server_cert.conf file.
+		# shellcheck disable=SC2153
+		read -r -a subdomains <<< "$SUBDOMAINS"
+		subdomains+=(lemon)
+		for i in "${!subdomains[@]}"
+		do
+			echo "DNS.$((i + 2)) = ${subdomains[$i]}.$domain" >> $cert_path/server_cert.conf
+		done
 
-			cp $cert_path/server.cer $cert_path/fullchain.pem
-			cp $cert_path/server.key $cert_path/privkey.pem
-			cp $cert_path/root.cer $cert_path/chain.pem
-        fi
+		# Generating TLS certificate.
+		openssl req \
+			-nodes \
+			-new \
+			-keyout $cert_path/server.key \
+			-out $cert_path/server.csr \
+			-config $cert_path/server_cert.conf
 
-        echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
+		# Signing certificate with root CA.
+		openssl x509 \
+			-days 3650 \
+			-req \
+			-in $cert_path/server.csr \
+			-CA $cert_path/root.cer \
+			-CAkey $cert_path/root.key \
+			-set_serial 123 \
+			-out $cert_path/server.cer \
+			-extfile $cert_path/server_cert.conf \
+			-extensions x509_ext
 
-        flapctl restart
+		# Copy certificates to Nginx exploitable files.
+		cp $cert_path/server.cer $cert_path/fullchain.pem
+		cp $cert_path/server.key $cert_path/privkey.pem
+		cp $cert_path/root.cer $cert_path/chain.pem
 
-        flapctl hooks post_domain_update
-
-        flapctl restart
+		# Setup primary domain.
+		echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
 
 		echo ""
 		echo "You can install the following CA in your browser to ease development: $cert_path/root.cer"
-        ;;
+		;;
     handle_request)
         echo '* [tls] Handling domain requests'
         flapctl tls handle_request_primary_update
@@ -154,7 +163,6 @@ DNS.4 = auth.$domain" > $cert_path/server_cert.conf
         {
             echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_primary.txt" &&
             flapctl hooks post_domain_update &&
-            flapctl restart &&
             rm "$FLAP_DATA/system/data/domain_update_primary.txt"
         } || { # Catch error
             echo "" > "$FLAP_DATA/system/data/domain_update_primary.txt"
@@ -180,7 +188,6 @@ DNS.4 = auth.$domain" > $cert_path/server_cert.conf
         {
             echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_delete.txt" &&
             flapctl hooks post_domain_update &&
-            flapctl restart &&
             rm "$FLAP_DATA/system/data/domain_update_delete.txt"
         } || { # Catch error
             echo "" > "$FLAP_DATA/system/data/domain_update_delete.txt"
@@ -230,8 +237,7 @@ DNS.4 = auth.$domain" > $cert_path/server_cert.conf
                 fi
             } &&
             flapctl start &&
-            flapctl hooks post_domain_update &&
-            flapctl restart
+            flapctl hooks post_domain_update
         } || { # Catch error
             echo "Failed to handle domain request."
             echo "ERROR" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt"

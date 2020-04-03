@@ -16,8 +16,14 @@ services:
             - ${FLAP_DIR}/core/src/front/public/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.
             - ${FLAP_DATA}/nextcloud/html:/var/www/nextcloud:ro # [emmc] -> [nginx] Nextcloud static files.
             - ${FLAP_DIR}/nextcloud/medias:/var/www/nextcloud_medias:ro # [emmc] -> [nginx] Other Nextcloud static files.
-            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files
+            - ${FLAP_DIR}/jitsi/medias:/var/www/jitsi_medias:ro # [emmc] -> [nginx] Jitsi static files.
+            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.
             - lemonStaticFiles:/var/www/lemon:ro # [lemon] -> [nginx] Lemon static files.
             - ${FLAP_DIR}/lemon/skin/flapskin:/var/www/lemon_flapskin:ro # [emmc] -> [nginx] Custom scripts and syles for flapskin.
-        ports: ["80:80", "443:443"]
-        networks: [apps-net]
+        ports: ["80:80", "443:443", "8448:8448"]
+        networks:
+            apps-net:
+                aliases:
+                    # Allow access to nginx from the others services.
+                    # Here, synapse can fetch the lemon's SAML metadata.
+                    - auth.$PRIMARY_DOMAIN_NAME

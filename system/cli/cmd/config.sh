@@ -6,11 +6,12 @@ CMD=${1:-}
 
 case $CMD in
 	generate)
-		flapctl config generate_compose
 		flapctl config generate_templates
+		flapctl config generate_compose
 		flapctl config generate_lemon
 		flapctl config generate_nginx
 		flapctl config generate_mails
+		flapctl hooks generate_config
 		;;
 	generate_mails)
 		echo '* [config] Generate authorized smtp senders map.'
@@ -39,7 +40,7 @@ case $CMD in
 
 		rm -f "$FLAP_DIR/docker-compose.override.yml"
 
-		if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ]
+		if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ] || [ "${FLAG_GENERATE_DOCKER_COMPOSE_CI:-}" == "true" ]
 		then
 			cat "$FLAP_DIR/system/docker-compose.override.yml" > "$FLAP_DIR/docker-compose.override.yml"
 		fi
@@ -51,11 +52,11 @@ case $CMD in
 				continue
 			fi
 
-			echo - "$(basename "$service")"
-
 			# Check if docker-compose.yml exists for the service.
 			if [ -f "$service/docker-compose.yml" ]
 			then
+				echo - "$(basename "$service")"
+
 				# Merge service's compose file into the main compose file.
 				"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
 					"$FLAP_DIR/docker-compose.yml" \
@@ -71,6 +72,18 @@ case $CMD in
 					"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
 						"$FLAP_DIR/docker-compose.override.yml" \
 						"$service/docker-compose.override.yml"
+				fi
+			fi
+
+			# Check if docker-compose.local.yml exists for the service.
+			if [ -f "$service/docker-compose.ci.yml" ]
+			then
+				if [ "${FLAG_GENERATE_DOCKER_COMPOSE_CI:-}" == "true" ]
+				then
+					# Merge service's compose file into the main compose file.
+					"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
+						"$FLAP_DIR/docker-compose.override.yml" \
+						"$service/docker-compose.ci.yml"
 				fi
 			fi
 		done
@@ -94,9 +107,9 @@ case $CMD in
 			echo "- $(basename "$dir")/$name.$ext"
 
 			# shellcheck disable=SC2016
-			envsubst '${PRIMARY_DOMAIN_NAME} ${PRIMARY_DOMAIN_NAME} ${SECONDARY_DOMAIN_NAMES} ${DOMAIN_NAMES} ${DOMAIN_NAMES_SOGO} ${DOMAIN_NAMES_FILES} ${ADMIN_PWD} ${SOGO_DB_PWD} ${NEXTCLOUD_DB_PWD}' < "$dir/$name.template.$ext" > "$dir/$name.$ext"
+			envsubst "$FLAP_ENV_VARS" < "$dir/$name.template.$ext" > "$dir/$name.$ext"
 		done
-	   ;;
+		;;
 	generate_lemon)
 		echo '* [config] Generate lemonLDAP configuration file.'
 
@@ -180,19 +193,20 @@ case $CMD in
 					service=$(basename "$service_path") # Get the service name
 					echo "  + $service"
 					export DOMAIN_NAME=$domain
-					# shellcheck disable=SC2016
-					envsubst '${DOMAIN_NAME} ${PRIMARY_DOMAIN_NAME}' < "$service_path/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
+					envsubst "$FLAP_ENV_VARS \${DOMAIN_NAME}" < "$service_path/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
 				fi
 			done
 		done
 		;;
 	show)
-		echo "PRIMARY_DOMAIN_NAME=$PRIMARY_DOMAIN_NAME"
-		echo "DOMAIN_NAMES=$DOMAIN_NAMES"
-		echo "SECONDARY_DOMAIN_NAMES=$SECONDARY_DOMAIN_NAMES"
-		echo "ADMIN_PWD=$ADMIN_PWD"
-		echo "SOGO_DB_PWD=$SOGO_DB_PWD"
-		echo "NEXTCLOUD_DB_PWD=$NEXTCLOUD_DB_PWD"
+		vars_string=""
+
+		for var in $FLAP_ENV_VARS
+		do
+			vars_string+="${var//[\$\{\}]/}	$(eval "echo $var")"$'\n'
+		done
+
+		echo "$vars_string" | column -t
 		;;
 	summarize)
 		echo "config | [generate, show, help] | Generate the configuration for each services."
