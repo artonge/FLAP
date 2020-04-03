@@ -6,9 +6,9 @@ CMD=${1:-}
 
 case $CMD in
 	hostname)
-		if [ "${FLAG_NO_NETWORK_SETUP:-}" == "true" ]
+		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
 		then
-			echo "* [setup] Skip network setup."
+			echo "* [setup:FEATURE_FLAG] Skip hostnames setup."
 			exit 0
 		fi
 
@@ -17,35 +17,59 @@ case $CMD in
 		hostnamectl --transient set-hostname "flap.local"
 		hostnamectl --pretty set-hostname "FLAP box (flap.local $DOMAIN_NAMES)"
 	;;
-	ports)
-		if [ "${FLAG_NO_NETWORK_SETUP:-}" == "true" ]
-		then
-			echo "* [setup] Skip network setup."
-			exit 0
-		fi
+	firewall)
+		echo '* [setup] Setting firewall rules.'
 
-		echo '* [setup] Openning ports'
-
-		# Reset ufw
+		# Reset ufw.
 		ufw --force reset
-		ufw --force enable
+
+		# Add default firewall rules.
 		ufw default deny incoming
 		ufw default allow outgoing
 
-		# System.
-		flapctl ports open 22 # SSH
-		# Nginx.
-		flapctl ports open 80 # HTTP
-		flapctl ports open 443 # HTTPS
-		# Mail.
-		flapctl ports open 25 # SMTP
-		flapctl ports open 587 # SMTP with STARTLS
-		flapctl ports open 143 # IMAP
-		# Matrix.
-		flapctl ports open 8448 # FEDERATION
-		# Jitsi
-		flapctl ports open 10000 UDP # RTP UDP
-		flapctl ports open 4443 # RTP TCP failback
+		# Add services's firewall rules.
+		for port in $NEEDED_PORTS
+		do
+			protocol=$(echo "$port" | cut -d '/' -f1)
+			port=$(echo "$port" | cut -d '/' -f2)
+
+			# Open firewall for the port/protocol.
+			ufw allow "$port/$protocol"
+		done
+	;;
+	ports)
+		echo '* [setup] Openning ports.'
+
+		# Exit now if feature is disabled.
+		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
+		then
+			echo "* [setup:FEATURE_FLAG] Skip opening port."
+			exit 0
+		fi
+
+		# Disable ufw to allow upnp to work.
+		ufw --force disable
+		ip=$(flapctl ip internal)
+		open_ports=$(flapctl ports list)
+		ufw --force enable
+
+		# Open ports.
+		for port in $NEEDED_PORTS
+		do
+			protocol=$(echo "$port" | cut -d '/' -f1)
+			port=$(echo "$port" | cut -d '/' -f2)
+
+			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port"
+			then
+				echo "* [setup] Port $port/$protocol is already open."
+				continue
+			fi
+
+			# Disable ufw to allow upnp to work.
+			ufw --force disable
+			flapctl ports open "$port" "$protocol"
+			ufw --force enable
+		done
 	;;
 	raid)
 		echo '* [setup] Setting up RAID.'

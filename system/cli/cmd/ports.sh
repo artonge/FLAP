@@ -4,8 +4,7 @@ set -eu
 
 CMD=${1:-}
 PORT=${2:-}
-PROTOCOL=${3:-TCP}
-protocol=$(echo "$PROTOCOL" | tr '[:upper:]' '[:lower:]')
+PROTOCOL=$(echo "${3:-TCP}" | tr '[:lower:]' '[:upper:]')
 DESCRIPTION="Port forwarding for the FLAP box."
 
 case $CMD in
@@ -20,11 +19,8 @@ case $CMD in
             # Create port mapping.
             upnpc -e "$DESCRIPTION" -a "$IP" "$PORT" "$PORT" "$PROTOCOL" > /dev/null &&
 
-            # Open firewall.
-            ufw allow "$PORT"/"$protocol"
-
             # Check that port mapping exists
-            flapctl ports list | grep ":$PORT" > /dev/null &&
+            flapctl ports list | grep "$IP:$PORT" > /dev/null &&
 
             echo "* [ports] Port mapping created ($PORT)."
         } || { # Catch error
@@ -33,12 +29,12 @@ case $CMD in
         }
         ;;
     close)
-        # Delete port mapping if any
+        # Delete port mapping.
         upnpc -d "$PORT" "$PROTOCOL" > /dev/null || true
 
         {
             # Check that port mapping do not exist
-            (flapctl ports list || echo "") | grep -v ":$PORT" > /dev/null &&
+            (flapctl ports list) | grep -v ":$PORT" > /dev/null &&
             echo "* [ports] Port mapping deleted ($PORT)."
         } || { # Catch error
             echo "* [ports] Failed to delete port mapping ($PORT)."
@@ -46,8 +42,7 @@ case $CMD in
         }
         ;;
     list)
-        # Grep only the list of port mapping
-        upnpc -l | grep -E "^ [0-9]"
+        upnpc -l | grep -E "^ [0-9]" | cat
         ;;
     summarize)
         echo "ports | [open, close, list, help] | Manipulate ports forwarding."

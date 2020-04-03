@@ -51,6 +51,19 @@ export DOMAIN_NAMES
 export SECONDARY_DOMAIN_NAMES
 export SUBDOMAINS
 
+# System
+# 22 - SSH
+
+# Nginx.
+# 80 - HTTP
+# 443 - HTTPS
+
+# Mail.
+# 25 - SMTP
+# 587 - SMTP with STARTLS
+# 143 - IMAP
+export NEEDED_PORTS="22/tcp 80/tcp 443/tcp 25/tcp 587/tcp 143/tcp"
+
 PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 SECONDARY_DOMAIN_NAMES="${DOMAIN_NAMES//${PRIMARY_DOMAIN_NAME:-"none"}/}"
