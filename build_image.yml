@@ -20,7 +20,8 @@
             docker build \
                 --tag $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)-$ARCH \
                 --tag $CI_REGISTRY_IMAGE:latest-$ARCH \
-                .
+                ${DOCKERFILE:-./Dockerfile}
+
         - docker push $CI_REGISTRY_IMAGE
 
 build:amd64:
