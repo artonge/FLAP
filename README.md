@@ -60,7 +60,7 @@ Adding the following line to your `/etc/hosts` file:
 
 #### ⚠ Setup feature flags
 
-The `flapctl` cli use feature flag to inhibit or change some functionality. Copy the `flapctl.example.env` to `flapctl.env` file and setup the variables accordingly. A typical dev station would use all of them but not `FLAG_NO_SAML_FETCH`.
+The `flapctl` cli use feature flag to inhibit or change some functionality. Copy the `flapctl.example.env` to `flapctl.env` file and setup the variables accordingly. A typical dev station would use most of them.
 
 ```shell
 cp flapctl.example.env flapctl.env
