@@ -33,6 +33,11 @@ Commands:
                     continue
                 fi
 
+                if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
+                then
+                    continue
+                fi
+
                 {
                     flapctl update migrate "$(basename "$service")"
                 } || {

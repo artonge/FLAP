@@ -94,6 +94,11 @@ case $CMD in
 				continue
 			fi
 
+			if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
+			then
+				continue
+			fi
+
 			service=$(basename "$service")
 
 			# Skip if the directory is allready created.
@@ -133,6 +138,11 @@ case $CMD in
 		for service in "$FLAP_DIR"/*/
 		do
 			if [ ! -d "$service" ]
+			then
+				continue
+			fi
+
+			if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
 			then
 				continue
 			fi

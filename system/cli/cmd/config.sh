@@ -52,6 +52,11 @@ case $CMD in
 				continue
 			fi
 
+			if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
+			then
+				continue
+			fi
+
 			# Check if docker-compose.yml exists for the service.
 			if [ -f "$service/docker-compose.yml" ]
 			then
@@ -130,6 +135,11 @@ case $CMD in
 				continue
 			fi
 
+			if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
+			then
+				continue
+			fi
+
 			service=$(basename "$service")
 
 			for domain in $DOMAIN_NAMES
@@ -184,6 +194,11 @@ case $CMD in
 			for service_path in "$FLAP_DIR"/*/ # Generate conf for each services
 			do
 				if [ ! -d "$service_path" ]
+				then
+					continue
+				fi
+
+				if [ -f "$service_path/scripts/hooks/should_install.sh" ] && ! "$service_path/scripts/hooks/should_install.sh"
 				then
 					continue
 				fi
