@@ -136,7 +136,7 @@ pip3 install yq
 # Removing useless packages.
 apt remove -y postfix dovecot
 apt purge -y postfix dovecot
-apt autoremove
+apt autoremove -y
 
 # Setting certbot hooks.
 mkdir -p /etc/letsencrypt/renewal-hooks/pre

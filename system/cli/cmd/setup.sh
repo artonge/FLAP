@@ -56,8 +56,8 @@ case $CMD in
 		# Open ports.
 		for port in $NEEDED_PORTS
 		do
-			protocol=$(echo "$port" | cut -d '/' -f1)
-			port=$(echo "$port" | cut -d '/' -f2)
+			protocol=$(echo "$port" | cut -d '/' -f2)
+			port=$(echo "$port" | cut -d '/' -f1)
 
 			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port"
 			then
