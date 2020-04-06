@@ -61,16 +61,13 @@ MY_VAR="my value"
 
 #### should_install
 
-This hook is used to indicate whether or not to install the service, meaning to run the `init_db`, `pre_install` and `post_install` hook.
+This hook is used to indicate whether or not to install the service. If this hook do not return 0, the service will not be installed.
 
 This can be useful if the service needs a specific environment to be installed. For example, `matrix` needs to have an attributed domain name before being installed.
-
-The exit code will be used to determine whether or not the service can be installed.
 
 Context:
 
     - This hook is ran before services are started.
-    - This hook is ran only once during the service's installation phase.
 
 Example:
 

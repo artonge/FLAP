@@ -45,6 +45,10 @@ export -f generatePassword
 
 FLAP_LIBS="$FLAP_DIR/system/cli/lib"
 
+# Export the ARCH env var.
+export ARCH
+ARCH=$(uname -p)
+
 # Export env var.
 export PRIMARY_DOMAIN_NAME
 export DOMAIN_NAMES
