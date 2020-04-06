@@ -31,6 +31,7 @@ function pre_run_all {
 		init_db)
 			echo "* [hooks] Starting PostgreSQL for init_db hook."
 			docker-compose --no-ansi up --detach postgres
+			"$FLAP_DIR/postgres/scripts/wait_ready.sh"
 		;;
 	esac
 }
