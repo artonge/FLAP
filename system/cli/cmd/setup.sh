@@ -18,10 +18,17 @@ case $CMD in
 		hostnamectl --pretty set-hostname "FLAP box (flap.local $DOMAIN_NAMES)"
 	;;
 	firewall)
+		if [ "${FLAG_NO_FIREWALL_SETUP:-}" == "true" ]
+		then
+			echo "* [setup:FEATURE_FLAG] Skip firewall setup."
+			exit 0
+		fi
+
 		echo '* [setup] Setting firewall rules.'
 
 		# Reset ufw.
 		ufw --force reset
+		ufw --force enable
 
 		# Add default firewall rules.
 		ufw default deny incoming
@@ -30,22 +37,22 @@ case $CMD in
 		# Add services's firewall rules.
 		for port in $NEEDED_PORTS
 		do
-			protocol=$(echo "$port" | cut -d '/' -f1)
-			port=$(echo "$port" | cut -d '/' -f2)
+			protocol=$(echo "$port" | cut -d '/' -f2)
+			port=$(echo "$port" | cut -d '/' -f1)
 
 			# Open firewall for the port/protocol.
 			ufw allow "$port/$protocol"
 		done
 	;;
 	ports)
-		echo '* [setup] Openning ports.'
-
 		# Exit now if feature is disabled.
 		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
 		then
 			echo "* [setup:FEATURE_FLAG] Skip opening port."
 			exit 0
 		fi
+
+		echo '* [setup] Openning ports.'
 
 		# Disable ufw to allow upnp to work.
 		ufw --force disable
@@ -56,7 +63,7 @@ case $CMD in
 		# Open ports.
 		for port in $NEEDED_PORTS
 		do
-			protocol=$(echo "$port" | cut -d '/' -f2)
+			protocol=$(echo "$port" | cut -d '/' -f2 | tr '[:lower:]' '[:upper:]')
 			port=$(echo "$port" | cut -d '/' -f1)
 
 			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port"
