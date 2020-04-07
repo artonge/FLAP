@@ -69,6 +69,7 @@ docker run \
 	--env FLAG_INSECURE_SAML_FETCH=true \
 	--env FLAG_USE_FIXED_IP=true \
 	--env FLAG_GENERATE_DOCKER_COMPOSE_CI=true \
+	--env FLAG_NO_FIREWALL_SETUP=true \
 	--env LOG_DRIVER=json-file \
 	--network host \
 	--add-host="flap.local:$FLAP_IP" \

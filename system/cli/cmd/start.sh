@@ -24,6 +24,7 @@ case $CMD in
 		flapctl setup raid
 		flapctl setup hostname
 		flapctl setup fs
+		flapctl setup firewall
 
 		# Generate config
 		flapctl config generate
