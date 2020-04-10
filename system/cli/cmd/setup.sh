@@ -54,11 +54,19 @@ case $CMD in
 
 		echo '* [setup] Openning ports.'
 
+		if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+		then
+			ufw --force disable
+		fi
+
 		# Disable ufw to allow upnp to work.
-		ufw --force disable
 		ip=$(flapctl ip internal)
 		open_ports=$(flapctl ports list)
-		ufw --force enable
+
+		if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+		then
+			ufw --force enable
+		fi
 
 		# Open ports.
 		for port in $NEEDED_PORTS
@@ -73,20 +81,63 @@ case $CMD in
 			fi
 
 			# Disable ufw to allow upnp to work.
-			ufw --force disable
+			if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+			then
+				ufw --force disable
+			fi
+
 			flapctl ports open "$port" "$protocol"
-			ufw --force enable
+
+			if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+			then
+				ufw --force enable
+			fi
 		done
 	;;
 	raid)
 		echo '* [setup] Setting up RAID.'
 		flapctl disks setup
 
-		if [ "${FLAG_NO_RAID_SETUP:-false}" == "false" ]
+		if [ "${FLAG_NO_RAID_SETUP:-}" == "true" ]
 		then
-			# Check that the RAID array is correctly mounted.
-			findmnt "$FLAP_DATA"
+			exit 0
 		fi
+
+		# Check that the RAID array is correctly mounted.
+		findmnt "$FLAP_DATA"
+	;;
+	hosting)
+		if [ "${FLAG_SETUP_HOSTING:-}" != "true" ]
+		then
+			echo "* [setup:FEATURE_FLAG] Skip hosting setup."
+			exit 0
+		fi
+
+		if findmnt "$FLAP_DATA"
+		then
+			exit 0
+		fi
+
+		mkdir --parents "$FLAP_DATA"
+
+		echo '* [setup] Checking disk status.'
+		mount /dev/sda "$FLAP_DATA"
+		if [ -f "$FLAP_DATA/system/data/installation_done.txt" ]
+		then
+			echo '* [setup] Disk is a FLAP install, exiting.'
+			exit 0
+		else
+			echo '* [setup] Disk is not a FLAP install.'
+			umount "$FLAP_DATA"
+		fi
+
+		echo '* [setup] Seting up disk for FLAP.'
+		mkfs -t ext4 /dev/sda
+		mount /dev/sda "$FLAP_DATA"
+
+		echo "* [setup] Setting static IP"
+		mkdir --parents "$FLAP_DATA/system/data"
+		curl -4 https://icanhazip.com 2>/dev/null > "$FLAP_DATA/system/data/fixed_ip.txt"
 	;;
 	fs)
 		echo '* [setup] Creating data directories.'

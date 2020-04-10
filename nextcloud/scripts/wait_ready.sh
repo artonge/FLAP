@@ -2,8 +2,8 @@
 
 set -eu
 
-until docker-compose logs nextcloud | grep "NOTICE: ready to handle connections"
+until docker-compose logs nextcloud | grep "NOTICE: ready to handle connections" > /dev/null
 do
-    >&2 echo "Nextcloud is unavailable - sleeping"
+    echo "Nextcloud is unavailable - sleeping"
     sleep 1
 done

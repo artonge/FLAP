@@ -92,9 +92,9 @@ APT::Periodic::Unattended-Upgrade "1";
 
 ################################################################################
 echo "SETTING UP ENV VARS"
-echo "export FLAP_DIR=/opt/flap" > /etc/environment
-echo "export FLAP_DATA=/flap" >> /etc/environment
-echo "export COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment
+echo "FLAP_DIR=/opt/flap" > /etc/environment
+echo "FLAP_DATA=/flap" >> /etc/environment
+echo "COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment
 # shellcheck disable=SC1091
 source /etc/environment
 ln -sf "$FLAP_DIR/system/cli/flapctl.sh" /bin/flapctl
@@ -163,6 +163,10 @@ fi
 
 # Install flap systemd service.
 cp "$FLAP_DIR/system/flap.service" /etc/systemd/system
+if [ "$(command -v systemctl || true)" != "" ]
+then
+    systemctl enable flap
+fi
 
 ################################################################################
 echo "DONE"

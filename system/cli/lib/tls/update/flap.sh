@@ -30,7 +30,7 @@ wget \
 	--quiet \
 	--output-document=- \
 	--content-on-error \
-	"https://flap.id/domains/$DOMAIN"
+	"https://flap.id/domains/$DOMAIN" | cat
 
 # Catch error code
 exit_code=${PIPESTATUS[0]}

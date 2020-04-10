@@ -4,6 +4,12 @@ set -eu
 
 CMD=${1:-}
 
+# Disable ufw to allow upnp to work.
+if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+then
+	ufw --force disable > /dev/null
+fi
+
 case $CMD in
 	internal)
 		upnpc -l | grep "Local LAN" | cut -d ' '  -f6
@@ -31,3 +37,8 @@ Commands:
 	dns | <domain_name> | Ask the ip for a given domain name." | column -t -s "|"
 		;;
 esac
+
+if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+then
+	ufw --force enable > /dev/null
+fi

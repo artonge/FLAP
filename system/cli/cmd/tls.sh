@@ -32,6 +32,12 @@ case $CMD in
             fi
         done
 
+		# Exit now if there is no domains to setup.
+		if [ ${#domains[@]} == "0" ]
+		then
+			exit 0
+		fi
+
         {
             # Generate TLS certificates
             "$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
@@ -122,7 +128,7 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 			-in $cert_path/server.csr \
 			-CA $cert_path/root.cer \
 			-CAkey $cert_path/root.key \
-			-set_serial 123 \
+			-set_serial $RANDOM \
 			-out $cert_path/server.cer \
 			-extfile $cert_path/server_cert.conf \
 			-extensions x509_ext
@@ -266,15 +272,26 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
             exit 0
         fi
 
-        {
-			"$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" "$domain" &&
-			"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain" &&
-			test "$(flapctl ip dns "$DOMAIN")" == "$(flapctl ip external)"
-        } || { # Catch error
-            echo "Failed to register $domain."
-        }
-        ;;
-    update_dns_records)
+		echo "* [tls] Registering domain name"
+
+		"$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" "$domain"
+		"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
+
+		elapse=0
+		until [ "$(flapctl ip dns "$domain")" == "$(flapctl ip external)" ] > /dev/null
+		do
+			echo "Waiting for DNS propagation"
+			sleep 60
+			elapse+=60
+
+			if [ $elapse -gt $(( 60 * 30 )) ]
+			then
+				echo "* [tls] ERROR: DNS propagation timeout (30 minutes)"
+				exit 1
+			fi
+		done
+		;;
+	update_dns_records)
 		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] || [ "${FLAG_NO_DNS_RECORD_UPDATE:-}" == "true" ]
 		then
 			echo '* [tls:FEATURE_FLAG] Skipping DNS update.'
@@ -284,17 +301,17 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 		# Get current external IP to check if it is necessary to update the DNS.
 		EXTERNAL_IP=$(flapctl ip external)
 
-        # Execute update script for each OK domain or the provided ones.
-        read -r -a domains <<< "$DOMAIN_NAMES"
+		# Execute update script for each OK domain or the provided ones.
+		read -r -a domains <<< "$DOMAIN_NAMES"
 
-        if [ "$#" -gt "1" ]
-        then
-            domains=("$@")
-            domains=("${domains[@]:1}")
-        fi
+		if [ "$#" -gt "1" ]
+		then
+			domains=("$@")
+			domains=("${domains[@]:1}")
+		fi
 
-        for domain in "${domains[@]}"
-        do
+		for domain in "${domains[@]}"
+		do
 			# Don't update DNS records if the ip is correct.
 			HOST_IP=$(flapctl ip dns "$domain")
 			if [ "$EXTERNAL_IP" == "$HOST_IP" ]
@@ -303,15 +320,11 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 				continue
 			fi
 
-            provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
+			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
-            {
-                "$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
-            } || { # Catch error
-                echo "Failed to update $domain's DNS records."
-            }
-        done
-        ;;
+			"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
+		done
+		;;
     list)
         "$FLAP_DIR/system/cli/lib/tls/list_domains.sh"
         ;;

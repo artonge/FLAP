@@ -21,10 +21,10 @@ case $CMD in
 		fi
 
 		# Run some setup operations if necessary.
+		flapctl setup hosting
 		flapctl setup raid
 		flapctl setup hostname
 		flapctl setup fs
-		flapctl setup firewall
 
 		# Generate config
 		flapctl config generate
@@ -49,6 +49,7 @@ case $CMD in
 		then
 			# Run other setup operations.
 			flapctl setup ports
+			flapctl setup firewall
 			flapctl setup cron
 
 			# Mark the installation as done.
