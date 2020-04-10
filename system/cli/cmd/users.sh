@@ -13,6 +13,7 @@ case $CMD in
 		wget \
 			--method POST \
 			--header "Content-Type: application/json" \
+			--header "Host: flap.local" \
 			--body-data '{
 					"username": "theadmin",
 					"password": "password",
@@ -23,7 +24,7 @@ case $CMD in
 			--quiet \
 			--output-document=- \
 			--content-on-error \
-			http://flap.local/api/users | cat
+			http://localhost/api/users | cat
 
 		# Catch error code
 		exit_code=${PIPESTATUS[0]}

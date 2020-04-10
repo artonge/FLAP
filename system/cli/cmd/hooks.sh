@@ -107,7 +107,7 @@ function post_run_all {
 
 
 case $cmd in
-	init_db|pre_install|post_install|generate_config|post_update|post_domain_update|health_check|clean)
+	init_db|pre_install|post_install|generate_config|wait_ready|post_update|post_domain_update|health_check|clean)
 		hook=$cmd
 		exit_code=0
 		hooks_ran=()
@@ -163,7 +163,7 @@ case $cmd in
 		exit "$exit_code"
 	;;
 	summarize)
-		echo "hooks | [post_install, pre_update, post_update, post_domain_update, health_check, clean] [<service-name>, ...] | Run hooks."
+		echo "hooks | [post_install, pre_update, post_update, wait_ready, post_domain_update, health_check, clean] [<service-name>, ...] | Run hooks."
 	;;
 	help|*)
 		echo "

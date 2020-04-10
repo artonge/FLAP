@@ -2,8 +2,8 @@
 
 set -eu
 
-until docker-compose logs postgres | grep "database system is ready to accept connections"
+until docker-compose logs postgres | grep "database system is ready to accept connections" > /dev/null
 do
-    >&2 echo "PostgreSQL is unavailable - sleeping"
+    echo "PostgreSQL is unavailable - sleeping"
     sleep 1
 done
