@@ -54,19 +54,16 @@ case $CMD in
 
 		echo '* [setup] Openning ports.'
 
+		ip=$(flapctl ip internal)
+		echo "Internal ip is: $ip"
+
 		if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
 		then
+			# Disable ufw to allow upnp to work.
 			ufw --force disable
 		fi
 
-		# Disable ufw to allow upnp to work.
-		ip=$(flapctl ip internal)
 		open_ports=$(flapctl ports list)
-
-		if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
-		then
-			ufw --force enable
-		fi
 
 		# Open ports.
 		for port in $NEEDED_PORTS
@@ -76,23 +73,17 @@ case $CMD in
 
 			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port"
 			then
-				echo "* [setup] Port $port/$protocol is already open."
+				echo "Port $port/$protocol is already open."
 				continue
 			fi
 
-			# Disable ufw to allow upnp to work.
-			if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
-			then
-				ufw --force disable
-			fi
-
-			flapctl ports open "$port" "$protocol"
-
-			if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
-			then
-				ufw --force enable
-			fi
+			flapctl ports open "$port" "$protocol" "$ip"
 		done
+
+		if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
+		then
+			ufw --force enable
+		fi
 	;;
 	raid)
 		echo '* [setup] Setting up RAID.'

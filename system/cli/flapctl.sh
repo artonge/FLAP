@@ -85,7 +85,7 @@ NEXTCLOUD_DB_PWD=$(readPwd "$FLAP_DATA/system/data/nextcloudDbPwd.txt")
 
 # Load services env vars.
 export FLAP_ENV_VARS
-FLAP_ENV_VARS="\${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${ADMIN_PWD} \${SOGO_DB_PWD} \${NEXTCLOUD_DB_PWD}"
+FLAP_ENV_VARS="\${ARCH} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${ADMIN_PWD} \${SOGO_DB_PWD} \${NEXTCLOUD_DB_PWD}"
 
 # Load services environement variables.
 # This will populate FLAP_ENV_VARS and SUBDOMAINES.
