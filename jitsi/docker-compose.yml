@@ -1,7 +1,7 @@
 services:
     # Frontend
     jitsi:
-        image: jitsi/web:4101-2
+        image: jitsi/web:4384-1
         container_name: flap_jitsi
         volumes:
             - ${FLAP_DATA}/jitsi/jitsi:/config
@@ -13,7 +13,7 @@ services:
 
     # XMPP server
     prosody:
-        image: jitsi/prosody:4101-2
+        image: jitsi/prosody:4384-1
         container_name: flap_prosody
         expose: ["5222", "5347", "5280"]
         volumes:
@@ -26,7 +26,7 @@ services:
 
     # Focus component
     jicofo:
-        image: jitsi/jicofo:4101-2
+        image: jitsi/jicofo:4384-1
         container_name: flap_jicofo
         volumes:
             - ${FLAP_DATA}/jitsi/jicofo:/config
@@ -37,7 +37,7 @@ services:
 
     # Video bridge
     jvb:
-        image: jitsi/jvb:4101-2
+        image: jitsi/jvb:4384-1
         container_name: flap_jvb
         ports:
             - "10000:10000/udp"
