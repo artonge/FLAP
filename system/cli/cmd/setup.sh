@@ -40,7 +40,7 @@ case $CMD in
 			protocol=$(echo "$port" | cut -d '/' -f2)
 			port=$(echo "$port" | cut -d '/' -f1)
 
-			# Open firewall for the port/protocol.
+			echo "Open firewall for $port/$protocol"
 			ufw allow "$port/$protocol"
 		done
 	;;
@@ -109,10 +109,17 @@ case $CMD in
 			exit 0
 		fi
 
-		mkdir --parents "$FLAP_DATA"
+		mkdir --parents "$FLAP_DATA/system/data"
 
 		echo '* [setup] Checking disk status.'
-		mount /dev/sda "$FLAP_DATA"
+		if [ ! -f "$FLAP_DATA/system/data/disk.txt" ]
+		then
+			echo "/dev/sda" > "$FLAP_DATA/system/data/disk.txt"
+		fi
+
+		disk=$(cat "$FLAP_DATA/system/data/disk.txt")
+
+		mount "$disk" "$FLAP_DATA"
 		if [ -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
 			echo '* [setup] Disk is a FLAP install, exiting.'
@@ -123,8 +130,10 @@ case $CMD in
 		fi
 
 		echo '* [setup] Seting up disk for FLAP.'
-		mkfs -t ext4 /dev/sda
-		mount /dev/sda "$FLAP_DATA"
+		mkfs -t ext4 "$disk"
+		mount "$disk" "$FLAP_DATA"
+		mkdir --parents "$FLAP_DATA/system/data"
+		echo "$disk" > "$FLAP_DATA/system/data/disk.txt"
 
 		echo "* [setup] Setting static IP"
 		mkdir --parents "$FLAP_DATA/system/data"
