@@ -16,6 +16,8 @@
 
 ###### docker-compose.override.yml
 
+###### scripts/wait_ready.sh
+
 ## Hooks
 
 Hooks are called during FLAP life-cycle. They are used to configure the services. From installation to domain name update, it is the place to handle the particularities of the services. During hooks execution, you can make use of any environment variables shown by `flapctl config show`. You can add environment variable with the first hook, `load_env`
