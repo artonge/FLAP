@@ -1,8 +1,8 @@
 services:
     nextcloud:
         # Check "Critical changes..." issue before updating the version number.
-        # https://github.com/nextcloud/server/issues
-        image: nextcloud:17.0.2-fpm
+        # https://github.com/nextcloud/server/issues?q=Critical+changes
+        image: nextcloud:18.0.2-fpm
         container_name: flap_nextcloud
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: always

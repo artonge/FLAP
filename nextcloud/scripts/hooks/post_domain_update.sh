@@ -2,20 +2,21 @@
 
 set -eu
 
-# Wait for nextcloud to be ready
-"$FLAP_DIR/nextcloud/scripts/wait_ready.sh"
+flapctl hooks wait_ready nextcloud
 
-# Generate config.php with the new config
+echo "Generate domains specific config."
 docker-compose exec -T --user www-data nextcloud /inner_scripts/generate_post_domain_update_config.sh
 
-echo "Skip SAML metadata fetching for nextcloud."
-# Get SAML metadata for each domains.
+echo "Getting SAML metadata for each domains."
 for domain in $DOMAIN_NAMES
 do
-	if [ "${FLAG_INSECURE_SAML_FETCH:-}" == "true" ]
+	# Check certificates with local CA for local domains.
+	provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
+	if [ "$provider" == "local" ]
 	then
-		curl "https://files.$domain/apps/user_saml/saml/metadata?idp=1" --insecure --output "$FLAP_DATA/nextcloud/saml/metadata_$domain.xml"
-	else
-		curl "https://files.$domain/apps/user_saml/saml/metadata?idp=1" --output "$FLAP_DATA/nextcloud/saml/metadata_$domain.xml"
+		ca_cert=(--cacert /etc/letsencrypt/live/flap/root.cer)
 	fi
+
+	echo "Fetching synapse SAML metadatas for $domain."
+	curl "https://files.$domain/apps/user_saml/saml/metadata?idp=1" --output "$FLAP_DATA/nextcloud/saml/metadata_$domain.xml" "${ca_cert[@]}"
 done

@@ -71,7 +71,7 @@ export NEEDED_PORTS="22/tcp 80/tcp 443/tcp 25/tcp 587/tcp 143/tcp"
 PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
 SECONDARY_DOMAIN_NAMES="${DOMAIN_NAMES//${PRIMARY_DOMAIN_NAME:-"none"}/}"
-SUBDOMAINS="auth files mail"
+SUBDOMAINS="auth mail"
 
 # Read passwords from files.
 export ADMIN_PWD
@@ -80,12 +80,9 @@ ADMIN_PWD=$(readPwd "$FLAP_DATA/system/data/adminPwd.txt")
 export SOGO_DB_PWD
 SOGO_DB_PWD=$(readPwd "$FLAP_DATA/system/data/sogoDbPwd.txt")
 
-export NEXTCLOUD_DB_PWD
-NEXTCLOUD_DB_PWD=$(readPwd "$FLAP_DATA/system/data/nextcloudDbPwd.txt")
-
 # Load services env vars.
 export FLAP_ENV_VARS
-FLAP_ENV_VARS="\${ARCH} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${ADMIN_PWD} \${SOGO_DB_PWD} \${NEXTCLOUD_DB_PWD}"
+FLAP_ENV_VARS="\${ARCH} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${ADMIN_PWD} \${SOGO_DB_PWD}"
 
 # Load services environement variables.
 # This will populate FLAP_ENV_VARS and SUBDOMAINES.

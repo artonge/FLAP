@@ -55,6 +55,13 @@ php occ background:cron
 # ENABLE PREVIEW PRE-GENERATOR
 php occ app:enable previewgenerator || true
 
+# ENABLE ONLYOFFICE
+if [ "$ARCH" == "x86_64" ]
+then
+	php occ app:install documentserver_community || true
+	php occ app:install onlyoffice || true
+fi
+
 # MAIL
 php occ config:system:set mail_smtpmode --value "smtp"
 php occ config:system:set mail_sendmailmode --value "smtp"
