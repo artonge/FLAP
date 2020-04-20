@@ -26,7 +26,7 @@ if [ "${FLAG_JITSI_USE_EXTERNAL_TURN:-}" == "true" ]
 then
 	if [ ! -f "$FLAP_DATA/system/data/turn_server.txt" ]
 	then
-		echo "demo.flap.cloud:5349" > "$FLAP_DATA/system/data/turn_server.txt"
+		echo "demo.flap.cloud" > "$FLAP_DATA/system/data/turn_server.txt"
 	fi
 
 	TURN_SECRET='default_password'
