@@ -109,6 +109,7 @@ echo "INSTALLING FLAP"
 # miniupnpc: open ports
 # avahi-daemon: set the mDNS name
 # mdadm: setup RAID
+# iproute2: use the ip cmd
 # jq: manipulate json text files
 # psmisc: better cli output with pstree
 # msmtp msmtp-mta: to send mail with sendmail
@@ -123,6 +124,7 @@ apt install -y \
     miniupnpc \
     avahi-daemon \
     mdadm \
+    iproute2 \
     jq \
     psmisc \
     msmtp msmtp-mta \
