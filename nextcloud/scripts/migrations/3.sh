@@ -11,10 +11,10 @@ then
 	echo "* [3] Install Onlyoffice."
 	docker-compose --no-ansi up --detach nextcloud
 
-	"$FLAP_DIR/nextcloud/scripts/wait_ready.sh"
+	flapctl hooks wait_ready nextcloud
 
-	php occ app:install documentserver_community || true
-	php occ app:install onlyoffice || true
+	docker exec --user www-data flap_nextcloud php occ app:install documentserver_community || true
+	docker exec --user www-data flap_nextcloud php occ app:install onlyoffice || true
 
 	docker-compose --no-ansi down
 fi
