@@ -8,20 +8,47 @@ PROTOCOL=$(echo "${3:-TCP}" | tr '[:lower:]' '[:upper:]')
 DESCRIPTION="Port forwarding for the FLAP box."
 
 case $CMD in
+	setup)
+		# Exit now if feature is disabled.
+		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
+		then
+			echo "* [setup:FEATURE_FLAG] Skip opening port."
+			exit 0
+		fi
+
+		echo '* [ports] Openning ports.'
+
+		ip=$(flapctl ip internal)
+		echo "Internal IP is: $ip"
+
+		open_ports=$(flapctl ports list)
+
+		# Open ports.
+		for port in $NEEDED_PORTS
+		do
+			protocol=$(echo "$port" | cut -d '/' -f2 | tr '[:lower:]' '[:upper:]')
+			port=$(echo "$port" | cut -d '/' -f1)
+
+			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port"
+			then
+				echo "Port $port/$protocol is already open."
+				continue
+			fi
+
+			flapctl ports open "$port" "$protocol" "$ip"
+		done
+		;;
 	open)
 		echo "Openning port $PORT/$PROTOCOL"
 
 		IP=${4:-$(flapctl ip internal)}
 
 		# Delete port forwarding if any.
-		flapctl ports close "$PORT" > /dev/null || true
+		flapctl ports close "$PORT" > /dev/null
 
 		{
 			# Create port mapping.
 			upnpc -e "$DESCRIPTION" -a "$IP" "$PORT" "$PORT" "$PROTOCOL" > /dev/null &&
-
-			# Check that port mapping exists
-			flapctl ports list | grep "$IP:$PORT" > /dev/null &&
 
 			echo "* [ports] Port mapping created ($PORT)."
 		} || { # Catch error
@@ -30,14 +57,11 @@ case $CMD in
 		}
 		;;
 	close)
-		echo "CLosing port $PORT/$PROTOCOL"
-
-		# Delete port mapping.
-		upnpc -d "$PORT" "$PROTOCOL" > /dev/null || true
+		echo "Closing port $PORT/$PROTOCOL"
 
 		{
-			# Check that port mapping do not exist
-			(flapctl ports list) | grep -v ":$PORT" > /dev/null &&
+			# Delete port mapping.
+			upnpc -d "$PORT" "$PROTOCOL" > /dev/null &&
 			echo "* [ports] Port mapping deleted ($PORT)."
 		} || { # Catch error
 			echo "* [ports] Failed to delete port mapping ($PORT)."

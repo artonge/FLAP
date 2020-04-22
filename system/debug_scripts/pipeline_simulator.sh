@@ -47,7 +47,7 @@ docker run \
 
 # Specify the image we cant to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
-CI_COMMIT_REF_SLUG=version-1-4-0
+CI_COMMIT_REF_SLUG=version-1-6-0
 CI_COMMIT_SHA=latest
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
@@ -62,14 +62,6 @@ docker pull $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 docker run \
 	--name flap \
 	--detach \
-	--env FLAG_NO_CLEAN_DOCKER=true \
-	--env FLAG_NO_RAID_SETUP=true \
-	--env FLAG_NO_NAT_NETWORK_SETUP=true \
-	--env FLAG_NO_TLS_GENERATION=true \
-	--env FLAG_INSECURE_SAML_FETCH=true \
-	--env FLAG_USE_FIXED_IP=true \
-	--env FLAG_GENERATE_DOCKER_COMPOSE_CI=true \
-	--env FLAG_NO_FIREWALL_SETUP=true \
 	--env LOG_DRIVER=json-file \
 	--network host \
 	--add-host="flap.local:$FLAP_IP" \
@@ -97,11 +89,10 @@ docker exec flap flapctl clean data -y
 docker exec flap rm -rf /flap_dir/*
 docker exec flap cp -rT /opt/flap /flap_dir
 # To use your local files run the following command from your host machine.
-# Watchout, this will override the env vars with you flapctl.env file.
 # sudo rsync -a $FLAP_DIR/* /flap_dir
 
-mkdir -p "/flap_data/system/data"
-echo "0.0.0.0" > "/flap_data/system/data/fixed_ip.txt"
+# Copy pipeline init_config file.
+cp /flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml /flap_dir/flap_init_config.yml
 
 docker exec flap flapctl start
 

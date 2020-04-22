@@ -4,12 +4,6 @@ set -eu
 
 CMD=${1:-}
 
-# Disable ufw to allow upnp to work.
-if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
-then
-	ufw --force disable > /dev/null
-fi
-
 case $CMD in
 	internal)
 		upnpc -l | grep "Local LAN" | cut -d ' '  -f6
@@ -25,6 +19,18 @@ case $CMD in
 	dns)
 		host -t A "$2" | cut -d ' '  -f4
 		;;
+	setup)
+		if [ "${FLAG_USE_FIXED_IP:-}" != "true" ]
+		then
+			echo "* [setup:FEATURE_FLAG] Skip fixed IP setup."
+			exit 0
+		fi
+
+		echo "* [setup] Setting static IP"
+		mkdir --parents "$FLAP_DATA/system/data"
+		curl -4 https://icanhazip.com 2>/dev/null > "$FLAP_DATA/system/data/fixed_ip.txt"
+		echo "Static IP is $(cat "$FLAP_DATA/system/data/fixed_ip.txt")"
+		;;
 	summarize)
 		echo "ip | [internal, external, help] | Get ip address."
 		;;
@@ -37,8 +43,3 @@ Commands:
 	dns | <domain_name> | Ask the ip for a given domain name." | column -t -s "|"
 		;;
 esac
-
-if [ "${FLAG_NO_FIREWALL_SETUP:-}" != "true" ]
-then
-	ufw --force enable > /dev/null
-fi

@@ -8,25 +8,21 @@ case $CMD in
 	"")
 		echo '* [start] Running setup operations.'
 
-		if [ -f /var/lib/flap/images ]
+		# Run some setup operations if necessary.
+		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
-			echo "* [start] Load docker images."
-
-			for image in /var/lib/flap/images/*
-			do
-				docker load "$image"
-			done
-
-			rm -rf /var/lib/flap/images
+			flapctl setup flapenv
+			flapctl setup hostname
+			flapctl setup docker_images
+			flapctl disks setup
+			# Run 'setup flapenv' twice because 'disk setup' could have destroy it.
+			flapctl setup flapenv
+			flapctl ip setup
 		fi
 
-		# Run some setup operations if necessary.
-		flapctl setup hosting
-		flapctl setup raid
-		flapctl setup hostname
 		flapctl setup fs
 
-		# Generate config
+		# Generate config.
 		flapctl config generate
 
 		# Run init and install hooks.
@@ -48,7 +44,7 @@ case $CMD in
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
 			# Run other setup operations.
-			flapctl setup ports
+			flapctl ports setup
 			flapctl setup firewall
 			flapctl setup cron
 

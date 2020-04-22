@@ -26,20 +26,10 @@ Commands:
         if [ "$SERVICE" == "all" ]
         then
             echo '* [update] Running migrations for all services.'
-            for service in "$FLAP_DIR"/*/
+            for service in $FLAP_SERVICES
             do
-                if [ ! -d "$service" ]
-                then
-                    continue
-                fi
-
-                if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
-                then
-                    continue
-                fi
-
                 {
-                    flapctl update migrate "$(basename "$service")"
+                    flapctl update migrate "$service"
                 } || {
                     echo "* [update] ERROR - Fail to run migrations for $service."
                     EXIT_CODE=1
@@ -99,8 +89,8 @@ Commands:
             git submodule update --init &&
 
             # Update docker-compose.yml to pull new images.
-            flapctl config generate_compose &&
             flapctl config generate_templates &&
+            flapctl hooks generate_config system &&
             echo '* [update] Pulling new docker images.' &&
             docker-compose --no-ansi pull
         } || {

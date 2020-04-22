@@ -51,8 +51,6 @@ function should_run {
 	fi
 
 	case $hook in
-		generate_config)
-		;;
 		pre_install|post_install|init_db)
 			if [ -f "$FLAP_DATA/$service/installed.txt" ]
 			then
@@ -67,10 +65,6 @@ function post_run {
 	local service=$2
 
 	case $hook in
-		post_install)
-			echo "* [hooks] Marking $service as installed."
-			touch "$FLAP_DATA/$service/installed.txt"
-		;;
 	esac
 }
 
@@ -91,6 +85,12 @@ function post_run_all {
 			docker-compose --no-ansi down
 		;;
 		post_install)
+			for service in $FLAP_SERVICES
+			do
+				echo "* [hooks] Marking $service as installed."
+				touch "$FLAP_DATA/$service/installed.txt"
+			done
+
 			# If a primary domain name is set,
 			# we need to run post_domain_update hooks for freshly installed services.
 			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
@@ -163,19 +163,20 @@ case $cmd in
 		exit "$exit_code"
 	;;
 	summarize)
-		echo "hooks | [post_install, pre_update, post_update, wait_ready, post_domain_update, health_check, clean] [<service-name>, ...] | Run hooks."
+		echo "hooks | [init_db, pre_install, post_install, generate_config, wait_ready, post_update, post_domain_update, health_check, clean] [<service-name> ...] | Run hooks."
 	;;
 	help|*)
 		echo "
 $(hooks summarize)
 Commands:
-	init_db | [<service-name>, ...] | Run the init_db hook for all or some services.
-	pre_install | [<service-name>, ...] | Run the pre_install hook for all or some services.
-	post_install | [<service-name>, ...] | Run the post_install hook for all or some services.
-	generate_config | [<service-name>, ...] | Run the generate_config hook for all or some services.
-	post_update | [<service-name>, ...] | Run the post_update hook for all or some services.
-	post_domain_update | [<service-name>, ...] | Run the post_domain_update hook for all or some services.
-	health_check | [<service-name>, ...] | Run the health_check hook for all or some services.
-	clean | [<service-name>, ...] | Run the clean hook for all or some services." | column -t -s "|"
+	init_db | [<service-name> ...] | Run the init_db hook for all or some services.
+	pre_install | [<service-name> ...] | Run the pre_install hook for all or some services.
+	post_install | [<service-name> ...] | Run the post_install hook for all or some services.
+	generate_config | [<service-name> ...] | Run the generate_config hook for all or some services.
+	wait_ready | [<service-name> ...] | Wait for the service to be up and ready.
+	post_update | [<service-name> ...] | Run the post_update hook for all or some services.
+	post_domain_update | [<service-name> ...] | Run the post_domain_update hook for all or some services.
+	health_check | [<service-name> ...] | Run the health_check hook for all or some services.
+	clean | [<service-name> ...] | Run the clean hook for all or some services." | column -t -s "|"
 	;;
 esac
