@@ -6,25 +6,67 @@ CMD=${1:-}
 
 case $CMD in
 	setup)
-		if [ "${FLAG_NO_RAID_SETUP:-}" == "true" ]
+		flapctl disks single
+		flapctl disks raid1
+		;;
+	single)
+		if [ "${FLAG_DISK_MODE_SINGLE:-}" != "true" ]
+		then
+			echo "* [setup:FEATURE_FLAG] Skip single disk setup."
+			exit 0
+		fi
+
+		if findmnt "$FLAP_DATA"
+		then
+			echo "* [disk] Single disk already mounted, exiting."
+			exit 0
+		fi
+
+		mkdir --parents "$FLAP_DATA/system/data"
+
+		echo '* [disk] Checking disk status.'
+
+		disk=$(yq --raw-output .disks[0] "$FLAP_DIR/flap_init_config.yml")
+		disk=${disk:-"/dev/sda"}
+
+		mount "$disk" "$FLAP_DATA"
+		if [ -f "$FLAP_DATA/system/data/installation_done.txt" ]
+		then
+			echo '* [setup] Disk is a FLAP install, exiting.'
+			exit 0
+		else
+			echo '* [setup] Disk is not a FLAP install.'
+			umount "$FLAP_DATA"
+		fi
+
+		echo '* [setup] Seting up disk for FLAP.'
+		mkfs -t ext4 "$disk"
+		mount "$disk" "$FLAP_DATA"
+		mkdir --parents "$FLAP_DATA/system/data"
+		echo "$disk" > "$FLAP_DATA/system/data/disk.txt"
+
+		# Make the disk mount on boot.
+		echo "$disk $FLAP_DATA ext4 defaults,nofail,discard 0 0" | tee -a /etc/fstab
+		;;
+	raid1)
+		if [ "${FLAG_DISK_MODE_RAID1:-}" != "true" ]
 		then
 			echo "* [disks:FEATURE_FLAG] Skip RAID array creation."
 			exit 0
 		fi
 
-		# Don't build the array if it is already created.
 		if [ -e /dev/md0 ]
 		then
-			echo "* [disks] RAID array is allready created."
+			echo "* [disks] RAID array is already created."
 			exit 0
 		fi
 
 		# Get the disks filenames from the usb ports.
-		# TODO: need better disk name guessing
-		# shellcheck disable=SC1001
-		disk1="$(ls /sys/bus/usb/drivers/usb/4-1.1/4-1.1\:1.0/host0/target0\:0\:0/0\:0\:0\:0/block)"
-		# shellcheck disable=SC1001
-		disk2="$(ls /sys/bus/usb/drivers/usb/4-1.2/4-1.2\:1.0/host1/target1\:0\:0/1\:0\:0\:0/block)"
+		disk_path1=$(yq --raw-output .disks_path[0] "$FLAP_DIR/flap_init_config.yml")
+		disk1=$(ls "$disk_path1")
+
+		disk_path2=$(yq --raw-output .disks_path[1] "$FLAP_DIR/flap_init_config.yml")
+		disk2=$(ls "$disk_path2")
 
 		echo "* [disks] Creating RAID array with $disk1 and $disk2."
 
@@ -79,7 +121,7 @@ case $CMD in
 		echo "
 $(flapctl disks summarize)
 Commands:
-	setup | | Setup RAID 1 array.
+	setup | | Setup disks.
 	check | | Check that the RAID array is OK." | column -t -s "|"
 		;;
 esac

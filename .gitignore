@@ -6,4 +6,6 @@
 
 flapctl.env
 
+flap_init_config.yml
+
 .vscode

@@ -104,6 +104,7 @@ echo "INSTALLING FLAP"
 # Install dependencies
 # git: fetch updates
 # gettext: envsubst
+# bsdmainutils: for the column cmd
 # certbot: generate TLS certificates
 # cron: periodic tasks
 # miniupnpc: open ports
@@ -119,8 +120,9 @@ echo "INSTALLING FLAP"
 apt install -y \
     git \
     gettext \
+    bsdmainutils \
     certbot \
-	cron \
+    cron \
     miniupnpc \
     avahi-daemon \
     mdadm \

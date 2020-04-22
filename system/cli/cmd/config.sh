@@ -7,90 +7,44 @@ CMD=${1:-}
 case $CMD in
 	generate)
 		flapctl config generate_templates
-		flapctl config generate_compose
-		flapctl config generate_lemon
 		flapctl config generate_nginx
-		flapctl config generate_mails
 		flapctl hooks generate_config
 		;;
-	generate_mails)
-		echo '* [config] Generate authorized smtp senders map.'
+	generate_compose)
+		flapctl hooks generate_config system
+		;;
+	generate_nginx)
+		echo "Create Nginx directory structure."
+		mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains"
 
-		echo "" > "$FLAP_DIR/mail/config/smtpd_sender"
-
+		echo "Reset domains' includes files."
 		if [ "$PRIMARY_DOMAIN_NAME" == "" ]
 		then
-			exit 0
+			echo "" > "$FLAP_DIR/nginx/config/conf.d/domains.conf"
+		else
+			echo "include /etc/nginx/parts.d/tls.inc;" > "$FLAP_DIR/nginx/config/conf.d/domains.conf"
 		fi
 
-		mapfile -t users < <(flapctl users list)
-		for username in "${users[@]}"
+		echo "Clean old domains config files."
+		rm -rf "$FLAP_DIR"/nginx/config/conf.d/domains/*
+
+		echo 'Generate Nginx configurations files for each domains.'
+		# shellcheck disable=SC2153
+		for domain in $DOMAIN_NAMES
 		do
-			# shellcheck disable=SC2153
-			for domain in $DOMAIN_NAMES
+			echo "- $domain"
+			echo "include /etc/nginx/conf.d/domains/$domain/*.conf;" >> "$FLAP_DIR/nginx/config/conf.d/domains.conf"
+			mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains/$domain"
+
+			for service in $FLAP_SERVICES
 			do
-				echo "- $username@$domain"
-				echo "$username@$domain $username@$PRIMARY_DOMAIN_NAME" >> "$FLAP_DIR/mail/config/smtpd_sender"
+				if [ -f "$FLAP_DIR/$service/nginx.conf" ]
+				then
+					echo "  + $service"
+					export DOMAIN_NAME=$domain
+					envsubst "$FLAP_ENV_VARS \${DOMAIN_NAME}" < "$FLAP_DIR/$service/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
+				fi
 			done
-		done
-		;;
-	generate_compose)
-		echo '* [config] Generate docker-compose.yml.'
-		cat "$FLAP_DIR/system/docker-compose.yml" > "$FLAP_DIR/docker-compose.yml"
-
-		rm -f "$FLAP_DIR/docker-compose.override.yml"
-
-		if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ] || [ "${FLAG_GENERATE_DOCKER_COMPOSE_CI:-}" == "true" ]
-		then
-			cat "$FLAP_DIR/system/docker-compose.override.yml" > "$FLAP_DIR/docker-compose.override.yml"
-		fi
-
-		for service in "$FLAP_DIR"/*/
-		do
-			if [ ! -d "$service" ]
-			then
-				continue
-			fi
-
-			if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
-			then
-				continue
-			fi
-
-			# Check if docker-compose.yml exists for the service.
-			if [ -f "$service/docker-compose.yml" ]
-			then
-				echo - "$(basename "$service")"
-
-				# Merge service's compose file into the main compose file.
-				"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
-					"$FLAP_DIR/docker-compose.yml" \
-					"$service/docker-compose.yml"
-			fi
-
-			# Check if docker-compose.override.yml exists for the service.
-			if [ -f "$service/docker-compose.override.yml" ]
-			then
-				if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ]
-				then
-					# Merge service's compose file into the main compose file.
-					"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
-						"$FLAP_DIR/docker-compose.override.yml" \
-						"$service/docker-compose.override.yml"
-				fi
-			fi
-
-			# Check if docker-compose.local.yml exists for the service.
-			if [ -f "$service/docker-compose.ci.yml" ]
-			then
-				if [ "${FLAG_GENERATE_DOCKER_COMPOSE_CI:-}" == "true" ]
-				then
-					# Merge service's compose file into the main compose file.
-					"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
-						"$FLAP_DIR/docker-compose.override.yml" \
-						"$service/docker-compose.ci.yml"
-				fi
-			fi
 		done
 		;;
 	generate_templates)
@@ -115,113 +69,15 @@ case $CMD in
 			envsubst "$FLAP_ENV_VARS" < "$dir/$name.template.$ext" > "$dir/$name.$ext"
 		done
 		;;
-	generate_lemon)
-		echo '* [config] Generate lemonLDAP configuration file.'
-
-		# Alter lemonLDAP config using jq.
-
-		echo "* [config] Set SAML keys."
-		config=$(cat "$FLAP_DIR/lemon/config/lmConf-1.json")
-		echo "$config" | \
-			jq --arg privateKey "$(cat "$FLAP_DATA/lemon/saml/private_key.pem")" '.samlServicePrivateKeySig=$privateKey' | \
-			jq --arg publicKey  "$(cat "$FLAP_DATA/lemon/saml/cert.pem")" '.samlServicePublicKeySig=$publicKey' \
-		> "$FLAP_DIR/lemon/config/lmConf-1.json"
-
-		echo "* [config] Add vhosts and SAML metadata to the lemonLDAP config."
-		for service in "$FLAP_DIR"/*/
-		do
-			if [ ! -d "$service" ]
-			then
-				continue
-			fi
-
-			if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
-			then
-				continue
-			fi
-
-			service=$(basename "$service")
-
-			for domain in $DOMAIN_NAMES
-			do
-				# Check if lemon config exists for the service.
-				if [ -f "$FLAP_DIR/$service/config/lemon.jq" ]
-				then
-					echo "- $service: $domain"
-					vhostType='CDA'
-					[ -f "$FLAP_DATA/$service/saml/metadata_$domain.xml" ] && metadata=$(cat "$FLAP_DATA/$service/saml/metadata_$domain.xml")
-					config=$(cat "$FLAP_DIR/lemon/config/lmConf-1.json")
-					# Add a vhost for each domains.
-					jq \
-						--null-input \
-						--arg domain "$domain" \
-						--arg vhostType "$vhostType" \
-						--arg samlMetadata "${metadata:-}" \
-						--from-file "$FLAP_DIR/$service/config/lemon.jq" | \
-					jq \
-						--slurp \
-						--argjson config \
-						"$config" '.[0] * $config' \
-					> "$FLAP_DIR/lemon/config/lmConf-1.json"
-				fi
-			done
-		done
-		;;
-	generate_nginx)
-		echo '* [config] Generate Nginx configurations files for each domains'
-
-		# Create directory architecture
-		mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains"
-
-		# Reset domains includes files.
-		if [ "$PRIMARY_DOMAIN_NAME" == "" ]
-		then
-			echo "" > "$FLAP_DIR/nginx/config/conf.d/domains.conf"
-		else
-			echo "include /etc/nginx/parts.d/tls.inc;" > "$FLAP_DIR/nginx/config/conf.d/domains.conf"
-		fi
-
-		# Clean old domains service config files
-		rm -rf "$FLAP_DIR"/nginx/config/conf.d/domains/*
-
-		# Generate conf for each domains
-		for domain in $DOMAIN_NAMES
-		do
-			echo "- $domain"
-			echo "include /etc/nginx/conf.d/domains/$domain/*.conf;" >> "$FLAP_DIR/nginx/config/conf.d/domains.conf"
-			mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains/$domain" # Create domain's conf directory
-
-			for service_path in "$FLAP_DIR"/*/ # Generate conf for each services
-			do
-				if [ ! -d "$service_path" ]
-				then
-					continue
-				fi
-
-				if [ -f "$service_path/scripts/hooks/should_install.sh" ] && ! "$service_path/scripts/hooks/should_install.sh"
-				then
-					continue
-				fi
-
-				if [ -f "$service_path/nginx.conf" ]
-				then
-					service=$(basename "$service_path") # Get the service name
-					echo "  + $service"
-					export DOMAIN_NAME=$domain
-					envsubst "$FLAP_ENV_VARS \${DOMAIN_NAME}" < "$service_path/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
-				fi
-			done
-		done
-		;;
 	show)
 		vars_string=""
 
 		for var in $FLAP_ENV_VARS
 		do
-			vars_string+="${var//[\$\{\}]/}	$(eval "echo $var")"$'\n'
+			vars_string+="${var//[\$\{\}]/} | $(eval "echo $var")"$'\n'
 		done
 
-		echo "$vars_string" | column -t
+		echo "$vars_string" | column -t -s '|'
 		;;
 	summarize)
 		echo "config | [generate, show, help] | Generate the configuration for each services."
@@ -231,6 +87,7 @@ case $CMD in
 $(flapctl config summarize)
 Commands:
 	generate | | Generate the services config files from the current config variables.
+	generate_templates | | Render templates.
 	show | | Show the current config variables." | column -t -s "|"
 		;;
 esac
