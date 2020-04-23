@@ -3,6 +3,9 @@ services:
     jitsi:
         image: jitsi/web:4384-1
         container_name: flap_jitsi
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
         volumes:
             - ${FLAP_DATA}/jitsi/jitsi:/config
         env_file: [$FLAP_DIR/jitsi/jitsi.env]
@@ -15,6 +18,9 @@ services:
     prosody:
         image: jitsi/prosody:4384-1
         container_name: flap_prosody
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
         expose: ["5222", "5347", "5280"]
         volumes:
             - ${FLAP_DATA}/jitsi/prosody:/config
@@ -28,6 +34,9 @@ services:
     jicofo:
         image: jitsi/jicofo:4384-1
         container_name: flap_jicofo
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
         volumes:
             - ${FLAP_DATA}/jitsi/jicofo:/config
         env_file: [$FLAP_DIR/jitsi/jitsi.env]
@@ -39,6 +48,9 @@ services:
     jvb:
         image: jitsi/jvb:4384-1
         container_name: flap_jvb
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
         ports:
             - "10000:10000/udp"
             - "4443:4443"
