@@ -2,16 +2,9 @@
 
 set -eu
 
-echo "* [3] Move nextcloud_db_password file."
-mkdir --parents "$FLAP_DATA/nextcloud/passwd"
-if [ -f "$FLAP_DATA/system/data/nextcloudDbPwd.txt" ]
-then
-	mv "$FLAP_DATA/system/data/nextcloudDbPwd.txt" "$FLAP_DATA/nextcloud/passwd/nextcloud_db_pwd.txt"
-fi
-
 if [ "$ARCH" == "x86_64" ]
 then
-	echo "* [3] Install Onlyoffice."
+	echo "* [5] Install Onlyoffice."
 	docker-compose --no-ansi up --detach nextcloud
 
 	flapctl hooks wait_ready nextcloud
