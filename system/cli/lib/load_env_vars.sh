@@ -37,7 +37,7 @@ FLAP_ENV_VARS="\${ARCH} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_D
 
 # Load the admin email.
 # If admin_email.txt does not exist, try to load it from flap_init_config.yml.
-if [ ! -f "$FLAP_DATA/system/admin_email.txt" ]
+if [ ! -f "$FLAP_DATA/system/admin_email.txt" ] && [ -f "$FLAP_DIR/flap_init_config.yml" ]
 then
 	admin_mail=$(yq --raw-output '.admin_mail' "$FLAP_DIR/flap_init_config.yml")
 	if [ "$admin_mail" != "" ]
