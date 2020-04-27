@@ -36,6 +36,7 @@ case $CMD in
 		cd "$FLAP_DIR"
 
 		echo '* [start] Starting services.'
+		export COMPOSE_HTTP_TIMEOUT=120
 		docker-compose --no-ansi up --detach
 
 		# Run post install hooks.
@@ -52,7 +53,7 @@ case $CMD in
 			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
 
-		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl tls primary)" == "" ]
+		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl domains primary)" == "" ]
 		then
 			# Generate certificates for flap.test.
 			flapctl tls generate_localhost

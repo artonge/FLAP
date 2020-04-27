@@ -21,6 +21,7 @@ case $CMD in
 		do
 			# shellcheck disable=SC2016
 			key=$(yq --raw-output --arg var "$var" '.env_vars[$var]' "$FLAP_DIR/flap_init_config.yml")
+			echo "$var=$key"
 			echo "export $var=$key" >> "$FLAP_DATA/system/flapctl.env"
 		done
 		;;

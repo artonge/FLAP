@@ -39,11 +39,6 @@ system_test:
             \
                 --name flap \
             \
-                --env FLAG_NO_CLEAN_DOCKER=true \
-                --env FLAG_NO_NAT_NETWORK_SETUP=true \
-                --env FLAG_NO_TLS_GENERATION=true \
-                --env FLAG_NO_FIREWALL_SETUP=true \
-            \
                 --env LOG_DRIVER=json-file \
             \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
@@ -57,6 +52,9 @@ system_test:
                 $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 /bin/sh -c "while true; do sleep 1000; done"
 
+        # Use env vars set in flap_init_config.pipeline.yml.
+        - cp $CI_PROJECT_DIR/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_PROJECT_DIR/flap_init_config.yml
+
         - docker exec flap flapctl start
         - docker exec flap flapctl test setup tls
 
@@ -67,7 +65,7 @@ system_test:
     image: docker:stable
     services:
         - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
     script:
         # Get DinD's ip.
         - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
@@ -83,15 +81,6 @@ system_test:
             \
                 --name flap_old \
             \
-                --env FLAG_NO_CLEAN_DOCKER=true \
-                --env FLAG_NO_NAT_NETWORK_SETUP=true \
-                --env FLAG_NO_TLS_GENERATION=true \
-                --env FLAG_NO_NETWORK_SETUP=true \
-                --env FLAG_USE_FIXED_IP=true \
-                --env FLAG_NO_DNS_RECORD_UPDATE=true \
-                --env FLAG_GENERATE_DOCKER_COMPOSE_CI=true \
-                --env FLAG_NO_FIREWALL_SETUP=true \
-            \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
                 --add-host="flap.test:$FLAP_IP" \
@@ -101,6 +90,7 @@ system_test:
                 --add-host="matrix.flap.test:$FLAP_IP" \
                 --add-host="chat.flap.test:$FLAP_IP" \
                 --add-host="jitsi.flap.test:$FLAP_IP" \
+                --add-host="weblate.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -116,14 +106,14 @@ system_test:
                 $CI_REGISTRY_IMAGE:$(eval $LATEST_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
-        - mkdir -p $CI_BUILD_DIR/flap_data/system/data
-        - echo "0.0.0.0" > $CI_BUILD_DIR/flap_data/system/data/fixed_ip.txt
-
         # Copy the code to the real folder.
         - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
 
         # Update the flapctl link so it maps to the new location.
         - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
+
+        # Use env vars set in flap_init_config.pipeline.yml.
+        - cp $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_BUILDS_DIR/flap_dir/flap_init_config.yml
 
         # Start the instance.
         - docker exec flap_old flapctl start
@@ -153,7 +143,7 @@ e2e:
     only: [branches]
     services:
         - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
     stage: test
     variables:
         SCREEN_WIDTH: "1920"
@@ -184,6 +174,7 @@ e2e:
                 --add-host="matrix.flap.test:$FLAP_IP" \
                 --add-host="chat.flap.test:$FLAP_IP" \
                 --add-host="jitsi.flap.test:$FLAP_IP" \
+                --add-host="weblate.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -199,6 +190,7 @@ e2e:
                 $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
                 /bin/sh -c "while true; do sleep 1000; done"
 
+        # Use env vars set in flap_init_config.pipeline.yml.
         - cp $CI_PROJECT_DIR/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_PROJECT_DIR/flap_init_config.yml
 
         - docker exec flap flapctl start

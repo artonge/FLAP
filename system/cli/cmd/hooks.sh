@@ -73,6 +73,29 @@ function post_run_all {
 	local services=("$@")
 	local services=("${services[@]:1}")
 
+	# Mark all enabled services as installed.
+	if [ "$hook" == "post_install" ]
+	then
+		installed_services=()
+		for service in $FLAP_SERVICES
+		do
+			if [ -f "$FLAP_DATA/$service/installed.txt" ]
+			then
+				continue
+			fi
+			echo "* [hooks] Marking $service as installed."
+			touch "$FLAP_DATA/$service/installed.txt"
+			installed_services+=("$service")
+		done
+
+		# If a primary domain name is set,
+		# we need to run post_domain_update hooks for freshly installed services.
+		if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
+		then
+			flapctl hooks post_domain_update "${installed_services[@]}"
+		fi
+	fi
+
 	# Only run post_run_all if a hook has been run.
 	if [ $pre_run_has_run == "false" ]
 	then
@@ -83,20 +106,6 @@ function post_run_all {
 		init_db)
 			echo "* [hooks] Shutting PostgreSQL down for init_db hook."
 			docker-compose --no-ansi down
-		;;
-		post_install)
-			for service in $FLAP_SERVICES
-			do
-				echo "* [hooks] Marking $service as installed."
-				touch "$FLAP_DATA/$service/installed.txt"
-			done
-
-			# If a primary domain name is set,
-			# we need to run post_domain_update hooks for freshly installed services.
-			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
-			then
-				flapctl hooks post_domain_update "${services[@]}"
-			fi
 		;;
 		post_domain_update)
 			echo "* [hooks] Restarting services after post_domain_update hook."
@@ -115,20 +124,12 @@ case $cmd in
 		# Go to FLAP_DIR to allow docker-compose cmds.
 		cd "$FLAP_DIR"
 
-		# Get services list.
-		mapfile -t services < <(ls --directory "$FLAP_DIR"/*/)
+		# Get services list from args.
+		services_list=${*:2}
+		# Default services list to FLAP_SERVICES.
+		services_list=${services_list:-$FLAP_SERVICES}
 
-		#                 1         2     ...
-		# flapctl hooks <hook> [<service> ...]
-		# More than 1 arg mean a list of services.
-		if [ "$#" != "1" ]
-		then
-			services=("$@")
-			services=("${services[@]:1}")
-		fi
-
-		# Run the hook for each service.
-		for service in "${services[@]}"
+		for service in $services_list
 		do
 			service=$(basename "$service")
 
@@ -138,7 +139,7 @@ case $cmd in
 			fi
 
 			# Run pre_run_all here so we do not run it if no hooks need to be run.
-			pre_run_all "$hook" "${services[@]}"
+			pre_run_all "$hook" "$services_list"
 
 			echo "* [hooks] Running $hook hook for $service."
 			"$FLAP_DIR/$service/scripts/hooks/$hook.sh"
@@ -163,11 +164,11 @@ case $cmd in
 		exit "$exit_code"
 	;;
 	summarize)
-		echo "hooks | [init_db, pre_install, post_install, generate_config, wait_ready, post_update, post_domain_update, health_check, clean] [<service-name> ...] | Run hooks."
+		echo "hooks | [init_db, pre_install, post_install, ...] [<service-name> ...] | Run hooks for the specified services, default to all services.."
 	;;
 	help|*)
 		echo "
-$(hooks summarize)
+$(flapctl hooks summarize)
 Commands:
 	init_db | [<service-name> ...] | Run the init_db hook for all or some services.
 	pre_install | [<service-name> ...] | Run the pre_install hook for all or some services.

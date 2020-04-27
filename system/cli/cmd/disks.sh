@@ -96,8 +96,8 @@ case $CMD in
 		# -o Enable automatic online data collection.
 		# -s Automatic Attribute autosave.
 		# -S (../..) Start a short self-test every day between 2-3am, and a long self test Saturdays between 3-4am.
-		echo "/dev/$disk1 -d sat -m louis@chmn.me -a -o on -S on -s (S/../.././02|L/../../6/03)" > /etc/smartd.conf
-		echo "/dev/$disk2 -d sat -m louis@chmn.me -a -o on -S on -s (S/../.././02|L/../../6/03)" >> /etc/smartd.conf
+		echo "/dev/$disk1 -d sat -m $ADMIN_EMAIL -a -o on -S on -s (S/../.././02|L/../../6/03)" > /etc/smartd.conf
+		echo "/dev/$disk2 -d sat -m $ADMIN_EMAIL -a -o on -S on -s (S/../.././02|L/../../6/03)" >> /etc/smartd.conf
 
 		# Activate mdadm monitoring:
 		# mdadm --monitor --daemonise --test --scan

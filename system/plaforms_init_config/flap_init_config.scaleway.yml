@@ -5,3 +5,5 @@ env_vars:
 
 disks:
     - /dev/sda
+
+admin_email: louis@chmn.me

@@ -1,0 +1,4 @@
+services:
+    weblate:
+        environment:
+            WEBLATE_DEBUG: 1

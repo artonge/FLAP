@@ -11,45 +11,17 @@ EXIT_CODE=0
 
 case $CMD in
     summarize)
-        echo "update | [<branch_name>, migrate [service_name], help] | Handle update logique for FLAP."
+        echo "update | [<branch_name>, help] | Handle update logique for FLAP."
         ;;
     help)
         echo "
 $(flapctl update summarize)
 Commands:
-    update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch.
-    migrate | [service_name] | Run migrations for all or only the specified service." | column -t -s "|"
+    update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch." | column -t -s "|"
         ;;
     migrate)
-        SERVICE=${2:-all}
-
-        if [ "$SERVICE" == "all" ]
-        then
-            echo '* [update] Running migrations for all services.'
-            for service in $FLAP_SERVICES
-            do
-                {
-                    flapctl update migrate "$service"
-                } || {
-                    echo "* [update] ERROR - Fail to run migrations for $service."
-                    EXIT_CODE=1
-                }
-            done
-        else
-            # Get the base migration for the service.
-            # The current migration is the last migration that was run.
-            CURRENT_MIGRATION=$(cat "$FLAP_DATA/$SERVICE/current_migration.txt")
-
-            # Run migration scripts as long as there is some to run.
-            while [ -f "$FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh" ]
-            do
-                echo "* [update] Migrating $SERVICE from $CURRENT_MIGRATION to $((CURRENT_MIGRATION+1))"
-                "$FLAP_DIR/$SERVICE/scripts/migrations/$((CURRENT_MIGRATION+1)).sh"
-                CURRENT_MIGRATION=$((CURRENT_MIGRATION+1))
-                echo $CURRENT_MIGRATION > "$FLAP_DATA/$SERVICE/current_migration.txt"
-            done
-        fi
-        ;;
+        flapctl migrate "${@:1}"
+    ;;
     ""|*)
         # Go to FLAP_DIR for git cmds.
         cd "$FLAP_DIR"
@@ -120,8 +92,8 @@ Commands:
         {
             # We need to update the system first because the other services migrations
             # might need the results of the system migration.
-            flapctl update migrate system &&
-            flapctl update migrate
+            flapctl migrate system &&
+            flapctl migrate
         } || {
             echo '* [update] ERROR - Fail to run migrations.'
             EXIT_CODE=1

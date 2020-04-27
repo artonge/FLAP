@@ -20,3 +20,7 @@ services:
             stores-net:
             apps-net:
                 aliases: [nextcloud]
+
+x-nginx-extra-volumes:
+    - ${FLAP_DATA}/nextcloud/html:/var/www/nextcloud:ro # [emmc] -> [nginx] Nextcloud static files.
+    - ${FLAP_DIR}/nextcloud/medias:/var/www/nextcloud_medias:ro # [emmc] -> [nginx] Other Nextcloud static files.
