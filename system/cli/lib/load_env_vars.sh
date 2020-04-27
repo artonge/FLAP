@@ -46,8 +46,10 @@ then
 		if [ "$admin_mail" != "" ]
 		then
 			echo "$admin_mail" > "$FLAP_DATA/system/admin_email.txt"
+			ADMIN_EMAIL=$admin_mail
 		fi
 	fi
+else
 	ADMIN_EMAIL=$(cat "$FLAP_DATA/system/admin_email.txt")
 fi
 
