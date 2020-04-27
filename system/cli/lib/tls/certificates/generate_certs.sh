@@ -33,5 +33,5 @@ certbot certonly \
     --expand \
     --force-renewal \
     --agree-tos \
-    --email louis@chmn.me \
+    --email "$ADMIN_EMAIL" \
     "${domains[@]}"

@@ -6,3 +6,5 @@ env_vars:
     FLAG_LOCALHOST_TLS_INSTALL: true
     FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE: true
     FLAG_NO_FIREWALL_SETUP: true
+
+admin_email: ""

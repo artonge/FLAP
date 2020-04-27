@@ -16,9 +16,6 @@ fi
 export ARCH
 ARCH=$(uname -m)
 
-export FLAP_SERVICES
-FLAP_SERVICES=""
-
 export PRIMARY_DOMAIN_NAME
 PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 
@@ -37,6 +34,24 @@ NEEDED_PORTS=""
 export FLAP_ENV_VARS
 FLAP_ENV_VARS="\${ARCH} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS}"
 
+
+# Load the admin email.
+# If admin_email.txt does not exist, try to load it from flap_init_config.yml.
+if [ ! -f "$FLAP_DATA/system/admin_email.txt" ]
+then
+	admin_mail=$(yq --raw-output '.admin_mail' "$FLAP_DIR/flap_init_config.yml")
+	if [ "$admin_mail" != "" ]
+	then
+		echo "$admin_mail" > "$FLAP_DATA/system/admin_email.txt"
+	fi
+fi
+
+export ADMIN_EMAIL
+ADMIN_EMAIL=$(cat "$FLAP_DATA/system/admin_email.txt")
+
+
+export FLAP_SERVICES
+FLAP_SERVICES=""
 
 # Ppopulate FLAP_SERVICES with activated services.
 for service in "$FLAP_DIR"/*/

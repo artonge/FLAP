@@ -75,3 +75,6 @@ services:
 
 networks:
     apps-net:
+
+x-nginx-extra-volumes:
+    - ${FLAP_DIR}/jitsi/medias:/var/www/jitsi_medias:ro # [emmc] -> [nginx] Jitsi static files.

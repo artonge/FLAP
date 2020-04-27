@@ -13,7 +13,7 @@ docker-compose exec -T mail cp /tmp/docker-mailserver/vhost.tmp /tmp/vhost.tmp
 docker-compose exec -T mail generate-dkim-config
 
 # Update DNS records.
-flapctl tls update_dns_records
+flapctl domains update_dns_records
 
 # Generate smtpd sender list.
 flapctl hooks generate_config mail

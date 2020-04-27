@@ -75,7 +75,7 @@ Unattended-Upgrade::Allowed-Origins {
         "${distro_id}:${distro_codename}-security";
         "${distro_id}:${distro_codename}-updates";
 };
-Unattended-Upgrade::Mail "louis@chmn.me";
+Unattended-Upgrade::Mail "root";
 Unattended-Upgrade::MinimalSteps "true";
 Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
 Unattended-Upgrade::Remove-Unused-Dependencies "true";

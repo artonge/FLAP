@@ -42,12 +42,13 @@ docker run \
 	--add-host="chat.flap.test:$FLAP_IP" \
 	--add-host="coturn.flap.test:$FLAP_IP" \
 	--add-host="jitsi.flap.test:$FLAP_IP" \
+	--add-host="weblate.flap.test:$FLAP_IP" \
 	docker:stable \
 	sh
 
 # Specify the image we cant to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
-CI_COMMIT_REF_SLUG=version-1-6-0
+CI_COMMIT_REF_SLUG=version-1-7-0
 CI_COMMIT_SHA=latest
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
@@ -73,6 +74,7 @@ docker run \
 	--add-host="chat.flap.test:$FLAP_IP" \
 	--add-host="coturn.flap.test:$FLAP_IP" \
 	--add-host="jitsi.flap.test:$FLAP_IP" \
+	--add-host="weblate.flap.test:$FLAP_IP" \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \

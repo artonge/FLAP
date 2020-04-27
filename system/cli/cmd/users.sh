@@ -35,7 +35,7 @@ case $CMD in
 			exit "$exit_code"
 		fi
 
-		echo "* [users] First user 'admin' was created."
+		echo "* [users] First user 'theadmin'/'password' was created."
 		;;
 	list)
 		cd "$FLAP_DIR"
@@ -59,7 +59,7 @@ case $CMD in
 		echo "${users//[$'\r']}"
 		;;
 	summarize)
-		echo "users | | Manage users."
+		echo "users | [list, create_admin] | Manage users."
 		;;
 	help|*)
 		echo "

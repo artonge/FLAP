@@ -6,3 +6,6 @@ env_vars:
     FLAG_NO_DNS_RECORD_UPDATE: true
     FLAG_GENERATE_DOCKER_COMPOSE_CI: true
     FLAG_NO_FIREWALL_SETUP: true
+    ENABLE_WEBLATE: true
+
+admin_email: ""

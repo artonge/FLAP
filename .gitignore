@@ -3,6 +3,7 @@
 /docker-compose.dev.yml
 /docker-compose.override.yml
 /docker-compose.override.yml.tmp
+/docker-compose.nginx-extra-volumes.yml
 
 flapctl.env
 

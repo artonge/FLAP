@@ -5,21 +5,6 @@ services:
         restart: always
         logging:
             driver: ${LOG_DRIVER:-journald}
-        volumes:
-            # Nginx configurations.
-            - ${FLAP_DIR}/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro # [emmc] -> [nginx] NGINX main conf file
-            - ${FLAP_DIR}/nginx/config/conf.d:/etc/nginx/conf.d:ro # [emmc] -> [nginx] NGINX services conf files
-            - ${FLAP_DIR}/nginx/config/parts.d:/etc/nginx/parts.d:ro # [emmc] -> [nginx] NGINX parts conf files
-            # TLS Certificates.
-            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [nginx] SSL certificates
-            # Static files from apps
-            - ${FLAP_DIR}/core/src/front/public/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.
-            - ${FLAP_DATA}/nextcloud/html:/var/www/nextcloud:ro # [emmc] -> [nginx] Nextcloud static files.
-            - ${FLAP_DIR}/nextcloud/medias:/var/www/nextcloud_medias:ro # [emmc] -> [nginx] Other Nextcloud static files.
-            - ${FLAP_DIR}/jitsi/medias:/var/www/jitsi_medias:ro # [emmc] -> [nginx] Jitsi static files.
-            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.
-            - lemonStaticFiles:/var/www/lemon:ro # [lemon] -> [nginx] Lemon static files.
-            - ${FLAP_DIR}/lemon/skin/flapskin:/var/www/lemon_flapskin:ro # [emmc] -> [nginx] Custom scripts and syles for flapskin.
         ports: ["80:80", "443:443", "8448:8448"]
         networks:
             apps-net:
@@ -27,3 +12,11 @@ services:
                     # Allow access to nginx from the others services.
                     # Here, synapse can fetch the lemon's SAML metadata.
                     - auth.$PRIMARY_DOMAIN_NAME
+
+x-nginx-extra-volumes:
+    # Nginx configurations.
+    - ${FLAP_DIR}/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro # [emmc] -> [nginx] NGINX main conf file
+    - ${FLAP_DIR}/nginx/config/conf.d:/etc/nginx/conf.d:ro # [emmc] -> [nginx] NGINX services conf files
+    - ${FLAP_DIR}/nginx/config/parts.d:/etc/nginx/parts.d:ro # [emmc] -> [nginx] NGINX parts conf files
+    # TLS Certificates.
+    - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [nginx] SSL certificates
