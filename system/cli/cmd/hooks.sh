@@ -92,6 +92,9 @@ function post_run_all {
 		# we need to run post_domain_update hooks for freshly installed services.
 		if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
 		then
+			flapctl stop
+			flapctl tls generate
+			flapctl start
 			flapctl hooks post_domain_update "${installed_services[@]}"
 		fi
 	fi

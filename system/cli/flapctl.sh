@@ -35,7 +35,7 @@ then
 
 	# --line-buffered allow grep line by line output instead of grep using a larger buffer.
 	# --color=always allow for the color not to be overrided.
-	"$FLAP_DIR/system/cli/cmd/$CMD.sh" "${ARGS[@]}" &> /dev/stdout | \
+	"$FLAP_DIR/system/cli/cmd/$CMD.sh" "${ARGS[@]}" 2> /dev/stdout | \
 		sed --unbuffered -E "s/\[([a-z:]+)\]/\[$CMD:\1\]/" | \
 		grep --line-buffered --color=always -E "^\* \[.+\].*|$" | \
 		cat

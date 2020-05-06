@@ -1,7 +1,6 @@
 env_vars:
     FLAG_DISK_MODE_SINGLE: true
     FLAG_NO_NAT_NETWORK_SETUP: true
-    FLAG_USE_FIXED_IP: true
 
 disks:
     - /dev/sdb

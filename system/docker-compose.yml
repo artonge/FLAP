@@ -1,4 +1,6 @@
-version: "3.7"
+# Version 2.x is more approriate for our use case.
+# See: https://github.com/docker/compose/issues/4513#issuecomment-377311337
+version: "2.4"
 
 services:
     memcached:

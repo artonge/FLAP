@@ -11,6 +11,7 @@ case $CMD in
 		flapctl hooks generate_config
 		;;
 	generate_nginx)
+		echo "* [config] Generating Nginx config files."
 		echo "Create Nginx directory structure."
 		mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains"
 

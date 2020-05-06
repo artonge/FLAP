@@ -9,3 +9,6 @@
 # Every minutes
 * * * * *    flapctl domains handle_request &> /var/log/flap/tls.log
 * * * * *    flapctl domains update_dns_records &> /var/log/flap/tls.log
+
+# Every 30 minutes.
+**/30 * * * *    flapctl users sync_mail_aliases

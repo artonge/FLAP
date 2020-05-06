@@ -15,5 +15,5 @@ docker-compose exec -T mail generate-dkim-config
 # Update DNS records.
 flapctl domains update_dns_records
 
-# Generate smtpd sender list.
-flapctl hooks generate_config mail
+flapctl users sync_mail_aliases
+flapctl exec mail generate_smtp_senders_map

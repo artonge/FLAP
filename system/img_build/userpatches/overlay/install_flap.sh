@@ -56,15 +56,6 @@ export SODIUM_INSTALL=system
 pip3 install docker-compose
 
 ################################################################################
-echo "CREATING ALIASES"
-echo "alias dc='docker-compose'" > /root/.bash_aliases
-echo "alias dprune='docker container prune -f && docker volume prune -f && docker network prune -f && docker image prune -f'" >> /root/.bash_aliases
-set +u # Prevent undefined variables to crash bashrc execution
-# shellcheck disable=SC1091
-source /root/.bashrc
-set -u
-
-################################################################################
 echo "ENABLING AUTO UPDATE"
 apt install -y unattended-upgrades
 
@@ -94,42 +85,43 @@ APT::Periodic::Unattended-Upgrade "1";
 echo "SETTING UP ENV VARS"
 echo "FLAP_DIR=/opt/flap" > /etc/environment
 echo "FLAP_DATA=/flap" >> /etc/environment
-echo "COMPOSE_HTTP_TIMEOUT=120" >> /etc/environment
 # shellcheck disable=SC1091
 source /etc/environment
 ln -sf "$FLAP_DIR/system/cli/flapctl.sh" /bin/flapctl
 
 ################################################################################
-echo "INSTALLING FLAP"
+echo "INSTALLING FLAP DEPENDENCIES"
 # Install dependencies
-# git: fetch updates
-# gettext: envsubst
+# avahi-daemon: set the mDNS name
 # bsdmainutils: for the column cmd
 # certbot: generate TLS certificates
 # cron: periodic tasks
-# miniupnpc: open ports
-# avahi-daemon: set the mDNS name
-# mdadm: setup RAID
+# gettext: envsubst
+# git: fetch updates
 # iproute2: use the ip cmd
 # jq: manipulate json text files
-# psmisc: better cli output with pstree
+# libssl-dev: to install docker-compose
+# mdadm: setup RAID
+# miniupnpc: open ports
 # msmtp msmtp-mta: to send mail with sendmail
+# psmisc: better cli output with pstree
 # ssh: to allow remote connection
 # ufw: firewall
 # wget: for clean http requests in flapctl
 apt install -y \
+	avahi-daemon \
+	bsdmainutils \
+	certbot \
+	cron \
+	gettext \
     git \
-    gettext \
-    bsdmainutils \
-    certbot \
-    cron \
-    miniupnpc \
-    avahi-daemon \
+	iproute2 \
+	jq \
+	libssl-dev \
     mdadm \
-    iproute2 \
-    jq \
+	miniupnpc \
+	msmtp msmtp-mta \
     psmisc \
-    msmtp msmtp-mta \
     ssh \
     ufw \
     wget
@@ -142,6 +134,7 @@ apt remove -y postfix dovecot
 apt purge -y postfix dovecot
 apt autoremove -y
 
+echo "ADDING LETSENCRYPT HOOKS"
 # Setting certbot hooks.
 mkdir -p /etc/letsencrypt/renewal-hooks/pre
 mkdir -p /etc/letsencrypt/renewal-hooks/post
@@ -150,9 +143,11 @@ echo "flapctl start" > /etc/letsencrypt/renewal-hooks/post/start_flap.sh
 chmod +x /etc/letsencrypt/renewal-hooks/pre/stop_flap.sh
 chmod +x /etc/letsencrypt/renewal-hooks/post/start_flap.sh
 
+echo "DISABLING PASSWORD AUTH FOR SSH"
 # Customize sshd config.
 sed -i 's/#\?PasswordAuthentication .*/PasswordAuthentication no/g' /etc/ssh/sshd_config
 
+echo "FETCHING FLAP REPOSITORY"
 # Fetch git repository
 git clone --recursive https://gitlab.com/flap-box/flap.git "$FLAP_DIR"
 
@@ -165,7 +160,7 @@ then
     git submodule update --init
 fi
 
-# Install flap systemd service.
+echo "INSTALLING FLAP'S SYSTEMD SERVICE"
 cp "$FLAP_DIR/system/flap.service" /etc/systemd/system
 if [ "$(command -v systemctl || true)" != "" ]
 then

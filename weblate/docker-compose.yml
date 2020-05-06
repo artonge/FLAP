@@ -1,13 +1,16 @@
 services:
     weblate:
-        image: weblate/weblate:4.0.1-1
+        image: weblate/weblate:4.0.2-1
         container_name: flap_weblate
         env_file: [$FLAP_DIR/weblate/weblate.env]
         restart: always
         logging:
             driver: ${LOG_DRIVER:-journald}
+        depends_on: [postgres, redis]
         volumes:
             - ${FLAP_DATA}/weblate/data:/app/data # [hd] <-> [weblate] Data
+        environment:
+            WEBLATE_DEBUG: 0
         networks:
             stores-net:
             apps-net:

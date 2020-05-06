@@ -37,6 +37,24 @@ case $CMD in
 
 		echo "* [users] First user 'theadmin'/'password' was created."
 		;;
+	sync_mail_aliases)
+		wget \
+			--method GET \
+			--header "Host: flap.local" \
+			--quiet \
+			--output-document=- \
+			--content-on-error \
+			http://localhost/api/crons/update-mail-aliases | cat
+
+		# Catch error code
+		exit_code=${PIPESTATUS[0]}
+
+		if [ "$exit_code" != "0" ]
+		then
+			echo ""
+			exit "$exit_code"
+		fi
+		;;
 	list)
 		cd "$FLAP_DIR"
 
@@ -57,6 +75,29 @@ case $CMD in
 
 		# Remove \r char.
 		echo "${users//[$'\r']}"
+		;;
+	list_mail_aliases)
+		uid=$2
+
+		cd "$FLAP_DIR"
+
+		docker-compose ps --filter State=up | grep -E "^flap_ldap " | cat &> /dev/null
+		was_up=${PIPESTATUS[1]}
+
+		aliases=$(
+			docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null | \
+			grep '^mailAlias:' | \
+			cut -d ' ' -f2 2> /dev/null
+		)
+
+		if [ "$was_up" != "0" ]
+		then
+			# Remove networks.
+			flapctl hooks clean system &> /dev/null
+		fi
+
+		# Remove \r char.
+		echo "${aliases//[$'\r']}"
 		;;
 	summarize)
 		echo "users | [list, create_admin] | Manage users."
