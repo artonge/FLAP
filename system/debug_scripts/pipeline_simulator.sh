@@ -48,7 +48,7 @@ docker run \
 
 # Specify the image we cant to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
-CI_COMMIT_REF_SLUG=version-1-7-0
+CI_COMMIT_REF_SLUG=version-1-7-1
 CI_COMMIT_SHA=latest
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
@@ -95,6 +95,8 @@ docker exec flap cp -rT /opt/flap /flap_dir
 
 # Copy pipeline init_config file.
 cp /flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml /flap_dir/flap_init_config.yml
+
+docker exec flap ln -sf "/flap_dir/system/cli/flapctl.sh" /bin/flapctl
 
 docker exec flap flapctl start
 

@@ -1,2 +1,6 @@
 # 3h00 - Learn what is SPAM in every Junk folders.
 0 3 * * *     docker exec --tty --user root flap_mail sa-learn --spam /var/mail/*/.Junk --dbpath /var/mail-state/lib-amavis/.spamassassin > /dev/null
+
+# Every 30 minutes.
+# For new users.
+*/30 * * * *     flapctl exec mail generate_smtp_senders_map > /dev/null

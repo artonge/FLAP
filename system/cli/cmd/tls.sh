@@ -77,6 +77,7 @@ keyUsage=critical,keyCertSign,cRLSign" > $cert_path/root_ca.conf
 		then
 			# Creating root CA.
 			openssl req \
+				-days 3650 \
 				-nodes \
 				-x509 \
 				-new \
@@ -112,6 +113,7 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 
 		# Generating TLS certificate.
 		openssl req \
+			-days 3650 \
 			-nodes \
 			-new \
 			-keyout $cert_path/server.key \

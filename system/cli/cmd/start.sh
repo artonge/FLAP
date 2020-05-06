@@ -17,7 +17,6 @@ case $CMD in
 			flapctl disks setup
 			# Run 'setup flapenv' twice because 'disk setup' could have destroy it.
 			flapctl setup flapenv
-			flapctl ip setup
 		fi
 
 		flapctl setup fs
@@ -38,6 +37,9 @@ case $CMD in
 		echo '* [start] Starting services.'
 		export COMPOSE_HTTP_TIMEOUT=120
 		docker-compose --no-ansi up --detach
+
+		# Wait dor services to be up.
+		flapctl hooks wait_ready
 
 		# Run post install hooks.
 		flapctl hooks post_install

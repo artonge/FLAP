@@ -2,8 +2,6 @@
 
 set -eu
 
-flapctl hooks wait_ready nextcloud
-
 # Concider running the following commands to repaire potential nextcloud issues.
 # php occ maintenance:mode --on
 # php occ db:add-missing-indices

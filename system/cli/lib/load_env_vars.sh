@@ -2,7 +2,6 @@
 
 set -ue
 
-
 # Load feature flags.
 if [ -f "$FLAP_DATA/system/flapctl.env" ]
 then
@@ -54,26 +53,6 @@ else
 fi
 
 
-export FLAP_SERVICES
-FLAP_SERVICES=""
-
-# Ppopulate FLAP_SERVICES with activated services.
-for service in "$FLAP_DIR"/*/
-do
-	if [ ! -d "$service" ]
-	then
-		continue
-	fi
-
-	if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
-	then
-		continue
-	fi
-
-	FLAP_SERVICES="$FLAP_SERVICES $(basename "$service")"
-done
-
-
 # Load services environement variables.
 # This will populate FLAP_ENV_VARS, SUBDOMAINES and NEEDED_PORTS.
 # HACK: We do not use FLAP_SERVICES because some services can need some other services env var even if it is disabled.
@@ -88,4 +67,24 @@ do
 
 	# shellcheck source=jitsi/scripts/hooks/load_env.sh
 	source "$service/scripts/hooks/load_env.sh"
+done
+
+
+export FLAP_SERVICES
+FLAP_SERVICES=""
+
+# Ppopulate FLAP_SERVICES with activated services.
+for service in "$FLAP_DIR"/*
+do
+	if [ ! -d "$service" ]
+	then
+		continue
+	fi
+
+	if [ -f "$service/scripts/hooks/should_install.sh" ] && ! "$service/scripts/hooks/should_install.sh"
+	then
+		continue
+	fi
+
+	FLAP_SERVICES="$FLAP_SERVICES $(basename "$service")"
 done

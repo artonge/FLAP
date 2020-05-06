@@ -9,27 +9,19 @@ case $CMD in
 		upnpc -l | grep "Local LAN" | cut -d ' '  -f6
 		;;
 	external)
-		if [ "${FLAG_USE_FIXED_IP:-}" == "true" ]
+		# Attempt to get the external IP with upnpc if we are behind a NAT.
+		ip=$(upnpc -l 2> /dev/stdout | grep "ExternalIPAddress" | cut -d ' '  -f3)
+
+		# Default to icanhazip.com.
+		if [ "$ip" == "" ]
 		then
-			cat "$FLAP_DATA/system/data/fixed_ip.txt"
-		else
-			upnpc -l | grep "ExternalIPAddress" | cut -d ' '  -f3
+			ip=$(curl -4 https://icanhazip.com 2> /dev/null)
 		fi
+
+		echo "$ip"
 		;;
 	dns)
 		host -t A "$2" | cut -d ' '  -f4
-		;;
-	setup)
-		if [ "${FLAG_USE_FIXED_IP:-}" != "true" ]
-		then
-			echo "* [setup:FEATURE_FLAG] Skip fixed IP setup."
-			exit 0
-		fi
-
-		echo "* [setup] Setting static IP"
-		mkdir --parents "$FLAP_DATA/system/data"
-		curl -4 https://icanhazip.com 2>/dev/null > "$FLAP_DATA/system/data/fixed_ip.txt"
-		echo "Static IP is $(cat "$FLAP_DATA/system/data/fixed_ip.txt")"
 		;;
 	summarize)
 		echo "ip | [internal, external, help] | Get ip address."

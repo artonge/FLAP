@@ -4,23 +4,6 @@ set -eu
 
 CMD=${1:-}
 
-function run_migrations {
-	local service=$1
-	# Get the base migration for the service.
-	# The current migration is the last migration that was run.
-	local current_migration
-	current_migration=$(cat "$FLAP_DATA/$service/current_migration.txt")
-
-	# Run migration scripts as long as there is some to run.
-	while [ -f "$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh" ]
-	do
-		echo "* [migrate] Migrating $service from $current_migration to $((current_migration+1))"
-		"$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh"
-		current_migration=$((current_migration+1))
-		echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
-	done
-}
-
 case $CMD in
 	summarize)
 		echo "migrate | [<service_name> ...], help | Run services migrations."
@@ -30,6 +13,27 @@ case $CMD in
 $(flapctl migrate summarize)
 Commands:
 	migrate | [<service_name> ...] | Run migrations for the specified services, default to all services." | column -t -s "|"
+	;;
+	status)
+		echo "* [migrate] Listing migrations to run."
+
+		for service in $FLAP_SERVICES
+		do
+			current_migration=$(cat "$FLAP_DATA/$service/current_migration.txt")
+			needed_migrations=()
+
+			while [ -f "$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh" ]
+			do
+				needed_migrations+=($((current_migration+1)))
+				current_migration=$((current_migration+1))
+			done
+
+			if [ ${#needed_migrations[@]} != 0 ]
+			then
+				echo "$service: [${needed_migrations[*]}]"
+			fi
+
+		done
 	;;
 	""|*)
 		exit_code=0
@@ -46,12 +50,26 @@ Commands:
 		# Run the hook for each services.
 		for service in $services
 		do
-			{
-				run_migrations "$service"
-			} || {
-				echo "* [migrate] ERROR - Fail to run migrations for $service."
-				exit_code=1
-			}
+			# Get the base migration for the service.
+			# The current migration is the last migration that was run.
+			current_migration=$(cat "$FLAP_DATA/$service/current_migration.txt")
+
+			# Run migration scripts as long as there is some to run.
+			while [ -f "$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh" ]
+			do
+				echo "* [migrate] Migrating $service from $current_migration to $((current_migration+1))."
+
+				{
+					"$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh" &&
+					current_migration=$((current_migration+1)) &&
+					echo "* [migrate] Migration $current_migration done." &&
+					echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
+				} || {
+					echo "* [migrate] ERROR - Fail to run migrations for $service."
+					exit_code=1
+					break
+				}
+			done
 		done
 
 		exit $exit_code
