@@ -15,16 +15,14 @@ case $CMD in
 			flapctl setup hostname
 			flapctl setup docker_images
 			flapctl disks setup
-			# Run 'setup flapenv' twice because 'disk setup' could have destroy it.
-			flapctl setup flapenv
 		fi
 
 		flapctl setup fs
 
-		# Generate config.
+		flapctl migrate
+
 		flapctl config generate
 
-		# Run init and install hooks.
 		flapctl hooks init_db
 		flapctl hooks pre_install
 

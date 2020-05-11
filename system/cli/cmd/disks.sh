@@ -47,7 +47,9 @@ case $CMD in
 
 		# Make the disk mount on boot.
 		echo "$disk $FLAP_DATA ext4 defaults,nofail,discard 0 0" | tee -a /etc/fstab
-		;;
+
+		flapctl setup flapenv
+	;;
 	raid1)
 		if [ "${FLAG_DISK_MODE_RAID1:-}" != "true" ]
 		then
@@ -105,7 +107,9 @@ case $CMD in
 		# Mdadm monitoring is on by default. The warning are sent to the mail address specified in /etc/msmtp.aliases.
 		# You can test the reception of the mail with the following command:
 		# mdadm --monitor --scan --test -1
-		;;
+
+		flapctl setup flapenv
+	;;
 	check)
 		# mdadm --detail --test /dev/md0
 		# umount /dev/md0

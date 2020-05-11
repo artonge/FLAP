@@ -6,7 +6,9 @@ Welcome to the **FLAP** main repository. FLAP main objective is to ease self-hos
 
 ![Home page](https://gitlab.com/flap-box/core/raw/master/screenshots/home.png)
 
-FLAP is:
+---
+
+### FLAP is:
 
 -   A **framework for self-hosted services** administration.
 -   An opinionated **selection of self-hosted services**.

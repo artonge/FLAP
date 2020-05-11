@@ -1,6 +1,9 @@
 services:
     postgres:
-        image: postgres:11.2
+        # Do not upgrade lightly. See:
+        # Github issue for automatic upgrade in docker container: https://github.com/docker-library/postgres/issues/37
+        # pg_upgrade doc: https://www.postgresql.org/docs/9.4/pgupgrade.html
+        image: postgres:11.7
         container_name: flap_postgres
         env_file: [$FLAP_DIR/postgres/postgres.env]
         restart: always
