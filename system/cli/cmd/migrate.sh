@@ -36,8 +36,6 @@ Commands:
 		done
 	;;
 	""|*)
-		exit_code=0
-
 		# Go to FLAP_DIR to allow docker-compose cmds.
 		cd "$FLAP_DIR"
 
@@ -66,12 +64,9 @@ Commands:
 					echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
 				} || {
 					echo "* [migrate] ERROR - Fail to run migrations for $service."
-					exit_code=1
 					break
 				}
 			done
 		done
-
-		exit $exit_code
 	;;
 esac

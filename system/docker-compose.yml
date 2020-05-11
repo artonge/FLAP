@@ -3,8 +3,9 @@
 version: "2.4"
 
 services:
+    # Check release notes here: https://github.com/memcached/memcached/wiki/ReleaseNotes
     memcached:
-        image: memcached:1.5.12
+        image: memcached:1.6.5
         container_name: flap_memcached
         restart: always
         logging:

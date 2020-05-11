@@ -1,6 +1,7 @@
 services:
     redis:
-        image: redis:5.0
+        # Check release notes here: https://redis.io/download
+        image: redis:6.0
         container_name: flap_redis
         restart: always
         logging:

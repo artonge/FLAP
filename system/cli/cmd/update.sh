@@ -80,29 +80,9 @@ Commands:
 			exit 1
 		}
 
-		echo '* [update] Stoping containers.'
-		flapctl stop || true # "|| true" to prevent exiting the script on error.
-
-		# Setting up fs for new services.
-		flapctl setup fs
-
 		{
-			# We need to update the system first because the other services migrations
-			# might need the results of the system migration.
-			flapctl migrate system &&
-			flapctl migrate
-		} || {
-			echo '* [update] ERROR - Fail to run migrations.'
-			EXIT_CODE=1
-		}
-
-		{
-			flapctl hooks clean &&
-
-			echo '* [update] Starting containers.' &&
-			flapctl start &&
-
-			flapctl hooks wait_ready &&
+			echo '* [update] Restarting containers.' &&
+			flapctl restart &&
 
 			flapctl hooks post_update &&
 

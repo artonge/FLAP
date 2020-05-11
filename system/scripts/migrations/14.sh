@@ -11,4 +11,4 @@ echo "* [14] Update docker-compose."
 pip3 install -U docker-compose
 
 echo "* [14] Remove deprecated static IP file."
-rm "$FLAP_DATA/system/data/fixed_ip.txt"
+rm --force "$FLAP_DATA/system/data/fixed_ip.txt"

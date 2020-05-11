@@ -1,7 +1,7 @@
 services:
     # Frontend
     jitsi:
-        image: jitsi/web:4384-1
+        image: jitsi/web:stable-4548
         container_name: flap_jitsi
         restart: always
         logging:
@@ -16,7 +16,7 @@ services:
 
     # XMPP server
     prosody:
-        image: jitsi/prosody:4384-1
+        image: jitsi/prosody:stable-4548
         container_name: flap_prosody
         restart: always
         logging:
@@ -32,7 +32,7 @@ services:
 
     # Focus component
     jicofo:
-        image: jitsi/jicofo:4384-1
+        image: jitsi/jicofo:stable-4548
         container_name: flap_jicofo
         restart: always
         logging:
@@ -46,7 +46,7 @@ services:
 
     # Video bridge
     jvb:
-        image: jitsi/jvb:4384-1
+        image: jitsi/jvb:stable-4548
         container_name: flap_jvb
         restart: always
         logging:

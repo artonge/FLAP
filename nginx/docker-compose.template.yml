@@ -1,6 +1,7 @@
 services:
     nginx:
-        image: nginx:1.17.1
+        # Release notes: https://nginx.org/en/download.html
+        image: nginx:1.18.0
         container_name: flap_nginx
         restart: always
         logging:
@@ -12,6 +13,7 @@ services:
                     # Allow access to nginx from the others services.
                     # Here, synapse can fetch the lemon's SAML metadata.
                     - auth.$PRIMARY_DOMAIN_NAME
+                    - reload.$PRIMARY_DOMAIN_NAME
 
 x-nginx-extra-volumes:
     # Nginx configurations.

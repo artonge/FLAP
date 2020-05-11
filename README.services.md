@@ -323,18 +323,6 @@ set -eu
 # Generate the synapse config.
 echo "Generating Synapse's homserver.yaml configuration file."
 docker-compose run -T --rm --no-deps synapse generate
-
-"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
-	"$FLAP_DATA/matrix/synapse/data/homeserver.yaml" \
-	"$FLAP_DIR/matrix/config/synapse.yaml"
-
-if [ "${FLAG_SYNAPSE_ALLOW_REGISTRATIONS:-}" == "true" ]
-then
-	echo "Enable registrations for Synapse."
-	"$FLAP_DIR/system/cli/lib/merge_yaml.sh" \
-		"$FLAP_DATA/matrix/synapse/data/homeserver.yaml" \
-		"$FLAP_DIR/matrix/config/synapse.allow_registrations.yaml"
-fi
 ```
 
 #### wait_ready
