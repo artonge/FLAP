@@ -2,7 +2,11 @@
 
 ---
 
-Welcome to the **FLAP** main repository. FLAP main objective is to ease self-hosted services administration to allow more people to manage their numeric data.
+Welcome to the **FLAP** main repository. FLAP main goal is to ease self-hosted services administration to allow more people to manage their numeric data.
+
+If you need help setting up services, take a look at [our commercial plans](https://www.flap.cloud).
+
+Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://riot.im/app/#/room/#flap-software:matrix.org).
 
 ![Home page](https://gitlab.com/flap-box/core/raw/master/screenshots/home.png)
 
