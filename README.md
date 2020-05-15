@@ -4,7 +4,7 @@
 
 Welcome to the **FLAP** main repository. FLAP main goal is to ease self-hosted services administration to allow more people to manage their numeric data.
 
-If you need help setting up services, take a look at [our commercial plans](https://www.flap.cloud).
+If you need help setting up services, take a look at [our commercial offers](https://www.flap.cloud).
 
 Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://riot.im/app/#/room/#flap-software:matrix.org).
 
@@ -18,49 +18,13 @@ Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://r
 -   An opinionated **selection of self-hosted services**.
 -   A **nice web GUI** to access the services and manage users and domain names.
 
-Once installed, most of the heavy lifting is done through the `flapctl` [CLI tool](https://gitlab.com/flap-box/flap/-/tree/master/system/cli).
+Once installed, most of the heavy lifting is done by the [`flapctl` CLI tool](https://gitlab.com/flap-box/flap/-/tree/master/system/cli).
 
 ## Framework features
 
-[More information here](https://gitlab.com/flap-box/flap/-/blob/master/README.services.md)
+[Features & Roadmap](https://gitlab.com/flap-box/flap/-/blob/master/FEATURES.md)
 
-You can define:
-
--   **Hooks** called during FLAP life-cycle
-    -   database initialization
-    -   pre/post installation
-    -   load service's specific environment global variables
-    -   configuration generation before starting services
-    -   wait ready after starting services
-    -   post FLAP update
-    -   post domain update
--   **Configuration file** with **templates** for:
-    -   the service
-    -   docker-compose
-    -   nginx
-    -   lemonLDAP (SSO)
--   **Migrations** which are run after a FLAP update when services are down.
--   **Dockerfile** to automatically build custom docker images in Gitlab pipelines
--   **Cron** tasks
-
-## Available services
-
-Each service is contained in it own directory.
-
--   **User visible applications:**
-    -   FLAP user and admin web GUI
-    -   Nextcloud
-    -   SOGo
-    -   Synapse/Riot
-    -   Jitsi
--   **Backend services:**
-    -   Nginx
-    -   LemonLDAP
-    -   OpenLDAP
-    -   PostgreSQL
-    -   Redis
-    -   Memcached
-    -   Mail (Dovecot, Postfix, Postgrey, Postscreen, Amavis, SmapAssassin, OpenDKIM, OpenDMARC)
+[Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/README.services.md)
 
 ## Administration
 

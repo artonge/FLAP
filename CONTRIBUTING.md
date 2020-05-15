@@ -3,9 +3,14 @@
 ---
 
 You can take a look at the tasks board [here](https://gitlab.com/groups/flap-box/-/boards).
+
+You can also take a look at [feature & roadmap](https://gitlab.com/flap-box/flap/-/blob/master/FEATURES.md).
+
 You can also open an issue explaining the modification you would like to make and I will happily help you through the process.
 
 FLAP is a composition of docker services, `nginx`, `postgresql`, `sogo`, etc, orchestrated by docker-compose.
+
+Most of the heavy lifting is done by the [`flapctl` CLI tool](https://gitlab.com/flap-box/flap/-/tree/master/system/cli).
 
 ### Cloning
 
@@ -15,7 +20,8 @@ We need the `--recursive` flag so submodules are also cloned.
 
 ### Installing
 
-You can follow the `system/img_build/userpatches/overlay/install_flap.sh` script to know what needs to be installed.
+You can follow the [`install_flap.sh`](https://gitlab.com/flap-box/flap/-/blob/master/system/img_build/userpatches/overlay/install_flap.sh) script to know what needs to be installed.
+
 Or just follow the following paragraphs.
 
 ### Installing dependencies
@@ -88,9 +94,9 @@ Dependencies exist between services, which means, for example, that starting `so
 
 ### Enabling development settings
 
-Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. A default `docker-compose.override.yml` is generated with the `$FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE` feature flag. You can tweak the services' own `docker-compose.override.yml` if you need to.
+Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the default `docker-compose.yml`. A default `docker-compose.override.yml` is generated with the `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE` feature flag. You can tweak the services' own `docker-compose.override.yml` if you need to.
 
-`docker-compose.override.yml` will currently do stuff like:
+`docker-compose.override.yml` will currently do things like:
 
 -   Use local docker images.
 -   Expose all services to `localhost:some_port` so you can access them directly.
