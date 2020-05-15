@@ -46,7 +46,7 @@ docker run \
 	docker:stable \
 	sh
 
-# Specify the image we cant to debug.
+# Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
 CI_COMMIT_REF_SLUG=version-1-7-1
 CI_COMMIT_SHA=latest
