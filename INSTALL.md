@@ -76,51 +76,37 @@ admin_email: <your email>
 
 ### First account and domain name
 
+The domain name setup logic is still young so you will have to set your DNS records by yourself. Ideally FLAP will be able to configure DNS records for some domain name provider. You should, at minimum, have the following records:
+
+```
+@    IN    A       <ip>
+*    IN    A       <ip>
+```
+
+And for email to work:
+
+```
+@                              IN    MX     10    @
+@                              IN    TXT    "v=spf1 a aaaa mx -all"
+_dmarc                         IN    TXT    "v=DMARC1; p=none"
+mail._domainkey                IN    TXT    <dkim>
+```
+
 If you are on the same network than your server, you can go to http://flap.local.
 
 Else you will need to finish the setup in the terminal to setup your domain name and create the first user.
-
-The domain name setup logic is still young so you will have to set your DNS records by yourself. For now, choose `unknown` as provider. Ideally FLAP will be able to configure DNS records for some domain name provider.
 
 ```shell
 echo "Starting FLAP."
 flapctl start
 echo "FLAP is up."
 
-DOMAIN_NAME=
-USER_NAME=
-USER_EMAIL=
-
 echo "Setting up domain name."
-wget \
-    --method POST \
-    --header 'Host: flap.local' \
-    --header 'Content-Type: application/json' \
-    --body-data "{ \"name\": \"$DOMAIN_NAME\", \"provider\": \"unknown\" }" \
-    --quiet \
-    --output-document=- \
-    --content-on-error \
-    "http://localhost/api/domains"
-
-echo "Handling new domain request."
-flapctl domains handle_request
+flapctl domains add <you_domain_name>
 echo "Domain name is set."
 
 echo "Creating first user."
-wget \
-    --method POST \
-    --header "Host: flap.local" \
-    --header 'Content-Type: application/json' \
-    --body-data "{
-        \"fullname\": \"$USER_NAME\",
-        \"email\": \"$USER_EMAIL\",
-        \"admin\": true
-    }" \
-    --quiet \
-    --output-document=- \
-    --content-on-error \
-    "http://localhost/api/users"
-
+flapctl users create
 echo "First user is created."
 
 echo "Restarting FLAP."
