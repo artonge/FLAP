@@ -55,7 +55,7 @@ FLAP uses some special files for services integration.
 
 #### `nginx.conf`
 
-If the service needs exposure to thought Nginx you can add a `nginx.conf` file specifying the service nginx configuration.
+If the service needs exposure to through Nginx you can add a `nginx.conf` file specifying the service nginx configuration.
 
 For example, core:
 

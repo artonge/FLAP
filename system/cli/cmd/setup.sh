@@ -24,6 +24,9 @@ case $CMD in
 			echo "$var=$key"
 			echo "export $var=$key" >> "$FLAP_DATA/system/flapctl.env"
 		done
+
+		admin_email=$(yq --raw-output '.admin_email' "$FLAP_DIR/flap_init_config.yml")
+		echo "$admin_email" > "$FLAP_DATA/system/admin_email.txt"
 		;;
 	docker_images)
 		if [ ! -f /var/lib/flap/images ]

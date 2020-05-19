@@ -37,6 +37,52 @@ case $CMD in
 
 		echo "* [users] First user 'theadmin'/'password' was created."
 		;;
+	create)
+		echo "Username:"
+		read -r username
+		echo "Display Name:"
+		read -r displayname
+		echo "Email:"
+		read -r email
+
+		echo "Create admin user $username ($displayname, $email) ? [Y/N]:"
+		read -r answer
+
+		if [ "$answer" == "${answer#[Yy]}" ]
+		then
+			exit 0
+		fi
+
+		# HACK: wget output does not contain a new line, so the log is weird.
+		# We can not exec an 'echo ""' because when it fails the script return ealry.
+		# We add a `| cat` to prevent exiting early on error.
+		# Then we catch the error code with PIPESTATUS, exec `echo ""` and return the exit code.
+		wget \
+			--method POST \
+			--header "Content-Type: application/json" \
+			--header "Host: flap.local" \
+			--body-data "{
+					\"username\": \"$username\",
+					\"fullname\": \"$displayname\",
+					\"email\": \"$email\",
+					\"admin\": true
+				}" \
+			--quiet \
+			--output-document=- \
+			--content-on-error \
+			http://localhost/api/users | cat
+
+		# Catch error code
+		exit_code=${PIPESTATUS[0]}
+
+		if [ "$exit_code" != "0" ]
+		then
+			echo ""
+			exit "$exit_code"
+		fi
+
+		echo "* [users] The user '$username was created."
+		;;
 	sync_mail_aliases)
 		wget \
 			--method GET \

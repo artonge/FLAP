@@ -8,10 +8,10 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 
 **Priority mark:**
 
--   [<span style="color: red; font-size: 20px; line-height: 12px">•</span>] Will add in less than 6 months.
--   [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>] Will add in less than 1 year.
--   [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>] Will add one day.
--   [<span style="color: blue; font-size: 20px; line-height: 12px">•</span>] Won't add, but pull requests are welcome.
+-   [⚫ ⚫ ⚫] Will add in less than 6 months.
+-   [⚫ ⚫] Will add in less than 1 year.
+-   [⚫] Will add one day.
+-   [⚪] Won't add, but pull requests are welcome.
 
 ### **Services framework**
 
@@ -48,9 +48,9 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [x] HD management
     -   [x] single disk setup
     -   [x] RAID1 setup
-    -   [ ] More RAID setups [<span style="color: blue; font-size: 20px; line-height: 12px">•</span>]
--   [ ] Backup management [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
--   [ ] Monitoring tool [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
+    -   [ ] More RAID setups [⚪]
+-   [ ] Backup management [⚫ ⚫]
+-   [ ] Monitoring tool [⚫]
 
 ### **Applications**
 
@@ -61,12 +61,14 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [x] **Synapse/Riot**
     -   [x] Automatic room join for new users
 -   [x] **Jitsi**
-    -   [ ] Limit access to FLAP's users [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
--   [ ] **Weblate** [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
--   [ ] **Ghost** [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
--   [ ] **Mattermost** [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
--   [ ] **Peertube** [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
--   [ ] **Home Assistant** [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
+    -   [ ] Limit access to FLAP's users [⚫]
+-   [ ] **Ghost** [⚫]
+-   [ ] **Miniflux** [⚫]
+-   [ ] **Weblate** [⚫ ⚫]
+-   [ ] **Mattermost** [⚫ ⚫]
+-   [ ] **Peertube** [⚫ ⚫]
+-   [ ] **Discourse** [⚫ ⚫]
+-   [ ] **Home Assistant** [⚫]
 
 ### **Backend services**
 
@@ -77,13 +79,13 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] SSO
         -   [x] HTTP Headers
         -   [x] SAML
-        -   [ ] CAS [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] OpenID server [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] External authentication provider [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] Multiple factor authentication [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
+        -   [ ] CAS [⚫]
+    -   [ ] OpenID server [⚫]
+    -   [ ] External authentication provider [⚫]
+    -   [ ] Multiple factor authentication [⚫ ⚫]
 -   [x] **OpenLDAP**
 -   [x] **PostgreSQL**
--   [ ] **MySQL** [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
+-   [ ] **MySQL** [⚫]
 -   [x] **Redis**
 -   [x] **Memcached**
 -   [x] **Mail**
@@ -95,10 +97,10 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] SmapAssassin
     -   [x] OpenDKIM
     -   [x] OpenDMARC
-    -   [ ] ClamAV [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
--   [ ] **Wireguard** [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] To access services [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] Automatic connection [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
+    -   [ ] ClamAV [⚫ ⚫]
+-   [ ] **Wireguard** [⚫]
+    -   [ ] To access services [⚫]
+    -   [ ] Automatic connection [⚫]
 
 ### **Cross services features**
 
@@ -106,11 +108,11 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] Create, delete and list users in FLAP's GUI
     -   [x] Allow self registration in auth portal
     -   [ ] Allow user to set a profile picture
-    -   [ ] Bulk add in FLAP's GUI [<span style="color: red; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] Groups [<span style="color: red; font-size: 20px; line-height: 12px">•</span>]
-        -   [ ] Limit services access during SSO [<span style="color: red; font-size: 20px; line-height: 12px">•</span>]
-        -   [ ] Use default group for self registered users [<span style="color: red; font-size: 20px; line-height: 12px">•</span>]
-        -   [ ] Create mailing list [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
+    -   [ ] Bulk add in FLAP's GUI [⚫ ⚫ ⚫]
+    -   [ ] Groups [⚫ ⚫ ⚫]
+        -   [ ] Limit services access during SSO [⚫ ⚫ ⚫]
+        -   [ ] Use default group for self registered users [⚫ ⚫ ⚫]
+        -   [ ] Create mailing list [⚫ ⚫]
 -   [x] **Domains management**
 
     -   [x] Add, delete and update a domain in FLAP's GUI
@@ -118,18 +120,18 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] Automatic TLS setup with Letsencrypt
     -   [x] Automatic Nginx setup by domain
     -   [x] Self signed certificate setup
-        -   [ ] GUI to download the root CA [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
+        -   [ ] GUI to download the root CA [⚫]
     -   [x] DKIM generation
     -   [ ] Automatic DNS configuration
         -   [x] FLAP.id
-        -   [ ] NameCheap [<span style="color: blue; font-size: 20px; line-height: 12px">•</span>]
-        -   [ ] DuckDns [<span style="color: blue; font-size: 20px; line-height: 12px">•</span>]
+        -   [ ] NameCheap [⚪]
+        -   [ ] DuckDns [⚪]
 
 -   [x] **Services management**
     -   [x] Features flags
     -   [x] Documentation for how to use a service
-    -   [ ] GUI to enable/disable flags [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] Enable/Disable services [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] Disk usage per services [<span style="color: yellow; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] GUI to restart the services [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
-    -   [ ] GUI to restart the host [<span style="color: orange; font-size: 20px; line-height: 12px">•</span>]
+    -   [ ] GUI to enable/disable flags [⚫]
+    -   [ ] Enable/Disable services [⚫]
+    -   [ ] Disk usage per services [⚫]
+    -   [ ] GUI to restart the services [⚫ ⚫]
+    -   [ ] GUI to restart the host [⚫ ⚫]
