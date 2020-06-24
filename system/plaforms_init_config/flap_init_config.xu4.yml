@@ -2,6 +2,8 @@ env_vars:
     FLAG_DISK_MODE_RAID1: true
     FLAG_SYNAPSE_USE_EXTERNAL_JITSI_SERVER: true
     FLAG_JITSI_USE_EXTERNAL_TURN: true
+    RESTIC_REPOSITORY: /backup
+    RESTIC_PASSWORD: <you_password>
 
 disks_path:
     - /sys/bus/usb/drivers/usb/4-1.1/4-1.1\:1.0/host0/target0\:0\:0/0\:0\:0\:0/block

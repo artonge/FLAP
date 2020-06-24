@@ -3,7 +3,7 @@ services:
         # Check release notes here: https://redis.io/download
         image: redis:6.0
         container_name: flap_redis
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:

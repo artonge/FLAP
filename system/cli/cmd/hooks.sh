@@ -31,7 +31,7 @@ function pre_run_all {
 		init_db)
 			echo "* [hooks] Starting PostgreSQL for init_db hook."
 			docker-compose --no-ansi up --detach postgres
-			"$FLAP_DIR/postgres/scripts/wait_ready.sh"
+			flapctl hooks wait_ready postgres
 		;;
 	esac
 }
@@ -119,7 +119,7 @@ function post_run_all {
 
 
 case $cmd in
-	init_db|pre_install|post_install|generate_config|wait_ready|post_update|post_domain_update|health_check|clean)
+	init_db|pre_install|post_install|generate_config|wait_ready|post_update|post_domain_update|health_check|clean|pre_backup|post_restore)
 		hook=$cmd
 		exit_code=0
 		hooks_ran=()
@@ -181,6 +181,8 @@ Commands:
 	post_update | [<service-name> ...] | Run the post_update hook for all or some services.
 	post_domain_update | [<service-name> ...] | Run the post_domain_update hook for all or some services.
 	health_check | [<service-name> ...] | Run the health_check hook for all or some services.
+	pre_backup | [<service-name> ...] | Run the pre_backup hook for all or some services.
+	post_restore | [<service-name> ...] | Run the post_restore hook for all or some services.
 	clean | [<service-name> ...] | Run the clean hook for all or some services." | column -t -s "|"
 	;;
 esac

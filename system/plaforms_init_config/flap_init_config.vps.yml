@@ -1,6 +1,8 @@
 env_vars:
     FLAG_DISK_MODE_SINGLE: true
     FLAG_NO_NAT_NETWORK_SETUP: true
+    RESTIC_REPOSITORY: /backup
+    RESTIC_PASSWORD: <you_password>
 
 disks:
     - /dev/sda

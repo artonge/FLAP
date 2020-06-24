@@ -5,6 +5,12 @@ include:
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
+.flap_docker_setup:
+    image: docker:stable
+    services:
+        - name: docker:dind
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
+
 # Check shell scripts sanity.
 shellcheck:
     image: koalaman/shellcheck-alpine:latest
@@ -62,10 +68,7 @@ system_test:
 # Then run the update procedure the the targeted commit or tag.
 .update_test:
     stage: test
-    image: docker:stable
-    services:
-        - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
+    extends: .flap_docker_setup
     script:
         # Get DinD's ip.
         - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
@@ -138,17 +141,11 @@ test_update_to_tag:
         LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
 
 # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
-e2e:
-    image: docker:stable
+.setup_flap:
     only: [branches]
-    services:
-        - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
+    extends: .flap_docker_setup
     stage: test
-    variables:
-        SCREEN_WIDTH: "1920"
-        SCREEN_HEIGHT: "1080"
-    script:
+    before_script:
         # Get DinD's ip.
         - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
 
@@ -162,8 +159,6 @@ e2e:
                 --detach \
             \
                 --name flap \
-            \
-                --env COMPOSE_HTTP_TIMEOUT=120 \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -182,6 +177,7 @@ e2e:
             \
                 --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --volume $CI_BUILDS_DIR/flap_backup:$CI_BUILDS_DIR/flap_backup \
                 --volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
             \
                 --env FLAP_DIR=$CI_PROJECT_DIR \
@@ -199,6 +195,45 @@ e2e:
         - docker exec flap flapctl restart
         - docker exec flap flapctl hooks post_domain_update
 
+.test_backup:
+    extends: .setup_flap
+    script:
+        - mkdir /backup
+        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+        - >
+            docker exec \
+                --env BACKUP_TOOL=$BACKUP_TOOL \
+                --env $REPO_VAR=$CI_BUILDS_DIR/flap_backup \
+                --env $PASSPHRASE_VAR=password \
+                flap flapctl backup
+        - >
+            docker exec \
+                --env BACKUP_TOOL=$BACKUP_TOOL \
+                --env $REPO_VAR=$CI_BUILDS_DIR/flap_backup \
+                --env $PASSPHRASE_VAR=password \
+                flap flapctl backup restore
+
+# Disabled for now.
+# Error: Extended attributes are not supported on this filesystemtest_backup_borg:
+#     extends: .test_backup
+#     variables:
+#         BACKUP_TOOL: borg
+#         REPO_VAR: BORG_REPO
+#         PASSPHRASE_VAR: BORG_PASSPHRASE
+
+test_backup_restic:
+    extends: .test_backup
+    variables:
+        BACKUP_TOOL: restic
+        REPO_VAR: RESTIC_REPOSITORY
+        PASSPHRASE_VAR: RESTIC_PASSWORD
+
+e2e:
+    extends: .setup_flap
+    variables:
+        SCREEN_WIDTH: "1920"
+        SCREEN_HEIGHT: "1080"
+    script:
         # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
         - >
             apk add --no-cache \
@@ -210,8 +245,7 @@ e2e:
               ca-certificates \
               ttf-freefont
 
-        # Install nodejs and npm.
-        - apk add nodejs npm python make
+        - apk add nodejs npm python3 make
 
         # Don't download chromium during puppeteer installation.
         # shellcheck disable=SC2034

@@ -1,14 +1,17 @@
 @reboot      flapctl setup cron > /dev/null
 @reboot      flapctl ports setup > /dev/null
 
-@midnight    flapctl update &> /var/log/flap/update.log
+@midnight    flapctl update
 
 @hourly      flapctl healthcheck &> /var/log/flap/healthcheck.log
 @hourly      flapctl ports setup > /dev/null
 
-# Every minutes
+# Every minutes.
 * * * * *    flapctl domains handle_request &> /var/log/flap/tls.log
 * * * * *    flapctl domains update_dns_records &> /var/log/flap/tls.log
 
 # Every 30 minutes.
 **/30 * * * *    flapctl users sync_mail_aliases
+
+# Every day at 3 am and 15 pm.
+0 3,15 * * *    flapctl backup

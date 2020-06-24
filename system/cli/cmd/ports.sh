@@ -12,15 +12,10 @@ case $CMD in
 		# Exit now if feature is disabled.
 		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
 		then
-			echo "* [setup:FEATURE_FLAG] Skip opening port."
 			exit 0
 		fi
 
-		echo '* [ports] Openning ports.'
-
 		ip=$(flapctl ip internal)
-		echo "Internal IP is: $ip"
-
 		open_ports=$(flapctl ports list)
 
 		# Open ports.
@@ -29,9 +24,8 @@ case $CMD in
 			protocol=$(echo "$port" | cut -d '/' -f2 | tr '[:lower:]' '[:upper:]')
 			port=$(echo "$port" | cut -d '/' -f1)
 
-			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port"
+			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port" > /dev/null
 			then
-				echo "Port $port/$protocol is already open."
 				continue
 			fi
 
@@ -69,7 +63,7 @@ case $CMD in
 		}
 		;;
 	list)
-		upnpc -l | grep -E "^ [0-9]" | cat
+		upnpc -l | grep -E "^ *[0-9]{1,2}" | cat
 		;;
 	summarize)
 		echo "ports | [open, close, list, help] | Manipulate ports forwarding."

@@ -19,6 +19,8 @@ FLAP services are a collection of scripts and configuration files. This file is 
     -   [post_install](#post_install)
     -   [post_domain_update](#post_domain_update)
     -   [post_update](#post_update)
+    -   [pre_backup](#pre_backup)
+    -   [post_restore](#post_restore)
 -   [Migrations](#migrations)
 -   [Custom docker image](#custom-docker-image)
 -   [Cron jobs](#cron_jobs)
@@ -419,6 +421,51 @@ There is no example yet.
 set -eu
 ```
 
+#### pre_backup
+
+This hook is called before a backup. Use this hook to make extra backup tasks.
+
+Context:
+
+    - Services are up.
+
+For example, sogo dump all the users' data into disks.
+
+```shell
+#!/bin/bash
+
+set -eu
+
+docker exec --user sogo flap_sogo sogo-tool backup /backup ALL
+```
+
+#### post_restore
+
+This hook is called after a restoration.
+
+Context:
+
+    - Services should be up.
+
+For example, Nextcloud load its database that was dumped to disk in `pre_backup`.
+
+```shell
+#!/bin/bash
+
+set -eu
+
+docker exec --user www-data flap_nextcloud php occ maintenance:mode --on
+
+docker exec --user postgres flap_postgres psql --dbname template1 --command "DROP DATABASE nextcloud;"
+docker exec --user postgres flap_postgres psql --dbname template1 --command "CREATE DATABASE nextcloud WITH OWNER nextcloud;"
+
+# shellcheck disable=SC2002
+gzip --decompress --stdout "$FLAP_DATA/nextcloud/backup.sql.gz" | docker exec --interactive --user postgres flap_postgres psql --dbname nextcloud
+
+docker exec --user www-data flap_nextcloud php occ maintenance:mode --off
+docker exec --user www-data flap_nextcloud php occ maintenance:data-fingerprint
+```
+
 ## Migrations
 
 On every FLAP update, services' migrations will be ran. This is a good place to update the service's data structure or any other task that can not be done otherwise.
@@ -463,7 +510,7 @@ variables:
 
 You can define recurring tasks in a `<service_name>.cron` file. The commands will be executed from the host and not the container.
 
-Example, Nextcloud use this to regularly to generate file previews and run various tasks:
+Example, Nextcloud use this to regularly generate file previews and run various tasks:
 
 ```shell
 */5 * * * *     docker exec --tty --user www-data flap_nextcloud php -f /var/www/html/cron.php

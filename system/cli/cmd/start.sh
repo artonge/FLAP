@@ -33,7 +33,7 @@ case $CMD in
 		cd "$FLAP_DIR"
 
 		echo '* [start] Starting services.'
-		export COMPOSE_HTTP_TIMEOUT=120
+		export COMPOSE_HTTP_TIMEOUT=240
 		docker-compose --no-ansi up --detach
 
 		# Wait dor services to be up.

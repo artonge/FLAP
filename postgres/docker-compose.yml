@@ -6,11 +6,10 @@ services:
         image: postgres:11.7
         container_name: flap_postgres
         env_file: [$FLAP_DIR/postgres/postgres.env]
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:
-            - ${FLAP_DIR}/postgres/scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro # [emmc] -> [postgres] Init
             - ${FLAP_DATA}/postgres/data/data:/var/lib/postgresql/data # [postgres] <-> [hd] Data
         networks:
             stores-net:

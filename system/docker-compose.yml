@@ -7,7 +7,7 @@ services:
     memcached:
         image: memcached:1.6.5
         container_name: flap_memcached
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         networks:
