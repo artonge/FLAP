@@ -22,9 +22,9 @@ Once installed, most of the heavy lifting is done by the [`flapctl` CLI tool](ht
 
 ## Framework features
 
-[Features & Roadmap](https://gitlab.com/flap-box/flap/-/blob/master/FEATURES.md)
+[Features & Roadmap](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/features.md)
 
-[Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/README.services.md)
+[Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/create_new_service.md)
 
 ## Administration
 
@@ -46,7 +46,7 @@ FLAP aims to lower the need for administration. This is done by:
 
 ## Installation
 
-[See here.](https://gitlab.com/flap-box/flap/-/blob/master/INSTALL.md)
+[See here.](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/install.md)
 
 ## Contributing
 

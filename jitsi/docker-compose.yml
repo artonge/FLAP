@@ -3,7 +3,7 @@ services:
     jitsi:
         image: jitsi/web:stable-4548
         container_name: flap_jitsi
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:
@@ -18,7 +18,7 @@ services:
     prosody:
         image: jitsi/prosody:stable-4548
         container_name: flap_prosody
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         expose: ["5222", "5347", "5280"]
@@ -34,7 +34,7 @@ services:
     jicofo:
         image: jitsi/jicofo:stable-4548
         container_name: flap_jicofo
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:
@@ -48,7 +48,7 @@ services:
     jvb:
         image: jitsi/jvb:stable-4548
         container_name: flap_jvb
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         ports:
@@ -64,7 +64,7 @@ services:
     coturn:
         image: instrumentisto/coturn:4.5.1
         container_name: flap_coturn
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:

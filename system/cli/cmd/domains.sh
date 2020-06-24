@@ -47,7 +47,7 @@ case $CMD in
 		echo "* [users] The domain '$domainname was added."
 	;;
     handle_request)
-        echo '* [tls] Handling domain requests'
+        echo '* [domains] Handling domain requests'
         flapctl domains handle_request_primary_update
         flapctl domains handle_request_domain_deletion
         flapctl domains handle_request_domain_creation
@@ -66,7 +66,7 @@ case $CMD in
             exit 0
         fi
 
-        echo '* [tls] Handling domain update request'
+        echo '* [domains] Handling domain update request'
         # Handle primary domain update
         {
             echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_primary.txt" &&
@@ -91,7 +91,7 @@ case $CMD in
             exit 0
         fi
 
-        echo '* [tls] Handling domain delete request'
+        echo '* [domains] Handling domain delete request'
         # Handle domain deletion request
         {
             echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_delete.txt" &&
@@ -126,7 +126,7 @@ case $CMD in
             exit 0
         fi
 
-        echo '* [tls] Handling domain create request'
+        echo '* [domains] Handling domain create request'
 
         # Give time to the server to pick up the status change.
         sleep 2
@@ -140,7 +140,7 @@ case $CMD in
                 # If primary domain is emtpy, set the handled domain as primary.
                 if [ "$(flapctl domains primary)" == "" ]
                 then
-                    echo "* [tls] Set $DOMAIN as primary."
+                    echo "* [domains] Set $DOMAIN as primary."
                     echo "$DOMAIN" > "$FLAP_DATA/system/data/primary_domain.txt"
                 fi
             } &&
@@ -174,7 +174,7 @@ case $CMD in
             exit 0
         fi
 
-		echo "* [tls] Registering domain name"
+		echo "* [domains] Registering domain name"
 
 		"$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" "$domain"
 		"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
@@ -188,7 +188,7 @@ case $CMD in
 
 			if [ $elapse -gt $(( 60 * 30 )) ]
 			then
-				echo "* [tls] ERROR: DNS propagation timeout (30 minutes)"
+				echo "* [domains] ERROR: DNS propagation timeout (30 minutes)"
 				exit 1
 			fi
 		done
@@ -196,7 +196,7 @@ case $CMD in
 	update_dns_records)
 		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] || [ "${FLAG_NO_DNS_RECORD_UPDATE:-}" == "true" ]
 		then
-			echo '* [tls:FEATURE_FLAG] Skipping DNS update.'
+			echo '* [domains:FEATURE_FLAG] Skipping DNS update.'
 			exit
 		fi
 
@@ -218,7 +218,7 @@ case $CMD in
 			HOST_IP=$(flapctl ip dns "$domain")
 			if [ "$EXTERNAL_IP" == "$HOST_IP" ]
 			then
-				echo "* [tls] IP is ok for $domain, skipping."
+				echo "* [domains] IP is ok for $domain, skipping."
 				continue
 			fi
 

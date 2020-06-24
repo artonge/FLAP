@@ -3,7 +3,7 @@ services:
         # Release notes: https://nginx.org/en/download.html
         image: nginx:1.18.0
         container_name: flap_nginx
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         ports: ["80:80", "443:443", "8448:8448"]

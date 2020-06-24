@@ -23,7 +23,7 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		git fetch --tags --prune
+		git fetch --tags --prune > /dev/null
 
 		CURRENT_TAG=$(git describe --tags --abbrev=0)
 		NEXT_TAG=$(git tag --sort version:refname | grep -A 1 "$CURRENT_TAG" | grep -v "$CURRENT_TAG" | cat)
@@ -33,7 +33,6 @@ Commands:
 		# Abort update if there is no TARGET_TAG.
 		if [ "${TARGET_TAG:-0.0.0}" == '0.0.0' ]
 		then
-			echo '* [update] Nothing to update, exiting.'
 			exit 0
 		fi
 
@@ -44,6 +43,9 @@ Commands:
 			exit 0
 		fi
 		touch /tmp/updating_flap.lock
+
+		echo "* [update] Backing up." &&
+		flapctl backup
 
 		{
 			echo "* [update] Updating code to $TARGET_TAG." &&

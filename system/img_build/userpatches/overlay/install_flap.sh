@@ -15,11 +15,11 @@ apt upgrade -y
 
 # Install tools
 apt install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg2 \
-    software-properties-common
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	gnupg2 \
+	software-properties-common
 
 ################################################################################
 echo "INSTALLING DOCKER"
@@ -32,15 +32,15 @@ add-apt-repository "deb https://download.docker.com/linux/debian $(lsb_release -
 # Install docker
 apt update
 apt install -y \
-    docker-ce=5:19.03.7~3-0~debian-buster \
-    docker-ce-cli=5:19.03.7~3-0~debian-buster \
-    containerd.io=1.2.6-3
+	docker-ce=5:19.03.7~3-0~debian-buster \
+	docker-ce-cli=5:19.03.7~3-0~debian-buster \
+	containerd.io=1.2.6-3
 
 # Start docker on boot.
 # Check if we are in a docker container with systemctl.
 if [ "$(command -v systemctl || true)" != "" ]
 then
-    systemctl enable docker
+	systemctl enable docker
 fi
 
 ################################################################################
@@ -62,9 +62,9 @@ apt install -y unattended-upgrades
 # shellcheck disable=SC2016
 echo '
 Unattended-Upgrade::Allowed-Origins {
-        "${distro_id}:${distro_codename}";
-        "${distro_id}:${distro_codename}-security";
-        "${distro_id}:${distro_codename}-updates";
+    "${distro_id}:${distro_codename}";
+    "${distro_id}:${distro_codename}-security";
+    "${distro_id}:${distro_codename}-updates";
 };
 Unattended-Upgrade::Mail "root";
 Unattended-Upgrade::MinimalSteps "true";
@@ -93,6 +93,7 @@ ln -sf "$FLAP_DIR/system/cli/flapctl.sh" /bin/flapctl
 echo "INSTALLING FLAP DEPENDENCIES"
 # Install dependencies
 # avahi-daemon: set the mDNS name
+# borgbackup: backups
 # bsdmainutils: for the column cmd
 # certbot: generate TLS certificates
 # cron: periodic tasks
@@ -105,26 +106,29 @@ echo "INSTALLING FLAP DEPENDENCIES"
 # miniupnpc: open ports
 # msmtp msmtp-mta: to send mail with sendmail
 # psmisc: better cli output with pstree
+# restic: backups
 # ssh: to allow remote connection
 # ufw: firewall
 # wget: for clean http requests in flapctl
 apt install -y \
 	avahi-daemon \
+	borgbackup \
 	bsdmainutils \
 	certbot \
 	cron \
 	gettext \
-    git \
+	git \
 	iproute2 \
 	jq \
 	libssl-dev \
-    mdadm \
+	mdadm \
 	miniupnpc \
 	msmtp msmtp-mta \
-    psmisc \
-    ssh \
-    ufw \
-    wget
+	psmisc \
+	restic \
+	ssh \
+	ufw \
+	wget
 
 # yq: manipulate yaml text files.
 pip3 install yq
@@ -153,18 +157,18 @@ git clone --recursive https://gitlab.com/flap-box/flap.git "$FLAP_DIR"
 
 if [ "$BRANCH_OR_TAG" != 'master' ]
 then
-    echo "CHECKING OUT $BRANCH_OR_TAG"
-    cd "$FLAP_DIR"
-    git fetch --tags --prune
-    git checkout "$BRANCH_OR_TAG"
-    git submodule update --init
+	echo "CHECKING OUT $BRANCH_OR_TAG"
+	cd "$FLAP_DIR"
+	git fetch --tags --prune
+	git checkout "$BRANCH_OR_TAG"
+	git submodule update --init
 fi
 
 echo "INSTALLING FLAP'S SYSTEMD SERVICE"
 cp "$FLAP_DIR/system/flap.service" /etc/systemd/system
 if [ "$(command -v systemctl || true)" != "" ]
 then
-    systemctl enable flap
+	systemctl enable flap
 fi
 
 ################################################################################

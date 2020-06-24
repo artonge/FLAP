@@ -3,7 +3,7 @@ services:
         image: registry.gitlab.com/flap-box/docker-mailserver:v6.2.1-flap.2
         container_name: flap_mail
         env_file: [./mail/mail.env]
-        restart: always
+        restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         depends_on: [ldap]
