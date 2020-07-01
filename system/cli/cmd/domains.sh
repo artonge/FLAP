@@ -95,6 +95,7 @@ case $CMD in
         # Handle domain deletion request
         {
             echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_delete.txt" &&
+            flapctl tls generate &&
             flapctl hooks post_domain_update &&
             rm "$FLAP_DATA/system/data/domain_update_delete.txt"
         } || { # Catch error
