@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:experimental
 
-FROM debian:buster-20200224-slim
+FROM debian:10.4-slim
 
 COPY ./system/img_build/userpatches/overlay/install_flap.sh /install_flap.sh
 

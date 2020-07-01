@@ -32,9 +32,9 @@ add-apt-repository "deb https://download.docker.com/linux/debian $(lsb_release -
 # Install docker
 apt update
 apt install -y \
-	docker-ce=5:19.03.7~3-0~debian-buster \
-	docker-ce-cli=5:19.03.7~3-0~debian-buster \
-	containerd.io=1.2.6-3
+	docker-ce \
+	docker-ce-cli \
+	containerd.io
 
 # Start docker on boot.
 # Check if we are in a docker container with systemctl.
