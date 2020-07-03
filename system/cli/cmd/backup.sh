@@ -23,17 +23,16 @@ case $CMD in
 	restore)
 		flapctl stop
 
+		echo "* [backup] Restoring FLAP_DATA."
+		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" restore
+
 		# If git head is a tag, checkout current_tag.
 		if [ "$(git rev-parse --abbrev-ref HEAD)" == "HEAD" ]
 		then
-			"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" extract_current_tag
 			current_tag=$(cat "$FLAP_DATA"/system/current_tag.txt)
 			cd "$FLAP_DIR"
 			git checkout "$current_tag"
 		fi
-
-		echo "* [backup] Restoring FLAP_DATA."
-		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" restore
 
 		flapctl config generate
 

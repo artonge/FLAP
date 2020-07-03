@@ -27,10 +27,6 @@ case $CMD in
 		restic rebuild-index --quiet
 		restic check --quiet
 	;;
-	extract_current_tag)
-		snapshot_id=$(restic snapshots --last --json | jq --raw-output '.[0].id')
-		restic restore --quiet --path "$FLAP_DATA"/system/current_tag.txt --target . "$snapshot_id"
-	;;
 	restore)
 		snapshot_id=$(restic snapshots --last --json | jq --raw-output '.[0].id')
 		restic restore --quiet --target "$FLAP_DATA"/.. "$snapshot_id"
