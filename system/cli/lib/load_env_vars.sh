@@ -2,6 +2,9 @@
 
 set -ue
 
+mkdir --parents "$FLAP_DATA/system"
+touch "$FLAP_DATA/system/flap.yml"
+
 # Load feature flags.
 if [ -f "$FLAP_DATA/system/flapctl.env" ]
 then
