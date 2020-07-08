@@ -11,7 +11,6 @@ main_compose_file="$FLAP_DIR/docker-compose.yml"
 main_compose_override_file="$FLAP_DIR/docker-compose.override.yml"
 
 compose_files=()
-compose_monitoring_files=()
 compose_override_files=()
 compose_ci_files=()
 
@@ -21,11 +20,6 @@ do
 	if [ -f "$FLAP_DIR/$service/docker-compose.yml" ]
 	then
 		compose_files+=("$FLAP_DIR/$service/docker-compose.yml")
-	fi
-
-	if [ -f "$FLAP_DIR/$service/docker-compose.monitoring.yml" ]
-	then
-		compose_monitoring_files+=("$FLAP_DIR/$service/docker-compose.monitoring.yml")
 	fi
 
 	if [ -f "$FLAP_DIR/$service/docker-compose.override.yml" ]
@@ -65,20 +59,6 @@ yq \
 	--argjson volumes "$nginx_volumes" \
 	'.[0] * {"services": {"nginx": {"volumes": (.[0].services.nginx.volumes + $volumes)}}}' \
 	"$main_compose_file.tmp" > "$main_compose_file"
-
-
-if [ "${ENABLE_MONITORING:-}" == "true" ]
-then
-	echo "Merge services' docker-compose.monitoring files."
-	# shellcheck disable=SC2016
-	yq \
-		--yaml-output \
-		--yaml-roundtrip \
-		--slurp \
-		'reduce .[] as $service ({}; . * $service)' "${compose_monitoring_files[@]}" "$main_compose_file" > "$main_compose_file.tmp"
-
-	cat "$main_compose_file.tmp" >> "$main_compose_file"
-fi
 
 
 if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ]

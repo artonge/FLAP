@@ -21,7 +21,6 @@ FLAP services are a collection of scripts and configuration files. This file is 
     -   [post_update](#post_update)
     -   [pre_backup](#pre_backup)
     -   [post_restore](#post_restore)
--   [Monitoring](#monitoring)
 -   [Migrations](#migrations)
 -   [Custom docker image](#custom-docker-image)
 -   [Cron jobs](#cron_jobs)
@@ -466,15 +465,6 @@ gzip --decompress --stdout "$FLAP_DATA/nextcloud/backup.sql.gz" | docker exec --
 docker exec --user www-data flap_nextcloud php occ maintenance:mode --off
 docker exec --user www-data flap_nextcloud php occ maintenance:data-fingerprint
 ```
-
-## Monitoring
-
-Extra information [here](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/monitoring.md).
-
-FLAP includes a Prometheus and Grafana instance. Services can expose some dashboards, alerts and exporters to populate this system.
-
-Dashboards goes here: `$FLAP_DIR/$service/monitoring/dashboards`
-Alerts goes there: `$FLAP_DIR/$service/monitoring/alerts.yml`
 
 ## Migrations
 

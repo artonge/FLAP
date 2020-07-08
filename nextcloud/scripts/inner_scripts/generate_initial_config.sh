@@ -56,8 +56,7 @@ php occ background:cron
 php occ app:enable previewgenerator || true
 
 # ENABLE ONLYOFFICE
-if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
-
+if [ "$ARCH" == "x86_64" ]
 then
 	php occ app:install documentserver_community || true
 	php occ app:install onlyoffice || true

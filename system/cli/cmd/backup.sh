@@ -27,10 +27,10 @@ case $CMD in
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" restore
 
 		# If git head is a tag, checkout current_tag.
-		cd "$FLAP_DIR"
 		if [ "$(git rev-parse --abbrev-ref HEAD)" == "HEAD" ]
 		then
 			current_tag=$(cat "$FLAP_DATA"/system/current_tag.txt)
+			cd "$FLAP_DIR"
 			git checkout "$current_tag"
 		fi
 
