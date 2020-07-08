@@ -29,6 +29,6 @@ case $CMD in
 	;;
 	restore)
 		snapshot_id=$(restic snapshots --last --json | jq --raw-output '.[0].id')
-		restic restore --quiet --target "$FLAP_DATA"/.. "$snapshot_id"
+		restic restore --quiet --target / "$snapshot_id"
 	;;
 esac
