@@ -19,12 +19,6 @@ do
     php occ config:system:set trusted_domains "$i" --value files."${DOMAINS[$i]}"
 done
 
-# SET ONLY OFFICE DOMAIN
-if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
-then
-	php occ config:app:set onlyoffice DocumentServerUrl --value "https://files.$PRIMARY_DOMAIN_NAME/index.php/apps/documentserver_community/"
-fi
-
 # MAIL
 php occ config:system:set mail_domain --value "$PRIMARY_DOMAIN_NAME"
 php occ config:system:set mail_smtphost --value "$PRIMARY_DOMAIN_NAME"

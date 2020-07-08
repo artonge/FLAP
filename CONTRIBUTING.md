@@ -55,15 +55,13 @@ source /etc/environment
 ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 ```
 
-### Alias your `localhost` to `flap.test`
+### Alias your `localhost` to `flap.localhost`
 
 Adding the following line to your `/etc/hosts` file:
 
-`127.0.0.1 flap.test auth.flap.test lemon.flap.test monitoring.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test`
+`127.0.0.1 flap.localhost auth.flap.localhost lemon.flap.localhost files.flap.localhost mail.flap.localhost matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test`
 
 ### ⚠ Setup feature flags
-
-Extra information [here](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/storage.md).
 
 The `flapctl` CLI uses feature flags to inhibit or change some functionality. Copy the `flapctl.example.env` to `$FLAP_DATA/system/flapctl.env` file and setup the variables accordingly. A typical dev station would use most of them.
 

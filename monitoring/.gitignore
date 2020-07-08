@@ -1,6 +1,0 @@
-grafana.env
-
-config/alertmanager/config.yml
-config/grafana/dashboards
-config/prometheus/alert.rules
-config/prometheus/prometheus.yml

@@ -50,7 +50,7 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] RAID1 setup
     -   [ ] More RAID setups [⚪]
 -   [x] Backup management
--   [x] Monitoring tool
+-   [ ] Monitoring tool [⚫ ⚫ ⚫]
 
 ### **Applications**
 

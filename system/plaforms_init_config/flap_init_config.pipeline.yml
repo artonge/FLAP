@@ -5,11 +5,6 @@ env_vars:
     FLAG_NO_DNS_RECORD_UPDATE: true
     FLAG_GENERATE_DOCKER_COMPOSE_CI: true
     FLAG_NO_FIREWALL_SETUP: true
-    FLAG_NO_DOCUMENTSERVER: true
     ENABLE_WEBLATE: true
-
-    BACKUP_TOOL: restic
-    RESTIC_REPOSITORY: $FLAP_DIR/../flap_backup
-    RESTIC_PASSWORD: password
 
 admin_email: ""
