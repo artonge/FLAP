@@ -18,7 +18,7 @@ case $CMD in
         docker-compose --no-ansi down --remove-orphans || systemctl restart docker || docker-compose --no-ansi down --remove-orphans
     ;;
     summarize)
-        echo "stop | | STOP flap services."
+        echo "stop | | Stop flap services."
     ;;
     help|*)
         echo "

@@ -5,16 +5,28 @@ include:
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
-.flap_docker_setup:
-    image: docker:stable
-    services:
-        - name: docker:dind
-          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
+stages:
+  - build
+  - setup
+  - test
+  - deploy  # dummy stage to follow the template guidelines
+  - review
+  - dast
+  - staging
+  - canary
+  - production
+  - incremental rollout 10%
+  - incremental rollout 25%
+  - incremental rollout 50%
+  - incremental rollout 100%
+  - performance
+  - cleanup
 
 # Check shell scripts sanity.
 shellcheck:
     image: koalaman/shellcheck-alpine:latest
     stage: test
+    needs: []
     script:
         - apk add git
         - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --external-sources --shell=bash
@@ -23,66 +35,34 @@ shellcheck:
 test_script_executable:
     image: ubuntu
     stage: test
+    needs: []
     script:
         - apt-get update
         - apt-get install -y git
-        - git ls-files --exclude='*.sh' --ignored | xargs -I{} ls -aslh {}
+        - find . -name '*.sh' ! -executable -print | grep -v node_modules
         - git ls-files --exclude='*.sh' --ignored | xargs -I{} test -x {}
 
-# Run start_flap and CLI unit tests
-system_test:
-    only: [branches]
-    stage: test
+.start_flap:
     image: docker:stable
-    services: ["docker:dind"]
-    script:
-        # Start a flap instance with mappings to real folders.
-        # We need mappings to real folders because docker will resolve its mappings using the real file system.
-        # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
+    services:
+        - name: docker:dind
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
+    needs: [build]
+    before_script:
+        # Get DinD's ip.
+        - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
+
+        # Install git so it can be used in FLAP_IMAGE_TAG scripts.
+        - apk add git
+
+        # Share the docker container network with this container so it can talk to itself.
+        #  ==> the network ports are beeing serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
+        # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
         - >
             docker run \
                 --detach \
             \
                 --name flap \
-            \
-                --env LOG_DRIVER=json-file \
-            \
-                --volume /var/run/docker.sock:/var/run/docker.sock \
-            \
-                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
-                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
-            \
-                --env FLAP_DIR=$CI_PROJECT_DIR \
-                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-            \
-                $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
-                /bin/sh -c "while true; do sleep 1000; done"
-
-        # Use env vars set in flap_init_config.pipeline.yml.
-        - cp $CI_PROJECT_DIR/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_PROJECT_DIR/flap_init_config.yml
-
-        - docker exec flap flapctl start
-        - docker exec flap flapctl test setup tls
-
-# Run start from a previous flap version.
-# Then run the update procedure the the targeted commit or tag.
-.update_test:
-    stage: test
-    extends: .flap_docker_setup
-    script:
-        # Get DinD's ip.
-        - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
-
-        - apk add git
-
-        # Start a flap instance with mappings to real folders.
-        # We need mappings to real folders because docker will resolve its mappings using the real file system.
-        # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
-        - >
-            docker run \
-                --detach \
-            \
-                --name flap_old \
             \
                 --network host \
                 --add-host="flap.local:$FLAP_IP" \
@@ -101,32 +81,59 @@ system_test:
             \
                 --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
                 --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --volume $CI_BUILDS_DIR/flap_backup:$CI_BUILDS_DIR/flap_backup \
                 --volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
             \
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
             \
-                $CI_REGISTRY_IMAGE:$(eval $LATEST_TAG) \
+                $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
-        # Copy the code to the real folder.
-        - docker exec flap_old cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
-
+        # Copy the content of flap:/opt/flap into flap:$CI_BUILDS_DIR/flap_dir.
+        # This is necessary to be able to bind volumes to containers started from the flap container.
+        # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
+        - docker exec flap cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
         # Update the flapctl link so it maps to the new location.
-        - docker exec flap_old ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
+        - docker exec flap ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
 
         # Use env vars set in flap_init_config.pipeline.yml.
         - cp $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_BUILDS_DIR/flap_dir/flap_init_config.yml
 
-        # Start the instance.
-        - docker exec flap_old flapctl start
-        - docker exec flap_old flapctl users create_admin
-        - docker exec flap_old flapctl tls generate_localhost flap.test
-        - docker exec flap_old flapctl restart
-        - docker exec flap_old flapctl hooks post_domain_update
+        # Restore flap_data if it exists.
+        - apk add tar
+        - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
+        - if [ -f flap.tar.gz ]; then docker exec flap flapctl setup flapenv; fi
+        - if [ -f flap.tar.gz ]; then docker exec flap flapctl tls generate_localhost; fi
+        - if [ -f flap.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
-        # Update the instance.
-        - docker exec flap_old flapctl update $CI_COMMIT_REF_NAME
+        - docker exec flap flapctl start
+
+# Run start_flap and CLI unit tests
+test_cli:
+    only: [branches]
+    stage: test
+    extends: .start_flap
+    variables:
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    needs: [build]
+    script:
+        - docker exec flap flapctl test setup tls
+
+# Start the last production version of flap, then update to $CI_COMMIT_REF_NAME.
+.update_test:
+    stage: test
+    extends: .start_flap
+    variables:
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(eval $LATEST_TAG)
+    needs: []
+    script:
+        - docker exec flap flapctl users create_admin
+        - docker exec flap flapctl tls generate_localhost
+        - docker exec flap flapctl restart
+        - docker exec flap flapctl hooks post_domain_update
+
+        - docker exec flap flapctl update $CI_COMMIT_REF_NAME
 
 test_update_to_commit:
     extends: .update_test
@@ -141,98 +148,38 @@ test_update_to_tag:
         LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
 
 # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
-.setup_flap:
+setup_flap:
     only: [branches]
-    extends: .flap_docker_setup
-    stage: test
-    before_script:
-        # Get DinD's ip.
-        - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
-
-        # Pass some flags env var.
-        # Share the docker container network with this container so it can talk to itself.
-        #  ==> the network ports are beeing serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
-        # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
-        # Bind our working directories.
-        - >
-            docker run \
-                --detach \
-            \
-                --name flap \
-            \
-                --network host \
-                --add-host="flap.local:$FLAP_IP" \
-                --add-host="flap.test:$FLAP_IP" \
-                --add-host="auth.flap.test:$FLAP_IP" \
-                --add-host="files.flap.test:$FLAP_IP" \
-                --add-host="mail.flap.test:$FLAP_IP" \
-                --add-host="matrix.flap.test:$FLAP_IP" \
-                --add-host="chat.flap.test:$FLAP_IP" \
-                --add-host="jitsi.flap.test:$FLAP_IP" \
-                --add-host="weblate.flap.test:$FLAP_IP" \
-            \
-                --env LOG_DRIVER=json-file \
-            \
-                --volume /var/run/docker.sock:/var/run/docker.sock \
-            \
-                --volume $CI_PROJECT_DIR:$CI_PROJECT_DIR \
-                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
-                --volume $CI_BUILDS_DIR/flap_backup:$CI_BUILDS_DIR/flap_backup \
-                --volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
-            \
-                --env FLAP_DIR=$CI_PROJECT_DIR \
-                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-            \
-                $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
-                /bin/sh -c "while true; do sleep 1000; done"
-
-        # Use env vars set in flap_init_config.pipeline.yml.
-        - cp $CI_PROJECT_DIR/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_PROJECT_DIR/flap_init_config.yml
-
-        - docker exec flap flapctl start
+    extends: .start_flap
+    stage: setup
+    variables:
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    artifacts:
+        paths:
+            - flap.tar.gz
+    script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl tls generate_localhost
         - docker exec flap flapctl restart
         - docker exec flap flapctl hooks post_domain_update
 
-.test_backup:
-    extends: .setup_flap
-    script:
-        - mkdir /backup
+        # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
-        - >
-            docker exec \
-                --env BACKUP_TOOL=$BACKUP_TOOL \
-                --env $REPO_VAR=$CI_BUILDS_DIR/flap_backup \
-                --env $PASSPHRASE_VAR=password \
-                flap flapctl backup
-        - >
-            docker exec \
-                --env BACKUP_TOOL=$BACKUP_TOOL \
-                --env $REPO_VAR=$CI_BUILDS_DIR/flap_backup \
-                --env $PASSPHRASE_VAR=password \
-                flap flapctl backup restore
+        - docker exec flap flapctl backup
+        - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
 
-# Disabled for now.
-# Error: Extended attributes are not supported on this filesystemtest_backup_borg:
-#     extends: .test_backup
-#     variables:
-#         BACKUP_TOOL: borg
-#         REPO_VAR: BORG_REPO
-#         PASSPHRASE_VAR: BORG_PASSPHRASE
-
-test_backup_restic:
-    extends: .test_backup
-    variables:
-        BACKUP_TOOL: restic
-        REPO_VAR: RESTIC_REPOSITORY
-        PASSPHRASE_VAR: RESTIC_PASSWORD
+        - docker exec flap flapctl stop
 
 e2e:
-    extends: .setup_flap
+    only: [branches]
+    extends: .start_flap
+    needs: [setup_flap]
+    stage: test
+    retry: 2
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     script:
         # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
         - >

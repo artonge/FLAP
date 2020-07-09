@@ -11,7 +11,7 @@ case $CMD in
 	add)
 		domainname=$2
 
-		echo "Create domain $domainname ? [Y/N]:"
+		echo "Add domain $domainname ? [Y/N]:"
 		read -r answer
 
 		if [ "$answer" == "${answer#[Yy]}" ]
