@@ -1,0 +1,19 @@
+services:
+    nginx:
+        networks:
+            monitor-net:
+                aliases: [nginx]
+
+    nginxexporter:
+        image: fish/nginx-exporter:v0.1.1
+        container_name: flap_nginxexporter
+        command: ["-nginx.scrape_uri=http://nginx/nginx_status"]
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        expose: [9113]
+        networks:
+            monitor-net:
+                aliases: [nginxexporter]
+        labels:
+            org.label-schema.group: "monitoring"

@@ -10,8 +10,9 @@ docker run \
 	--name docker \
 	--detach \
 	--rm \
-	--volume /flap_data:/flap_data \
 	--volume /flap_dir:/flap_dir \
+	--volume /flap_data:/flap_data \
+	--volume /flap_backup:/flap_backup \
 	--volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
 	--volume /var/lib/docker/image:/var/lib/docker/image \
 	--volume /var/lib/docker/overlay2:/var/lib/docker/overlay2 \
@@ -29,8 +30,9 @@ docker run \
 	--rm \
 	-it \
 	--env CI=true \
-	--volume /flap_data:/flap_data \
 	--volume /flap_dir:/flap_dir \
+	--volume /flap_data:/flap_data \
+	--volume /flap_backup:/flap_backup \
 	--volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
 	--link docker \
 	--add-host="flap.local:$FLAP_IP" \
@@ -59,7 +61,7 @@ FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 #  ==> the network ports are beeing serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
 # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
 # Bind our working directories.
-docker pull $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+# docker pull $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 docker run \
 	--name flap \
 	--detach \
@@ -78,6 +80,7 @@ docker run \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \
+	--volume /flap_backup:/flap_backup \
 	--volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
 	--env FLAP_DIR=/flap_dir \
 	--env FLAP_DATA=/flap_data \
