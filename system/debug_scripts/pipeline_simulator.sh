@@ -38,6 +38,7 @@ docker run \
 	--add-host="flap.local:$FLAP_IP" \
 	--add-host="flap.test:$FLAP_IP" \
 	--add-host="auth.flap.test:$FLAP_IP" \
+	--add-host="home.flap.test:$FLAP_IP" \
 	--add-host="files.flap.test:$FLAP_IP" \
 	--add-host="mail.flap.test:$FLAP_IP" \
 	--add-host="matrix.flap.test:$FLAP_IP" \
@@ -70,6 +71,7 @@ docker run \
 	--add-host="flap.local:$FLAP_IP" \
 	--add-host="flap.test:$FLAP_IP" \
 	--add-host="auth.flap.test:$FLAP_IP" \
+	--add-host="home.flap.test:$FLAP_IP" \
 	--add-host="files.flap.test:$FLAP_IP" \
 	--add-host="mail.flap.test:$FLAP_IP" \
 	--add-host="matrix.flap.test:$FLAP_IP" \
@@ -128,6 +130,6 @@ export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 npm install codeceptjs puppeteer mocha-junit-reporter
 
 # Run e2e tests
-cd /flap_dir/core
+cd /flap_dir/home
 export FLAP_URL=flap.test
 npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
