@@ -13,7 +13,7 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [⚫] Will add one day.
 -   [⚪] Won't add, but pull requests are welcome.
 
-### **Framework per service features**
+### **Framework's features for services**
 
 [Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/create_new_service.md)
 
@@ -49,8 +49,8 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] single disk setup
     -   [x] RAID1 setup
     -   [ ] More RAID setups [⚪]
--   [x] Backup management
--   [x] Monitoring tool
+-   [x] Backup data and configuration
+-   [x] Monitoring services and host server
 
 ### **Applications**
 
@@ -69,6 +69,7 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [ ] **Peertube** [⚫ ⚫]
 -   [ ] **Discourse** [⚫ ⚫]
 -   [ ] **Home Assistant** [⚫]
+-   [ ] **Matomo** [⚫ ⚫ ⚫]
 
 ### **Backend services**
 
