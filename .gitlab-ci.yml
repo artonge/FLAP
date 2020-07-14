@@ -46,7 +46,7 @@ test_script_executable:
     image: docker:stable
     services:
         - name: docker:dind
-          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
+          alias: flap.local flap.test auth.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
     needs: [build]
     before_script:
         # Get DinD's ip.
@@ -121,7 +121,7 @@ test_cli:
         - docker exec flap flapctl test setup tls
 
 # Start the last production version of flap, then update to $CI_COMMIT_REF_NAME.
-.test_update:
+.update_test:
     stage: test
     extends: .start_flap
     variables:
@@ -133,19 +133,16 @@ test_cli:
         - docker exec flap flapctl restart
         - docker exec flap flapctl hooks post_domain_update
 
-        # Add content to SOGo so pre_backup hooks does not fails.
-        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
-
         - docker exec flap flapctl update $CI_COMMIT_REF_NAME
 
 test_update_to_commit:
-    extends: .test_update
+    extends: .update_test
     only: [branches]
     variables:
         LATEST_TAG: git tag --sort version:refname | tail -1
 
 test_update_to_tag:
-    extends: .test_update
+    extends: .update_test
     only: [tags]
     variables:
         LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
@@ -173,7 +170,7 @@ setup_flap:
 
         - docker exec flap flapctl stop
 
-test_e2e:
+e2e:
     only: [branches]
     extends: .start_flap
     needs: [setup_flap]
@@ -202,7 +199,7 @@ test_e2e:
         - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
         # Install codecept and puppeteer.
-        - cd home
+        - cd core
         - npm install codeceptjs puppeteer mocha-junit-reporter
 
         # Run e2e tests
@@ -210,7 +207,7 @@ test_e2e:
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
     artifacts:
         reports:
-            junit: home/output/result.xml
+            junit: core/output/result.xml
 
 build_disk_image:
     stage: build
