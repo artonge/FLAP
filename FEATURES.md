@@ -13,9 +13,9 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [⚫] Will add one day.
 -   [⚪] Won't add, but pull requests are welcome.
 
-### **Framework per service features**
+### **Services framework**
 
-[Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/create_new_service.md)
+[Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/README.services.md)
 
 -   [x] **Hooks** called during FLAP life-cycle
 
@@ -49,8 +49,8 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] single disk setup
     -   [x] RAID1 setup
     -   [ ] More RAID setups [⚪]
--   [x] Backup management
--   [x] Monitoring tool
+-   [ ] Backup management [⚫ ⚫]
+-   [ ] Monitoring tool [⚫]
 
 ### **Applications**
 
@@ -99,9 +99,8 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
     -   [x] OpenDMARC
     -   [ ] ClamAV [⚫ ⚫]
 -   [ ] **Wireguard** [⚫]
-    -   [ ] To access services inside a VPN [⚫]
-        -   [ ] SSO [⚫]
-    -   [ ] To publish services from another server/IP [⚫]
+    -   [ ] To access services [⚫]
+    -   [ ] Automatic connection [⚫]
 
 ### **Cross services features**
 
