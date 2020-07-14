@@ -133,6 +133,9 @@ test_cli:
         - docker exec flap flapctl restart
         - docker exec flap flapctl hooks post_domain_update
 
+        # Add content to SOGo so pre_backup hooks does not fails.
+        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+
         - docker exec flap flapctl update $CI_COMMIT_REF_NAME
 
 test_update_to_commit:
