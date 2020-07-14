@@ -51,6 +51,9 @@ Commands:
 			echo "* [update] Updating code to $TARGET_TAG." &&
 			git checkout "$TARGET_TAG" &&
 
+			# Clean untracked files. Usefull when deleting a submodule.
+			git ls-files --others | xargs -I{} rm -rf {} &&
+
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
@@ -76,6 +79,7 @@ Commands:
 			git add .
 			git reset --hard
 			git clean -Xdf
+			git ls-files --others | xargs -I{} rm -rf {}
 			git checkout "$CURRENT_TAG"
 			git submodule update --init
 			rm /tmp/updating_flap.lock
