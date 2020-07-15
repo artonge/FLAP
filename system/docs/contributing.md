@@ -59,7 +59,7 @@ ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
 Adding the following line to your `/etc/hosts` file:
 
-`127.0.0.1 flap.test auth.flap.test lemon.flap.test monitoring.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test`
+`127.0.0.1 flap.test auth.flap.test home.flap.test lemon.flap.test monitoring.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test`
 
 ### ⚠ Setup feature flags
 
@@ -102,6 +102,6 @@ Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the
 
 -   Use local docker images.
 -   Expose all services to `localhost:some_port` so you can access them directly.
--   Bind the `./core` directory to its container and change the start command so you can have live reload when editing local source files.
+-   Bind the `./home` directory to its container and change the start command so you can have live reload when editing local source files.
 -   Expose an phpLdapAdmin instance.
 -   Activate debug mode on some service.
