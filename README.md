@@ -20,16 +20,6 @@ Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://r
 
 Once installed, most of the heavy lifting is done by the [`flapctl` CLI tool](https://gitlab.com/flap-box/flap/-/tree/master/system/cli).
 
-## Demo
-
-You can check out a demo instance here: https://demo.flap.cloud
-
-You can login with the username `demo` and password `demodemo`.
-
-## Installation
-
-[See here.](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/install.md)
-
 ## Documentation
 
 [Features & Roadmap](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/features.md)
@@ -44,6 +34,10 @@ You can login with the username `demo` and password `demodemo`.
 
 [Monitoring](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/monitoring.md)
 
+## Installation
+
+[See here.](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/install.md)
+
 ## Contributing
 
-[See here.](https://gitlab.com/flap-box/flap/-/blob/master/contributing.md)
+[See here.](https://gitlab.com/flap-box/flap/-/blob/master/CONTRIBUTING.md)

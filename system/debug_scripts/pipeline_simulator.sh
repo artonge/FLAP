@@ -38,7 +38,6 @@ docker run \
 	--add-host="flap.local:$FLAP_IP" \
 	--add-host="flap.test:$FLAP_IP" \
 	--add-host="auth.flap.test:$FLAP_IP" \
-	--add-host="home.flap.test:$FLAP_IP" \
 	--add-host="files.flap.test:$FLAP_IP" \
 	--add-host="mail.flap.test:$FLAP_IP" \
 	--add-host="matrix.flap.test:$FLAP_IP" \
@@ -51,7 +50,7 @@ docker run \
 
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
-CI_COMMIT_REF_SLUG=version-1-11-1
+CI_COMMIT_REF_SLUG=feature-backup
 CI_COMMIT_SHA=latest
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
@@ -71,7 +70,6 @@ docker run \
 	--add-host="flap.local:$FLAP_IP" \
 	--add-host="flap.test:$FLAP_IP" \
 	--add-host="auth.flap.test:$FLAP_IP" \
-	--add-host="home.flap.test:$FLAP_IP" \
 	--add-host="files.flap.test:$FLAP_IP" \
 	--add-host="mail.flap.test:$FLAP_IP" \
 	--add-host="matrix.flap.test:$FLAP_IP" \
@@ -130,6 +128,6 @@ export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 npm install codeceptjs puppeteer mocha-junit-reporter
 
 # Run e2e tests
-cd /flap_dir/home
+cd /flap_dir/core
 export FLAP_URL=flap.test
 npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter

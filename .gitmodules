@@ -1,5 +1,5 @@
 [submodule "core"]
-	path = home
+	path = core
 	url = https://gitlab.com/flap-box/core.git
 [submodule "sogo"]
 	path = sogo
