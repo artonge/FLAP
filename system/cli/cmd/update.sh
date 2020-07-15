@@ -23,7 +23,7 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		git fetch --tags --prune &> /dev/null
+		git fetch --force --tags --prune &> /dev/null
 
 		CURRENT_TAG=$(git describe --tags --abbrev=0)
 		NEXT_TAG=$(git tag --sort version:refname | grep -A 1 "$CURRENT_TAG" | grep -v "$CURRENT_TAG" | cat)
@@ -36,31 +36,32 @@ Commands:
 			exit 0
 		fi
 
-		# Don't update if an update is already in progress.
+		# Stop update if an update is already in progress.
 		if [ -f /tmp/updating_flap.lock ]
 		then
-			echo '* [update] Update already in progress, exiting.'
-			exit 0
+			pid=$(cat /tmp/updating_flap.lock)
+
+			if kill -0 "$pid"
+			then
+				echo '* [update] Update already in progress, exiting.'
+				exit 0
+			fi
 		fi
-		touch /tmp/updating_flap.lock
+
+		echo $$ > /tmp/updating_flap.lock
 
 		echo "* [update] Backing up." &&
 		flapctl backup
 
 		{
 			echo "* [update] Updating code to $TARGET_TAG." &&
-			git checkout "$TARGET_TAG" &&
-
-			# Clean untracked files. Usefull when deleting a submodule.
-			git ls-files --others | xargs -I{} rm -rf {} &&
+			git checkout --force --recurse-submodules "$TARGET_TAG" &&
 
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
-				git pull
+				git pull --force --recurse-submodules
 			fi
-
-			git submodule update --init &&
 
 			# Update docker-compose.yml to pull new images.
 			flapctl config generate_templates &&
@@ -73,15 +74,7 @@ Commands:
 			# - starting without the docker images,
 			# - running migrations on an unknown state.
 			echo '* [update] ERROR - Fail to update, going back to previous commit.'
-			git submodule foreach "git add ."
-			git submodule foreach "git reset --hard"
-			git submodule foreach "git clean -Xdf"
-			git add .
-			git reset --hard
-			git clean -Xdf
-			git ls-files --others | xargs -I{} rm -rf {}
-			git checkout "$CURRENT_TAG"
-			git submodule update --init
+			git checkout --force --recurse-submodules "$CURRENT_TAG"
 			rm /tmp/updating_flap.lock
 			exit 1
 		}
