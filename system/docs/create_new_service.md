@@ -60,7 +60,7 @@ FLAP uses some special files for services integration.
 
 If the service needs exposure to through Nginx you can add a `nginx.conf` file specifying the service nginx configuration.
 
-For example, core:
+For example, home:
 
 ```nginx
 server {
@@ -93,8 +93,8 @@ server {
 
 		# Use resolver and variable to prevent nginx to crash when it does not found the upstream host.
 		resolver 127.0.0.11 valid=30s;
-		set $upstream_core core;
-		proxy_pass http://$upstream_core:9000;
+		set $upstream_home home;
+		proxy_pass http://$upstream_home:9000;
 		# Needed so express-session can set a secure cookie
 		proxy_set_header X-Forwarded-Proto https;
 		# Forward host so express vhost can dispatch to the correct express-session
