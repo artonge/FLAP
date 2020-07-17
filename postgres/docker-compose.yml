@@ -3,7 +3,7 @@ services:
         # Do not upgrade lightly. See:
         # Github issue for automatic upgrade in docker container: https://github.com/docker-library/postgres/issues/37
         # pg_upgrade doc: https://www.postgresql.org/docs/9.4/pgupgrade.html
-        image: postgres:11.7
+        image: postgres:11.8
         container_name: flap_postgres
         env_file: [$FLAP_DIR/postgres/postgres.env]
         restart: unless-stopped

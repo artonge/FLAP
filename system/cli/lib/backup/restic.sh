@@ -25,7 +25,10 @@ case $CMD in
 		restic backup --quiet "$FLAP_DATA"
 		restic forget --quiet --prune --keep-hourly 2 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
 		restic rebuild-index --quiet
-		restic check --quiet
+		if [ "${FLAG_NO_BACKUP_CHECK:-}" != "true" ]
+		then
+			restic check --quiet
+		fi
 	;;
 	restore)
 		snapshot_id=$(restic snapshots --last --json | jq --raw-output '.[0].id')

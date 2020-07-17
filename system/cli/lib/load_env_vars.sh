@@ -15,9 +15,6 @@ fi
 
 
 # Export global environement variables.
-export ARCH
-ARCH=$(uname -m)
-
 export PRIMARY_DOMAIN_NAME
 PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 
@@ -34,7 +31,7 @@ export NEEDED_PORTS
 NEEDED_PORTS=""
 
 export FLAP_ENV_VARS
-FLAP_ENV_VARS="\${ARCH} \${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS}"
+FLAP_ENV_VARS="\${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS}"
 
 
 # Load the admin email.
