@@ -25,13 +25,13 @@ Commands:
 
 		git fetch --force --tags --prune --prune-tags &> /dev/null
 
-		CURRENT_TAG=$(git describe --tags --abbrev=0)
-		NEXT_TAG=$(git tag --sort version:refname | grep -A 1 "$CURRENT_TAG" | grep -v "$CURRENT_TAG" | cat)
-		ARG_TAG=${1:-}
-		TARGET_TAG=${ARG_TAG:-$NEXT_TAG}
+		current_tag=$(git describe --tags --abbrev=0)
+		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
+		arg_tag=${1:-}
+		target_tag=${arg_tag:-$next_tag}
 
-		# Abort update if there is no TARGET_TAG.
-		if [ "${TARGET_TAG:-0.0.0}" == '0.0.0' ]
+		# Abort update if there is no target_tag.
+		if [ "${target_tag:-0.0.0}" == '0.0.0' ]
 		then
 			exit 0
 		fi
@@ -54,8 +54,8 @@ Commands:
 		flapctl backup
 
 		{
-			echo "* [update] Updating code to $TARGET_TAG." &&
-			git checkout --force --recurse-submodules "$TARGET_TAG" &&
+			echo "* [update] Updating code to $target_tag." &&
+			git checkout --force --recurse-submodules "$target_tag" &&
 
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
@@ -74,7 +74,7 @@ Commands:
 			# - starting without the docker images,
 			# - running migrations on an unknown state.
 			echo '* [update] ERROR - Fail to update, going back to previous commit.'
-			git checkout --force --recurse-submodules "$CURRENT_TAG"
+			git checkout --force --recurse-submodules "$current_tag"
 			rm /tmp/updating_flap.lock
 			exit 1
 		}
@@ -95,6 +95,8 @@ Commands:
 		flapctl setup cron
 
 		rm /tmp/updating_flap.lock
+
+		flapctl update
 		;;
 esac
 

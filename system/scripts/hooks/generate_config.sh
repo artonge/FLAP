@@ -77,7 +77,7 @@ then
 		--slurp \
 		'reduce .[] as $service ({}; . * $service)' "${compose_monitoring_files[@]}" "$main_compose_file" > "$main_compose_file.tmp"
 
-	cat "$main_compose_file.tmp" >> "$main_compose_file"
+	cat "$main_compose_file.tmp" > "$main_compose_file"
 fi
 
 

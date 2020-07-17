@@ -18,7 +18,10 @@ case $CMD in
 	backup)
 		borg create --compression lz4 ::'{hostname}-{now}' "$FLAP_DATA"
 		borg prune --keep-hourly 2 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
-		borg check
+		if [ "${FLAG_NO_BACKUP_CHECK:-}" != "true" ]
+		then
+			borg check
+		fi
 	;;
 	restore)
 		archive=$(borg list --json | jq --raw-output '.archives[.archives | length - 1].archive')

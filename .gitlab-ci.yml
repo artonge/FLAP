@@ -22,7 +22,6 @@ stages:
   - performance
   - cleanup
 
-# Check shell scripts sanity.
 shellcheck:
     image: koalaman/shellcheck-alpine:latest
     stage: test
@@ -31,7 +30,6 @@ shellcheck:
         - apk add git
         - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --external-sources --shell=bash
 
-# Check shell scripts executability.
 test_script_executable:
     image: ubuntu
     stage: test
@@ -46,6 +44,7 @@ test_script_executable:
     image: docker:stable
     services:
         - name: docker:dind
+          # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
           alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test
     needs: [build]
     before_script:
@@ -138,6 +137,23 @@ test_cli:
 
         - docker exec flap flapctl update $CI_COMMIT_REF_NAME
 
+.test_serial_update:
+    stage: test
+    extends: .start_flap
+    variables:
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.12.1
+    needs: []
+    script:
+        - docker exec flap flapctl users create_admin
+        - docker exec flap flapctl tls generate_localhost
+        - docker exec flap flapctl restart
+        - docker exec flap flapctl hooks post_domain_update
+
+        # Add content to SOGo so pre_backup hooks does not fails.
+        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+
+        - docker exec flap flapctl update $CI_COMMIT_REF_NAME
+
 test_update_to_commit:
     extends: .test_update
     only: [branches]
@@ -150,7 +166,6 @@ test_update_to_tag:
     variables:
         LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
 
-# We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
 setup_flap:
     only: [branches]
     extends: .start_flap
@@ -204,9 +219,10 @@ test_e2e:
         # Install codecept and puppeteer.
         - cd home
         - npm install codeceptjs puppeteer mocha-junit-reporter
+        - npm run e2e:copy
+        - export FLAP_URL=flap.test
 
         # Run e2e tests
-        - export FLAP_URL=flap.test
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
     artifacts:
         reports:

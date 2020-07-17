@@ -1,7 +1,7 @@
 services:
     nginx:
         # Release notes: https://nginx.org/en/download.html
-        image: nginx:1.18.0
+        image: nginx:1.19.1
         container_name: flap_nginx
         restart: unless-stopped
         logging:
