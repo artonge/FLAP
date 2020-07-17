@@ -12,5 +12,6 @@ ADMIN_PWD=$(generatePassword system admin_pwd)
 export ARCH
 ARCH=$(uname -m)
 
+cd "$FLAP_DIR"
 export FLAP_VERSION
 FLAP_VERSION=$(git describe --tags --abbrev=0)
