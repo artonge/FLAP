@@ -10,6 +10,8 @@ docker run \
 	--name docker \
 	--detach \
 	--rm \
+	--publish 80:80 \
+	--publish 443:443 \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \
 	--volume /flap_backup:/flap_backup \
@@ -94,12 +96,13 @@ docker exec flap flapctl stop
 docker exec flap flapctl clean data -y
 
 docker exec flap rm -rf /flap_dir/*
-docker exec flap cp -rT /opt/flap /flap_dir
+# docker exec flap cp -rT /opt/flap /flap_dir
 # To use your local files run the following command from your host machine.
 # sudo rsync -a $FLAP_DIR/* /flap_dir
 
 # Copy pipeline init_config file.
-cp /flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml /flap_dir/flap_init_config.yml
+mkdir --parents /flap_data/system
+cp /flap_dir/system/flapctl.examples.d/pipeline.env /flap_data/system/flapctl.env
 
 docker exec flap ln -sf "/flap_dir/system/cli/flapctl.sh" /bin/flapctl
 
@@ -129,7 +132,11 @@ export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 npm install codeceptjs puppeteer mocha-junit-reporter
 
+docker exec --user www-data flap_nextcloud php occ user:list
+docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+
 # Run e2e tests
 cd /flap_dir/home
+npm run e2e:copy
 export FLAP_URL=flap.test
-npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
+npx codeceptjs run --profile=chrome-ci --steps

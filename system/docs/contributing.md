@@ -71,7 +71,7 @@ The `flapctl` CLI uses feature flags to inhibit or change some functionality. Co
 cp flapctl.example.env flapctl.env
 ```
 
-Services can also support specific feature flags. Take a look at `$FLAP_DIR/<service>/flags.env`.
+Services can also support specific feature flags. Take a look at `$FLAP_DIR/<service>/variables.yml`.
 
 ### Running services
 

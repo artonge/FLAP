@@ -22,7 +22,7 @@ services:
             org.label-schema.group: "monitoring"
 
     cadvisor:
-        image: gcr.io/google-containers/cadvisor:v0.37.0
+        image: gcr.io/google-containers/cadvisor:v0.36.0
         container_name: flap_cadvisor
         volumes:
             - /:/rootfs:ro

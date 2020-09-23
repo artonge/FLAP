@@ -3,16 +3,12 @@
 set -ue
 
 mkdir --parents "$FLAP_DATA/system"
-touch "$FLAP_DATA/system/flap.yml"
 
-# Load feature flags.
-if [ -f "$FLAP_DATA/system/flapctl.env" ]
-then
-	# shellcheck source=flapctl.example.env
-	# shellcheck disable=SC1091
-	source "$FLAP_DATA/system/flapctl.env"
-fi
-
+# Load environment variables and flags.
+touch "$FLAP_DATA/system/flapctl.env"
+# shellcheck source=flapctl.example.env
+# shellcheck disable=SC1091
+source "$FLAP_DATA/system/flapctl.env"
 
 # Export global environement variables.
 export PRIMARY_DOMAIN_NAME
@@ -32,26 +28,6 @@ NEEDED_PORTS=""
 
 export FLAP_ENV_VARS
 FLAP_ENV_VARS="\${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS}"
-
-
-# Load the admin email.
-# If admin_email.txt does not exist, try to load it from flap_init_config.yml.
-export ADMIN_EMAIL
-if [ ! -f "$FLAP_DATA/system/admin_email.txt" ]
-then
-	if [ -f "$FLAP_DIR/flap_init_config.yml" ]
-	then
-		admin_mail=$(yq --raw-output '.admin_mail' "$FLAP_DIR/flap_init_config.yml")
-		if [ "$admin_mail" != "" ]
-		then
-			echo "$admin_mail" > "$FLAP_DATA/system/admin_email.txt"
-			ADMIN_EMAIL=$admin_mail
-		fi
-	fi
-else
-	ADMIN_EMAIL=$(cat "$FLAP_DATA/system/admin_email.txt")
-fi
-
 
 # Load services environement variables.
 # This will populate FLAP_ENV_VARS, SUBDOMAINES and NEEDED_PORTS.

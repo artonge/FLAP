@@ -6,4 +6,8 @@ echo "Generating /etc/msmtprc and /etc/msmtp.aliases."
 flapctl config generate_templates
 # Copy msmtprc.conf to the msmtp config folder.
 cp "$FLAP_DIR/system/msmtprc.conf" /etc/msmtprc
-echo "root: $ADMIN_EMAIL" > /etc/msmtp.aliases
+
+if [ "${ADMIN_EMAIL:-}" != "" ]
+then
+    echo "root: $ADMIN_EMAIL" > /etc/msmtp.aliases
+fi

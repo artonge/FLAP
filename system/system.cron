@@ -7,6 +7,7 @@
 @hourly      flapctl ports setup > /dev/null
 
 # Every minutes.
+* * * * *    flapctl restart handle_request &> /var/log/flap/restart.log
 * * * * *    flapctl domains handle_request &> /var/log/flap/tls.log
 * * * * *    flapctl domains update_dns_records &> /var/log/flap/tls.log
 

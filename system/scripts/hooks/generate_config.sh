@@ -10,34 +10,11 @@ rm --force "$FLAP_DIR/docker-compose.override.yml"
 main_compose_file="$FLAP_DIR/docker-compose.yml"
 main_compose_override_file="$FLAP_DIR/docker-compose.override.yml"
 
-compose_files=()
-compose_monitoring_files=()
-compose_override_files=()
-compose_ci_files=()
-
 # Get list of docker-compose files.
-for service in $FLAP_SERVICES
-do
-	if [ -f "$FLAP_DIR/$service/docker-compose.yml" ]
-	then
-		compose_files+=("$FLAP_DIR/$service/docker-compose.yml")
-	fi
-
-	if [ -f "$FLAP_DIR/$service/docker-compose.monitoring.yml" ]
-	then
-		compose_monitoring_files+=("$FLAP_DIR/$service/docker-compose.monitoring.yml")
-	fi
-
-	if [ -f "$FLAP_DIR/$service/docker-compose.override.yml" ]
-	then
-		compose_override_files+=("$FLAP_DIR/$service/docker-compose.override.yml")
-	fi
-
-	if [ -f "$FLAP_DIR/$service/docker-compose.ci.yml" ]
-	then
-		compose_ci_files+=("$FLAP_DIR/$service/docker-compose.ci.yml")
-	fi
-done
+mapfile -t compose_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.yml)
+mapfile -t compose_monitoring_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.monitoring.yml)
+mapfile -t compose_override_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.override.yml)
+mapfile -t compose_ci_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.ci.yml)
 
 echo "Merge services' docker-compose.yml files."
 # shellcheck disable=SC2016
@@ -89,9 +66,7 @@ then
 		--yaml-output \
 		--yaml-roundtrip \
 		--slurp \
-		'reduce .[] as $service ({}; . * $service)' "${compose_override_files[@]}" > "$main_compose_override_file.tmp"
-
-	cat "$main_compose_override_file.tmp" >> "$main_compose_override_file"
+		'reduce .[] as $service ({}; . * $service)' "${compose_override_files[@]}" > "$main_compose_override_file"
 fi
 
 
@@ -108,7 +83,6 @@ then
 
 	cat "$main_compose_override_file.tmp" >> "$main_compose_override_file"
 fi
-
 
 rm --force "$main_compose_override_file.tmp"
 rm --force "$main_compose_file.tmp"

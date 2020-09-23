@@ -5,29 +5,6 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
-	flapenv)
-		if [ ! -f "$FLAP_DIR/flap_init_config.yml" ]
-		then
-			exit
-		fi
-
-		echo "* [setup] Creating flapctl.env file from flap_init_config.yml"
-
-		env_vars=$(yq --raw-output '.env_vars | keys[]' "$FLAP_DIR/flap_init_config.yml")
-
-		echo "" > "$FLAP_DATA/system/flapctl.env"
-
-		for var in $env_vars
-		do
-			# shellcheck disable=SC2016
-			key=$(yq --raw-output --arg var "$var" '.env_vars[$var]' "$FLAP_DIR/flap_init_config.yml")
-			echo "$var=$key"
-			echo "export $var=$key" >> "$FLAP_DATA/system/flapctl.env"
-		done
-
-		admin_email=$(yq --raw-output '.admin_email' "$FLAP_DIR/flap_init_config.yml")
-		echo "$admin_email" > "$FLAP_DATA/system/admin_email.txt"
-		;;
 	docker_images)
 		if [ ! -f /var/lib/flap/images ]
 		then

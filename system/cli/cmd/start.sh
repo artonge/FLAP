@@ -11,7 +11,6 @@ case $CMD in
 		# Run some setup operations if necessary.
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
-			flapctl setup flapenv
 			flapctl setup hostname
 			flapctl setup docker_images
 			flapctl disks setup

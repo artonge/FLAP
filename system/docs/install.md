@@ -33,40 +33,30 @@ source /etc/environment
 
 ### Configuration file
 
-`flapctl` uses two environment variables `FLAP_DIR` and `FLAP_DATA`.
+`flapctl` uses two environment variables `FLAP_DIR` and `FLAP_DATA` set in `/etc/environment`.
 
--   `FLAP_DIR` is where the FLAP repository is. This default to `/opt/flap`.
--   `FLAP_DATA` is where all your data and configuration are. Be careful with this directory ! This default to `/flap`.
+-   `FLAP_DIR` is where the FLAP repository is. The default is `/opt/flap`.
+-   `FLAP_DATA` is where all your data and configuration are. Be careful with this directory ! The default is `/flap`.
 
-`flapctl` also load environment variables from `$FLAP_DATA/flapctl.env`. This file is used to store configuration and feature flags options.
-
-When installing FLAP, you can create a `flap_init_config.yml` file inside `FLAP_DIR`. This file will contains information that `flapctl` will use to create the `$FLAP_DATA/flapctl.env` file and configure you host.
+`flapctl` also load environment variables from `$FLAP_DATA/system/flapctl.env`. This file is used to store configuration and feature flags options.
 
 You can find examples for:
 
--   [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/plaforms_init_config/flap_init_config.vps.yml)
--   [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/plaforms_init_config/flap_init_config.xu4.yml)
--   [Local development](https://gitlab.com/flap-box/flap/-/tree/master/system/plaforms_init_config/flap_init_config.local.yml)
--   [Gitlab pipelines](https://gitlab.com/flap-box/flap/-/tree/master/system/plaforms_init_config/flap_init_config.pipeline.yml)
+-   [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/vps.env)
+-   [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/xu4.env)
+-   [Local development](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/local.env)
+-   [Gitlab pipelines (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/pipeline.env)
 
 You can find more information on configuration options:
 
+-   [Administration](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/administration.md)
 -   [Feature flags](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/feature_flags.md)
 -   [Backup](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/backup.md)
 -   [Storage](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/storage.md)
 
-Do not forget to set the administrator's email to receive important mail from the host.
-
-```yaml
-# ADMIN EMAIL.
-# FLAP will send you some e-mail if necessary.
-# For example in case of disk or RAID array failure
-admin_email: <your email>
-```
-
 ### First start
 
-You can no start FLAP for the first time:
+You can now start FLAP for the first time:
 
 ```shell
 flapctl start

@@ -9,6 +9,7 @@ FLAP services are a collection of scripts and configuration files. This file is 
     -   [nginxconf](#nginxconf)
     -   [configlemon.jq](#configlemon.jq)
     -   [docker-composeyml](#docker-composeyml)
+	-   [variables.yml](#variables.yml)
 -   [Hooks](#hooks)
     -   [load_env](#load_env)
     -   [should_install](#should_install)
@@ -176,6 +177,23 @@ volumes:
 
 x-nginx-extra-volumes:
     - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.
+```
+
+#### `variables.yml`
+
+Services can be customised to tweak their behaviors.
+
+The home GUI contains a form to set those variables. If you add a new variable for a service, make sure to add it to its `variables.yml` file.
+
+Make sure that tweaking the variable won't break the service.
+
+Example for home:
+
+```yaml
+FLAG_DISABLE_ADVANCED_SETTINGS:
+    type: boolean
+    info: Disable advanced settings.
+    group: tweaks
 ```
 
 You can also create `docker-compose.ci.yml` and `docker-compose.override.yml` files. They will be used to override some configuration if respectively, `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE` or `FLAG_GENERATE_DOCKER_COMPOSE_CI` are set. They are used during development.
