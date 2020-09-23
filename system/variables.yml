@@ -1,0 +1,93 @@
+# Feature flags for the flapctl cli.
+# You can set those variables in $FLAP_DIR/system/flapctl.env
+
+# Every services also support feature flags. Take a look at `$FLAP_DIR/<service>/variables.yml`.
+
+FLAG_NO_CLEAN_DOCKER:
+    type: boolean
+    info: Don't clean docker on calling flapctl clean docker.
+    example:
+        - CI pipeline where disk space is not a problem.
+        - Dev station where keeping docker images can be usefull.
+    group: dev
+
+FLAG_DISK_MODE_SINGLE:
+    type: boolean
+    info: Setup single disk for the data directory.
+    example:
+        - Hosted instance where data replication is done by the host.
+
+FLAG_DISK_MODE_RAID1:
+    type: boolean
+    info: Setup the RAID1 array for the data directory.
+    example:
+        - Homeserver where data replication must be done manually.
+
+FLAG_NO_NAT_NETWORK_SETUP:
+    type: boolean
+    info: Don't open ports and setup hostname.
+    example:
+        - CI pipeline where there is no port to open and the cmd will fail.
+        - Dev station where we don't want ports to be open toward the station.
+    group: tweaks
+
+FLAG_NO_CRON_SETUP:
+    type: boolean
+    info: Don't setup cron jobs.
+    example:
+        - Dev station were we don't want our custom cron jobs to be overided
+    group: dev
+
+FLAG_NO_TLS_GENERATION:
+    type: boolean
+    info: Don't generate TLS certificates with letsencrypt.
+    example:
+        - Dev station or CI pipeline where we don't need real TLS certificates.
+        - CI jobs where we don't want blow our allowed certificates count.
+    group: dev
+
+FLAG_LOCALHOST_TLS_INSTALL:
+    type: boolean
+    info: Install flap.test domain with self signed certificates when flapctl start is called. This will only be run if there is no primary domain configured.
+    example:
+        - Dev station or CI pipeline where we trust our self signed certificates.
+    group: dev
+
+FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:
+    type: boolean
+    info: Generate doker.compose.override.yml config file.
+    example:
+        - Dev station where we want to tweak the docker-compose.yml file.
+    group: dev
+
+FLAG_GENERATE_DOCKER_COMPOSE_CI:
+    type: boolean
+    info: Add doker.compose.ci.yml to the final doker.compose.override.yml config file.
+    example:
+        - CI jobs that need special rules.
+
+FLAG_NO_DNS_RECORD_UPDATE:
+    type: boolean
+    info: Do not update DNS records.
+    example:
+        - CI jobs that use dummy domain name.
+    group: dev
+
+FLAG_NO_FIREWALL_SETUP:
+    type: boolean
+    info: Do not setup firewall rules.
+    example:
+        - Dev station where we do not want to have our firewall messed up.
+    group: dev
+
+FLAG_NO_BACKUP_CHECK:
+    type: boolean
+    info: Do not check backup after the end of a backup.
+    example:
+        - Low end server that will take several hours to check the backup.
+    group: tweaks
+
+ADMIN_EMAIL:
+    type: string
+    info: The system will send mail to this address.
+    group: tweaks

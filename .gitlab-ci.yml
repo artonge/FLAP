@@ -35,10 +35,7 @@ test_script_executable:
     stage: test
     needs: []
     script:
-        - apt-get update
-        - apt-get install -y git
-        - find . -name '*.sh' ! -executable -print | grep -v node_modules
-        - git ls-files --exclude='*.sh' --ignored | xargs -I{} test -x {}
+        - test $(find . -path './**/node_modules' -prune -o  -name '*.sh' ! -executable -print | wc -l) == "0"
 
 .start_flap:
     image: docker:stable
@@ -96,8 +93,13 @@ test_script_executable:
         # Update the flapctl link so it maps to the new location.
         - docker exec flap ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
 
-        # Use env vars set in flap_init_config.pipeline.yml.
-        - cp $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_BUILDS_DIR/flap_dir/flap_init_config.yml
+        # Use environment variables set in pipeline.yml.
+        - mkdir --parents $CI_BUILDS_DIR/flap_data/system
+        - if [ -f $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
+        - if [ -f $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env ]; then echo ok; fi
+
+        - if [ -f $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml ]; then cp $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_BUILDS_DIR/flap_dir/flap_init_config.yml; fi
+        - if [ -f $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml ]; then echo ok; fi
 
         # Restore flap_data if it exists.
         - apk add tar
@@ -183,6 +185,10 @@ setup_flap:
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+        # Sync nextcloud user base.
+        - docker exec --user www-data flap_nextcloud php occ user:list
+
+        # Backup $FLAP_DATA
         - docker exec flap flapctl backup
         - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
 
@@ -193,7 +199,7 @@ test_e2e:
     extends: .start_flap
     needs: [setup_flap]
     stage: test
-    retry: 2
+    retry: 1
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
@@ -217,16 +223,29 @@ test_e2e:
         - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
         # Install codecept and puppeteer.
-        - cd home
+        - cd $CI_BUILDS_DIR/flap_dir/home/
         - npm install codeceptjs puppeteer mocha-junit-reporter
+
+        # - mkdir -p e2e/tests/services
         - npm run e2e:copy
+
         - export FLAP_URL=flap.test
 
-        # Run e2e tests
+        # Run e2e tests.
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
+        - mv $CI_BUILDS_DIR/flap_dir/home/output $CI_BUILDS_DIR/flap/home/output
+        - mv $CI_BUILDS_DIR/flap_dir/home/e2e/output $CI_BUILDS_DIR/flap/home/e2e/output
+        - ls ../
+        - ls ../../
+        - ls ../../../
+        - ls ../../../../
+        - ls $CI_BUILDS_DIR
+        - ls $CI_BUILDS_DIR/flap || true
     artifacts:
         reports:
-            junit: home/output/result.xml
+            junit: $CI_BUILDS_DIR/flap/home/output/result.xml
+        paths:
+            - $CI_BUILDS_DIR/flap/home/e2e/output
 
 build_disk_image:
     stage: build

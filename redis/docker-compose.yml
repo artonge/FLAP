@@ -8,6 +8,7 @@ services:
             driver: ${LOG_DRIVER:-journald}
         volumes:
             - ${FLAP_DATA}/redis/data:/data # [redis] <-> [hd] Data
+            - ${FLAP_DATA}/redis/config/redis.conf:/usr/local/etc/redis/redis.conf # [redis] <-> [hd] Config
         networks:
             stores-net:
                 aliases: [redis]

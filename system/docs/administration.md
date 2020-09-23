@@ -18,4 +18,9 @@ FLAP aims to lower the need for administration. This is done by:
 
 -   **Heavy use of Gitlab pipelines** to tests installation and update processes and to run e2e tests to prevent breakages.
 
-With that say, there is an `admin` user that can log to some service with extra capabilities. It's password can be found by running `flapctl config show`.
+With that say, there is an `admin` user that can log to some service with extra capabilities. Its password can be found by running `flapctl config show`.
+
+
+Do not forget to set the administrator's email to receive important mail from the host.
+
+You can also set a `ADMIN_EMAIL` environment variable in `$FLAP_DATA/system/flapctl.env`. FLAP will send you some e-mail if necessary. For example in case of disk or RAID array failure, updates or failed cron jobs.

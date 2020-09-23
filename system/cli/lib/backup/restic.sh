@@ -22,7 +22,7 @@ fi
 CMD=${1:-}
 case $CMD in
 	backup)
-		restic backup --quiet "$FLAP_DATA"
+		restic backup --quiet "$FLAP_DATA" --tag "$FLAP_VERSION"
 		restic forget --quiet --prune --keep-hourly 2 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
 		restic rebuild-index --quiet
 		if [ "${FLAG_NO_BACKUP_CHECK:-}" != "true" ]

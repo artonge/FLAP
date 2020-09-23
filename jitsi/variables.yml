@@ -1,0 +1,4 @@
+FLAG_JITSI_USE_EXTERNAL_TURN:
+    type: boolean
+    info: Use an external TURN server provided by FLAP.
+    group: tweaks

@@ -2,7 +2,9 @@
 
 ---
 
-Welcome to the **FLAP** main repository. FLAP main goal is to ease self-hosted services administration to allow more people to manage their numeric data.
+Welcome to the **FLAP** main repository.
+
+The aim of FLAP is to facilitate the use of self-hosted services to allow more people to manage their numeric data.
 
 If you need help setting up services, take a look at [our commercial offers](https://www.flap.cloud).
 
@@ -15,8 +17,8 @@ Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://r
 ### FLAP is:
 
 -   A **framework for self-hosted services** administration.
--   An opinionated **selection of self-hosted services**.
--   A **nice web GUI** to access the services and manage users and domain names.
+-   A wise **selection of self-hosted services**.
+-   A **beautiful web GUI** to access services and manage users and domain names.
 
 Once installed, most of the heavy lifting is done by the [`flapctl` CLI tool](https://gitlab.com/flap-box/flap/-/tree/master/system/cli).
 

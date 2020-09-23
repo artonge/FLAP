@@ -47,7 +47,7 @@ case $CMD in
 		domain=${2:-flap.test}
 		cert_path=/etc/letsencrypt/live/flap
 
-		# Create default flap.localhost domain if it is missing
+		# Create default flap.test domain if it is missing
 		mkdir -p "$FLAP_DATA/system/data/domains/$domain"
 		echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
 		echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
@@ -151,6 +151,6 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 $(flapctl tls summarize)
 Commands:
     generate | | Generate certificates for the current domain name.
-    generate_localhost | | Create flap.localhost domain and generate certificates if none exists." | column -t -s "|"
+    generate_localhost | | Create flap.test domain and generate certificates if none exists." | column -t -s "|"
         ;;
 esac

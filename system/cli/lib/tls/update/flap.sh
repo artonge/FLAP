@@ -10,9 +10,9 @@ TOKEN=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt")
 echo "* [dns-update:flap] Updating flap DNS for $DOMAIN."
 
 # shellcheck disable=SC2002
-if [ -f "$FLAP_DIR/opendkim/keys/$DOMAIN/mail.txt" ]
+if [ -f "$FLAP_DIR/mail/config/opendkim/keys/$DOMAIN/mail.txt" ]
 then
-	dkim=$(cat "$FLAP_DIR/opendkim/keys/$DOMAIN/mail.txt" | tr "\n" " " | grep --only-matching --extended-regexp 'p=.+"' | tr '"\t' ' ' | sed 's/[[:space:]]//g')
+	dkim=$(cat "$FLAP_DIR/mail/config/opendkim/keys/$DOMAIN/mail.txt" | tr "\n" " " | grep --only-matching --extended-regexp 'p=.+"' | tr '"\t' ' ' | sed 's/[[:space:]]//g')
 fi
 
 # HACK: wget output does not contain a new line, so the log is weird.
