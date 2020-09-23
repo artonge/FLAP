@@ -19,6 +19,10 @@ $(flapctl update summarize)
 Commands:
 	update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch." | column -t -s "|"
 		;;
+	images)
+		docker-compose --no-ansi pull
+		flapctl restart
+		;;
 	""|*)
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
