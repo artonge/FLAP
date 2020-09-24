@@ -19,6 +19,10 @@ $(flapctl update summarize)
 Commands:
 	update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch." | column -t -s "|"
 		;;
+	images)
+		docker-compose --no-ansi pull
+		flapctl restart
+		;;
 	""|*)
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
@@ -54,9 +58,8 @@ Commands:
 		flapctl backup
 
 		{
-			echo "* [update] Updating code to $target_tag." &&
+			echo "* [update] Updating code from $current_tag to $target_tag." &&
 			git checkout --force --recurse-submodules "$target_tag" &&
-
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
@@ -95,6 +98,14 @@ Commands:
 		flapctl setup cron
 
 		rm /tmp/updating_flap.lock
+
+		current_tag=$(git describe --tags --abbrev=0)
+
+		if [ "$current_tag" != "$target_tag" ]
+		then
+			echo "* [update] ERROR - FLAP is on $current_tag instead of $target_tag."
+			exit 1
+		fi
 
 		flapctl update
 		;;

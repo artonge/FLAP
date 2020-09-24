@@ -58,7 +58,7 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [x] **Nextcloud**
     -   [x] OnlyOffice
 -   [x] **SOGo**
--   [x] **Synapse/Riot**
+-   [x] **Synapse/Element**
     -   [x] Automatic room join for new users
 -   [x] **Jitsi**
     -   [ ] Limit access to FLAP's users [⚫]

@@ -1,6 +1,6 @@
 [submodule "core"]
 	path = home
-	url = https://gitlab.com/flap-box/core.git
+	url = https://gitlab.com/flap-box/home.git
 [submodule "sogo"]
 	path = sogo
 	url = https://gitlab.com/flap-box/sogo.git
@@ -12,4 +12,4 @@
 	url = https://gitlab.com/flap-box/lemon.git
 [submodule "matrix"]
 	path = matrix
-	url = https://gitlab.com/flap-box/matrix
+	url = https://gitlab.com/flap-box/matrix.git
