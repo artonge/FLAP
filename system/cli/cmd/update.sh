@@ -32,10 +32,10 @@ Commands:
 		current_tag=$(git describe --tags --abbrev=0)
 		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
 		arg_tag=${1:-}
-		target_tag=${arg_tag:-$next_tag}
+		target=${arg_tag:-$next_tag}
 
-		# Abort update if there is no target_tag.
-		if [ "${target_tag:-0.0.0}" == '0.0.0' ]
+		# Abort update if there is no target.
+		if [ "${target:-0.0.0}" == '0.0.0' ]
 		then
 			exit 0
 		fi
@@ -58,8 +58,8 @@ Commands:
 		flapctl backup
 
 		{
-			echo "* [update] Updating code from $current_tag to $target_tag." &&
-			git checkout --force --recurse-submodules "$target_tag" &&
+			echo "* [update] Updating code from $current_tag to $target." &&
+			git checkout --force --recurse-submodules "$target" &&
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
@@ -99,14 +99,20 @@ Commands:
 
 		rm /tmp/updating_flap.lock
 
-		current_tag=$(git describe --tags --abbrev=0)
-
-		if [ "$current_tag" != "$target_tag" ]
+		# Check new current HEAD.
+		current_head=$(git rev-parse --abbrev-ref HEAD)
+		if [ "$current_head" == "HEAD" ]
 		then
-			echo "* [update] ERROR - FLAP is on $current_tag instead of $target_tag."
+			current_head=$(git describe --tags --abbrev=0)
+		fi
+
+		if [ "$current_head" != "$target" ]
+		then
+			echo "* [update] ERROR - FLAP is on $current_head instead of $target."
 			exit 1
 		fi
 
+		# Recursivly continue to newer updates.
 		flapctl update
 		;;
 esac
