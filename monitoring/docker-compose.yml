@@ -1,6 +1,6 @@
 services:
     prometheus:
-        image: prom/prometheus:v2.21.0
+        image: prom/prometheus:v2.19.2
         container_name: flap_prometheus
         volumes:
             - ${FLAP_DIR}/monitoring/config/prometheus:/etc/prometheus
@@ -41,7 +41,7 @@ services:
             org.label-schema.group: "monitoring"
 
     grafana:
-        image: grafana/grafana:7.1.5
+        image: grafana/grafana:7.0.6
         container_name: flap_grafana
         volumes:
             - grafana_data:/var/lib/grafana

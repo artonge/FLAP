@@ -8,7 +8,7 @@ The aim of FLAP is to facilitate the use of self-hosted services to allow more p
 
 If you need help setting up services, take a look at [our commercial offers](https://www.flap.cloud).
 
-Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://app.element.io/app/#/room/#flap-software:matrix.org).
+Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://riot.im/app/#/room/#flap-software:matrix.org).
 
 ![Home page](https://gitlab.com/flap-box/core/raw/master/screenshots/home.png)
 
