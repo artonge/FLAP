@@ -93,13 +93,9 @@ test_script_executable:
         # Update the flapctl link so it maps to the new location.
         - docker exec flap ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
 
-        # Use environment variables set in pipeline.yml.
+        # Copy flapctl.env for pipeline.
         - mkdir --parents $CI_BUILDS_DIR/flap_data/system
-        - if [ -f $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
-        - if [ -f $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env ]; then echo ok; fi
-
-        - if [ -f $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml ]; then cp $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml $CI_BUILDS_DIR/flap_dir/flap_init_config.yml; fi
-        - if [ -f $CI_BUILDS_DIR/flap_dir/system/plaforms_init_config/flap_init_config.pipeline.yml ]; then echo ok; fi
+        - cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env
 
         # Restore flap_data if it exists.
         - apk add tar
@@ -232,7 +228,7 @@ test_e2e:
         - export FLAP_URL=flap.test
 
         # Run e2e tests.
-        - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
+        - exit_code=$(npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter) || true
         - mv $CI_BUILDS_DIR/flap_dir/home/output $CI_BUILDS_DIR/flap/home/output
         - mv $CI_BUILDS_DIR/flap_dir/home/e2e/output $CI_BUILDS_DIR/flap/home/e2e/output
         - ls ../
@@ -241,6 +237,7 @@ test_e2e:
         - ls ../../../../
         - ls $CI_BUILDS_DIR
         - ls $CI_BUILDS_DIR/flap || true
+        - exit $exit_code
     artifacts:
         reports:
             junit: $CI_BUILDS_DIR/flap/home/output/result.xml
