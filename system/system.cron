@@ -2,7 +2,6 @@
 @reboot      flapctl ports setup > /dev/null
 
 @midnight    flapctl update
-@weekly      flapctl update images
 
 @hourly      flapctl healthcheck &> /var/log/flap/healthcheck.log
 @hourly      flapctl ports setup > /dev/null

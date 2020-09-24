@@ -161,7 +161,6 @@ then
 	cd "$FLAP_DIR"
 	git fetch --tags --prune
 	git checkout "$BRANCH_OR_TAG"
-	git submodule sync
 	git submodule update --init
 fi
 
