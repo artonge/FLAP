@@ -10,7 +10,7 @@ If you need help setting up services, take a look at [our commercial offers](htt
 
 Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://app.element.io/app/#/room/#flap-software:matrix.org).
 
-![Home page](https://gitlab.com/flap-box/core/raw/master/screenshots/home.png)
+![Home page](https://gitlab.com/flap-box/home/raw/master/screenshots/home.png)
 
 ---
 

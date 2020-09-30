@@ -2,13 +2,19 @@
 
 Feature("nextcloud")
 
-Scenario("launch nextcloud", (I) => {
+Scenario("launch nextcloud", async (I) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
 	I.click(".Nextcloud")
 
-	I.wait(2)
+	let nb
+	do {
+		nb = await I.grabNumberOfOpenTabs()
+		I.wait(1)
+	} while (nb === 1)
+	I.wait(20)
+
 	I.switchToNextTab()
 	I.seeInCurrentUrl("https://files.flap.test")
 
@@ -31,7 +37,6 @@ Scenario("launch nextcloud", (I) => {
 
 	I.click(".app-sidebar__close")
 	I.wait(1)
-	I.wait
 	I.click("test.md")
 	I.waitForText("New text document content.")
 	I.click(".header-close")
