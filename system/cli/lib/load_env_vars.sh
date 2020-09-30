@@ -4,9 +4,7 @@ set -ue
 
 mkdir --parents "$FLAP_DATA/system"
 
-# Load environment variables and flags.
-touch "$FLAP_DATA/system/flapctl.env"
-# shellcheck source=flapctl.example.env
+# shellcheck source=./system/flapctl.exemple.d/flapctl.vps.env
 # shellcheck disable=SC1091
 source "$FLAP_DATA/system/flapctl.env"
 

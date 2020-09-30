@@ -4,11 +4,12 @@ services:
         image: redis:6.0
         container_name: flap_redis
         restart: unless-stopped
+        command: redis-server /usr/local/etc/redis/redis.conf
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:
             - ${FLAP_DATA}/redis/data:/data # [redis] <-> [hd] Data
-            - ${FLAP_DATA}/redis/config/redis.conf:/usr/local/etc/redis/redis.conf # [redis] <-> [hd] Config
+            - ${FLAP_DIR}/redis/config/redis.conf:/usr/local/etc/redis/redis.conf # [redis] <-> [hd] Config
         networks:
             stores-net:
                 aliases: [redis]

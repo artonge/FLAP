@@ -17,6 +17,11 @@ FLAP_LIBS="$FLAP_DIR/system/cli/lib"
 # shellcheck source=system/cli/lib/helpers.sh
 source "$FLAP_LIBS/helpers.sh"
 
+# Check for flapctl.env file.
+if [ ! -f "$FLAP_DATA/system/flapctl.env" ]
+then
+	echo "* [flapctl] flapctl.env file not found, create one and retry"
+fi
 
 # Load feature flags and services environment variables.
 # shellcheck source=system/cli/lib/load_env_vars.sh

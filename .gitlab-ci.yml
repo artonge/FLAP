@@ -195,11 +195,16 @@ test_e2e:
     extends: .start_flap
     needs: [setup_flap]
     stage: test
-    retry: 1
+    # retry: 1
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    artifacts:
+        reports:
+            junit: home/output/result.xml
+        paths:
+            - ./home/e2e/output/
     script:
         # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
         - >
@@ -219,7 +224,7 @@ test_e2e:
         - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
         # Install codecept and puppeteer.
-        - cd $CI_BUILDS_DIR/flap_dir/home/
+        - cd ./home
         - npm install codeceptjs puppeteer mocha-junit-reporter
 
         # - mkdir -p e2e/tests/services
@@ -228,21 +233,7 @@ test_e2e:
         - export FLAP_URL=flap.test
 
         # Run e2e tests.
-        - exit_code=$(npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter) || true
-        - mv $CI_BUILDS_DIR/flap_dir/home/output $CI_BUILDS_DIR/flap/home/output
-        - mv $CI_BUILDS_DIR/flap_dir/home/e2e/output $CI_BUILDS_DIR/flap/home/e2e/output
-        - ls ../
-        - ls ../../
-        - ls ../../../
-        - ls ../../../../
-        - ls $CI_BUILDS_DIR
-        - ls $CI_BUILDS_DIR/flap || true
-        - exit $exit_code
-    artifacts:
-        reports:
-            junit: $CI_BUILDS_DIR/flap/home/output/result.xml
-        paths:
-            - $CI_BUILDS_DIR/flap/home/e2e/output
+        - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
 
 build_disk_image:
     stage: build
