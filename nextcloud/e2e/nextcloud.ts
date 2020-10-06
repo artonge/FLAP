@@ -18,6 +18,11 @@ Scenario("launch nextcloud", async (I) => {
 	I.switchToNextTab()
 	I.seeInCurrentUrl("https://files.flap.test")
 
+	I.waitForElement(".header-close")
+	I.click(".header-close")
+
+	I.wait(2)
+
 	I.waitForText("All files")
 	I.see("All files")
 	I.see("Deleted files")
@@ -31,17 +36,18 @@ Scenario("launch nextcloud", async (I) => {
 	I.click(".icon-confirm")
 
 	I.waitForElement(".editor__content")
-	I.wait(1)
+	I.wait(2)
 	I.fillField(".editor__content", "New text document content.")
 	I.click(".header-close")
-
 	I.click(".app-sidebar__close")
-	I.wait(1)
+
+	I.waitForText("All files")
 	I.click("test.md")
 	I.waitForText("New text document content.")
 	I.click(".header-close")
 
-	I.wait(3)
+	I.waitForText("All files")
+	I.wait(2)
 	I.click(locate("tr").withAttr({ "data-file": "test.md" }).find(".fileactions .icon-more"))
 	I.click("Delete file")
 })
