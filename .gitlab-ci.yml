@@ -195,7 +195,7 @@ test_e2e:
     extends: .start_flap
     needs: [setup_flap]
     stage: test
-    # retry: 1
+    retry: 1
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
@@ -204,7 +204,7 @@ test_e2e:
         reports:
             junit: home/output/result.xml
         paths:
-            - ./home/e2e/output/
+            - home/e2e/output
     script:
         # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
         - >

@@ -11,10 +11,10 @@ main_compose_file="$FLAP_DIR/docker-compose.yml"
 main_compose_override_file="$FLAP_DIR/docker-compose.override.yml"
 
 # Get list of docker-compose files.
-mapfile -t compose_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.yml)
-mapfile -t compose_monitoring_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.monitoring.yml)
-mapfile -t compose_override_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.override.yml)
-mapfile -t compose_ci_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.ci.yml)
+mapfile -t compose_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.yml | grep -E "${FLAP_SERVICES/ /|}")
+mapfile -t compose_monitoring_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.monitoring.yml | grep -E "${FLAP_SERVICES/ /|}")
+mapfile -t compose_override_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.override.yml | grep -E "${FLAP_SERVICES/ /|}")
+mapfile -t compose_ci_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.ci.yml | grep -E "${FLAP_SERVICES/ /|}")
 
 echo "Merge services' docker-compose.yml files."
 # shellcheck disable=SC2016
