@@ -29,9 +29,6 @@ FLAP_ENV_VARS="\${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECO
 
 # Load services environement variables.
 # This will populate FLAP_ENV_VARS, SUBDOMAINES and NEEDED_PORTS.
-# HACK: We do not use FLAP_SERVICES because some services can need some other services env var even if it is disabled.
-# This will be changed in the future so only the env var of enabled services are loaded.
-# See: https://gitlab.com/flap-box/flap/-/issues/62
 for service in "$FLAP_DIR"/*/
 do
 	if [ ! -f "$service/scripts/hooks/load_env.sh" ]
@@ -62,3 +59,6 @@ do
 
 	FLAP_SERVICES="$FLAP_SERVICES $(basename "$service")"
 done
+
+# Trim leading white space.
+FLAP_SERVICES=${FLAP_SERVICES:1}

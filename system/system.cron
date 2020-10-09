@@ -1,4 +1,3 @@
-@reboot      flapctl setup cron > /dev/null
 @reboot      flapctl ports setup > /dev/null
 
 @midnight    flapctl update

@@ -1,21 +1,33 @@
 .build_docker:
     stage: build
-    only: [master, tags]
+    only: [master, tags, schedules]
     image: docker:stable
     services: ["docker:dind"]
     variables:
         # Until this issue is resolved: https://gitlab.com/gitlab-org/gitlab-runner/issues/1736
         GIT_STRATEGY: none
     script:
+        # Connect to gitlab registry.
         - DOCKER_DRIVER=overlay2
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+
+        # Clone repository.
         - apk add git
         - cd $CI_BUILDS_DIR
         - rm -rf $CI_PROJECT_DIR
         - git clone $CI_REPOSITORY_URL $CI_PROJECT_DIR
         - cd $CI_PROJECT_DIR
-        - git checkout $CI_COMMIT_SHA
+
+        # Specify the target, current commit or latest tag if pipeline is scheduled.
+        - TARGET=$CI_COMMIT_SHA
+        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ] TARGET=$(git tag --sort version:refname | grep flap | tail -1)
+        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ] VERSION_SCRIPT="git tag --sort version:refname | grep flap | tail -1"
+
+        # Checkout target.
+        - git checkout $TARGET
         - git submodule update --init
+
+        # Build image.
         - >
             docker build \
                 --tag $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)-$ARCH \
@@ -47,6 +59,10 @@ create_manifest:
         - mkdir -p /root/.docker
         - echo "{}" | jq '.experimental = "enabled"' > ~/.docker/config.json
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+
+        # Change VERSION_SCRIPT to be the latest tag if the pipeline is scheduled.
+        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ] VERSION_SCRIPT="git tag --sort version:refname | grep flap | tail -1"
+
         - >
             docker manifest create \
                 $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT) \
@@ -57,5 +73,6 @@ create_manifest:
                 $CI_REGISTRY_IMAGE:latest \
                 $CI_REGISTRY_IMAGE:latest-amd64 \
                 $CI_REGISTRY_IMAGE:latest-armv7
+
         - "docker manifest push $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)"
         - "docker manifest push $CI_REGISTRY_IMAGE:latest"

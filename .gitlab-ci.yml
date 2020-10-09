@@ -132,23 +132,8 @@ test_cli:
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
-
-        - docker exec flap flapctl update $CI_COMMIT_REF_NAME
-
-.test_serial_update:
-    stage: test
-    extends: .start_flap
-    variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.12.1
-    needs: []
-    script:
-        - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
-
-        # Add content to SOGo so pre_backup hooks does not fails.
-        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+        # Sync nextcloud user base.
+        - docker exec --user www-data flap_nextcloud php occ user:list
 
         - docker exec flap flapctl update $CI_COMMIT_REF_NAME
 
@@ -164,10 +149,39 @@ test_update_to_tag:
     variables:
         LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
 
-setup_flap:
-    only: [branches]
-    extends: .start_flap
+setup_with_serial_updates:
     stage: setup
+    extends: .start_flap
+    needs: []
+    allow_failure: true
+    # only: [tags]
+    variables:
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.13.0
+    artifacts:
+        paths:
+            - flap.tar.gz
+    script:
+        - docker exec flap flapctl users create_admin
+        - docker exec flap flapctl tls generate_localhost
+        - docker exec flap flapctl restart
+        - docker exec flap flapctl hooks post_domain_update
+
+        # Add content to SOGo so pre_backup hooks does not fails.
+        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+        # Sync nextcloud user base.
+        - docker exec --user www-data flap_nextcloud php occ user:list
+
+        - cp $CI_PROJECT_DIR/system/cli/cmd/start.sh $CI_BUILDS_DIR/flap_dir/system/cli/cmd/start.sh
+        - docker exec flap flapctl update
+
+        # Backup $FLAP_DATA
+        - docker exec flap flapctl backup
+        - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
+
+setup_flap:
+    stage: setup
+    extends: .start_flap
+    only: [branches]
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     artifacts:
@@ -188,18 +202,10 @@ setup_flap:
         - docker exec flap flapctl backup
         - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
 
-        - docker exec flap flapctl stop
-
-test_e2e:
-    only: [branches]
-    extends: .start_flap
-    needs: [setup_flap]
+.test_e2e:
     stage: test
+    extends: .start_flap
     retry: 1
-    variables:
-        SCREEN_WIDTH: "1920"
-        SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     artifacts:
         reports:
             junit: home/output/result.xml
@@ -234,6 +240,24 @@ test_e2e:
 
         # Run e2e tests.
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
+
+test_e2e_current:
+    only: [branches]
+    extends: .test_e2e
+    needs: [setup_flap]
+    variables:
+        SCREEN_WIDTH: "1920"
+        SCREEN_HEIGHT: "1080"
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+
+test_e2e_after_serial_updates:
+    # only: [branches]
+    extends: .test_e2e
+    needs: [setup_with_serial_updates]
+    variables:
+        SCREEN_WIDTH: "1920"
+        SCREEN_HEIGHT: "1080"
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
 build_disk_image:
     stage: build

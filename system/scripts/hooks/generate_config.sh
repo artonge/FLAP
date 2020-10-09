@@ -11,12 +11,17 @@ main_compose_file="$FLAP_DIR/docker-compose.yml"
 main_compose_override_file="$FLAP_DIR/docker-compose.override.yml"
 
 # Get list of docker-compose files.
-mapfile -t compose_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.yml | grep -E "${FLAP_SERVICES/ /|}")
-mapfile -t compose_monitoring_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.monitoring.yml | grep -E "${FLAP_SERVICES/ /|}")
-mapfile -t compose_override_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.override.yml | grep -E "${FLAP_SERVICES/ /|}")
-mapfile -t compose_ci_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.ci.yml | grep -E "${FLAP_SERVICES/ /|}")
+mapfile -t compose_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")
+mapfile -t compose_monitoring_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.monitoring.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")
+mapfile -t compose_override_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.override.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")
+mapfile -t compose_ci_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.ci.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")
 
 echo "Merge services' docker-compose.yml files."
+for service in ${compose_files[*]}
+do
+	echo "	- $service"
+done
+
 # shellcheck disable=SC2016
 yq \
 	--yaml-output \
@@ -47,6 +52,11 @@ yq \
 if [ "${ENABLE_MONITORING:-}" == "true" ]
 then
 	echo "Merge services' docker-compose.monitoring files."
+	for service in ${compose_monitoring_files[*]}
+	do
+		echo "	- $service"
+	done
+
 	# shellcheck disable=SC2016
 	yq \
 		--yaml-output \
@@ -61,6 +71,11 @@ fi
 if [ "${FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE:-}" == "true" ]
 then
 	echo "Merge services' docker-compose.override files."
+	for service in ${compose_override_files[*]}
+	do
+		echo "	- $service"
+	done
+
 	# shellcheck disable=SC2016
 	yq \
 		--yaml-output \
@@ -73,6 +88,11 @@ fi
 if [ "${FLAG_GENERATE_DOCKER_COMPOSE_CI:-}" == "true" ]
 then
 	echo "Merge services' docker-compose.ci.yml files."
+	for service in ${compose_ci_files[*]}
+	do
+		echo "	- $service"
+	done
+
 	touch "$main_compose_override_file"
 	# shellcheck disable=SC2016
 	yq \

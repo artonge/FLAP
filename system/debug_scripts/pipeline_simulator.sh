@@ -53,7 +53,7 @@ docker run \
 
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
-CI_COMMIT_REF_SLUG=version-1-11-1
+CI_COMMIT_REF_SLUG=version-1-13-0
 CI_COMMIT_SHA=latest
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
@@ -96,7 +96,7 @@ docker exec flap flapctl stop
 docker exec flap flapctl clean data -y
 
 docker exec flap rm -rf /flap_dir/*
-# docker exec flap cp -rT /opt/flap /flap_dir
+docker exec flap cp -rT /opt/flap /flap_dir
 # To use your local files run the following command from your host machine.
 # sudo rsync -a $FLAP_DIR/* /flap_dir
 
@@ -112,6 +112,16 @@ docker exec flap flapctl users create_admin
 docker exec flap flapctl tls generate_localhost
 docker exec flap flapctl restart
 docker exec flap flapctl hooks post_domain_update
+
+docker exec --user www-data flap_nextcloud php occ user:list
+docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+
+sudo cp "$FLAP_DIR/system/cli/cmd/start.sh" /flap_dir/system/cli/cmd/start.sh
+sudo cp "$FLAP_DIR/system/cli/cmd/update.sh" /flap_dir/system/cli/cmd/update.sh
+
+docker exec flap flapctl update v1.13.1
+
+
 
 # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
 apk add --no-cache \
@@ -131,9 +141,6 @@ apk add nodejs npm make python
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 npm install codeceptjs puppeteer mocha-junit-reporter
-
-docker exec --user www-data flap_nextcloud php occ user:list
-docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
 
 # Run e2e tests
 cd /flap_dir/home

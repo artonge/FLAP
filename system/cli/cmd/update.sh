@@ -40,18 +40,6 @@ Commands:
 			exit 0
 		fi
 
-		# Stop update if an update is already in progress.
-		if [ -f /tmp/updating_flap.lock ]
-		then
-			pid=$(cat /tmp/updating_flap.lock)
-
-			if kill -0 "$pid"
-			then
-				echo '* [update] Update already in progress, exiting.'
-				exit 0
-			fi
-		fi
-
 		echo $$ > /tmp/updating_flap.lock
 
 		echo "* [update] Backing up." &&
