@@ -154,7 +154,7 @@ setup_with_serial_updates:
     extends: .start_flap
     needs: []
     allow_failure: true
-    # only: [tags]
+    only: [tags]
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.13.0
     artifacts:
@@ -171,7 +171,6 @@ setup_with_serial_updates:
         # Sync nextcloud user base.
         - docker exec --user www-data flap_nextcloud php occ user:list
 
-        - cp $CI_PROJECT_DIR/system/cli/cmd/start.sh $CI_BUILDS_DIR/flap_dir/system/cli/cmd/start.sh
         - docker exec flap flapctl update
 
         # Backup $FLAP_DATA
@@ -251,7 +250,7 @@ test_e2e_current:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
 test_e2e_after_serial_updates:
-    # only: [branches]
+    only: [tag]
     extends: .test_e2e
     needs: [setup_with_serial_updates]
     variables:

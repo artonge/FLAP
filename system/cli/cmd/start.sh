@@ -33,9 +33,15 @@ case $CMD in
 
 		echo '* [start] Starting services.'
 		export COMPOSE_HTTP_TIMEOUT=240
-		# ip a
-		# docker-compose --verbose --log-level DEBUG --no-ansi up --detach
-		docker-compose --no-ansi up --detach
+
+		if [ "${CI:-false}" == "false" ]
+		then
+			docker-compose --no-ansi up --detach
+		else
+			# Debug overlapping network error happening during serial updates.
+			ip a
+			docker-compose --verbose --log-level DEBUG --no-ansi up --detach
+		fi
 
 		# Wait dor services to be up.
 		flapctl hooks wait_ready
