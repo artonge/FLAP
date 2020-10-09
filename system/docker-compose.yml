@@ -17,12 +17,6 @@ services:
 networks:
     apps-net:
         name: flap_apps-net
-        ipam:
-            config:
-                - subnet: 172.30.0.0/24
     stores-net:
         name: flap_stores-net
         internal: true
-        ipam:
-            config:
-                - subnet: 172.31.0.0/24

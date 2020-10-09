@@ -41,7 +41,7 @@ services:
             org.label-schema.group: "monitoring"
 
     grafana:
-        image: grafana/grafana:7.1.5
+        image: grafana/grafana:7.2.0
         container_name: flap_grafana
         volumes:
             - grafana_data:/var/lib/grafana
@@ -74,7 +74,8 @@ services:
 
 networks:
     monitor-net:
-        driver: bridge
+        name: flap_stores-net
+        internal: true
 
 volumes:
     prometheus_data: {}
