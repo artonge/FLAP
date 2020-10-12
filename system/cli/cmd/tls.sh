@@ -67,7 +67,7 @@ distinguished_name = req_distinguished_name
 x509_extensions    = x509_ext
 [ req_distinguished_name ]
 organizationName = FLAP
-commonName = FLAP localhost Root CA
+commonName = FLAP local Root CA
 [ x509_ext ]
 basicConstraints=critical,CA:true,pathlen:0
 keyUsage=critical,keyCertSign,cRLSign" > $cert_path/root_ca.conf

@@ -40,8 +40,6 @@ Commands:
 			exit 0
 		fi
 
-		echo $$ > /tmp/updating_flap.lock
-
 		echo "* [update] Backing up." &&
 		flapctl backup
 
@@ -66,7 +64,6 @@ Commands:
 			# - running migrations on an unknown state.
 			echo '* [update] ERROR - Fail to update, going back to previous commit.'
 			git checkout --force --recurse-submodules "$current_tag"
-			rm /tmp/updating_flap.lock
 			exit 1
 		}
 
@@ -84,8 +81,6 @@ Commands:
 		}
 
 		flapctl setup cron
-
-		rm /tmp/updating_flap.lock
 
 		# Check new current HEAD.
 		current_head=$(git rev-parse --abbrev-ref HEAD)
