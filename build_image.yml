@@ -20,8 +20,8 @@
 
         # Specify the target, current commit or latest tag if pipeline is scheduled.
         - TARGET=$CI_COMMIT_SHA
-        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ] TARGET=$(git tag --sort version:refname | grep flap | tail -1)
-        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ] VERSION_SCRIPT="git tag --sort version:refname | grep flap | tail -1"
+        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ]; then TARGET=$(git tag --sort version:refname | grep flap | tail -1); fi
+        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ]; then VERSION_SCRIPT="git tag --sort version:refname | grep flap | tail -1"; fi
 
         # Checkout target.
         - git checkout $TARGET
