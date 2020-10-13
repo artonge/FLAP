@@ -61,7 +61,7 @@ create_manifest:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
 
         # Change VERSION_SCRIPT to be the latest tag if the pipeline is scheduled.
-        - if [ "$CI_PIPELINE_SOURCE" == "schedule" ]; then VERSION_SCRIPT="git tag --sort version:refname | grep flap | tail -1"; fi
+        - if [ "$TAGGED_REPO" == "true" ]; then VERSION_SCRIPT="git tag --sort version:refname | grep flap | tail -1"; fi
 
         - >
             docker manifest create \

@@ -46,7 +46,7 @@ if [ "$child_nb" == 1 ]
 then
 	# https://www.putorius.net/lock-files-bash-scripts.html
 	exec 100>/tmp/flap.lock || exit 1
-	flock -w 30 100 || (echo "* [flapctl] Ongoing flapctl call, exiting."; exit 1)
+	flock -w 30 100 || exit 1
 fi
 
 # Execute the $CMD.

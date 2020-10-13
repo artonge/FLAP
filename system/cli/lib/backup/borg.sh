@@ -16,7 +16,7 @@ fi
 CMD=${1:-}
 case $CMD in
 	backup)
-		borg create --compression lz4 ::'{hostname}-{now}' "$FLAP_DATA"
+		borg create --compression lz4 ::'{hostname}-{now}'-"$FLAP_VERSION" "$FLAP_DATA"
 		borg prune --keep-hourly 2 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
 		if [ "${FLAG_NO_BACKUP_CHECK:-}" != "true" ]
 		then
