@@ -132,8 +132,8 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 -   [x] **Services management**
     -   [x] Features flags
     -   [x] Documentation for how to use a service
-    -   [ ] GUI to enable/disable flags [⚫]
+    -   [x] GUI to enable/disable flags
+	-   [x] GUI to restart the services
+	-   [x] GUI to restart the host
     -   [ ] Enable/Disable services [⚫]
     -   [ ] Disk usage per services [⚫]
-    -   [ ] GUI to restart the services [⚫ ⚫]
-    -   [ ] GUI to restart the host [⚫ ⚫]

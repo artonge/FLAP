@@ -130,10 +130,18 @@ case $CMD in
 		docker-compose ps --filter State=up | grep -E "^flap_ldap " | cat &> /dev/null
 		was_up=${PIPESTATUS[1]}
 
+		docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
+
 		aliases=$(
-			docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null | \
-			grep '^mailAlias:' | \
+			grep '^mailAlias: ' /tmp/export.ldif | \
 			cut -d ' ' -f2 2> /dev/null
+		)
+
+		aliases_base64=$(
+			grep '^mailAlias:: ' /tmp/export.ldif | \
+			cut -d ' ' -f2 | \
+			base64 --decode --ignore-garbage | \
+			tr " " "\n" 2> /dev/null
 		)
 
 		if [ "$was_up" != "0" ]
@@ -143,7 +151,7 @@ case $CMD in
 		fi
 
 		# Remove \r char.
-		echo "${aliases//[$'\r']}"
+		echo "${aliases//[$'\r']}""$aliases_base64"
 		;;
 	summarize)
 		echo "users | [list, create_admin] | Manage users."

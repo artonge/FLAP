@@ -47,7 +47,6 @@ case $CMD in
 		echo "* [users] The domain '$domainname was added."
 	;;
     handle_request)
-        echo '* [domains] Handling domain requests'
         flapctl domains handle_request_primary_update
         flapctl domains handle_request_domain_deletion
         flapctl domains handle_request_domain_creation
@@ -219,7 +218,6 @@ case $CMD in
 			HOST_IP=$(flapctl ip dns "$domain")
 			if [ "$EXTERNAL_IP" == "$HOST_IP" ]
 			then
-				echo "* [domains] IP is ok for $domain, skipping."
 				continue
 			fi
 
