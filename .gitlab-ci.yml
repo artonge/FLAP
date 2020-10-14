@@ -22,20 +22,36 @@ stages:
   - performance
   - cleanup
 
-shellcheck:
-    image: koalaman/shellcheck-alpine:latest
-    stage: test
-    needs: []
-    script:
-        - apk add git
-        - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --external-sources --shell=bash
-
 test_script_executable:
     image: ubuntu
     stage: test
     needs: []
+    only: [branches]
     script:
         - test $(find . -path './**/node_modules' -prune -o  -name '*.sh' ! -executable -print | wc -l) == "0"
+
+shellcheck:
+    image: koalaman/shellcheck-alpine:latest
+    stage: test
+    needs: []
+    only: [branches]
+    before_script:
+        - shellcheck --version
+    script:
+        - apk add git
+        - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --external-sources --shell=bash
+
+test_dockerfile_sanity:
+    image:
+        name: instrumenta/conftest:latest
+        entrypoint: [""]
+    stage: test
+    needs: []
+    only: [branches]
+    before_script:
+        - conftest --version
+    script:
+        - find ./ -name Dockerfile | xargs -I {} conftest test --policy dockerfile-security.rego {}
 
 .start_flap:
     image: docker:stable
@@ -82,6 +98,7 @@ test_script_executable:
             \
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
+                --env CI_JOB_NAME=$CI_JOB_NAME \
             \
                 $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
@@ -110,7 +127,7 @@ test_script_executable:
 test_cli:
     stage: test
     extends: .start_flap
-    except: [merge_requests]
+    only: [branches]
     needs: [build]
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
@@ -139,7 +156,7 @@ test_cli:
 
 test_update_to_commit:
     extends: .test_update
-    except: [tags]
+    only: [branches]
     variables:
         LATEST_TAG: git tag --sort version:refname | tail -1
 
@@ -152,11 +169,11 @@ test_update_to_tag:
 setup_with_serial_updates:
     stage: setup
     extends: .start_flap
+    only: [tags]
     needs: []
     allow_failure: true
-    only: [tags]
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.13.0
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.13.2
     artifacts:
         paths:
             - flap.tar.gz
@@ -180,7 +197,7 @@ setup_with_serial_updates:
 setup_flap:
     stage: setup
     extends: .start_flap
-    except: [merge_requests]
+    only: [branches]
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     artifacts:
@@ -242,7 +259,7 @@ setup_flap:
 
 test_e2e_current:
     extends: .test_e2e
-    except: [merge_requests]
+    only: [branches]
     needs: [setup_flap]
     variables:
         SCREEN_WIDTH: "1920"
@@ -250,13 +267,13 @@ test_e2e_current:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
 test_e2e_after_serial_updates:
-    only: [tags]
     extends: .test_e2e
+    only: [tags]
     needs: [setup_with_serial_updates]
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}
 
 build_disk_image:
     stage: build
