@@ -4,7 +4,7 @@ This is the list of FLAP's current and future features.
 
 Future features are not limited to the one listed bellow.
 
-Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-box/flap/-/blob/master/CONTRIBUTING.md).
+Pull requests are welcome. See [contribution guidlines](contributing.md).
 
 **Priority mark:**
 
@@ -15,7 +15,7 @@ Pull requests are welcome. See [contribution guidlines](https://gitlab.com/flap-
 
 ### **Framework's features for services**
 
-[Detailed list of framework features for services](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/create_new_service.md)
+[Detailed list of framework features for services](create_new_service.md)
 
 -   [x] **Hooks** called during FLAP life-cycle
 

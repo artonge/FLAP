@@ -1,0 +1,31 @@
+site_name: FLAP Documentation
+site_description: Documentations to help you set up you own FLAP cloud.
+
+copyright: CC-BY-SA
+
+site_url: https://www.flap.cloud
+
+repo_url: https://gitlab.com/flap-box/flap
+edit_uri: https://gitlab.com/flap-box/flap/edit/master/system/docs/
+
+strict: true
+
+docs_dir: system/docs
+site_dir: public
+
+nav:
+    - Home: index.md
+    - Installation: install.md
+    - Administration: administration.md
+    - Environment variables: environment_variables.md
+    - Backup: backup.md
+    - Monitoring: monitoring.md
+    - Features & Roadmap: features.md
+    - Contributing: contributing.md
+    - Add your service: create_new_service.md
+
+plugins:
+    - search:
+        lang: en
+
+theme: readthedocs

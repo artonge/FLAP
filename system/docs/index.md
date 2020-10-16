@@ -2,6 +2,8 @@
 
 ---
 
+Welcome to the **FLAP** documentation. This will help you setup your own FLAP cloud.
+
 **If you don't want to set up your own FLAP cloud, take a look at [our commercial offers](https://www.flap.cloud).**
 
 Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://app.element.io/#/room/#flap-software:matrix.org).
@@ -29,12 +31,12 @@ Connect with the username `demo` and password `demodemo`.
 ## Documentation
 
 - **Setting up you instance**
-	- [Installation](https://docs.flap.cloud/install)
-	- [Information about administrating a FLAP server](https://docs.flap.cloud/administration)
-	- [Configuration](https://docs.flap.cloud/environment_variables)
-	- [Backups](https://docs.flap.cloud/backup)
-	- [Monitoring](https://docs.flap.cloud/monitoring)
-	- [Features & Roadmap](https://docs.flap.cloud/features)
+	- [Installation](install.md)
+	- [Information about administrating a FLAP server](administration.md)
+	- [Configuration](environment_variables.md)
+	- [Backups](backup.md)
+	- [Monitoring](monitoring.md)
+	- [Features & Roadmap](features.md)
 - **Contributing**
-	- [Development environment setup](contributing)
-	- [Create a new service](create_new_service)
+	- [Development environment setup](contributing.md)
+	- [Create a new service](create_new_service.md)
