@@ -21,9 +21,9 @@ This will do the following action, please ensure none of them will break your sy
 -   Disable password authentication for SSH
 -   Create a systemd service for FLAP
 
-Click [here](https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/overlay/install_flap.sh) to see the script file.
+[Click here to see the script file.](https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/overlay/install_flap.sh)
 
-```shell
+```bash
 echo "Getting and running flap_install.sh script."
 curl https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/overlay/install_flap.sh | bash
 
@@ -49,22 +49,21 @@ You can find examples for:
 
 You can find more information on configuration options:
 
--   [Administration](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/administration.md)
--   [Feature flags](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/feature_flags.md)
--   [Backup](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/backup.md)
--   [Storage](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/storage.md)
+-   [Administration](administration.md)
+-   [Feature flags](environment_variables.md)
+-   [Backup](backup.md)
 
 ### First start
 
 You can now start FLAP for the first time:
 
-```shell
+```bash
 flapctl start
 ```
 
 If you are on the same network than your server, you can go to http://flap.local to finish the installation. Else you will need to finish the setup in the terminal to setup your domain name and create the first user.
 
-### Domain name
+### Set the domain name
 
 The domain name setup logic is still young so you will have to set your DNS records by yourself. Ideally FLAP will be able to configure DNS records for some domain name provider. You should, at minimum, have the following records:
 
@@ -75,11 +74,13 @@ The domain name setup logic is still young so you will have to set your DNS reco
 
 After the DNS records setup, you setup the domain in FLAP in the web GUI or by running the following commands:
 
-```shell
+```bash
 flapctl domains add <you_domain_name>
 ```
 
 When the domain name is set, you can add the following records for email to work:
+
+DKIM can be found on the FLAP home web GUI.
 
 ```
 @                              IN    MX     10    @
@@ -94,12 +95,10 @@ _imap._tcp          IN    SRV    0    1    143    @
 _submission._tcp    IN    SRV    0    1    587    @
 ```
 
-DKIM can be found on the FLAP home web GUI.
-
-# First user
+### Create the first user
 
 To setup the first user, you can use the web GUI or run the following command:
 
-```shell
+```bash
 flapctl users create
 ```

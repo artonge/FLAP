@@ -222,8 +222,8 @@ This is the place to populate some special FLAP environment variables.
 
 Context:
 
-    -   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
-    -   Services can either be up or down, do not make any assumptions.
+-   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
+-   Services can either be up or down, do not make any assumptions.
 
 Example:
 
@@ -251,9 +251,9 @@ You can also create a special variables for the service to enable or disable it.
 
 Context:
 
-    -   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
-    -   This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
-    -   Services can either be up or down, do not make any assumptions.
+-   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
+-   This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
+-   Services can either be up or down, do not make any assumptions.
 
 Example:
 
@@ -277,8 +277,8 @@ For example, matrix use this hook to generate a Nginx configuration file for the
 
 Context:
 
-    - This hook is ran at every `flapctl start` calls.
-    - Services should be down.
+- This hook is ran at every `flapctl start` calls.
+- Services should be down.
 
 Example:
 
@@ -303,10 +303,10 @@ This hook is used to let the service run some command to setup the database, lik
 
 Context:
 
-    - This hook is ran only once during the service's installation phase.
-    - This hook is ran during `flapctl start` before services are started.
-    - Services should be down.
-    - The database will specially be running during this hook so there is no need to start it.
+- This hook is ran only once during the service's installation phase.
+- This hook is ran during `flapctl start` before services are started.
+- Services should be down.
+- The database will specially be running during this hook so there is no need to start it.
 
 Example:
 
@@ -330,9 +330,9 @@ This hook is ran only once during the service's installation phase.
 
 Context:
 
-    - This hook is ran only once during the service's installation phase.
-    - This hook is ran during `flapctl start` before services are started.
-    - Services should be down.
+- This hook is ran only once during the service's installation phase.
+- This hook is ran during `flapctl start` before services are started.
+- Services should be down.
 
 For example, `matrix` needs to generate some files, and this can only be done by running a command in the synapse docker image.
 
@@ -352,7 +352,7 @@ This hook is used to wait for the service to be up. Execute whatever commands to
 
 Context:
 
-    -   This hook is called after `flapctl start` calls.
+-   This hook is called after `flapctl start` calls.
 
 Example:
 
@@ -378,9 +378,9 @@ For example, `nextcloud` runs some configuration with a command inside the docke
 
 Context:
 
-    - This hook is ran only once during the service's installation phase.
-    - This hook is ran during `flapctl start` after services are started.
-    - Services should be up.
+- This hook is ran only once during the service's installation phase.
+- This hook is ran during `flapctl start` after services are started.
+- Services should be up.
 
 Example:
 
@@ -403,7 +403,7 @@ This hook is called whenever a domain is added, deleted, or promoted to main dom
 
 Context:
 
-    - Services should be up.
+- Services should be up.
 
 For example, `lemon` fetches SAML metadatas:
 
@@ -430,7 +430,7 @@ This hook is called after a FLAP update.
 
 Context:
 
-    - Services should be up.
+- Services should be up.
 
 There is no example yet.
 
@@ -446,7 +446,7 @@ This hook is called before a backup. Use this hook to make extra backup tasks.
 
 Context:
 
-    - Services are up.
+- Services are up.
 
 For example, sogo dump all the users' data into disks.
 
@@ -464,7 +464,7 @@ This hook is called after a restoration.
 
 Context:
 
-    - Services should be up.
+- Services should be up.
 
 For example, Nextcloud load its database that was dumped to disk in `pre_backup`.
 
@@ -487,7 +487,7 @@ docker exec --user www-data flap_nextcloud php occ maintenance:data-fingerprint
 
 ## Monitoring
 
-Extra information [here](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/monitoring.md).
+[Extra information ](monitoring.md).
 
 FLAP includes a Prometheus and Grafana instance. Services can expose some dashboards, alerts and exporters to populate this system.
 

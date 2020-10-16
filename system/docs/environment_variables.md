@@ -1,4 +1,4 @@
-# Tweaking FLAP with feature flags
+# Tweaking FLAP with environment variables flags
 
 ---
 

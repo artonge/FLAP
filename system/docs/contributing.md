@@ -2,9 +2,9 @@
 
 ---
 
-You can take a look at the tasks board [here](https://gitlab.com/groups/flap-box/-/boards).
+You can take a look at [the tasks board](https://gitlab.com/groups/flap-box/-/boards).
 
-You can also take a look at [feature & roadmap](https://gitlab.com/flap-box/flap/-/blob/master/FEATURES.md).
+You can also take a look at [feature & roadmap](features.md).
 
 You can also open an issue explaining the modification you would like to make and I will happily help you through the process.
 
@@ -35,7 +35,7 @@ You need to install the following dependencies in order to run FLAP locally:
 
 I advise to alias the `docker-compose` command to `dc` for ease of use.
 
-```shell
+```bash
 echo "alias dc='docker-compose'" > ~/.bashrc
 ```
 
@@ -48,7 +48,7 @@ The following script will:
 -   Expose `$FLAP_DIR` and `$FLAP_DATA` as global env variables. You can change them to your convenience.
 -   Expose the `flapctl` CLI tool globally.
 
-```shell
+```bash
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
 echo "export FLAP_DATA=/flap" >> /etc/environment
 source /etc/environment
@@ -63,11 +63,11 @@ Adding the following line to your `/etc/hosts` file:
 
 ### ⚠ Setup feature flags
 
-Extra information [here](https://gitlab.com/flap-box/flap/-/blob/master/system/docs/storage.md).
+[Extra information](environment_variables.md).
 
 The `flapctl` CLI uses feature flags to inhibit or change some functionality. Copy the `flapctl.example.env` to `$FLAP_DATA/system/flapctl.env` file and setup the variables accordingly. A typical dev station would use most of them.
 
-```shell
+```bash
 cp flapctl.example.env flapctl.env
 ```
 
@@ -77,7 +77,7 @@ Services can also support specific feature flags. Take a look at `$FLAP_DIR/<ser
 
 To start all services you can run:
 
-```shell
+```bash
 sudo -E flapctl start
 ```
 
@@ -85,7 +85,7 @@ _For now `sudo` is required to ease the manipulation of containers data. Any pro
 
 To start a single service you can run:
 
-```shell
+```bash
 sudo -E flapctl config generate
 docker-compose up [<service name> ...]
 ```
