@@ -1,6 +1,6 @@
 .build_docker:
     stage: build
-    only: [master, tags, schedules, branches]
+    only: [master, tags, schedules]
     image: docker:stable
     services: ["docker:dind"]
     variables:

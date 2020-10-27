@@ -201,7 +201,7 @@ case $CMD in
 		fi
 
 		# Get current external IP to check if it is necessary to update the DNS.
-		EXTERNAL_IP=$(flapctl ip external)
+		external_ip=$(flapctl ip external)
 
 		# Execute update script for each OK domain or the provided ones.
 		read -r -a domains <<< "$DOMAIN_NAMES"
@@ -215,11 +215,13 @@ case $CMD in
 		for domain in "${domains[@]}"
 		do
 			# Don't update DNS records if the ip is correct.
-			HOST_IP=$(flapctl ip dns "$domain")
-			if [ "$EXTERNAL_IP" == "$HOST_IP" ]
+			host_ip=$(flapctl ip dns "$domain")
+			if [ "$external_ip" == "$host_ip" ]
 			then
 				continue
 			fi
+
+			echo "* [domains:$domain] Updating, $external_ip != $host_ip."
 
 			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
