@@ -31,6 +31,8 @@ source "$FLAP_LIBS/load_env_vars.sh"
 if [ ! -f "$FLAP_DIR/system/cli/cmd/$CMD.sh" ]
 then
 	"$FLAP_DIR/system/cli/cmd/help.sh" "${ARGS[@]}"
+	echo "* [$CMD] ERROR"
+	exit 1
 fi
 
 # Choose color from the depth of the flapctl call.

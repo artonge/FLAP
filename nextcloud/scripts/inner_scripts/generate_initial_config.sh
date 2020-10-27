@@ -55,6 +55,10 @@ php occ background:cron
 # ENABLE PREVIEW PRE-GENERATOR
 php occ app:enable previewgenerator || true
 
+# ENABLE RANSOMWARE PLUGINS
+php occ app:enable ransomware_protection || true
+php occ app:enable ransomware_detection || true
+
 # ENABLE ONLYOFFICE
 if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
 

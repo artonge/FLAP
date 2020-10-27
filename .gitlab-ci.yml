@@ -24,9 +24,9 @@ stages:
 
 pages:
     image: python
-    stage: deploy
+    stage: build
     needs: []
-    # only: [master]
+    only: [master]
     artifacts:
         paths: [public]
     script:
