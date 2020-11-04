@@ -21,6 +21,7 @@
 -   Enable end to end encryption ?
 -   Expose a default shared folder to the local network.
 -   Enable Talk with TURN server ?
+-   Enable Talk and bridge it to matrix
 
 ###### Resources
 

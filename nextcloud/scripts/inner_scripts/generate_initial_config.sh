@@ -9,8 +9,7 @@ php occ config:system:set appstoreenabled --value true --type boolean
 php occ config:system:set datadirectory --value '/data'
 
 # ENABLE LDAP BACKEND
-php occ app:enable user_ldap || true
-php occ ldap:delete-config s01
+php occ app:enable user_ldap
 php occ ldap:create-empty-config
 php occ ldap:set-config s01 ldapHost ldap
 php occ ldap:set-config s01 ldapPort 389
@@ -30,7 +29,7 @@ php occ ldap:set-config s01 ldapEmailAttribute mail
 php occ ldap:test-config s01
 
 # ENABLE SAML
-php occ app:enable user_saml || true
+php occ app:enable user_saml
 php occ config:app:set user_saml type --value "saml"
 php occ config:app:set user_saml general-require_provisioned_account --value "1"
 php occ config:app:set user_saml general-uid_mapping --value "uid"
@@ -53,18 +52,17 @@ php occ config:app:set user_saml security-logoutRequestSigned --value "1"
 php occ background:cron
 
 # ENABLE PREVIEW PRE-GENERATOR
-php occ app:enable previewgenerator || true
+php occ app:enable previewgenerator
 
 # ENABLE RANSOMWARE PLUGINS
-php occ app:enable ransomware_protection || true
-php occ app:enable ransomware_detection || true
+php occ app:enable ransomware_protection
 
 # ENABLE ONLYOFFICE
 if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
 
 then
-	php occ app:install documentserver_community || true
-	php occ app:install onlyoffice || true
+	php occ app:install documentserver_community
+	php occ app:install onlyoffice
 fi
 
 # MAIL
@@ -77,6 +75,9 @@ php occ config:system:set mail_smtpport --value "587"
 php occ config:system:set mail_smtpname --value "admin"
 php occ config:system:set mail_smtppassword --value "$ADMIN_PWD"
 php occ config:system:set mail_smtpsecure --value "tls"
+
+# DISABLE DASHBOARD
+php occ app:disable dashboard
 
 # DISABLE FUNCTIONNALITIES
 php occ config:system:set updatechecker --value false --type boolean
