@@ -2,7 +2,7 @@
 
 set -eu
 
-echo "* [6] Enable ransomware plugins."
+echo "* [7] Disable ransomware_detection plugin."
 docker-compose --no-ansi up --detach nextcloud
 
 flapctl hooks wait_ready nextcloud

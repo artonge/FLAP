@@ -165,6 +165,8 @@ test_cli:
 
         - docker exec flap flapctl update $CI_COMMIT_REF_NAME
 
+        - test "$(docker exec flap flapctl migrate status)" == ""
+
 test_update_to_commit:
     extends: .test_update
     only: [branches]
@@ -200,6 +202,8 @@ setup_with_serial_updates:
         - docker exec --user www-data flap_nextcloud php occ user:list
 
         - docker exec flap flapctl update
+
+        - test "$(docker exec flap flapctl migrate status)" == ""
 
         # Backup $FLAP_DATA
         - docker exec flap flapctl backup
