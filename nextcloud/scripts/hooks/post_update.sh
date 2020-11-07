@@ -2,8 +2,10 @@
 
 set -eu
 
+echo "Listing nextcloud app."
+docker exec --tty --user www-data flap_nextcloud php occ app:list
+
 # Concider running the following commands to repaire potential nextcloud issues.
-# php occ maintenance:mode --on
 # php occ db:add-missing-indices
 # php occ db:convert-filecache-bigint
 # php occ maintenance:mimetype:update-js

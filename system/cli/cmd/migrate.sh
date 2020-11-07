@@ -15,8 +15,6 @@ Commands:
 	migrate | [<service_name> ...] | Run migrations for the specified services, default to all services." | column -t -s "|"
 	;;
 	status)
-		echo "* [migrate] Listing migrations to run."
-
 		for service in $FLAP_SERVICES
 		do
 			current_migration=$(cat "$FLAP_DATA/$service/current_migration.txt")
@@ -32,7 +30,6 @@ Commands:
 			then
 				echo "$service: [${needed_migrations[*]}]"
 			fi
-
 		done
 	;;
 	""|*)
