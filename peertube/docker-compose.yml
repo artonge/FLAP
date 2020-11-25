@@ -1,0 +1,25 @@
+services:
+    peertube:
+        image: chocobozzz/peertube:v2.4.0-buster
+        container_name: flap_peertube
+        env_file: [$FLAP_DIR/peertube/peertube.env]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        depends_on: [postgres, redis, ldap, mail]
+        volumes:
+            - ${FLAP_DATA}/peertube/data:/data # [peertube] <-> [hd] Users' data.
+            - ${FLAP_DATA}/peertube/config:/config # [peertube] <-> [emmc] Config files.
+            - peertubeStaticFiles:/app/client/dist # [peertube] <-> [nginx] Static files needed by nginx.
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [peertube]
+
+volumes:
+    peertubeStaticFiles:
+        name: flap_peertubeStaticFiles
+
+x-nginx-extra-volumes:
+    - peertubeStaticFiles:/var/www/peertube/peertube-latest/client/dist:ro # [peertube] -> [nginx] Peertube static files.
+    - ${FLAP_DIR}/peertube/medias:/var/www/peertube_medias:ro # [emmc] -> [nginx] Peertube static files.

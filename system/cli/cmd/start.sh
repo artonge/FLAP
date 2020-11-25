@@ -32,8 +32,6 @@ case $CMD in
 		cd "$FLAP_DIR"
 
 		echo '* [start] Starting services.'
-		export COMPOSE_HTTP_TIMEOUT=240
-
 		if [ "${CI_JOB_NAME:-}" != "setup_with_serial_updates" ]
 		then
 			docker-compose --no-ansi up --detach

@@ -1,0 +1,4 @@
+services:
+    peertube:
+        ports:
+          - "9003:9000"

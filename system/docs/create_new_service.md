@@ -110,6 +110,8 @@ You can use this file to integrate the service with [LemonLDAP](https://lemonlda
 
 You will also need to configure SSO in the Nginx configuration file.
 
+- (locationRules doc)[https://lemonldap-ng.org/documentation/latest/presentation.html?#authorization]
+
 For example, SOGo uses the Remote-User and Basic Auth to authenticate the user:
 
 ```jq
@@ -475,8 +477,8 @@ set -eu
 
 docker exec --user www-data flap_nextcloud php occ maintenance:mode --on
 
-docker exec --user postgres flap_postgres psql --dbname template1 --command "DROP DATABASE nextcloud;"
-docker exec --user postgres flap_postgres psql --dbname template1 --command "CREATE DATABASE nextcloud WITH OWNER nextcloud;"
+docker exec --user postgres flap_postgres psql --command "DROP DATABASE nextcloud;"
+docker exec --user postgres flap_postgres psql --command "CREATE DATABASE nextcloud WITH OWNER nextcloud;"
 
 # shellcheck disable=SC2002
 gzip --decompress --stdout "$FLAP_DATA/nextcloud/backup.sql.gz" | docker exec --interactive --user postgres flap_postgres psql --dbname nextcloud

@@ -1,0 +1,12 @@
+[Unit]
+Description=Restore FLAP's data to intial state every day
+
+[Service]
+Environment="BACKUP_TOOL=restic"
+Environment="RESTIC_REPOSITORY=/backup"
+Environment="RESTIC_PASSWORD=securepassword"
+Environment="HOME=/root"
+Environment="FLAP_DIR=/opt/flap"
+Environment="FLAP_DATA=/flap"
+
+ExecStart=/root/restore_flap.sh

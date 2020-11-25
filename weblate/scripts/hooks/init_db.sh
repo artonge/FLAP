@@ -9,6 +9,4 @@ docker-compose exec -T --user postgres postgres psql -v ON_ERROR_STOP=1 <<-EOSQL
 EOSQL
 
 echo "Creating extension."
-docker-compose exec -T --user postgres postgres psql --dbname weblate -v ON_ERROR_STOP=1 <<-EOSQL
-	CREATE EXTENSION IF NOT EXISTS pg_trgm;
-EOSQL
+docker-compose exec -T --user postgres postgres psql -c "CREATE EXTENSION pg_trgm;" weblate

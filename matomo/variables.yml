@@ -1,0 +1,4 @@
+ENABLE_MATOMO:
+    type: boolean
+    info: Enable Matomo.
+    group: tweaks

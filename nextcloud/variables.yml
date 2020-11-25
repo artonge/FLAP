@@ -2,3 +2,7 @@ FLAG_NO_DOCUMENTSERVER:
     type: boolean
     info: Disable document server for Nextcloud.
     group: tweaks
+ENABLE_NEXTCLOUD:
+    type: boolean
+    info: Enable nextcloud.
+    group: tweaks

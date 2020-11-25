@@ -5,6 +5,15 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
+	summarize)
+        echo "restart | | Restart flap services."
+    ;;
+    help)
+        echo "
+$(flapctl restart summarize)
+Commands:
+    '' | | Restart flap services." | column -t -s "|"
+    ;;
     "")
         echo "* [restart] Restarting services."
         flapctl stop
@@ -29,13 +38,12 @@ case $CMD in
 			;;
 		esac
 	;;
-    summarize)
-        echo "restart | | Restart flap services."
-    ;;
-    help|*)
-        echo "
-$(flapctl restart summarize)
-Commands:
-    '' | | Restart flap services." | column -t -s "|"
-    ;;
+	*)
+		service=$CMD
+		docker stop "flap_$service"
+		docker rm "flap_$service"
+		flapctl config generate_templates
+		flapctl hooks generate_config "$service"
+		docker-compose --no-ansi up --detach "$service"
+	;;
 esac

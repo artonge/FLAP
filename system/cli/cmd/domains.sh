@@ -216,7 +216,7 @@ case $CMD in
 		do
 			# Don't update DNS records if the ip is correct.
 			host_ip=$(flapctl ip dns "$domain")
-			if [ "$external_ip" == "$host_ip" ]
+			if [ "$external_ip" == "$host_ip" ] || ! echo "$host_ip" | grep -E "^([0-9]{1,3}\.){3}[0-9]{1,3}$"
 			then
 				continue
 			fi

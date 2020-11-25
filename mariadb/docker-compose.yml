@@ -1,0 +1,17 @@
+services:
+    mariadb:
+        # Do not upgrade lightly. See:
+        # Github issue for automatic upgrade in docker container: https://github.com/docker-library/mariadb/issues/37
+        # pg_upgrade doc: https://www.mariadb.org/docs/9.4/pgupgrade.html
+        image: mariadb:10.5
+        command: --max-allowed-packet=64MB
+        container_name: flap_mariadb
+        env_file: [$FLAP_DIR/mariadb/mariadb.env]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        volumes:
+            - ${FLAP_DATA}/mariadb/data:/var/lib/mysql # [mariadb] <-> [hd] Data
+        networks:
+            stores-net:
+                aliases: [mariadb]

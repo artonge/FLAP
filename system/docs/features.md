@@ -62,14 +62,14 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
     -   [x] Automatic room join for new users
 -   [x] **Jitsi**
     -   [ ] Limit access to FLAP's users [⚫]
+-   [x] **Matomo**
+-   [x] **Peertube**
 -   [ ] **Ghost** [⚫]
 -   [ ] **Miniflux** [⚫]
 -   [ ] **Weblate** [⚫ ⚫]
 -   [ ] **Mattermost** [⚫ ⚫]
--   [ ] **Peertube** [⚫ ⚫]
 -   [ ] **Discourse** [⚫ ⚫]
 -   [ ] **Home Assistant** [⚫]
--   [ ] **Matomo** [⚫ ⚫ ⚫]
 
 ### **Backend services**
 
