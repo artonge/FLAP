@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eu
+
+echo "Generate domains specific config."
+docker-compose exec -T --user www-data matomo /inner_scripts/generate_post_domain_update_config.sh

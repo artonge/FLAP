@@ -29,9 +29,9 @@ function pre_run_all {
 
 	case $hook in
 		init_db)
-			echo "* [hooks] Starting PostgreSQL for init_db hook."
-			docker-compose --no-ansi up --detach postgres
-			flapctl hooks wait_ready postgres
+			echo "* [hooks] Starting PostgreSQL and MariaDB for init_db hook."
+			docker-compose --no-ansi up --detach postgres mariadb
+			flapctl hooks wait_ready postgres mariadb
 		;;
 	esac
 }
@@ -107,7 +107,7 @@ function post_run_all {
 
 	case $hook in
 		init_db)
-			echo "* [hooks] Shutting PostgreSQL down for init_db hook."
+			echo "* [hooks] Shutting PostgreSQL and MariaDB down for init_db hook."
 			docker-compose --no-ansi down
 		;;
 		post_domain_update)

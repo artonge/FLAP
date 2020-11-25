@@ -104,7 +104,7 @@ case $CMD in
 		# Activate mdadm monitoring:
 		# mdadm --monitor --daemonise --test --scan
 		# The commade is here for reference, but it is not usefull.
-		# Mdadm monitoring is on by default. The warning are sent to the mail address specified in /etc/msmtp.aliases.
+		# Mdadm monitoring is on by default. The warning are sent to the mail address specified in /etc/aliases.
 		# You can test the reception of the mail with the following command:
 		# mdadm --monitor --scan --test -1
 

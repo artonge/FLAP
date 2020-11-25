@@ -1,0 +1,10 @@
+[Unit]
+Description=Restore FLAP's data to intial state every day
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=restore_flap.service
+
+[Install]
+WantedBy=timers.target

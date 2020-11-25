@@ -1,0 +1,4 @@
+ENABLE_PEERTUBE:
+    type: boolean
+    info: Enable peertube.
+    group: tweaks
