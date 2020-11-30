@@ -22,17 +22,6 @@ stages:
   - performance
   - cleanup
 
-pages:
-    image: python
-    stage: build
-    needs: []
-    only: [master]
-    artifacts:
-        paths: [public]
-    script:
-        - pip install mkdocs
-        - mkdocs build --verbose
-
 test_script_executable:
     image: debian
     stage: test
