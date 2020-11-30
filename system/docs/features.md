@@ -4,16 +4,15 @@ This is the list of FLAP's current and future features.
 
 Future features are not limited to the one listed bellow.
 
-Pull requests are welcome. See [contribution guidlines](contributing.md).
+Pull requests are welcome. See [contribution guide](contributing.md).
 
-**Priority mark:**
+> [!NOTE]
+>-   [⚫ ⚫ ⚫] Will add in less than 6 months.
+>-   [⚫ ⚫] Will add in less than 1 year.
+>-   [⚫] Will add one day.
+>-   [⚪] Won't add, but pull requests are welcome.
 
--   [⚫ ⚫ ⚫] Will add in less than 6 months.
--   [⚫ ⚫] Will add in less than 1 year.
--   [⚫] Will add one day.
--   [⚪] Won't add, but pull requests are welcome.
-
-### **Framework's features for services**
+## Framework's features for services
 
 [Detailed list of framework features for services](create_new_service.md)
 
@@ -31,6 +30,7 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
 
     -   [x] The service
     -   [x] Docker-compose
+    -   [ ] Kubernetes deployement
     -   [x] Nginx
     -   [x] LemonLDAP (SSO)
 
@@ -40,7 +40,7 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
 
 -   [x] **Cron** tasks
 
-### **Host system management**
+## Host system management
 
 -   [x] Automatic system package update
 -   [x] Automatic FLAP update
@@ -52,7 +52,7 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
 -   [x] Backup data and configuration
 -   [x] Monitoring services and host server
 
-### **Applications**
+## Applications
 
 -   [x] **FLAP's web GUI**
 -   [x] **Nextcloud**
@@ -71,7 +71,7 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
 -   [ ] **Discourse** [⚫ ⚫]
 -   [ ] **Home Assistant** [⚫]
 
-### **Backend services**
+## Backend services
 
 -   [x] **Nginx**
     -   [x] TLS
@@ -86,7 +86,7 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
     -   [ ] Multiple factor authentication [⚫ ⚫]
 -   [x] **OpenLDAP**
 -   [x] **PostgreSQL**
--   [ ] **MySQL** [⚫]
+-   [x] **MySQL**
 -   [x] **Redis**
 -   [x] **Memcached**
 -   [x] **Mail**
@@ -104,19 +104,19 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
         -   [ ] SSO [⚫]
     -   [ ] To publish services from another server/IP [⚫]
 
-### **Cross services features**
+## Cross services features
 
 -   [x] **Users management**
     -   [x] Create, delete and list users in FLAP's GUI
     -   [x] Allow self registration in auth portal
+	-   [x] Bulk add in FLAP's GUI
     -   [ ] Allow user to set a profile picture
-    -   [ ] Bulk add in FLAP's GUI [⚫ ⚫ ⚫]
     -   [ ] Groups [⚫ ⚫ ⚫]
         -   [ ] Limit services access during SSO [⚫ ⚫ ⚫]
         -   [ ] Use default group for self registered users [⚫ ⚫ ⚫]
         -   [ ] Create mailing list [⚫ ⚫]
--   [x] **Domains management**
 
+-   [x] **Domains management**
     -   [x] Add, delete and update a domain in FLAP's GUI
     -   [x] Services configuration after domain update
     -   [x] Automatic TLS setup with Letsencrypt
@@ -125,7 +125,7 @@ Pull requests are welcome. See [contribution guidlines](contributing.md).
         -   [ ] GUI to download the root CA [⚫]
     -   [x] DKIM generation
     -   [ ] Automatic DNS configuration
-        -   [x] FLAP.id
+        -   [x] flap.id
         -   [ ] NameCheap [⚪]
         -   [ ] DuckDns [⚪]
 

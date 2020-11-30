@@ -5,6 +5,15 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
+	summarize)
+		echo "start | | Start flap services."
+		;;
+	help)
+		echo "
+$(flapctl start summarize)
+Commands:
+	'' | | Start." | column -t -s "|"
+	;;
 	"")
 		echo '* [start] Running setup operations.'
 
@@ -66,13 +75,13 @@ case $CMD in
 			flapctl hooks post_domain_update
 		fi
 		;;
-	summarize)
-		echo "start | | Start flap services."
+	*)
+		# Get services list from args.
+		services=("${@:1}")
+
+		flapctl config generate_templates
+		flapctl hooks generate_config "${services[@]}"
+
+		docker-compose --no-ansi up --detach "${services[@]}"
 		;;
-	help|*)
-		echo "
-$(flapctl start summarize)
-Commands:
-	'' | | Start." | column -t -s "|"
-	;;
 esac

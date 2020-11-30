@@ -4,13 +4,16 @@
 
 Welcome to the **FLAP** documentation. This will help you setup your own FLAP cloud.
 
-**If you don't want to set up your own FLAP cloud, take a look at [our commercial offers](https://www.flap.cloud).**
-
 Feel free to come chat on the matrix room: [#flap-software:matrix.org](https://app.element.io/#/room/#flap-software:matrix.org).
 
----
+> [!TIP]
+> **If you don't want to set up your own FLAP cloud, take a look at [our commercial offers](https://www.flap.cloud).**
 
-### What is FLAP ?
+> [!NOTE]
+> Check out the **demonstration** instance: [https://demo.flap.cloud](https://demo.flap.cloud)
+> Connect with the username `demo` and password `demodemo`.
+
+## What is FLAP ?
 
 FLAP is:
 
@@ -18,15 +21,9 @@ FLAP is:
 -   A wise **selection of self-hosted services**.
 -   A **beautiful web GUI** to access services and manage users and domain names.
 
-This is want the FLAP home page looks like:
+This is what the FLAP home page looks like:
 
 ![Home page](https://gitlab.com/flap-box/home/raw/master/screenshots/home.png)
-
-Check out the **demonstration** instance: [https://demo.flap.cloud](https://demo.flap.cloud)
-
-Connect with the username `demo` and password `demodemo`.
-
----
 
 ## Documentation
 

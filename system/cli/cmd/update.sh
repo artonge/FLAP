@@ -29,7 +29,7 @@ Commands:
 
 		git fetch --force --tags --prune --prune-tags --recurse-submodules &> /dev/null
 
-		current_tag=$(git describe --tags --abbrev=0)
+		current_tag=$(flapctl version)
 		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
 		arg_tag=${1:-}
 		target=${arg_tag:-$next_tag}

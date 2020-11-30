@@ -39,11 +39,10 @@ Commands:
 		esac
 	;;
 	*)
-		service=$CMD
-		docker stop "flap_$service"
-		docker rm "flap_$service"
-		flapctl config generate_templates
-		flapctl hooks generate_config "$service"
-		docker-compose --no-ansi up --detach "$service"
+		# Get services list from args.
+		services=("${@:1}")
+
+		flapctl stop "${services[@]}"
+		flapctl start "${services[@]}"
 	;;
 esac

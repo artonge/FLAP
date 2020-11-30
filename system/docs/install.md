@@ -2,11 +2,12 @@
 
 ---
 
-### Download
+## Download
 
 First you need to download and run the `install_flap.sh` script.
 
-**Warning:** this script was tested on debian buster only.
+> [!WARNING]
+> **This script was tested on debian buster only.**
 
 This will do the following action, please ensure none of them will break your system:
 
@@ -31,7 +32,7 @@ echo "Loading new environment variables."
 source /etc/environment
 ```
 
-### Configuration file
+## Configuration file
 
 `flapctl` uses two environment variables `FLAP_DIR` and `FLAP_DATA` set in `/etc/environment`.
 
@@ -44,7 +45,7 @@ You can find examples for:
 
 -   [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/vps.env)
 -   [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/xu4.env)
--   [Local development](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/local.env)
+-   [Local (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/local.env)
 -   [Gitlab pipelines (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/pipeline.env)
 
 You can find more information on configuration options:
@@ -53,7 +54,7 @@ You can find more information on configuration options:
 -   [Feature flags](environment_variables.md)
 -   [Backup](backup.md)
 
-### First start
+## First start
 
 You can now start FLAP for the first time:
 
@@ -61,9 +62,10 @@ You can now start FLAP for the first time:
 flapctl start
 ```
 
-If you are on the same network than your server, you can go to http://flap.local to finish the installation. Else you will need to finish the setup in the terminal to setup your domain name and create the first user.
+- If you are on the same network than your server: go to http://flap.local.
+- If your server is not on your network, you will need to setup your domain name and the first user in the terminal.
 
-### Set the domain name
+## Set the domain name
 
 The domain name setup logic is still young so you will have to set your DNS records by yourself. Ideally FLAP will be able to configure DNS records for some domain name provider. You should, at minimum, have the following records:
 
@@ -95,7 +97,7 @@ _imap._tcp          IN    SRV    0    1    143    @
 _submission._tcp    IN    SRV    0    1    587    @
 ```
 
-### Create the first user
+## Create the first user
 
 To setup the first user, you can use the web GUI or run the following command:
 

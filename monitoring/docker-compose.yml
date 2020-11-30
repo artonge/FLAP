@@ -1,6 +1,6 @@
 services:
     prometheus:
-        image: prom/prometheus:v2.21.0
+        image: prom/prometheus:v2.23.0
         container_name: flap_prometheus
         volumes:
             - ${FLAP_DIR}/monitoring/config/prometheus:/etc/prometheus
@@ -41,7 +41,7 @@ services:
             org.label-schema.group: "monitoring"
 
     grafana:
-        image: grafana/grafana:7.2.0
+        image: grafana/grafana:7.3.4
         container_name: flap_grafana
         volumes:
             - grafana_data:/var/lib/grafana
@@ -60,7 +60,7 @@ services:
             org.label-schema.group: "monitoring"
 
     pushgateway:
-        image: prom/pushgateway:v1.2.0
+        image: prom/pushgateway:v1.3.0
         container_name: flap_pushgateway
         restart: unless-stopped
         logging:

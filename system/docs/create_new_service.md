@@ -2,14 +2,15 @@
 
 ---
 
-FLAP services are a collection of scripts and configuration files. This file is a reference of those to help improving a service integration with FLAP.
+> [!INFO]
+> FLAP services are a collection of scripts and configuration files. This file is a reference of those to help improving a service integration with FLAP.
 
 -   [Templates](#templates)
 -   [Special files](#special-files)
-    -   [nginxconf](#nginxconf)
-    -   [configlemon.jq](#configlemon.jq)
-    -   [docker-composeyml](#docker-composeyml)
-	-   [variables.yml](#variables.yml)
+    -   [nginx.conf](#ltservicegtnginxconf)
+    -   [lemon.jq](#ltservicegtconfiglemonjq)
+    -   [docker-compose.yml](#ltservicegtdocker-composeyml)
+	-   [variables.yml](#ltservicegtvariablesyml)
 -   [Hooks](#hooks)
     -   [load_env](#load_env)
     -   [should_install](#should_install)
@@ -55,12 +56,18 @@ Limits:
 
 ## Special files
 
-FLAP uses some special files for services integration.
+<!-- panels:start -->
+<!-- div:title-panel -->
+### `<service>/nginx.conf`
 
-#### `nginx.conf`
+<!-- div:left-panel -->
+If the service needs to be exposed by Nginx you can add a `nginx.conf` file.
 
-If the service needs exposure to through Nginx you can add a `nginx.conf` file specifying the service nginx configuration.
+The `nginx.conf` file will be copied for each registered domains.
 
+`nginx.conf` file will are also template, so you can use all the environment variables listed by `flapctl config show`. There is also the `$DOMAIN_NAME` variable that will be replaced by each registered domains.
+
+<!-- div:right-panel -->
 For example, home:
 
 ```nginx
@@ -104,14 +111,24 @@ server {
 }
 ```
 
-#### `config/lemon.jq`
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### `<service>/config/lemon.jq`
+
+<!-- div:left-panel -->
 You can use this file to integrate the service with [LemonLDAP](https://lemonldap-ng.org/welcome). This is mostly wanted for SSO.
 
 You will also need to configure SSO in the Nginx configuration file.
 
-- (locationRules doc)[https://lemonldap-ng.org/documentation/latest/presentation.html?#authorization]
+- [`exportedHeaders` documentation](https://lemonldap-ng.org/documentation/latest/writingrulesand_headers.html#headers)
+- [`locationRules` documentation](https://lemonldap-ng.org/documentation/latest/presentation.html?#authorization)
+- `vhostOptions` is always the same.
 
+
+<!-- div:right-panel -->
 For example, SOGo uses the Remote-User and Basic Auth to authenticate the user:
 
 ```jq
@@ -135,8 +152,14 @@ For example, SOGo uses the Remote-User and Basic Auth to authenticate the user:
 }
 ```
 
-#### `docker-compose.yml`
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### `<service>/docker-compose.yml`
+
+<!-- div:left-panel -->
 For the service to be started in `flapctl start`, you must add a `docker-compose.yml` file.
 
 You must specify:
@@ -152,6 +175,11 @@ You can specify:
 -   volumes that nginx need to bind with through the `x-nginx-extra-volumes` property.
 -   docker network connection and its hostname.
 
+You can also create `docker-compose.ci.yml` and `docker-compose.override.yml` files. They will be used to override some configuration if respectively those variables are set:
+- `FLAG_GENERATE_DOCKER_COMPOSE_CI`.
+- `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE`
+
+<!-- div:right-panel -->
 For example, PostgreSQL:
 
 ```yaml
@@ -181,14 +209,21 @@ x-nginx-extra-volumes:
     - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.
 ```
 
-#### `variables.yml`
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### `<service>/variables.yml`
+
+<!-- div:left-panel -->
 Services can be customised to tweak their behaviors.
 
 The home GUI contains a form to set those variables. If you add a new variable for a service, make sure to add it to its `variables.yml` file.
 
 Make sure that tweaking the variable won't break the service.
 
+<!-- div:right-panel -->
 Example for home:
 
 ```yaml
@@ -198,7 +233,7 @@ FLAG_DISABLE_ADVANCED_SETTINGS:
     group: tweaks
 ```
 
-You can also create `docker-compose.ci.yml` and `docker-compose.override.yml` files. They will be used to override some configuration if respectively, `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE` or `FLAG_GENERATE_DOCKER_COMPOSE_CI` are set. They are used during development.
+<!-- panels:end -->
 
 ## Hooks
 
@@ -212,8 +247,12 @@ You must place the hooks in the `<service_name>/scripts/hooks` directory.
 
 Below is the list of hooks you can use:
 
-#### load_env
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### load_env
 
+<!-- div:left-panel -->
 This hook is used to load environment variables specific to the service. This can be a database password for example. Those variables will be available in all `flapctl` commands, hooks and during templates rendering.
 
 This is the place to populate some special FLAP environment variables.
@@ -227,6 +266,7 @@ Context:
 -   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
 -   Services can either be up or down, do not make any assumptions.
 
+<!-- div:right-panel -->
 Example:
 
 ```shell
@@ -243,8 +283,14 @@ export MY_DB_PASSWORD
 MY_DB_PASSWORD=$(generatePassword nextcloud nextcloud_db_pwd)
 ```
 
-#### should_install
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### should_install
+
+<!-- div:left-panel -->
 This hook is used to indicate whether or not to install the service. If this hook do not return 0, the service will not be installed.
 
 This can be useful if the service that needs a specific environment to be installed. For example, `matrix` needs to have an attributed domain name before being installed.
@@ -257,6 +303,7 @@ Context:
 -   This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
 -   Services can either be up or down, do not make any assumptions.
 
+<!-- div:right-panel -->
 Example:
 
 ```shell
@@ -271,8 +318,14 @@ test "${ENABLE_MATRIX:-false}" == "true"
 test "$MATRIX_DOMAIN_NAME" != ""
 ```
 
-#### generate_config
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### generate_config
+
+<!-- div:left-panel -->
 This hook is used to let the service generate special configuration file that can not be generate with a template.
 
 For example, matrix use this hook to generate a Nginx configuration file for the `MATRIX_DOMAIN_NAME`.
@@ -282,6 +335,7 @@ Context:
 - This hook is ran at every `flapctl start` calls.
 - Services should be down.
 
+<!-- div:right-panel -->
 Example:
 
 ```shell
@@ -299,8 +353,14 @@ envsubst "$FLAP_ENV_VARS" < "$FLAP_DIR/matrix/config/nginx.conf" > "$FLAP_DIR/ng
 
 ```
 
-#### init_db
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### init_db
+
+<!-- div:left-panel -->
 This hook is used to let the service run some command to setup the database, like creating a user and a database.
 
 Context:
@@ -310,6 +370,7 @@ Context:
 - Services should be down.
 - The database will specially be running during this hook so there is no need to start it.
 
+<!-- div:right-panel -->
 Example:
 
 ```shell
@@ -324,8 +385,14 @@ docker-compose exec -T --user postgres postgres psql -v ON_ERROR_STOP=1 <<-EOSQL
 EOSQL
 ```
 
-#### pre_install
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### pre_install
+
+<!-- div:left-panel -->
 This hook is used to let the service make any pre-installation adjustments.
 
 This hook is ran only once during the service's installation phase.
@@ -336,6 +403,7 @@ Context:
 - This hook is ran during `flapctl start` before services are started.
 - Services should be down.
 
+<!-- div:right-panel -->
 For example, `matrix` needs to generate some files, and this can only be done by running a command in the synapse docker image.
 
 ```shell
@@ -348,14 +416,21 @@ echo "Generating Synapse's homserver.yaml configuration file."
 docker-compose run -T --rm --no-deps synapse generate
 ```
 
-#### wait_ready
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### wait_ready
+
+<!-- div:left-panel -->
 This hook is used to wait for the service to be up. Execute whatever commands to check for the service readyness.
 
 Context:
 
 -   This hook is called after `flapctl start` calls.
 
+<!-- div:right-panel -->
 Example:
 
 ```shell
@@ -370,8 +445,14 @@ do
 done
 ```
 
-#### post_install
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### post_install
+
+<!-- div:left-panel -->
 This hook is used to let the service make any post-installation adjustments.
 
 This hook is ran only once during the service's installation phase.
@@ -384,6 +465,7 @@ Context:
 - This hook is ran during `flapctl start` after services are started.
 - Services should be up.
 
+<!-- div:right-panel -->
 Example:
 
 ```shell
@@ -399,14 +481,21 @@ echo "Generate config.php with the config."
 docker-compose exec -T --user www-data nextcloud /inner_scripts/generate_initial_config.sh
 ```
 
-#### post_domain_update
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### post_domain_update
+
+<!-- div:left-panel -->
 This hook is called whenever a domain is added, deleted, or promoted to main domain.
 
 Context:
 
 - Services should be up.
 
+<!-- div:right-panel -->
 For example, `lemon` fetches SAML metadatas:
 
 ```shell
@@ -426,14 +515,21 @@ fi
 curl "https://auth.$PRIMARY_DOMAIN_NAME/saml/metadata" --output "$FLAP_DATA/lemon/saml/metadata.xml" "${ca_cert[@]}"
 ```
 
-#### post_update
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### post_update
+
+<!-- div:left-panel -->
 This hook is called after a FLAP update.
 
 Context:
 
 - Services should be up.
 
+<!-- div:right-panel -->
 There is no example yet.
 
 ```shell
@@ -442,14 +538,21 @@ There is no example yet.
 set -eu
 ```
 
-#### pre_backup
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### pre_backup
+
+<!-- div:left-panel -->
 This hook is called before a backup. Use this hook to make extra backup tasks.
 
 Context:
 
 - Services are up.
 
+<!-- div:right-panel -->
 For example, sogo dump all the users' data into disks.
 
 ```shell
@@ -460,14 +563,21 @@ set -eu
 docker exec --user sogo flap_sogo sogo-tool backup /backup ALL
 ```
 
-#### post_restore
+<!-- panels:end -->
 
+---
+<!-- panels:start -->
+<!-- div:title-panel -->
+### post_restore
+
+<!-- div:left-panel -->
 This hook is called after a restoration.
 
 Context:
 
 - Services should be up.
 
+<!-- div:right-panel -->
 For example, Nextcloud load its database that was dumped to disk in `pre_backup`.
 
 ```shell
@@ -487,24 +597,129 @@ docker exec --user www-data flap_nextcloud php occ maintenance:mode --off
 docker exec --user www-data flap_nextcloud php occ maintenance:data-fingerprint
 ```
 
+<!-- panels:end -->
+
+<!-- panels:start -->
+<!-- div:title-panel -->
 ## Monitoring
 
+<!-- div:left-panel -->
 [Extra information ](monitoring.md).
 
 FLAP includes a Prometheus and Grafana instance. Services can expose some dashboards, alerts and exporters to populate this system.
 
-Dashboards goes here: `$FLAP_DIR/$service/monitoring/dashboards`
-Alerts goes there: `$FLAP_DIR/$service/monitoring/alerts.yml`
+- You can add additional monitoring services in `<service>/docker-compose.monitoring.yml`
+- You can specify additional Prometheus config here: `$FLAP_DIR/$service/monitoring/prometheus.yml`
+- And you can setup alerts here: `$FLAP_DIR/$service/monitoring/alerts.yml`
+- Dashboards goes here: `$FLAP_DIR/$service/monitoring/dashboards`
 
+<!-- div:right-panel -->
+Example docker-compose.monitoring.yml for Nginx:
+
+```yaml
+services:
+    nginx:
+        networks:
+            monitor-net:
+                aliases: [nginx]
+
+    nginxexporter:
+        image: fish/nginx-exporter:v0.1.1
+        container_name: flap_nginxexporter
+        command: ["-nginx.scrape_uri=http://nginx/nginx_status"]
+        restart: always
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        expose: [9113]
+        networks:
+            monitor-net:
+                aliases: [nginxexporter]
+        labels:
+            org.label-schema.group: "monitoring"
+```
+
+Example prometheus.yml for System:
+
+```yaml
+groups:
+    - name: targets
+      rules:
+          - alert: monitor_service_down
+            expr: up == 0
+            for: 30s
+            labels:
+                severity: critical
+            annotations:
+                summary: "Monitor service non-operational"
+                description: "Service {{ $labels.instance }} is down."
+
+    - name: host
+      rules:
+          - alert: high_cpu_load
+            expr: node_load1 > 1.5
+            for: 10m
+            labels:
+                severity: warning
+            annotations:
+                summary: "Server under high load"
+                description: "Docker host is under high load, the avg load 1m is at {{ $value}}. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
+
+          - alert: high_memory_load
+            expr: (sum(node_memory_MemTotal_bytes) - sum(node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes) ) / sum(node_memory_MemTotal_bytes) * 100 > 85
+            for: 10m
+            labels:
+                severity: warning
+            annotations:
+                summary: "Server memory is almost full"
+                description: "Docker host memory usage is {{ humanize $value}}%. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
+
+          - alert: high_storage_load
+            expr: (node_filesystem_size_bytes{fstype="aufs"} - node_filesystem_free_bytes{fstype="aufs"}) / node_filesystem_size_bytes{fstype="aufs"}  * 100 > 85
+            for: 10m
+            labels:
+                severity: warning
+            annotations:
+                summary: "Server storage is almost full"
+                description: "Docker host storage usage is {{ humanize $value}}%. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
+```
+
+Example alerts.yml for System:
+
+
+```yaml
+scrape_configs:
+    - job_name: "nodeexporter"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["nodeexporter:9100"]
+
+    - job_name: "cadvisor"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["cadvisor:8080"]
+
+alerting:
+    alertmanagers:
+        - scheme: http
+          static_configs:
+              - targets:
+                    - "alertmanager:9093"
+```
+
+<!-- panels:end -->
+
+<!-- panels:start -->
+<!-- div:title-panel -->
 ## Migrations
 
-On every FLAP update, services' migrations will be ran. This is a good place to update the service's data structure or any other task that can not be done otherwise.
+<!-- div:left-panel -->
+FLAP try to run pending migrations when it starts. But is is not blocking in case of failure. This is a good place to update the service's data structure or any other task that can not be done otherwise.
 
-You must place the migrations in the `<service_name>/scripts/migrations` directory.
-Migrations are ran before services are restarted.
-Migrations will be ran on every FLAP updates until they finish successfully.
+> [!TIP]
+>You must place the migrations in the `<service_name>/scripts/migrations` directory.
 
-For example: `sogo` in its migration `#1` is migrating the database password file to a new standard file location.
+<!-- div:right-panel -->
+For example: SOGo in its migration `#1` is migrating the database password file to a new standard file location.
 
 ```shell
 #!/bin/bash
@@ -516,12 +731,19 @@ mkdir --parents "$FLAP_DATA/sogo/passwd"
 mv "$FLAP_DATA/system/data/sogoDbPwd.txt" "$FLAP_DATA/sogo/passwd/sogo_db_pwd.txt"
 ```
 
+<!-- panels:end -->
+
+<!-- panels:start -->
+<!-- div:title-panel -->
 ## Custom docker image
 
+<!-- div:left-panel -->
 You can specify a custom Dockerfile for the service.
-For the image to be built, you can add a `.gitlab-ci.yml` to take advantage of a standardized way to build images for FLAP in Gitlab pipelines.
 
-Example:
+For the image to be built by Gitlab CI, you must create the file `<service>/.gitlab-ci.yml`.
+
+<!-- div:right-panel -->
+Example for SOGo:
 
 ```yaml
 include:
@@ -532,17 +754,27 @@ include:
       file: build_image.yml
 
 variables:
-	# Shell script use to generate the image's tag.
-    VERSION_SCRIPT:
+    # Double $$ is needed here as gitlab will interpret $(...) as an empty variable.
+    VERSION_SCRIPT: echo $$(grep "SOGO_VERSION " Dockerfile | cut -d " "  -f3)-flap.$$(grep "FLAP_VERSION " Dockerfile | cut -d " "  -f3)
 ```
 
+<!-- panels:end -->
+
+<!-- panels:start -->
+<!-- div:title-panel -->
 ## Cron jobs
 
-You can define recurring tasks in a `<service_name>.cron` file. The commands will be executed from the host and not the container.
+<!-- div:left-panel -->
+You can define recurring tasks in a `<service_name>.cron` file.
 
+The commands will be executed from the host and not the container.
+
+<!-- div:right-panel -->
 Example, Nextcloud use this to regularly generate file previews and run various tasks:
 
 ```shell
 */5 * * * *     docker exec --tty --user www-data flap_nextcloud php -f /var/www/html/cron.php
 0   4 * * *     docker exec --tty --user www-data flap_nextcloud php occ preview:pre-generate
 ```
+
+<!-- panels:end -->
