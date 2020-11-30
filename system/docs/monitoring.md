@@ -18,4 +18,4 @@ You can log in with the username `admin` and the `ADMIN_PWD` password. You can f
 
 ### Alerts
 
-Alerts are send by mail to ADMIN_EMAIL.
+Alerts are send by mail to the `ADMIN_EMAIL`.

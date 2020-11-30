@@ -1,0 +1,10 @@
+* [Introduction](/)
+* [Installation](install.md)
+* [Administration](administration.md)
+* [Environment variables](environment_variables.md)
+* [Backup](backup.md)
+* [Monitoring](monitoring.md)
+* [Features & Roadmap](features.md)
+* [Contributing](contributing.md)
+* [Adding your service](create_new_service.md)
+<div id="mb-footer"></div>
