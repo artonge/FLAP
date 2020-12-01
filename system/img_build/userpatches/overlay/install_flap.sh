@@ -174,5 +174,8 @@ then
 	systemctl enable flap
 fi
 
+echo "LIMIT LOG RETENTION TIME TO 1 YEAR"
+sed -i 's/#\?MaxRetentionSec.*/MaxRetentionSec=1year/g' /etc/ssh/sshd_config
+
 ################################################################################
 echo "DONE"
