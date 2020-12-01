@@ -97,6 +97,7 @@ echo "INSTALLING FLAP DEPENDENCIES"
 # bsdmainutils: for the column cmd
 # certbot: generate TLS certificates
 # cron: periodic tasks
+# fail2ban: ban multiple failed ssh conections
 # gettext: envsubst
 # git: fetch updates
 # iproute2: use the ip cmd
@@ -116,6 +117,7 @@ apt install -y \
 	bsdmainutils \
 	certbot \
 	cron \
+	fail2ban \
 	gettext \
 	git \
 	iproute2 \
