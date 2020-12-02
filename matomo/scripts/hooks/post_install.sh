@@ -46,7 +46,8 @@ curl "https://analytics.$PRIMARY_DOMAIN_NAME/index.php?action=finished&clientPro
 # Geolocation provider. with 'geoip2php', matomo looks for specific hardcoded databases uses misc/
 # shellcheck disable=SC2016
 docker-compose exec -T mariadb mysql \
- 	--password="$ADMIN_PWD" \
+	--user matomo \
+ 	--password="$MATOMO_DB_PWD" \
 	--database "matomo" \
 	--execute 'INSERT INTO `option` (option_name, option_value) VALUES ("usercountry.location_provider", "geoip2php");'
 
@@ -54,7 +55,8 @@ docker-compose exec -T mariadb mysql \
 # https://matomo.org/docs/setup-auto-archiving/#disable-browser-triggers-for-matomo-archiving-and-limit-matomo-reports-to-updating-every-hour
 # shellcheck disable=SC2016
 docker-compose exec -T mariadb mysql \
- 	--password="$ADMIN_PWD" \
+	--user matomo \
+ 	--password="$MATOMO_DB_PWD" \
 	--database "matomo" \
 	--execute 'INSERT INTO `option` (option_name, option_value) VALUES ("enableBrowserTriggerArchiving", 0);'
 
