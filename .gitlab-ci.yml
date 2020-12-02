@@ -179,7 +179,7 @@ setup_with_serial_updates:
     needs: []
     allow_failure: true
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(git tag --sort version:refname | tail -5 | head -1)
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(git tag --sort version:refname | tail -10 | head -1)
     artifacts:
         paths:
             - flap.tar.gz
