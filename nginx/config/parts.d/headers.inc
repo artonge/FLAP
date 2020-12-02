@@ -12,5 +12,5 @@ add_header X-XSS-Protection "1; mode=block" always;
 add_header X-Content-Type-Options "nosniff" always;
 # Reject unsafe HTTP methods
 add_header Allow "GET, POST, HEAD" always;
-# HSTS (ngx_http_headers_module is required) (31536000 seconds)
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+# Limit ressource access to the ressouce's domain.
+add_header Access-Control-Allow-Origin "https://$host";
