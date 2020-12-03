@@ -16,14 +16,14 @@ Scenario("launch matomo", async (I) => {
 	I.wait(20)
 
 	I.switchToNextTab()
-	I.seeInCurrentUrl(`https://analytics.${process.env.FLAP_URL}`)
+	I.seeInCurrentUrl(`https://analytics.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.fillField("form_login", "theadmin")
 	I.fillField("form_password", "password")
 	I.click("#login_form_submit")
 
 	I.waitForNavigation({})
-	I.seeInCurrentUrl(`https://analytics.${process.env.FLAP_URL}`)
+	I.seeInCurrentUrl(`https://analytics.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.waitForText("All Websites")
 	I.click("All Websites")
