@@ -29,12 +29,12 @@ Connect with the username `demo` and password `demodemo`.
 ## Documentation
 
 - **Setting up you instance**
-	- [Installation](https://docs.flap.cloud/install)
-	- [Information about administrating a FLAP server](https://docs.flap.cloud/administration)
-	- [Configuration](https://docs.flap.cloud/environment_variables)
-	- [Backups](https://docs.flap.cloud/backup)
-	- [Monitoring](https://docs.flap.cloud/monitoring)
-	- [Features & Roadmap](https://docs.flap.cloud/features)
+	- [Installation](https://docs.flap.cloud/#/install)
+	- [Information about administrating a FLAP server](https://docs.flap.cloud/#/administration)
+	- [Configuration](https://docs.flap.cloud/#/environment_variables)
+	- [Backups](https://docs.flap.cloud/#/backup)
+	- [Monitoring](https://docs.flap.cloud/#/monitoring)
+	- [Features & Roadmap](https://docs.flap.cloud/#/features)
 - **Contributing**
 	- [Development environment setup](contributing)
 	- [Create a new service](create_new_service)
