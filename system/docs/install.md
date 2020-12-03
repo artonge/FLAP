@@ -2,6 +2,27 @@
 
 ---
 
+## Requirements
+
+### Hardware
+
+For small instances serving 5 users and running 3 services, FLAP can run on low powered hardware like the odroid XU4 which has an armvhf 8 core processor and 2Go of RAM. Just add 2Go of swap and you should be good to go.
+
+> [!WARNING]
+> Not all services can run on an armvhf computer as docker images are not available for this architecture.
+
+If you want to serve more users or add more services you will have to upgrade your hardware accordingly. As it all depends on the number of user, and how mutch they use the instance, I can't give a specific recomandation.
+
+But as all services are run on a single machine, they won't scale well to thousands of users.
+
+In theory, and with some tweaks, it should be possible to convert the final docker-compose to a Kubernetes config file. This would allow to support a very large number of users as most services can scale horizontaly.
+
+### Network
+
+You can run FLAP behind a NAT given that your router can forward ports. FLAP will use `upnpc` to open the needed ports automatically.
+
+Preventing FLAP to access the internet is not supported but should be possible. There is support to generate ssl certificates with `openssl` for development. You will just need to import the root certificate into your browser to remove SSL warning, and maybe tweak some services configuration like synapse, to informe them that they won't be able to connect to the internet.
+
 ## Download
 
 First you need to download and run the `install_flap.sh` script.
