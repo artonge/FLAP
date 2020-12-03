@@ -175,11 +175,11 @@ test_update_to_tag:
 setup_with_serial_updates:
     stage: setup
     extends: .start_flap
-    only: [tags]
+    # only: [tags]
     needs: []
     allow_failure: true
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:v1.13.2
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(git tag --sort version:refname | tail -3 | head -1)
     artifacts:
         paths:
             - flap.tar.gz
@@ -277,7 +277,7 @@ test_e2e_current:
 
 test_e2e_after_serial_updates:
     extends: .test_e2e
-    only: [tags]
+    # only: [tags]
     needs: [setup_with_serial_updates]
     allow_failure: true
     variables:
