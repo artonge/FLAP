@@ -93,7 +93,7 @@ docker run \
 	--env FLAP_DIR=/flap_dir \
 	--env FLAP_DATA=/flap_data \
 	--workdir /flap_dir \
-	$CI_REGISTRY_IMAGE${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
+	"$CI_REGISTRY_IMAGE${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}" \
 	/bin/sh -c "while true; do sleep 1000; done"
 
 docker exec flap flapctl stop
