@@ -55,8 +55,8 @@ docker run \
 
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
-CI_COMMIT_REF_SLUG=version-1-13-0
-CI_COMMIT_SHA=latest
+CI_COMMIT_REF_SLUG=
+CI_COMMIT_SHA=v1.13.2
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 
@@ -93,7 +93,7 @@ docker run \
 	--env FLAP_DIR=/flap_dir \
 	--env FLAP_DATA=/flap_data \
 	--workdir /flap_dir \
-	$CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
+	$CI_REGISTRY_IMAGE${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
 	/bin/sh -c "while true; do sleep 1000; done"
 
 docker exec flap flapctl stop
@@ -119,9 +119,6 @@ docker exec flap flapctl hooks post_domain_update
 
 docker exec --user www-data flap_nextcloud php occ user:list
 docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
-
-sudo cp "$FLAP_DIR/system/cli/cmd/start.sh" /flap_dir/system/cli/cmd/start.sh
-sudo cp "$FLAP_DIR/system/cli/cmd/update.sh" /flap_dir/system/cli/cmd/update.sh
 
 docker exec flap flapctl update v1.13.1
 
@@ -149,5 +146,6 @@ npm install codeceptjs puppeteer mocha-junit-reporter
 # Run e2e tests
 cd /flap_dir/home
 npm run e2e:copy
-export FLAP_URL=flap.test
+eval "$(flapctl config export)"
+
 npx codeceptjs run --profile=chrome-ci --steps

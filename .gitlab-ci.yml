@@ -261,7 +261,7 @@ setup_flap:
         # - mkdir -p e2e/tests/services
         - npm run e2e:copy
 
-        - eval "$(docker exec flap flapctl config show_export)"
+        - eval "$(docker exec flap flapctl config export)"
 
         # Run e2e tests.
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
