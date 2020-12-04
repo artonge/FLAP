@@ -146,6 +146,6 @@ npm install codeceptjs puppeteer mocha-junit-reporter
 # Run e2e tests
 cd /flap_dir/home
 npm run e2e:copy
-eval "$(flapctl config export)"
+eval "$(flapctl config show)"
 
 npx codeceptjs run --profile=chrome-ci --steps
