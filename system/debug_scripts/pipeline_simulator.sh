@@ -50,6 +50,7 @@ docker run \
 	--add-host="weblate.flap.test:$FLAP_IP" \
 	--add-host="analytics.flap.test:$FLAP_IP" \
 	--add-host="video.flap.test:$FLAP_IP" \
+	--add-host="monitoring.flap.test:$FLAP_IP" \
 	docker:stable \
 	sh
 
@@ -85,6 +86,7 @@ docker run \
 	--add-host="weblate.flap.test:$FLAP_IP" \
 	--add-host="analytics.flap.test:$FLAP_IP" \
 	--add-host="video.flap.test:$FLAP_IP" \
+	--add-host="monitoring.flap.test:$FLAP_IP" \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \
