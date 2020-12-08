@@ -122,9 +122,7 @@ docker exec flap flapctl hooks post_domain_update
 docker exec --user www-data flap_nextcloud php occ user:list
 docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
 
-docker exec flap flapctl update v1.13.1
-
-
+# docker exec flap flapctl update
 
 # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
 apk add --no-cache \
@@ -148,6 +146,6 @@ npm install codeceptjs puppeteer mocha-junit-reporter
 # Run e2e tests
 cd /flap_dir/home
 npm run e2e:copy
-eval "$(flapctl config show)"
+eval "$(docker exec flap flapctl config show)"
 
 npx codeceptjs run --profile=chrome-ci --steps
