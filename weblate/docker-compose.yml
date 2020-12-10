@@ -1,6 +1,6 @@
 services:
     weblate:
-        image: weblate/weblate:4.0.2-1
+        image: weblate/weblate:4.3-1
         container_name: flap_weblate
         env_file: [$FLAP_DIR/weblate/weblate.env]
         restart: unless-stopped
