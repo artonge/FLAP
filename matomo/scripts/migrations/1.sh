@@ -4,5 +4,8 @@ set -eu
 
 # Version v1.14.2
 
-echo "* [1] Migrate database to utf8mb4"
-docker-compose run --rm --user www-data matomo php /var/www/html/console config:set core:convert-to-utf8mb4
+echo "* [1] Fix email encryption setting."
+docker-compose run --rm matomo php /var/www/html/console config:set --section="mail" --key="encryption" --value="tls"
+
+echo "* [1] Stop ldap and mariadb."
+docker-compose down

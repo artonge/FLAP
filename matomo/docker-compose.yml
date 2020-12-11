@@ -1,6 +1,6 @@
 services:
     matomo:
-        image: matomo:4.0-fpm
+        image: matomo:3.14-fpm
         container_name: flap_matomo
         env_file: [$FLAP_DIR/matomo/matomo.env]
         restart: unless-stopped
