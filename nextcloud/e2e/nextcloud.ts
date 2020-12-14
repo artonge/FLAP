@@ -16,7 +16,7 @@ Scenario("launch nextcloud", async (I) => {
 	I.wait(20)
 
 	I.switchToNextTab()
-	I.seeInCurrentUrl(`https://files.${process.env.FLAP_URL}`)
+	I.seeInCurrentUrl(`https://files.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.wait(2)
 	if (await I.grabNumberOfVisibleElements(".header-close") > 0) {
@@ -43,7 +43,7 @@ Scenario("launch nextcloud", async (I) => {
 	I.click(".header-close")
 	I.click(".app-sidebar__close")
 
-	I.waitUrlEquals(`https://files.${process.env.FLAP_URL}/apps/files/?dir=/`)
+	I.waitUrlEquals(`https://files.${process.env.PRIMARY_DOMAIN_NAME}/apps/files/?dir=/`)
 	I.wait(2)
 	I.click("test.md")
 	I.waitForText("New text document content.")

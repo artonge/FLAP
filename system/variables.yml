@@ -29,7 +29,7 @@ FLAG_NO_NAT_NETWORK_SETUP:
     example:
         - CI pipeline where there is no port to open and the cmd will fail.
         - Dev station where we don't want ports to be open toward the station.
-    group: tweaks
+    group: system
 
 FLAG_NO_CRON_SETUP:
     type: boolean
@@ -85,9 +85,9 @@ FLAG_NO_BACKUP_CHECK:
     info: Do not check backup after the end of a backup.
     example:
         - Low end server that will take several hours to check the backup.
-    group: tweaks
+    group: system
 
 ADMIN_EMAIL:
     type: string
     info: The system will send mail to this address.
-    group: tweaks
+    group: admin

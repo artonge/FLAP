@@ -62,7 +62,7 @@ services:
             apps-net:
 
     coturn:
-        image: instrumentisto/coturn:4.5.1
+        image: instrumentisto/coturn:4
         container_name: flap_coturn
         restart: unless-stopped
         logging:

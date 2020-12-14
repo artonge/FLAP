@@ -18,7 +18,7 @@ php /var/www/html/console config:set --section="mail" --key="port" --value="$EMA
 php /var/www/html/console config:set --section="mail" --key="type" --value="Plain"
 php /var/www/html/console config:set --section="mail" --key="username" --value="$EMAIL_SMTP_USER"
 php /var/www/html/console config:set --section="mail" --key="password" --value="$EMAIL_SMTP_PASSWORD"
-php /var/www/html/console config:set --section="mail" --key="encryption" --value="ssl"
+php /var/www/html/console config:set --section="mail" --key="encryption" --value="tls"
 php /var/www/html/console config:set --section="General" --key="noreply_email_address" --value="admin@$PRIMARY_DOMAIN_NAME"
 
 echo "Enable LDAP plugin"

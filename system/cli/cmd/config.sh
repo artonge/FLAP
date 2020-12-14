@@ -70,7 +70,7 @@ case $CMD in
 
 		for var in $FLAP_ENV_VARS
 		do
-			vars_string+="${var//[\$\{\}]/} | $(eval "echo $var")"$'\n'
+			vars_string+="export ${var//[\$\{\}]/}='$(eval "echo $var")'"$'\n'
 		done
 
 		echo "$vars_string" | column -t -s '|'
