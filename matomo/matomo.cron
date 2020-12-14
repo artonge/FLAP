@@ -1,2 +1,2 @@
-@hourly docker exec --user www-data flap_matomo php /var/www/html/console core:archive
+@hourly docker exec --user www-data flap_matomo php /var/www/html/console core:archive | grep --ignore-case error | grep --invert-match INFO
 @hourly flapctl exec matomo sync_user_admin_rights

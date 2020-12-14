@@ -1,4 +1,4 @@
 ENABLE_MONITORING:
     type: boolean
-    info: Enable monitoring.
-    group: tweaks
+    info: Enable Monitoring.
+    group: services

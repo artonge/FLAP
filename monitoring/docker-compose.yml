@@ -74,7 +74,7 @@ services:
 
 networks:
     monitor-net:
-        name: flap_stores-net
+        name: flap_monitor-net
         internal: true
 
 volumes:

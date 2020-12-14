@@ -22,6 +22,7 @@
 -   Expose a default shared folder to the local network.
 -   Enable Talk with TURN server ?
 -   Enable Talk and bridge it to matrix
+-	Fix instance url in mail when a user changes its mail in FLAP
 
 ###### Resources
 
