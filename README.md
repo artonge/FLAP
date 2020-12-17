@@ -36,5 +36,5 @@ Connect with the username `demo` and password `demodemo`.
 	- [Monitoring](https://docs.flap.cloud/#/monitoring)
 	- [Features & Roadmap](https://docs.flap.cloud/#/features)
 - **Contributing**
-	- [Development environment setup](contributing)
-	- [Create a new service](create_new_service)
+	- [Development environment setup](https://docs.flap.cloud/#/contributing)
+	- [Create a new service](https://docs.flap.cloud/#/create_new_service)
