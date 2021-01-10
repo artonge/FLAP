@@ -104,7 +104,7 @@ docker exec flap flapctl clean data -y
 docker exec flap rm -rf /flap_dir/*
 docker exec flap cp -rT /opt/flap /flap_dir
 # To use your local files run the following command from your host machine.
-# sudo rsync -a $FLAP_DIR/* /flap_dir
+# sudo rsync -a --delete $FLAP_DIR/* /flap_dir
 
 # Copy pipeline init_config file.
 mkdir --parents /flap_data/system
