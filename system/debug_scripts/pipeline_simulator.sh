@@ -99,13 +99,18 @@ docker run \
 	/bin/sh -c "while true; do sleep 1000; done"
 
 docker exec flap flapctl stop
-docker exec flap flapctl clean data -y
 
-docker exec flap rm -rf /flap_dir/*
-docker exec flap cp -rT /opt/flap /flap_dir
+# Chose one of the following option:
+
+# To copy the containers FLAP_DIR, use the following command from the docker container.
+# docker exec flap rm -rf /flap_dir/*
+# docker exec flap cp -rT /opt/flap /flap_dir
 
 # To use your local files run the following command from your host machine.
 # sudo rsync -a --delete $FLAP_DIR/* /flap_dir
+
+docker exec flap flapctl clean config -y
+docker exec flap flapctl clean data -y
 
 # Copy pipeline init_config file.
 mkdir --parents /flap_data/system
