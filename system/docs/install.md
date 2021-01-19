@@ -133,16 +133,7 @@ _submission._tcp    IN    SRV    0    1    587    @
 
 ### Self signed TLS certificates
 
-FLAP supports self signed TLS certificates ofr development. This can be abused to setup a FLAP instance on a local network with no access to the internet.
-
-You will need to set to following in the `/$FLAP_DATA/system/flapctl.env` file:
-
-```bash
-# /$FLAP_DATA/system/flapctl.env
-export FLAG_LOCALHOST_TLS_INSTALL=true
-```
-
-Then run:
+FLAP supports self signed TLS certificates for development. This can be abused to setup a FLAP instance on a local network with no access to the internet. Simply run:
 
 ```bash
 # By default the domain name is `flap.test`.
@@ -150,8 +141,6 @@ flapctl tls generate_localhost [<domain_name>]
 ```
 
 You will then need to set the DNS of your devices to resolve the domain name and to configure your devices to accept the TLS certificates without warning or error. For that, you can use the `/etc/letsencrypt/live/flap/root.cer` file on the FLAP server.
-
-
 
 ## Create the first user
 
