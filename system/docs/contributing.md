@@ -85,11 +85,11 @@ sudo -E flapctl start
 > [!INFO]
 > For now `sudo` is required to ease the manipulation of containers data. Any proposition to get rid of it would be appreciated.
 
-To start a single service you can run:
+To start a subset of services you can run:
 
 ```bash
 sudo -E flapctl config generate
-docker-compose up [<service name> ...]
+sudo -E flapctl start [<service name> ...]
 ```
 
 Dependencies exist between services, which means, for example, that starting `sogo` will also start `postrgres`, `ldap` and `memcached`.

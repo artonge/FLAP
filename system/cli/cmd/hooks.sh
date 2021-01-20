@@ -73,42 +73,49 @@ function post_run_all {
 	local services=("$@")
 	local services=("${services[@]:1}")
 
-	# Mark all enabled services as installed.
-	if [ "$hook" == "post_install" ]
-	then
-		installed_services=()
-		for service in $FLAP_SERVICES
-		do
-			if [ -f "$FLAP_DATA/$service/installed.txt" ]
+	# Post-hooks executed even if no hook has been executed.
+	case $hook in
+		post_install)
+			# Mark all enabled services as installed.
+			installed_services=()
+			for service in $FLAP_SERVICES
+			do
+				if [ -f "$FLAP_DATA/$service/installed.txt" ]
+				then
+					continue
+				fi
+				echo "* [hooks] Marking $service as installed."
+				touch "$FLAP_DATA/$service/installed.txt"
+				installed_services+=("$service")
+			done
+
+			# If a primary domain name is set,
+			# we need to run post_domain_update hooks for freshly installed services.
+			if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
 			then
-				continue
+				flapctl stop
+				flapctl tls generate
+				flapctl start
+				flapctl hooks post_domain_update "${installed_services[@]}"
 			fi
-			echo "* [hooks] Marking $service as installed."
-			touch "$FLAP_DATA/$service/installed.txt"
-			installed_services+=("$service")
-		done
+		;;
+	esac
 
-		# If a primary domain name is set,
-		# we need to run post_domain_update hooks for freshly installed services.
-		if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
-		then
-			flapctl stop
-			flapctl tls generate
-			flapctl start
-			flapctl hooks post_domain_update "${installed_services[@]}"
-		fi
-	fi
-
-	# Only run post_run_all if a hook has been run.
+	# Return if no hooks has been executed.
 	if [ $pre_run_has_run == "false" ]
 	then
 		return 0
 	fi
 
+	# Post-hooks executed only if a least one hook has been executed.
 	case $hook in
 		init_db)
 			echo "* [hooks] Shutting PostgreSQL and MariaDB down for init_db hook."
 			flapctl stop
+		;;
+		pre_install)
+			echo "* [hooks] Regenerating config after pre_install."
+			flapctl config generate
 		;;
 		post_domain_update)
 			echo "* [hooks] Restarting services after post_domain_update hook."

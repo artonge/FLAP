@@ -44,7 +44,7 @@ done
 export FLAP_SERVICES
 FLAP_SERVICES=""
 
-# Ppopulate FLAP_SERVICES with activated services.
+# Populate FLAP_SERVICES with activated services.
 for service in "$FLAP_DIR"/*
 do
 	if [ ! -d "$service" ]

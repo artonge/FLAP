@@ -8,20 +8,33 @@
 
 For small instances serving 5 users and running 3 services, FLAP can run on low powered hardware like the odroid XU4 which has an armvhf 8 core processor and 2Go of RAM. Just add 2Go of swap and you should be good to go.
 
+On low capacity servers, it might be necessary to increase the `COMPOSE_HTTP_TIMEOUT` environment variable. It default to `60` seconds. You can set it to `120` or `240` in the `/etc/environment` file.
+
+```bash
+# /etc/environment
+COMPOSE_HTTP_TIMEOUT=240
+```
+
 > [!WARNING]
 > Not all services can run on an armvhf computer as docker images are not available for this architecture.
 
-If you want to serve more users or add more services you will have to upgrade your hardware accordingly. As it all depends on the number of user, and how mutch they use the instance, I can't give a specific recomandation.
+If you want to serve more users or add more services you will have to upgrade your hardware accordingly. As it all depends on the number of user, and how much they use the instance, I can't give a specific recommendation.
 
 But as all services are run on a single machine, they won't scale well to thousands of users.
 
-In theory, and with some tweaks, it should be possible to convert the final docker-compose to a Kubernetes config file. This would allow to support a very large number of users as most services can scale horizontaly.
+In theory, and with some tweaks, it should be possible to convert the final docker-compose to a Kubernetes config file. This would allow to support a very large number of users as most services can scale horizontally.
+
+### System partition
+
+Even if they are remove when not used, docker images can take a lot of space, so it is recommended to have system partition of at least 16 Go.
+
+Additionally, you can mount an addition volume on the `$FLAP_DATA` directory. `$FLAP_DATA` defaults to `/flap`.
 
 ### Network
 
 You can run FLAP behind a NAT given that your router can forward ports. FLAP will use `upnpc` to open the needed ports automatically.
 
-Preventing FLAP to access the internet is not supported but should be possible. There is support to generate ssl certificates with `openssl` for development. You will just need to import the root certificate into your browser to remove SSL warning, and maybe tweak some services configuration like synapse, to informe them that they won't be able to connect to the internet.
+Preventing FLAP to access the internet is not supported but should be possible. There is support to generate ssl certificates with `openssl` for development. You will just need to import the root certificate into your browser to remove SSL warning, and maybe tweak some services configuration like synapse, to inform them that they won't be able to connect to the internet.
 
 ## Download
 
@@ -118,9 +131,20 @@ _imap._tcp          IN    SRV    0    1    143    @
 _submission._tcp    IN    SRV    0    1    587    @
 ```
 
+### Self signed TLS certificates
+
+FLAP supports self signed TLS certificates for development. This can be abused to setup a FLAP instance on a local network with no access to the internet. Simply run:
+
+```bash
+# By default the domain name is `flap.test`.
+flapctl tls generate_localhost [<domain_name>]
+```
+
+You will then need to set the DNS of your devices to resolve the domain name and to configure your devices to accept the TLS certificates without warning or error. For that, you can use the `/etc/letsencrypt/live/flap/root.cer` file on the FLAP server.
+
 ## Create the first user
 
-To setup the first user, you can use the web GUI or run the following command:
+To setup the first user, you can use the web GUI at http://flap.local if you are on the same network, or run the following command:
 
 ```bash
 flapctl users create

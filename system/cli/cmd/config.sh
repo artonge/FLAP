@@ -61,6 +61,7 @@ case $CMD in
 			name="${name%.*}" # Remove extension
 			name="${name%.*}" # Remove ".template"
 
+			echo "$name.template.$ext"
 			# shellcheck disable=SC2016
 			envsubst "$FLAP_ENV_VARS" < "$dir/$name.template.$ext" > "$dir/$name.$ext"
 		done
