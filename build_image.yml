@@ -47,6 +47,7 @@ build:amd64:
 build:armv7:
     extends: .build_docker
     tags: [docker, odroid]
+    allow_failure: true
     variables:
         ARCH: armv7
 

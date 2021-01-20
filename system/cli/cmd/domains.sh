@@ -194,7 +194,7 @@ case $CMD in
 		done
 		;;
 	update_dns_records)
-		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] || [ "${FLAG_NO_DNS_RECORD_UPDATE:-}" == "true" ]
+		if [ "${FLAG_NO_DNS_RECORD_UPDATE:-}" == "true" ]
 		then
 			echo '* [domains:FEATURE_FLAG] Skipping DNS update.'
 			exit
@@ -214,7 +214,15 @@ case $CMD in
 
 		for domain in "${domains[@]}"
 		do
-			# Don't update DNS records if the ip is correct.
+			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
+
+            # Do not try to update DNS records for local or localhost domains.
+            if [ "$provider" == "localhost" ] && [ "$provider" == "local" ]
+            then
+                continue
+            fi
+
+			# Do not update DNS records if the ip is correct.
 			host_ip=$(flapctl ip dns "$domain")
 			if [ "$external_ip" == "$host_ip" ] || ! echo "$host_ip" | grep -E "^([0-9]{1,3}\.){3}[0-9]{1,3}$"
 			then
@@ -222,8 +230,6 @@ case $CMD in
 			fi
 
 			echo "* [domains:$domain] Updating, $external_ip != $host_ip."
-
-			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
 			"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
 		done
