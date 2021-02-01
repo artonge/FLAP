@@ -1,0 +1,71 @@
+services:
+    funkwhale_celeryworker:
+        image: funkwhale/funkwhale:1.0.1
+        container_name: flap_funkwhale_celeryworker
+        # Celery workers handle background tasks (such file imports or federation
+        # messaging). The more processes a worker gets, the more tasks
+        # can be processed in parallel. However, more processes also means
+        # a bigger memory footprint.
+        # By default, a worker will span a number of process equal to your number
+        # of CPUs. You can adjust this, by explicitly setting the --concurrency
+        # flag:
+        #   celery -A funkwhale_api.taskapp worker -l INFO --concurrency=4
+        command: celery -A funkwhale_api.taskapp worker -l INFO --concurrency=${CELERYD_CONCURRENCY-0}
+        env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
+        environment: ["C_FORCE_ROOT=true"]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        depends_on: [postgres, redis]
+        volumes:
+            - ${FLAP_DATA}/funkwhale/data/media:${MEDIA_ROOT}
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [funkwhale_celeryworker]
+
+    funkwhale_celerybeat:
+        image: funkwhale/funkwhale:1.0.1
+        container_name: flap_funkwhale_celerybeat
+        command: celery -A funkwhale_api.taskapp beat --pidfile= -l INFO
+        env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        depends_on: [postgres, redis]
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [funkwhale_celerybeat]
+
+    funkwhale_api:
+        image: funkwhale/funkwhale:1.0.1
+        container_name: flap_funkwhale_api
+        ports: [5000]
+        env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        depends_on: [postgres, redis]
+        volumes:
+            - ${FLAP_DATA}/funkwhale/data/media:${MEDIA_ROOT}
+            - funkwhaleStaticFiles:${STATIC_ROOT}
+            - funkwhaleFrontend:/frontend
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [funkwhale_api]
+
+volumes:
+    funkwhaleStaticFiles:
+        name: flap_funkwhaleStaticFiles
+    funkwhaleFrontend:
+        name: flap_funkwhaleFrontend
+
+x-nginx-extra-volumes:
+    - funkwhaleStaticFiles:/var/www/funkwhale/static:ro # [funkwhale] -> [nginx] funkwhale static files.
+    - funkwhaleFrontend:/var/www/funkwhale/frontend:ro # [funkwhale] -> [nginx] funkwhale frontend files.
+    - ${FLAP_DATA}/funkwhale/data/media:/var/www/funkwhale/media:ro # [HD] -> [nginx] funkwhale media files.
+    - ${FLAP_DIR}/funkwhale/medias:/var/www/funkwhale_medias:ro # [emmc] -> [nginx] funkwhale extra static files.
+
+
