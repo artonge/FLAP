@@ -1,9 +1,4 @@
 {
-	exportedHeaders: {
-		"audio.\($domain)": {
-			"Remote-User": "$uid"
-		},
-	},
 	locationRules: {
 		"audio.\($domain)": {
 			default: "unprotect"
