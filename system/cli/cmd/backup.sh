@@ -22,9 +22,15 @@ case $CMD in
 	;;
 	restore)
 		flapctl stop
+		cat "$FLAP_DATA/system/flapctl.env"
 
 		echo "* [backup] Restoring FLAP_DATA."
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" restore
+
+		# Reload refresh environment variables.
+		# shellcheck source=./system/flapctl.exemple.d/flapctl.vps.env
+		# shellcheck disable=SC1091
+		cat "$FLAP_DATA/system/flapctl.env"
 
 		# If git head is a tag, checkout current_tag.
 		cd "$FLAP_DIR"
