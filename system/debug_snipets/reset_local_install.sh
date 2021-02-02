@@ -7,8 +7,8 @@ set -eux
 sudo -E flapctl stop
 sudo -E flapctl clean data -y
 
-sudo mkdir --parents $FLAP_DATA/system
-sudo cp $FLAP_DIR/system/flapctl.examples.d/local.env $FLAP_DATA/system/flapctl.env
+sudo mkdir --parents "$FLAP_DATA/system"
+sudo cp "$FLAP_DIR/system/flapctl.examples.d/local.env" "$FLAP_DATA/system/flapctl.env"
 
 sudo -E flapctl start
 
