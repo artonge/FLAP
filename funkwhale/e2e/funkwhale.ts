@@ -17,7 +17,18 @@ Scenario("launch funkwhale", async (I) => {
 	I.switchToNextTab()
 	I.seeInCurrentUrl("https://music.flap.test")
 
-	this.fillField("user", "theadmin")
-	this.fillField("password", "password")
-	this.click("Connect")
+	I.fillField("username", "theadmin")
+	I.fillField("password", "password")
+	within('.main', () => {
+		I.click("Login")
+	})
+
+	I.see('My Library')
+	I.see('Recently listened')
+	
+	I.click('.user-dropdown')
+	I.click('Logout')
+	I.click('Yes, log me out!')
+	
+	I.dontSee('My Library')
 })
