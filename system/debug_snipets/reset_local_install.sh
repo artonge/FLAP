@@ -19,3 +19,5 @@ sudo -E flapctl hooks post_domain_update
 
 sudo -E docker exec --user www-data flap_nextcloud php occ user:list
 sudo -E docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+
+sudo -E flapctl backup
