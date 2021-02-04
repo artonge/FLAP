@@ -82,6 +82,6 @@ Commands:
 		flapctl config generate_templates
 		flapctl hooks generate_config "${services[@]}"
 
-		docker-compose --no-ansi up --detach "${services[@]}"
+		docker-compose --no-ansi up --remove-orphans --detach "${services[@]}"
 		;;
 esac
