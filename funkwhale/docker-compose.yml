@@ -18,7 +18,7 @@ services:
             driver: ${LOG_DRIVER:-journald}
         depends_on: [postgres, redis]
         volumes:
-            - ${FLAP_DATA}/funkwhale/data/media:${MEDIA_ROOT}
+            - ${FLAP_DATA}/funkwhale/data/media:/srv/funkwhale/data/media
         networks:
             stores-net:
             apps-net:
@@ -41,15 +41,14 @@ services:
     funkwhale_api:
         image: funkwhale/funkwhale:1.0.1
         container_name: flap_funkwhale_api
-        ports: [5000]
         env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         depends_on: [postgres, redis]
         volumes:
-            - ${FLAP_DATA}/funkwhale/data/media:${MEDIA_ROOT}
-            - funkwhaleStaticFiles:${STATIC_ROOT}
+            - ${FLAP_DATA}/funkwhale/data/media:/srv/funkwhale/data/media
+            - funkwhaleStaticFiles:/srv/funkwhale/data/static
             - funkwhaleFrontend:/frontend
         networks:
             stores-net:

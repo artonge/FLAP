@@ -2,7 +2,7 @@
 
 set -eu
 
-until docker-compose logs funkwhale | grep "Server listening on 0.0.0.0:5000" > /dev/null
+until docker-compose logs funkwhale_api | grep "Application startup complete." > /dev/null
 do
     echo "Funkwhale is unavailable - sleeping"
     sleep 1

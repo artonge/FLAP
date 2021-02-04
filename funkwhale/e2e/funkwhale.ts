@@ -15,7 +15,7 @@ Scenario("launch funkwhale", async (I) => {
 	} while (nb === 1)
 
 	I.switchToNextTab()
-	I.seeInCurrentUrl("https://audio.flap.test")
+	I.seeInCurrentUrl("https://music.flap.test")
 
 	this.fillField("user", "theadmin")
 	this.fillField("password", "password")

@@ -1,11 +1,11 @@
 {
 	locationRules: {
-		"audio.\($domain)": {
+		"music.\($domain)": {
 			default: "unprotect"
 		}
 	},
 	vhostOptions: {
-		"audio.\($domain)": {
+		"music.\($domain)": {
 			vhostType: $vhostType
 		}
 	}
