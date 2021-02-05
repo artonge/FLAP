@@ -22,4 +22,5 @@ volumes:
 
 x-nginx-extra-volumes:
     - peertubeStaticFiles:/var/www/peertube/peertube-latest/client/dist:ro # [peertube] -> [nginx] Peertube static files.
+    - ${FLAP_DATA}/peertube/data:/var/www/peertube_data:ro # [emmc] -> [nginx] Peertube's users content.
     - ${FLAP_DIR}/peertube/medias:/var/www/peertube_medias:ro # [emmc] -> [nginx] Peertube static files.
