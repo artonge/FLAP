@@ -2,6 +2,7 @@ services:
     peertube:
         image: chocobozzz/peertube:v3.0.0-buster
         container_name: flap_peertube
+        ports: ["1935:1935"] # Live port.
         env_file: [$FLAP_DIR/peertube/peertube.env]
         restart: unless-stopped
         logging:
