@@ -2,7 +2,7 @@
 
 Feature("peertube")
 
-xScenario("launch peertube", async (I) => {
+Scenario("launch peertube", async (I) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
