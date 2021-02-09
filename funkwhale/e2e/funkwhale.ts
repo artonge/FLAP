@@ -27,6 +27,7 @@ Scenario("launch funkwhale", async (I) => {
 	I.see('Recently listened')
 	
 	I.click('.user-dropdown')
+	I.wait(1)
 	I.click('Logout')
 	I.wait(1)
 	I.click('Yes, log me out!')
