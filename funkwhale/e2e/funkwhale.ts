@@ -28,6 +28,7 @@ Scenario("launch funkwhale", async (I) => {
 	
 	I.click('.user-dropdown')
 	I.click('Logout')
+	I.wait(1)
 	I.click('Yes, log me out!')
 	
 	I.dontSee('My Library')
