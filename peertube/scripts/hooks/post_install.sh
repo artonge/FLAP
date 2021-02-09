@@ -3,6 +3,7 @@
 set -eu
 
 echo "Install SAML auth plugin."
+# If you bump the plugin version, please update home/apps.ts and add a migration to upgrade the plugin on live instances.
 docker-compose exec -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2 --plugin-version 0.0.4
 
 echo "Update auth-saml2 plugin config."
