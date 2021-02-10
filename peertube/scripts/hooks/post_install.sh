@@ -3,7 +3,7 @@
 set -eu
 
 echo "Install SAML auth plugin."
-docker-compose exec -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2
+docker-compose run -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2 --plugin-version 0.0.4
 
 echo "Update auth-saml2 plugin config."
 saml_config=$(jq \
