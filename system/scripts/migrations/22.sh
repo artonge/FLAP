@@ -2,7 +2,7 @@
 
 set -eu
 
-# Version v1.14.3
+# Version v1.14.4
 
 echo "* [22] Update docker-compose if it was installed with pip."
 if pip3 list | grep docker-compose
