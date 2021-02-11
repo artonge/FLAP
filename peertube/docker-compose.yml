@@ -1,7 +1,8 @@
 services:
     peertube:
-        image: chocobozzz/peertube:v3.0.0-buster
+        image: chocobozzz/peertube:v3.0.1-buster
         container_name: flap_peertube
+        ports: ["1935:1935"] # Live port.
         env_file: [$FLAP_DIR/peertube/peertube.env]
         restart: unless-stopped
         logging:
@@ -22,4 +23,5 @@ volumes:
 
 x-nginx-extra-volumes:
     - peertubeStaticFiles:/var/www/peertube/peertube-latest/client/dist:ro # [peertube] -> [nginx] Peertube static files.
+    - ${FLAP_DATA}/peertube/data:/var/www/peertube_data:ro # [emmc] -> [nginx] Peertube's users content.
     - ${FLAP_DIR}/peertube/medias:/var/www/peertube_medias:ro # [emmc] -> [nginx] Peertube static files.

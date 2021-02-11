@@ -1,0 +1,4 @@
+services:
+    funkwhale_api:
+        ports:
+          - "5000:5000"
