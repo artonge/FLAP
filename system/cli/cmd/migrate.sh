@@ -6,13 +6,14 @@ CMD=${1:-}
 
 case $CMD in
 	summarize)
-		echo "migrate | [<service_name> ...], help | Run services migrations."
+		echo "migrate | [<service_name> ..., status, help] | Run services migrations."
 	;;
 	help)
 		echo "
 $(flapctl migrate summarize)
 Commands:
-	migrate | [<service_name> ...] | Run migrations for the specified services, default to all services." | column -t -s "|"
+	migrate | [<service_name> ...] | Run migrations for the specified services, default to all services.
+	migrate | status | List pending migrations." | column -t -s "|"
 	;;
 	status)
 		for service in $FLAP_SERVICES

@@ -11,7 +11,7 @@ EXIT_CODE=0
 
 case $CMD in
 	summarize)
-		echo "update | [<branch_name>, help] | Handle update logique for FLAP."
+		echo "update | [<branch_name>, help] | Handle update logic for FLAP."
 		;;
 	help)
 		echo "
@@ -73,7 +73,7 @@ Commands:
 
 			flapctl hooks post_update &&
 
-			echo '* [update] Cleanning docker objects.' &&
+			echo '* [update] Cleaning docker objects.' &&
 			flapctl clean docker -y
 		} || {
 			echo '* [update] ERROR - Fail to restart containers.'
@@ -95,7 +95,7 @@ Commands:
 			exit 1
 		fi
 
-		# Recursivly continue to newer updates.
+		# Recursively continue to newer updates.
 		flapctl update
 		;;
 esac

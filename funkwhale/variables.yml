@@ -1,0 +1,4 @@
+ENABLE_FUNKWHALE:
+    type: boolean
+    info: Enable Funkwhale.
+    group: services

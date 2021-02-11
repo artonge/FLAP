@@ -1,15 +1,20 @@
 [submodule "core"]
 	path = home
 	url = https://gitlab.com/flap-box/home.git
+	ignore = dirty
 [submodule "sogo"]
 	path = sogo
 	url = https://gitlab.com/flap-box/sogo.git
+	ignore = dirty
 [submodule "ldap"]
 	path = ldap
 	url = https://gitlab.com/flap-box/ldap.git
+	ignore = dirty
 [submodule "lemon"]
 	path = lemon
 	url = https://gitlab.com/flap-box/lemon.git
+	ignore = dirty
 [submodule "matrix"]
 	path = matrix
 	url = https://gitlab.com/flap-box/matrix.git
+	ignore = dirty

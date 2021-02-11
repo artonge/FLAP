@@ -6,6 +6,7 @@ services:
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
+        # 8448 is for Matrix federation
         ports: ["80:80", "443:443", "8448:8448"]
         networks:
             apps-net:
