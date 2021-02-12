@@ -103,7 +103,7 @@ test_dockerfile_sanity:
             \
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
-                --env COMPOSE_HTTP_TIMEOUT=480 \
+                --env COMPOSE_HTTP_TIMEOUT=600 \
                 --env CI_JOB_NAME=$CI_JOB_NAME \
             \
                 $(eval $FLAP_IMAGE_TAG) \
