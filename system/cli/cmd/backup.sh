@@ -22,15 +22,14 @@ case $CMD in
 	;;
 	restore)
 		flapctl stop
-		cat "$FLAP_DATA/system/flapctl.env"
+
+		cp "$FLAP_DATA"/system/flapctl.env /tmp/flapctl.env
+		rm -rf "$FLAP_DATA"
+		mkdir -p "$FLAP_DATA"/system
+		cp /tmp/flapctl.env "$FLAP_DATA"/system/flapctl.env
 
 		echo "* [backup] Restoring FLAP_DATA."
-		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" restore
-
-		# Reload refresh environment variables.
-		# shellcheck source=./system/flapctl.exemple.d/flapctl.vps.env
-		# shellcheck disable=SC1091
-		cat "$FLAP_DATA/system/flapctl.env"
+		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" "$@"
 
 		# If git head is a tag, checkout current_tag.
 		cd "$FLAP_DIR"
@@ -46,14 +45,18 @@ case $CMD in
 
 		flapctl start
 	;;
+	list)
+		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" list
+	;;
 	summarize)
-		echo "backup | | Backup and restore FLAP's data."
+		echo "backup | [restore, list] | Backup and restore FLAP's data."
 	;;
 	help|*)
 		echo "
 $(flapctl backup summarize)
 Commands:
 	'' | | Run pre_backup hook and backup FLAP_DATA using borg or restic.
-	restore | | Restore FLAP_DATA usign borg or restic and run post_restore hook." | column -t -s "|"
+	restore | | Restore FLAP_DATA using borg or restic and run post_restore hook.
+	list | | List available snapshots." | column -t -s "|"
 	;;
 esac
