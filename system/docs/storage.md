@@ -6,12 +6,12 @@ FLAP can automatically setup you disks. The configuration must be place in the `
 
 If you do not set anything, FLAP will simply store the data on you system disk.
 
--   **Warning 1:** this is only mean for empty disks as it will delete everything.
--   **Warning 2:** the code is young and not feature full, you should check it out to understand what it does (See [disks.sh](https://gitlab.com/flap-box/flap/-/blob/master/system/cli/cmd/disks.sh)).
+- **Warning 1:** this is only mean for empty disks as it will delete everything.
+- **Warning 2:** the code is young and not feature full, you should check it out to understand what it does (See [disks.sh](https://gitlab.com/flap-box/flap/-/blob/master/system/cli/cmd/disks.sh)).
 
 Do not hesitate to submit a merge request to support your disk configuration.
 
-### Example 1 - Single disk
+## Example 1 - Single disk
 
 FLAP will format `/dev/sda` and mount it at `FLAP_DATA`.
 
@@ -22,7 +22,7 @@ disks:
     - /dev/sda
 ```
 
-### Example 2 - Raid array
+## Example 2 - Raid array
 
 FLAP will attempt to map disks from the server's USB ports.
 FLAP will format the disks and setup a RAID1 array with the mapped disks.

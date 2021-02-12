@@ -5,14 +5,15 @@
 FLAP support [borg](https://www.borgbackup.org/) and [restic](https://restic.readthedocs.io) to backup the `FLAP_DATA` directory.
 
 > [!TIP]
->-   **Borg** is more suited to backup servers with low ressources like RPi or Odroids.
->-   **Restic** is ressources intensive, but can backup to a lot of backends like S3 buckets
+>
+>- **Borg** is more suited to backup servers with low resources like RPi or Odroids.
+>- **Restic** is resources intensive, but can backup to a lot of backends like S3 buckets
 
 Backups are incrementally made, with a backup retention of:
 
--   7 daily
--   5 weekly
--   12 monthly
+- 7 daily
+- 5 weekly
+- 12 monthly
 
 ## Enable backups
 
