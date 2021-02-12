@@ -2,7 +2,7 @@
 
 set -eu
 
-docker-compose --no-ansi up --detach mariadb
+docker-compose up --detach mariadb
 flapctl hooks wait_ready mariadb
 
 docker exec flap_mariadb mysql --password="$ADMIN_PWD" --execute="DROP DATABASE matomo;"
@@ -12,5 +12,5 @@ docker exec flap_mariadb mysql --password="$ADMIN_PWD" --execute="GRANT ALL PRIV
 # shellcheck disable=SC2002
 gzip --decompress --stdout "$FLAP_DATA/matomo/backup.sql.gz" | docker exec --interactive flap_mariadb mysql --password="$ADMIN_PWD" --database matomo
 
-docker-compose --no-ansi up --detach matomo
+docker-compose up --detach matomo
 flapctl hooks wait_ready matomo

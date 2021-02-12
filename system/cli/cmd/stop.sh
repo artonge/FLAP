@@ -24,7 +24,7 @@ Commands:
 
 		# Stop all services. If an error occures, the docker daemon will be restarted before retrying.
 		echo '* [stop] Stopping services.'
-		docker-compose --no-ansi down --remove-orphans || systemctl restart docker || docker-compose --no-ansi down --remove-orphans
+		docker-compose down --remove-orphans || systemctl restart docker || docker-compose down --remove-orphans
 		;;
 	*)
 		# Get services list from args.
