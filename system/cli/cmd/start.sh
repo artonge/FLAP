@@ -43,11 +43,11 @@ Commands:
 		echo '* [start] Starting services.'
 		if [ "${CI_JOB_NAME:-}" != "setup_with_serial_updates" ]
 		then
-			docker-compose --no-ansi up --detach
+			docker-compose up --detach
 		else
 			# Debug overlapping network error happening during serial updates.
 			ip a
-			docker-compose --verbose --log-level DEBUG --no-ansi up --detach
+			docker-compose --verbose --log-level DEBUG up --detach
 		fi
 
 		# Wait dor services to be up.
@@ -82,6 +82,6 @@ Commands:
 		flapctl config generate_templates
 		flapctl hooks generate_config "${services[@]}"
 
-		docker-compose --no-ansi up --remove-orphans --detach "${services[@]}"
+		docker-compose up --remove-orphans --detach "${services[@]}"
 		;;
 esac
