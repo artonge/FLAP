@@ -24,7 +24,7 @@ case $CMD in
 		flapctl stop
 
 		cp "$FLAP_DATA"/system/flapctl.env /tmp/flapctl.env
-		rm -rf "$FLAP_DATA"
+		rm -rf "$FLAP_DATA"/*
 		mkdir -p "$FLAP_DATA"/system
 		cp /tmp/flapctl.env "$FLAP_DATA"/system/flapctl.env
 
