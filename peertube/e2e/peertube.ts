@@ -17,7 +17,20 @@ Scenario("launch peertube", async (I) => {
 	I.switchToNextTab()
 	I.seeInCurrentUrl("https://video.flap.test")
 
-	I.waitForText("Videos")
-	I.see("Discover")
-	I.see("Administration")
+	I.waitForText("Discover")
+	I.see("Trending")
+
+	I.click("FLAP SSO (flap.test)")
+
+	I.waitForText("My account")
+	I.see("My library")
+
+	I.click("Remind me later")
+	
+	I.wait(2)
+	I.click(".logged-in-more")
+
+	I.click("Log out")
+
+	I.see("Login")
 })
