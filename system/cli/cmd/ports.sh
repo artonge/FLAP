@@ -33,7 +33,7 @@ case $CMD in
 		done
 		;;
 	open)
-		echo "Openning port $PORT/$PROTOCOL"
+		echo "Opening port $PORT/$PROTOCOL"
 
 		IP=${4:-$(flapctl ip internal)}
 

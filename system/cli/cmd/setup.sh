@@ -52,12 +52,12 @@ case $CMD in
 
 		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" != "true" ]
 		then
-			# Allow packets comming from the port 1900 of a machine on the local network.
+			# Allow packets coming from the port 1900 of a machine on the local network.
 			# Allow reception on any port.
 			ufw allow from 192.168.0.0/24 port 1900 proto udp to any
 		fi
 
-		# Add services's firewall rules.
+		# Add service's firewall rules.
 		for port in $NEEDED_PORTS
 		do
 			protocol=$(echo "$port" | cut -d '/' -f2)
@@ -75,7 +75,7 @@ case $CMD in
 
 		for service in $FLAP_SERVICES
 		do
-			# Skip if the directory is allready created.
+			# Skip if the directory is already created.
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
 				# Create data directory for the service.
