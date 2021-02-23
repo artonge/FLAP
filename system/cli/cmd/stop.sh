@@ -29,14 +29,20 @@ Commands:
 	*)
 		# Get services list from args.
 		services=("${@:1}")
+		services_list=()
 
 		for service in "${services[@]}"
 		do
 			if docker ps --format '{{.Names}}' | grep "flap_$service"
 			then
-				docker stop "flap_$service"
-				docker rm "flap_$service"
+				services_list+=("flap_$service")
 			fi
 		done
+
+		if [ "${#services_list[@]}" != "0" ]
+		then
+			docker stop "${services_list[@]}"
+			docker rm "${services_list[@]}"
+		fi
 	;;
 esac
