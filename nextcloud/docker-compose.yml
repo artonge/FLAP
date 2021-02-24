@@ -3,7 +3,7 @@ services:
         # Check "Critical changes..." issue before updating the version number.
         # https://github.com/nextcloud/server/issues?q=Critical+changes
         # Also check the compatibility with plugins.
-        image: nextcloud:20.0-fpm
+        image: nextcloud:21.0-fpm
         container_name: flap_nextcloud
         env_file: [$FLAP_DIR/nextcloud/nextcloud.env]
         restart: unless-stopped
