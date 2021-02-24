@@ -28,9 +28,4 @@ cp /tmp/overlay/*.tar.gz /var/lib/flap/images
 # Prevent user creation on first boot.
 rm /root/.not_logged_in_yet
 
-# Setup louis@chmn.me key for ssh connection.
-# TODO: remove when GUI for adding ssh key exists.
-mkdir --parents /root/.ssh
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIQOuAFt8rbPUknP2eaZsPyXjm5dl3gg/WoTfvtnzJVa louis@latitude5591" > /root/.ssh/authorized_keys
-
 apt clean
