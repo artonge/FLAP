@@ -60,7 +60,6 @@ saml2_config:
             mxid_source_attribute: uid
 
 sso:
-    template_dir: /templates
     # Chrome do not allows redirection of a form when the 'form-action' CSP is set with the target domain.
     # TODO: reenable when resolved in lemonLDAP or matrix
     client_whitelist:
