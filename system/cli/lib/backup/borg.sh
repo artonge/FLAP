@@ -24,10 +24,13 @@ case $CMD in
 		fi
 	;;
 	restore)
-		archive=$(borg list --json | jq --raw-output '.archives[.archives | length - 1].archive')
+		archive=${2:-"$(borg list --json | jq --raw-output '.archives[-1].archive')"}
 		# Currently, extract always writes into the current working directory (".")
 		# Cd into FLAP_DATA's parent.
-		cd "$FLAP_DATA"/..
+		cd "$(dirname "$FLAP_DATA")"
 		borg extract --progress ::"$archive"
+	;;
+	list)
+		borg list
 	;;
 esac

@@ -13,6 +13,9 @@ services:
             apps-net:
                 aliases:
                     - meet.jitsi
+            jitsi-net:
+                aliases:
+                    - meet.jitsi
 
     # XMPP server
     prosody:
@@ -26,7 +29,7 @@ services:
             - ${FLAP_DATA}/jitsi/prosody:/config
         env_file: [$FLAP_DIR/jitsi/jitsi.env]
         networks:
-            apps-net:
+            jitsi-net:
                 aliases:
                     - xmpp.meet.jitsi
 
@@ -42,7 +45,7 @@ services:
         env_file: [$FLAP_DIR/jitsi/jitsi.env]
         depends_on: [prosody]
         networks:
-            apps-net:
+            jitsi-net:
 
     # Video bridge
     jvb:
@@ -59,7 +62,7 @@ services:
         env_file: [$FLAP_DIR/jitsi/jitsi.env]
         depends_on: [prosody]
         networks:
-            apps-net:
+            jitsi-net:
 
     coturn:
         image: instrumentisto/coturn:4
@@ -75,3 +78,6 @@ services:
 
 x-nginx-extra-volumes:
     - ${FLAP_DIR}/jitsi/medias:/var/www/jitsi_medias:ro # [emmc] -> [nginx] Jitsi static files.
+
+networks:
+    jitsi-net:

@@ -3,11 +3,12 @@
 ---
 
 > [!TIP]
+>
 >- You can take a look at [the tasks board](https://gitlab.com/groups/flap-box/-/boards).
 >- You can also take a look at [feature & roadmap](features.md).
 >- You can also open an issue explaining the modification you would like to make and I will happily help you through the process.
 
-FLAP is a composition of docker services, `nginx`, `postgresql`, `sogo`, etc, orchestrated by docker-compose.
+FLAP is a composition of docker services, `nginx`, `postgres`, `sogo`, etc, orchestrated by docker-compose.
 
 Most of the heavy lifting is done by the [`flapctl` CLI tool](https://gitlab.com/flap-box/flap/-/tree/master/system/cli).
 
@@ -27,13 +28,14 @@ Or just follow the following paragraphs.
 
 You need to install the following dependencies in order to run FLAP locally:
 
--   [docker](https://docs.docker.com/install)
--   [docker-compose](https://docs.docker.com/compose/install)
--   `apt install gettext psmisc jq`
--   `pip install yq`
+- [docker](https://docs.docker.com/install)
+- [docker-compose](https://docs.docker.com/compose/install)
+- `apt install gettext psmisc jq`
+- `pip install yq`
 
 > [!TIP]
-Alias the `docker-compose` command to `dc` for ease of use.
+> Alias the `docker-compose` command to `dc` for ease of use.
+>
 >```bash
 >echo "alias dc='docker-compose'" > ~/.bashrc
 >```
@@ -44,8 +46,8 @@ The `flapctl` CLI is a tool to manage a FLAP install. You can install it on your
 
 The following script will:
 
--   Expose `$FLAP_DIR` and `$FLAP_DATA` as global env variables. You can change them to your convenience.
--   Expose the `flapctl` CLI tool globally.
+- Expose `$FLAP_DIR` and `$FLAP_DATA` as global env variables. You can change them to your convenience.
+- Expose the `flapctl` CLI tool globally.
 
 ```bash
 echo "export FLAP_DIR=/opt/flap" > /etc/environment
@@ -58,7 +60,7 @@ ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
 Adding the following line to your `/etc/hosts` file:
 
-```
+```txt
 127.0.0.1 flap.test auth.flap.test home.flap.test lemon.flap.test monitoring.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test weblate.flap.test analytics.flap.test video.flap.test music.flap.test
 ```
 
@@ -92,7 +94,7 @@ sudo -E flapctl config generate
 sudo -E flapctl start [<service name> ...]
 ```
 
-Dependencies exist between services, which means, for example, that starting `sogo` will also start `postrgres`, `ldap` and `memcached`.
+Dependencies exist between services, which means, for example, that starting `sogo` will also start `postgres`, `ldap` and `memcached`.
 
 > [!WARNING]
 > Docker will bind all services ports to the hosts ports, make sure there is no conflicts.
@@ -103,8 +105,8 @@ Docker-compose [allows overriding](https://docs.docker.com/compose/extends/) the
 
 `docker-compose.override.yml` will currently do things like:
 
--   Use local docker images.
--   Expose all services to `localhost:some_port` so you can access them directly.
--   Bind the `./home` directory to its container and change the start command so you can have live reload when editing local source files.
--   Expose an phpLdapAdmin instance.
--   Activate debug mode on some service.
+- Use local docker images.
+- Expose all services to `localhost:some_port` so you can access them directly.
+- Bind the `./home` directory to its container and change the start command so you can have live reload when editing local source files.
+- Expose an phpLdapAdmin instance.
+- Activate debug mode on some service.

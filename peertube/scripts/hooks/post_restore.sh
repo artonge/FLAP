@@ -2,7 +2,7 @@
 
 set -eu
 
-docker-compose --no-ansi up --detach postgres
+docker-compose up --detach postgres
 flapctl hooks wait_ready postgres
 
 docker exec --user postgres flap_postgres psql --command "DROP DATABASE peertube;"

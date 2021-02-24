@@ -45,16 +45,16 @@ First you need to download and run the `install_flap.sh` script.
 
 This will do the following action, please ensure none of them will break your system:
 
--   Install apt and pip dependencies needed for `flapctl`
--   Remove postfix dovecot
--   Install docker and docker-compose
--   Enable `unattended-upgrades` and tweak its configuration
--   Override `/etc/environment` with two environment variables
--   Download the FLAP repository on the `/opt/flap` directory
--   Create a simlink for `flapctl` on `/bin/flapctl`
--   Install hooks for letsencrypt
--   Disable password authentication for SSH
--   Create a systemd service for FLAP
+- Install apt and pip dependencies needed for `flapctl`
+- Remove postfix dovecot
+- Install docker and docker-compose
+- Enable `unattended-upgrades` and tweak its configuration
+- Override `/etc/environment` with two environment variables
+- Download the FLAP repository on the `/opt/flap` directory
+- Create a simlink for `flapctl` on `/bin/flapctl`
+- Install hooks for letsencrypt
+- Disable password authentication for SSH
+- Create a systemd service for FLAP
 
 [Click here to see the script file.](https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/overlay/install_flap.sh)
 
@@ -70,23 +70,23 @@ source /etc/environment
 
 `flapctl` uses two environment variables `FLAP_DIR` and `FLAP_DATA` set in `/etc/environment`.
 
--   `FLAP_DIR` is where the FLAP repository is. The default is `/opt/flap`.
--   `FLAP_DATA` is where all your data and configuration are. Be careful with this directory ! The default is `/flap`.
+- `FLAP_DIR` is where the FLAP repository is. The default is `/opt/flap`.
+- `FLAP_DATA` is where all your data and configuration are. Be careful with this directory ! The default is `/flap`.
 
 `flapctl` also load environment variables from `$FLAP_DATA/system/flapctl.env`. This file is used to store configuration and feature flags options.
 
 You can find examples for:
 
--   [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/vps.env)
--   [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/xu4.env)
--   [Local (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/local.env)
--   [Gitlab pipelines (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/pipeline.env)
+- [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/vps.env)
+- [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/xu4.env)
+- [Local (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/local.env)
+- [Gitlab pipelines (development)](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/pipeline.env)
 
 You can find more information on configuration options:
 
--   [Administration](administration.md)
--   [Feature flags](environment_variables.md)
--   [Backup](backup.md)
+- [Administration](administration.md)
+- [Feature flags](environment_variables.md)
+- [Backup](backup.md)
 
 ## First start
 
@@ -96,14 +96,14 @@ You can now start FLAP for the first time:
 flapctl start
 ```
 
-- If you are on the same network than your server: go to http://flap.local.
+- If you are on the same network than your server: go to <http://flap.local>.
 - If your server is not on your network, you will need to setup your domain name and the first user in the terminal.
 
 ## Set the domain name
 
 The domain name setup logic is still young so you will have to set your DNS records by yourself. Ideally FLAP will be able to configure DNS records for some domain name provider. You should, at minimum, have the following records:
 
-```
+```txt
 @    IN    A       <ip>
 *    IN    A       <ip>
 ```
@@ -118,7 +118,7 @@ When the domain name is set, you can add the following records for email to work
 
 DKIM can be found on the FLAP home web GUI.
 
-```
+```txt
 @                              IN    MX     10    @
 @                              IN    TXT    "v=spf1 a aaaa mx -all"
 _dmarc                         IN    TXT    "v=DMARC1; p=none"
@@ -144,7 +144,7 @@ You will then need to set the DNS of your devices to resolve the domain name and
 
 ## Create the first user
 
-To setup the first user, you can use the web GUI at http://flap.local if you are on the same network, or run the following command:
+To setup the first user, you can use the web GUI at <http://flap.local> if you are on the same network, or run the following command:
 
 ```bash
 flapctl users create

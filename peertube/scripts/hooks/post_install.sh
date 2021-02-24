@@ -3,11 +3,7 @@
 set -eu
 
 echo "Install SAML auth plugin."
-# If you bump the plugin version, please update home/apps.ts and add a migration to upgrade the plugin on live instances.
-# The SAML plugin version is fixed for two reason:
-# 	- It allows one click connection from the FLAP home's view.
-# 	- Plugins updates are not automated for now so we would need to update them manually anyway.
-docker-compose run -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2 --plugin-version 0.0.4
+docker-compose exec -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2 --plugin-version "$PEERTUBE_SAML_PLUGIN_VERSION"
 
 echo "Update auth-saml2 plugin config."
 saml_config=$(jq \

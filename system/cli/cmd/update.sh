@@ -20,7 +20,7 @@ Commands:
 	update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch." | column -t -s "|"
 		;;
 	images)
-		docker-compose --no-ansi pull
+		docker-compose pull
 		flapctl restart
 		;;
 	""|*)
@@ -56,7 +56,7 @@ Commands:
 			flapctl config generate_templates &&
 			flapctl hooks generate_config system &&
 			echo '* [update] Pulling new docker images.' &&
-			docker-compose --no-ansi pull
+			docker-compose pull
 		} || {
 			# When either the git update or the docker pull fails, it is safer to go back to the previous tag.
 			# This will prevent from:

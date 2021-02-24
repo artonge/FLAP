@@ -22,21 +22,27 @@ Commands:
 		flapctl config generate_templates
 		flapctl hooks generate_config system
 
-		# Stop all services. If an error occures, the docker daemon will be restarted before retrying.
+		# Stop all services. If an error occurs, the docker daemon will be restarted before retrying.
 		echo '* [stop] Stopping services.'
-		docker-compose --no-ansi down --remove-orphans || systemctl restart docker || docker-compose --no-ansi down --remove-orphans
+		docker-compose down --remove-orphans || systemctl restart docker || docker-compose down --remove-orphans
 		;;
 	*)
 		# Get services list from args.
 		services=("${@:1}")
+		services_list=()
 
 		for service in "${services[@]}"
 		do
 			if docker ps --format '{{.Names}}' | grep "flap_$service"
 			then
-				docker stop "flap_$service"
-				docker rm "flap_$service"
+				services_list+=("flap_$service")
 			fi
 		done
+
+		if [ "${#services_list[@]}" != "0" ]
+		then
+			docker stop "${services_list[@]}"
+			docker rm "${services_list[@]}"
+		fi
 	;;
 esac

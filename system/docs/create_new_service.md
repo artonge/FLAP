@@ -5,28 +5,28 @@
 > [!INFO]
 > FLAP services are a collection of scripts and configuration files. This file is a reference of those to help improving a service integration with FLAP.
 
--   [Templates](#templates)
--   [Special files](#special-files)
-    -   [nginx.conf](#ltservicegtnginxconf)
-    -   [lemon.jq](#ltservicegtconfiglemonjq)
-    -   [docker-compose.yml](#ltservicegtdocker-composeyml)
-	-   [variables.yml](#ltservicegtvariablesyml)
--   [Hooks](#hooks)
-    -   [load_env](#load_env)
-    -   [should_install](#should_install)
-    -   [generate_config](#generate_config)
-    -   [init_db](#init_db)
-    -   [pre_install](#pre_install)
-    -   [wait_ready](#wait_ready)
-    -   [post_install](#post_install)
-    -   [post_domain_update](#post_domain_update)
-    -   [post_update](#post_update)
-    -   [pre_backup](#pre_backup)
-    -   [post_restore](#post_restore)
--   [Monitoring](#monitoring)
--   [Migrations](#migrations)
--   [Custom docker image](#custom-docker-image)
--   [Cron jobs](#cron_jobs)
+- [Templates](#templates)
+- [Special files](#special-files)
+  - [nginx.conf](#ltservicegtnginxconf)
+  - [lemon.jq](#ltservicegtconfiglemonjq)
+  - [docker-compose.yml](#ltservicegtdocker-composeyml)
+  - [variables.yml](#ltservicegtvariablesyml)
+- [Hooks](#hooks)
+  - [load_env](#load_env)
+  - [should_install](#should_install)
+  - [generate_config](#generate_config)
+  - [init_db](#init_db)
+  - [pre_install](#pre_install)
+  - [wait_ready](#wait_ready)
+  - [post_install](#post_install)
+  - [post_domain_update](#post_domain_update)
+  - [post_update](#post_update)
+  - [pre_backup](#pre_backup)
+  - [post_restore](#post_restore)
+- [Monitoring](#monitoring)
+- [Migrations](#migrations)
+- [Custom docker image](#custom-docker-image)
+- [Cron jobs](#cron_jobs)
 
 ## Templates
 
@@ -46,13 +46,13 @@ Templates are rendered with [`envsubst`](https://www.gnu.org/software/gettext/ma
 
 Advantages:
 
--   Having up to date configuration files on each starts. This also allows fast experimentation.
--   Using the service's configuration file syntax so we do not have to invent a new one.
--   Clear visualization of the current service's configurations.
+- Having up to date configuration files on each starts. This also allows fast experimentation.
+- Using the service's configuration file syntax so we do not have to invent a new one.
+- Clear visualization of the current service's configurations.
 
 Limits:
 
--   Does not support complex configuration tweaks. For example, matrix needs the `pre_install` hooks to further customize the configuration.
+- Does not support complex configuration tweaks. For example, matrix needs the `pre_install` hooks to further customize the configuration.
 
 ## Special files
 
@@ -164,18 +164,19 @@ For the service to be started in `flapctl start`, you must add a `docker-compose
 
 You must specify:
 
--   the image tag, preferably with a precise subversion.
--   the container name, so it do not depend on the main folder name.
--   the restart strategy, preferably `always`
--   the logging driver, preferably `${LOG_DRIVER:-journald}`.
+- the image tag, preferably with a precise subversion.
+- the container name, so it do not depend on the main folder name.
+- the restart strategy, preferably `always`
+- the logging driver, preferably `${LOG_DRIVER:-journald}`.
 
 You can specify:
 
--   any volumes linked to permanently store data.
--   volumes that nginx need to bind with through the `x-nginx-extra-volumes` property.
--   docker network connection and its hostname.
+- any volumes linked to permanently store data.
+- volumes that nginx need to bind with through the `x-nginx-extra-volumes` property.
+- docker network connection and its hostname.
 
 You can also create `docker-compose.ci.yml` and `docker-compose.override.yml` files. They will be used to override some configuration if respectively those variables are set:
+
 - `FLAG_GENERATE_DOCKER_COMPOSE_CI`.
 - `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE`
 
@@ -206,7 +207,7 @@ volumes:
         name: flap_sogoStaticFiles
 
 x-nginx-extra-volumes:
-    - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.
+  - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.
 ```
 
 <!-- panels:end -->
@@ -217,7 +218,7 @@ x-nginx-extra-volumes:
 ### `<service>/variables.yml`
 
 <!-- div:left-panel -->
-Services can be customised to tweak their behaviors.
+Services can be customized to tweak their behaviors.
 
 The home GUI contains a form to set those variables. If you add a new variable for a service, make sure to add it to its `variables.yml` file.
 
@@ -257,14 +258,14 @@ This hook is used to load environment variables specific to the service. This ca
 
 This is the place to populate some special FLAP environment variables.
 
--   `FLAP_ENV_VARS`: is used to expose variables during script execution and template rendering.
--   `SUBDOMAINS`: is used during TLS certificates generation.
--   `NEEDED_PORTS`: is used during `flapctl ports setup` and `flapctl setup firewall`.
+- `FLAP_ENV_VARS`: is used to expose variables during script execution and template rendering.
+- `SUBDOMAINS`: is used during TLS certificates generation.
+- `NEEDED_PORTS`: is used during `flapctl ports setup` and `flapctl setup firewall`.
 
 Context:
 
--   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
--   Services can either be up or down, do not make any assumptions.
+- This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
+- Services can either be up or down, do not make any assumptions.
 
 <!-- div:right-panel -->
 Example:
@@ -299,9 +300,9 @@ You can also create a special variables for the service to enable or disable it.
 
 Context:
 
--   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
--   This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
--   Services can either be up or down, do not make any assumptions.
+- This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
+- This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
+- Services can either be up or down, do not make any assumptions.
 
 <!-- div:right-panel -->
 Example:
@@ -412,7 +413,7 @@ For example, `matrix` needs to generate some files, and this can only be done by
 set -eu
 
 # Generate the synapse config.
-echo "Generating Synapse's homserver.yaml configuration file."
+echo "Generating Synapse's homeserver.yaml configuration file."
 docker-compose run -T --rm --no-deps synapse generate
 ```
 
@@ -424,11 +425,11 @@ docker-compose run -T --rm --no-deps synapse generate
 ### wait_ready
 
 <!-- div:left-panel -->
-This hook is used to wait for the service to be up. Execute whatever commands to check for the service readyness.
+This hook is used to wait for the service to be up. Execute whatever commands to check for the service readiness.
 
 Context:
 
--   This hook is called after `flapctl start` calls.
+- This hook is called after `flapctl start` calls.
 
 <!-- div:right-panel -->
 Example:
@@ -496,14 +497,14 @@ Context:
 - Services should be up.
 
 <!-- div:right-panel -->
-For example, `lemon` fetches SAML metadatas:
+For example, `lemon` fetches SAML metadata:
 
 ```shell
 #!/bin/bash
 
 set -eu
 
-echo "Fetching lemon's SAML metadatas."
+echo "Fetching lemon's SAML metadata."
 
 # Check certificates with local CA for local domains.
 provider=$(cat "$FLAP_DATA/system/data/domains/$PRIMARY_DOMAIN_NAME/provider.txt")
@@ -604,7 +605,7 @@ docker exec --user www-data flap_nextcloud php occ maintenance:data-fingerprint
 ## Monitoring
 
 <!-- div:left-panel -->
-[Extra information ](monitoring.md).
+[Extra information](monitoring.md).
 
 FLAP includes a Prometheus and Grafana instance. Services can expose some dashboards, alerts and exporters to populate this system.
 
@@ -642,7 +643,7 @@ Example prometheus.yml for System:
 
 ```yaml
 groups:
-    - name: targets
+  - name: targets
       rules:
           - alert: monitor_service_down
             expr: up == 0
@@ -653,7 +654,7 @@ groups:
                 summary: "Monitor service non-operational"
                 description: "Service {{ $labels.instance }} is down."
 
-    - name: host
+  - name: host
       rules:
           - alert: high_cpu_load
             expr: node_load1 > 1.5
@@ -688,12 +689,12 @@ Example alerts.yml for System:
 
 ```yaml
 scrape_configs:
-    - job_name: "nodeexporter"
+  - job_name: "nodeexporter"
       scrape_interval: 5s
       static_configs:
           - targets: ["nodeexporter:9100"]
 
-    - job_name: "cadvisor"
+  - job_name: "cadvisor"
       scrape_interval: 5s
       static_configs:
           - targets: ["cadvisor:8080"]
@@ -748,9 +749,9 @@ Example for SOGo:
 ```yaml
 include:
     # Auto devop
-    - template: Auto-DevOps.gitlab-ci.yml
+  - template: Auto-DevOps.gitlab-ci.yml
     # Image build script
-    - project: flap-box/flap
+  - project: flap-box/flap
       file: build_image.yml
 
 variables:

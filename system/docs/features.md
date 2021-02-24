@@ -7,6 +7,7 @@ Future features are not limited to the one listed bellow.
 Pull requests are welcome. See [contribution guide](contributing.md).
 
 > [!NOTE]
+>
 >- ⚫ ⚫ ⚫] Will add in less than 6 months.
 >- [⚫ ⚫] Will add in less than 1 year.
 >- [⚫] Will add one day.
@@ -20,7 +21,7 @@ Pull requests are welcome. See [contribution guide](contributing.md).
 
   - [x] Database initialization
   - [x] Pre/post installation
-  - [x] Moad service's specific environment global variables
+  - [x] Load service's specific environment global variables
   - [x] Configuration generation before starting services
   - [x] Wait ready after starting services
   - [x] Post FLAP update
@@ -30,7 +31,7 @@ Pull requests are welcome. See [contribution guide](contributing.md).
 
   - [x] The service
   - [x] Docker-compose
-  - [ ] Kubernetes deployement
+  - [ ] Kubernetes deployment
   - [x] Nginx
   - [x] LemonLDAP (SSO)
 
@@ -79,9 +80,9 @@ Pull requests are welcome. See [contribution guide](contributing.md).
   - [x] HTTP2
 - [x] **LemonLDAP**
   - [x] SSO
-      - [x] HTTP Headers
-      - [x] SAML
-      - [ ] CAS [⚫]
+    - [x] HTTP Headers
+    - [x] SAML
+    - [ ] CAS [⚫]
   - [ ] OpenID server [⚫]
   - [ ] External authentication provider [⚫]
   - [ ] Multiple factor authentication [⚫ ⚫]
@@ -96,13 +97,13 @@ Pull requests are welcome. See [contribution guide](contributing.md).
   - [x] Postgrey
   - [x] Postscreen
   - [x] Amavis
-  - [x] SmapAssassin
+  - [x] SpamAssassin
   - [x] OpenDKIM
   - [x] OpenDMARC
   - [ ] ClamAV [⚫ ⚫]
 - [ ] **Wireguard** [⚫]
   - [ ] To access services inside a VPN [⚫]
-      - [ ] SSO [⚫]
+    - [ ] SSO [⚫]
   - [ ] To publish services from another server/IP [⚫]
 
 ## Cross services features
@@ -110,12 +111,12 @@ Pull requests are welcome. See [contribution guide](contributing.md).
 - [x] **Users management**
   - [x] Create, delete and list users in FLAP's GUI
   - [x] Allow self registration in auth portal
-	- [x] Bulk add in FLAP's GUI
+  - [x] Bulk add in FLAP's GUI
   - [ ] Allow user to set a profile picture
   - [ ] Groups [⚫ ⚫ ⚫]
-      - [ ] Limit services access during SSO [⚫ ⚫ ⚫]
-      - [ ] Use default group for self registered users [⚫ ⚫ ⚫]
-      - [ ] Create mailing list [⚫ ⚫]
+    - [ ] Limit services access during SSO [⚫ ⚫ ⚫]
+    - [ ] Use default group for self registered users [⚫ ⚫ ⚫]
+    - [ ] Create mailing list [⚫ ⚫]
 
 - [x] **Domains management**
   - [x] Add, delete and update a domain in FLAP's GUI
@@ -123,18 +124,18 @@ Pull requests are welcome. See [contribution guide](contributing.md).
   - [x] Automatic TLS setup with Letsencrypt
   - [x] Automatic Nginx setup by domain
   - [x] Self signed certificate setup
-      - [ ] GUI to download the root CA [⚫]
+    - [ ] GUI to download the root CA [⚫]
   - [x] DKIM generation
   - [ ] Automatic DNS configuration
-      - [x] flap.id
-      - [ ] NameCheap [⚪]
-      - [ ] DuckDns [⚪]
+    - [x] flap.id
+    - [ ] NameCheap [⚪]
+    - [ ] DuckDns [⚪]
 
 - [x] **Services management**
   - [x] Features flags
   - [x] Documentation for how to use a service
   - [x] GUI to enable/disable flags
-	- [x] GUI to restart the services
-	- [x] GUI to restart the host
+  - [x] GUI to restart the services
+  - [x] GUI to restart the host
   - [ ] Enable/Disable services [⚫]
   - [ ] Disk usage per services [⚫]
