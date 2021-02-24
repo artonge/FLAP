@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>SSO redirect confirmation</title>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://auth.{{ server_name }}/static/bwr/vital.min.css"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://auth.{{ server_name }}/lemon_flapskin/css/skin.css"
+		/>
+	</head>
+	<body>
+		<div class="section">
+			<div class="col-1-5 space"></div>
+			<div class="col-3-5 feed-card flapskin-center">
+				<p>
+					The application at
+					<span style="font-weight:bold">{{ display_url | e }}</span>
+					is requesting full access to your
+					<span style="font-weight:bold">{{ server_name }}</span>
+					Matrix account.
+				</p>
+				<p>
+					If you don't recognise this address, you should ignore this
+					and close this tab.
+				</p>
+				<p>
+					<a href="{{ redirect_url | e }}">
+						<button
+							type="submit"
+							class="btn btn-success solid flapskin-success-button"
+						>
+							<span class="fa fa-envelope-open"></span>
+							<span trspan="sendPwd">I trust this address</span>
+						</button>
+					</a>
+				</p>
+			</div>
+			<div class="col-1-5 space"></div>
+		</div>
+	</body>
+</html>

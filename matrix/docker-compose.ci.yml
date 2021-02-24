@@ -1,0 +1,7 @@
+services:
+    synapse:
+        volumes:
+            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [synapse] SSL certificates.
+        environment:
+            # Allow local self-signed certificates
+            REQUESTS_CA_BUNDLE: /etc/letsencrypt/live/flap/root.cer

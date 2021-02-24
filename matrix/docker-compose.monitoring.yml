@@ -1,0 +1,5 @@
+services:
+    synapse:
+        networks:
+            monitor-net:
+                aliases: [synapse]

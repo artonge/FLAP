@@ -1,0 +1,11 @@
+services:
+    synapse:
+        ports: ["8080:8080"]
+        volumes:
+            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [synapse] SSL certificates.
+        environment:
+            # Allow local self-signed certificates
+            REQUESTS_CA_BUNDLE: /etc/letsencrypt/live/flap/root.cer
+
+    element:
+        ports: ["8082:80"]

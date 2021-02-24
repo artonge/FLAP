@@ -1,0 +1,117 @@
+# Synapse configuration, see:
+# https://github.com/matrix-org/synapse/blob/master/docs/sample_config.yaml
+
+listeners:
+    - port: 8008
+      tls: false
+      type: http
+      x_forwarded: true
+      resources:
+          - names: [client, federation]
+            compress: false
+    - port: 9093
+      tls: false
+      type: http
+      resources:
+          - names: [metrics]
+            compress: false
+
+database:
+    name: psycopg2
+    args:
+        database: synapse
+        user: synapse
+        password: $SYNAPSE_DB_PWD
+        host: postgres
+        cp_min: 5
+        cp_max: 10
+
+public_baseurl: https://matrix.$MATRIX_DOMAIN_NAME/
+
+turn_uris:
+    - turns:$TURN_SERVER:5349?transport=udp
+    - turns:$TURN_SERVER:5349?transport=tcp
+    - turn:$TURN_SERVER:3478?transport=udp
+    - turn:$TURN_SERVER:3478?transport=tcp
+    # Fallback if the TURN server does not work.
+    - turn:turn.matrix.org:3478?transport=udp
+    - turn:turn.matrix.org:3478?transport=tcp
+    - turns:turn.matrix.org:443?transport=tcp
+turn_shared_secret: $TURN_SECRET
+turn_user_lifetime: 86400000
+
+saml2_config:
+    enabled: true
+    sp_config:
+        cert_file: "/saml/matrix/cert.pem"
+        key_file: "/saml/matrix/private_key.pem"
+        metadata:
+            remote:
+                - url: https://auth.$PRIMARY_DOMAIN_NAME/saml/metadata
+        service:
+            sp:
+                authn_requests_signed: true
+                want_response_signed: true
+                want_assertions_signed: true
+                logout_requests_signed: true
+                required_attributes: ["uid", "displayName"]
+    user_mapping_provider:
+        config:
+            mxid_source_attribute: uid
+
+sso:
+    template_dir: /templates
+    # Chrome do not allows redirection of a form when the 'form-action' CSP is set with the target domain.
+    # TODO: reenable when resolved in lemonLDAP or matrix
+    client_whitelist:
+#         - https://chat.$PRIMARY_DOMAIN_NAME/
+
+enable_registration: false
+password_config:
+    enabled: true
+
+password_providers:
+    - module: "ldap_auth_provider.LdapAuthProvider"
+      config:
+          enabled: true
+          uri: "ldap://ldap:389"
+          start_tls: false
+          base: "ou=users,dc=flap,dc=local"
+          attributes:
+              uid: "uid"
+              mail: "mail"
+              name: "fullName"
+
+suppress_key_server_warning: true
+
+# See: https://github.com/matrix-org/synapse/blob/master/INSTALL.md#url-previews
+url_preview_enabled: true
+url_preview_ip_range_blacklist:
+    - "127.0.0.0/8"
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+    - "100.64.0.0/10"
+    - "169.254.0.0/16"
+    - "::1/128"
+    - "fe80::/64"
+    - "fc00::/7"
+
+auto_join_rooms:
+    - "#general:$MATRIX_DOMAIN_NAME"
+autocreate_auto_join_rooms: true
+
+x_forwarded: true
+
+# https://github.com/matrix-org/synapse/blob/b2b86990705de8a099093ec141ad83e09f182034/docs/metrics-howto.md
+enable_metrics: true
+# Debug options.
+# handlers:
+#   file:
+#     level: DEBUG
+#
+# loggers:
+#    ldap3:
+#      level: DEBUG
+#    ldap_auth_provider:
+#      level: DEBUG
