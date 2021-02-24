@@ -162,9 +162,7 @@ then
 	echo "CHECKING OUT $BRANCH_OR_TAG"
 	cd "$FLAP_DIR"
 	git fetch --tags --prune
-	git checkout "$BRANCH_OR_TAG"
-	git submodule sync
-	git submodule update --init
+	git checkout --force --recurse-submodules "$BRANCH_OR_TAG"
 fi
 
 echo "INSTALLING FLAP'S SYSTEMD SERVICE"
