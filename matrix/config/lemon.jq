@@ -15,7 +15,8 @@
 	samlSPMetaDataExportedAttributes: {
 		"synapse_\($domain)": {
 			"uid": "0;urn:mace:dir:attribute-def:uid;;uid",
-			"cn": "0;urn:mace:dir:attribute-def:displayName;;displayName"
+			"cn": "0;urn:mace:dir:attribute-def:displayName;;displayName",
+			"email": "0;urn:mace:dir:attribute-def:email;;email"
 		}
 	},
 	samlSPMetaDataXML: {

@@ -54,10 +54,10 @@ saml2_config:
                 want_response_signed: true
                 want_assertions_signed: true
                 logout_requests_signed: true
-                required_attributes: ["uid", "displayName"]
+                required_attributes: ["uid", "displayName", "email"]
     user_mapping_provider:
         config:
-            mxid_source_attribute: uid
+            mxml_source_attribute: uid
 
 sso:
     # Chrome do not allows redirection of a form when the 'form-action' CSP is set with the target domain.
