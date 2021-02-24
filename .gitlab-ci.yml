@@ -69,7 +69,7 @@ test_dockerfile_sanity:
         - apk add git
 
         # Share the docker container network with this container so it can talk to itself.
-        #  ==> the network ports are beeing serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
+        #  ==> the network ports are being serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
         # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
         - >
             docker run \
@@ -123,7 +123,6 @@ test_dockerfile_sanity:
         # Restore flap_data if it exists.
         - apk add tar
         - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
-        - if [ -f flap.tar.gz ]; then docker exec flap flapctl setup flapenv; fi
         - if [ -f flap.tar.gz ]; then docker exec flap flapctl tls generate_localhost; fi
         - if [ -f flap.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
@@ -329,7 +328,7 @@ build_disk_image:
         # Build the image on the remote server.
         - ssh root@flap.id '/mnt/volume1/armbian_build/compile.sh BOARD=odroidxu4 BRANCH=current RELEASE=buster BUILD_MINIMAL=yes BUILD_DESKTOP=no KERNEL_ONLY=no KERNEL_CONFIGURE=no'
 
-        # Compresse the image.
+        # Compress the image.
         - ssh root@flap.id 'gzip --fast --keep /mnt/volume1/armbian_build/output/images/Armbian_20.05.0-trunk_Odroidxu4_buster_current_5.4.23_minimal.img'
 
         # Store the image file in the root account.
