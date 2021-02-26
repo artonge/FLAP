@@ -12,4 +12,4 @@ then
 fi
 
 echo "* [22] Update docker if it was installed with apt."
-apt install --only-upgrade containerd.io docker-ce docker-ce-cli
+apt install -y --only-upgrade containerd.io docker-ce docker-ce-cli
