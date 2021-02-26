@@ -8,12 +8,9 @@ SUBDOMAINS="$SUBDOMAINS video"
 # 1935 - Live streaming
 NEEDED_PORTS="$NEEDED_PORTS 1935/tcp"
 
-export ENABLE_PEERTUBE
 export PEERTUBE_DOMAIN_NAME
 export PEERTUBE_DB_PWD
 export PEERTUBE_SAML_PLUGIN_VERSION
-
-ENABLE_PEERTUBE=${ENABLE_PEERTUBE:-false}
 
 PEERTUBE_DB_PWD=$(generatePassword peertube peertube_db_pwd)
 

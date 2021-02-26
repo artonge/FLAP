@@ -2,9 +2,9 @@
 
 set -eu
 
-test "$ENABLE_MATOMO" == "true"
+test "${ENABLE_MATOMO:-false}" == "true"
 
-# Mariadb has no image for armv7
+# Mariadb has no image for armv7.
 test "$ARCH" == "x86_64"
 
 # Need a domain to finish the setup.
