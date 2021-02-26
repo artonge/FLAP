@@ -19,13 +19,9 @@ Scenario("launch element", async (I) => {
 
 	I.click("Sign In")
 	I.click(".mx_SSOButton")
-	I.click("I trust this address")
+	I.click("Continue")
 
-	// I.click(".mx_AccessibleButton_kind_danger")
-	// I.click(".mx_AccessibleButton_kind_danger")
-	// I.click(".mx_AccessibleButton_kind_danger")
-	//
-	// I.see("Mr. Admin")
+	I.see("Mr. Admin")
 
 	I.waitForText("#general:​flap.test")
 	I.click(".mx_RoomSublist_tiles")
