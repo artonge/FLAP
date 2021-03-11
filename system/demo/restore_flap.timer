@@ -1,5 +1,5 @@
 [Unit]
-Description=Restore FLAP's data to intial state every day
+Description=Restore FLAP's data to initial state every day
 
 [Timer]
 OnCalendar=daily

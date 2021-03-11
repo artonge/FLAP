@@ -2,7 +2,7 @@
 
 set -eu
 
-echo STOPING and CLEANING
+echo STOPPING and CLEANING
 mkdir -p /flap/system
 touch /flap/system/flapctl.env
 
