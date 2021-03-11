@@ -41,6 +41,8 @@ case $CMD in
 
 		flapctl config generate
 
+		flapctl tls generate
+
 		flapctl hooks post_restore
 
 		flapctl start
