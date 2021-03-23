@@ -37,6 +37,7 @@ do
 	fi
 
 	# shellcheck source=system/scripts/hooks/load_env.sh
+	# shellcheck disable=SC1091
 	source "$service/scripts/hooks/load_env.sh"
 done
 
