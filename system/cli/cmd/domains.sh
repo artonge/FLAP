@@ -20,7 +20,7 @@ case $CMD in
 		fi
 
 		# HACK: wget output does not contain a new line, so the log is weird.
-		# We can not exec an 'echo ""' because when it fails the script return ealry.
+		# We can not exec an 'echo ""' because when it fails the script return early.
 		# We add a `| cat` to prevent exiting early on error.
 		# Then we catch the error code with PIPESTATUS, exec `echo ""` and return the exit code.
 		wget \
@@ -137,7 +137,7 @@ case $CMD in
             flapctl tls generate &&
             echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
             {
-                # If primary domain is emtpy, set the handled domain as primary.
+                # If primary domain is empty, set the handled domain as primary.
                 if [ "$(flapctl domains primary)" == "" ]
                 then
                     echo "* [domains] Set $DOMAIN as primary."
