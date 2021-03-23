@@ -4,7 +4,7 @@ set -ue
 
 mkdir --parents "$FLAP_DATA/system"
 
-# shellcheck source=./system/flapctl.examples.d/vps.env
+# shellcheck source=system/flapctl.examples.d/pipeline.env
 # shellcheck disable=SC1091
 source "$FLAP_DATA/system/flapctl.env"
 
