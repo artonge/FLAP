@@ -1,6 +1,7 @@
 services:
     funkwhale_celeryworker:
-        image: funkwhale/funkwhale:1.0.1
+        # Before upgrade: https://docs.funkwhale.audio/changelog.html
+        image: funkwhale/funkwhale:1.1.0
         container_name: flap_funkwhale_celeryworker
         # Celery workers handle background tasks (such file imports or federation
         # messaging). The more processes a worker gets, the more tasks
