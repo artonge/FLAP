@@ -131,7 +131,6 @@ case $CMD in
 	Commands:
 		hostname | | Setup local hostname.
 		firewall | | Setup firewall rules.
-		ports | | Open ports on NAT gateway.
 		fs | | Create FLAP's data files structure.
 		cron | | Setup the cron from service's cron files." | column -t -s "|"
 	;;
