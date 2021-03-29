@@ -196,7 +196,6 @@ case $CMD in
 	update_dns_records)
 		if [ "${FLAG_NO_DNS_RECORD_UPDATE:-}" == "true" ]
 		then
-			echo '* [domains:FEATURE_FLAG] Skipping DNS update.'
 			exit
 		fi
 
