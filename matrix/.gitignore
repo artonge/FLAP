@@ -1,0 +1,9 @@
+synapse.env
+
+config/synapse.yaml
+config/synapse.use_external_turn.yaml
+config/synapse.allow_registrations.yaml
+
+config/element.json
+
+config/nginx.conf

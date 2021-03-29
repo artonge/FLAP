@@ -14,7 +14,3 @@
 	path = lemon
 	url = https://gitlab.com/flap-box/lemon.git
 	ignore = dirty
-[submodule "matrix"]
-	path = matrix
-	url = https://gitlab.com/flap-box/matrix.git
-	ignore = dirty

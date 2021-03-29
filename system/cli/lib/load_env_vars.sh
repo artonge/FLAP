@@ -4,11 +4,12 @@ set -ue
 
 mkdir --parents "$FLAP_DATA/system"
 
-# shellcheck source=./system/flapctl.exemple.d/flapctl.vps.env
+# shellcheck source=system/flapctl.examples.d/pipeline.env
 # shellcheck disable=SC1091
+# shellcheck disable=SC1094
 source "$FLAP_DATA/system/flapctl.env"
 
-# Export global environement variables.
+# Export global environnement variables.
 export PRIMARY_DOMAIN_NAME
 PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 
@@ -27,8 +28,8 @@ NEEDED_PORTS=""
 export FLAP_ENV_VARS
 FLAP_ENV_VARS="\${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS}"
 
-# Load services environement variables.
-# This will populate FLAP_ENV_VARS, SUBDOMAINES and NEEDED_PORTS.
+# Load services environnement variables.
+# This will populate FLAP_ENV_VARS, SUBDOMAINS and NEEDED_PORTS.
 for service in "$FLAP_DIR"/*/
 do
 	if [ ! -f "$service/scripts/hooks/load_env.sh" ]
@@ -36,7 +37,8 @@ do
 		continue
 	fi
 
-	# shellcheck source=jitsi/scripts/hooks/load_env.sh
+	# shellcheck source=system/scripts/hooks/load_env.sh
+	# shellcheck disable=SC1091
 	source "$service/scripts/hooks/load_env.sh"
 done
 

@@ -2,4 +2,4 @@
 
 set -eu
 
-test "$ENABLE_NEXTCLOUD" == "true"
+test "${ENABLE_NEXTCLOUD:-false}" == "true"

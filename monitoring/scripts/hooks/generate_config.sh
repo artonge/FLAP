@@ -12,7 +12,6 @@ do
         continue
     fi
 
-    echo "- $service"
     ls "$FLAP_DIR/$service/monitoring/dashboards"
 
     cp "$FLAP_DIR/$service/monitoring/dashboards/"* "$FLAP_DIR/monitoring/config/grafana/dashboards"
@@ -26,7 +25,6 @@ for service in $FLAP_SERVICES
 do
 	if [ -f "$FLAP_DIR/$service/monitoring/prometheus.yml" ]
 	then
-		echo "- $service"
 		prometheus_files+=("$FLAP_DIR/$service/monitoring/prometheus.yml")
 	fi
 done
@@ -58,7 +56,6 @@ for service in $FLAP_SERVICES
 do
 	if [ -f "$FLAP_DIR/$service/monitoring/alerts.yml" ]
 	then
-		echo "- $service"
 		alert_files+=("$FLAP_DIR/$service/monitoring/alerts.yml")
 	fi
 done

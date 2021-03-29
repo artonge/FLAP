@@ -15,6 +15,6 @@ do
 		ca_cert=(--cacert /etc/letsencrypt/live/flap/root.cer)
 	fi
 
-	echo "Fetching Nextcloud SAML metadatas for $domain."
+	echo "Fetching Nextcloud SAML metadata for $domain."
 	curl "https://files.$domain/apps/user_saml/saml/metadata?idp=1" --output "$FLAP_DATA/nextcloud/saml/metadata_$domain.xml" "${ca_cert[@]}"
 done

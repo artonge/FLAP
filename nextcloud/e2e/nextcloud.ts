@@ -33,15 +33,15 @@ Scenario("launch nextcloud", async (I) => {
 	I.click(".button.new")
 	I.waitForText("New text document")
 	I.click("New text document")
-	I.waitForElement("#view13-input-file")
-	I.fillField("#view13-input-file", "test.md")
+	I.waitForElement("#view12-input-file")
+	I.fillField("#view12-input-file", "test.md")
 	I.click(".icon-confirm")
+	I.click("Create")
 
 	I.waitForElement(".editor__content")
 	I.wait(2)
 	I.fillField(".editor__content", "New text document content.")
 	I.click(".header-close")
-	I.click(".app-sidebar__close")
 
 	I.waitUrlEquals(`https://files.${process.env.PRIMARY_DOMAIN_NAME}/apps/files/?dir=/`)
 	I.wait(2)

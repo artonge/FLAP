@@ -104,7 +104,7 @@ docker exec flap flapctl stop
 
 # Chose one of the following option:
 
-# To copy the containers FLAP_DIR, use the following command from the docker container.
+# To copy the container's FLAP_DIR, use the following command from the docker container.
 # docker exec flap rm -rf /flap_dir/*
 # docker exec flap cp -rT /opt/flap /flap_dir
 

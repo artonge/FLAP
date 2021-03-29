@@ -1,12 +1,16 @@
 [Unit]
-Description=Restore FLAP's data to intial state every day
+Description=Restore FLAP's data to initial state every day
 
 [Service]
-Environment="BACKUP_TOOL=restic"
-Environment="RESTIC_REPOSITORY=/backup"
-Environment="RESTIC_PASSWORD=securepassword"
 Environment="HOME=/root"
 Environment="FLAP_DIR=/opt/flap"
 Environment="FLAP_DATA=/flap"
 
-ExecStart=/root/restore_flap.sh
+Environment="BACKUP_TOOL=restic"
+Environment="RESTIC_REPOSITORY=<repo>"
+Environment="RESTIC_PASSWORD=securepassword"
+Environment="AWS_ACCESS_KEY_ID=<access_key_id>"
+Environment="AWS_SECRET_ACCESS_KEY=<secret_acess_key>"
+Environment="AWS_DEFAULT_REGION=fr-par"
+
+ExecStart=/opt/flap/system/demo/restore_flap.sh

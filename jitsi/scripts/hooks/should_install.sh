@@ -2,6 +2,6 @@
 
 set -eu
 
-test "${ENABLE_JITSI:-true}" == "true"
+test "${ENABLE_JITSI:-false}" == "true"
 
 test "$ARCH" == "x86_64"
