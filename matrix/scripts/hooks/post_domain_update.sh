@@ -10,4 +10,4 @@ then
 fi
 
 echo "Fetching synapse SAML metadata."
-curl "https://matrix.$MATRIX_DOMAIN_NAME/_matrix/saml2/metadata.xml" --output "$FLAP_DATA/matrix/saml/metadata_$MATRIX_DOMAIN_NAME.xml" "${ca_cert[@]}"
+curl "https://matrix.$MATRIX_DOMAIN_NAME/_synapse/client/saml2/metadata.xml" --output "$FLAP_DATA/matrix/saml/metadata_$MATRIX_DOMAIN_NAME.xml" "${ca_cert[@]}"
