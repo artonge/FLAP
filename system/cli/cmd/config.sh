@@ -28,13 +28,13 @@ case $CMD in
 
 		echo 'Generate Nginx configurations files for each domains.'
 		# shellcheck disable=SC2153
-		for domain in "${DOMAIN_NAMES[@]}"
+		for domain in $DOMAIN_NAMES
 		do
 			echo "- $domain"
 			echo "include /etc/nginx/conf.d/domains/$domain/*.conf;" >> "$FLAP_DIR/nginx/config/conf.d/domains.conf"
 			mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains/$domain"
 
-			for service in "${FLAP_SERVICES[@]}"
+			for service in $FLAP_SERVICES
 			do
 				if [ -f "$FLAP_DIR/$service/nginx.conf" ]
 				then
@@ -68,7 +68,7 @@ case $CMD in
 	show)
 		vars_string=""
 
-		for var in "${FLAP_ENV_VARS[@]}"
+		for var in $FLAP_ENV_VARS
 		do
 			vars_string+="export ${var//[\$\{\}]/}='$(eval "echo $var")'"$'\n'
 		done

@@ -16,7 +16,7 @@ Commands:
 	migrate | status | List pending migrations." | column -t -s "|"
 	;;
 	status)
-		for service in "${FLAP_SERVICES[@]}"
+		for service in $FLAP_SERVICES
 		do
 			current_migration=$(cat "$FLAP_DATA/$service/current_migration.txt")
 			needed_migrations=()
@@ -44,7 +44,7 @@ Commands:
 
 		echo "* [migrate] Running migrations for $services."
 		# Run the hook for each services.
-		for service in "${services[@]}"
+		for service in $services
 		do
 			# Get the base migration for the service.
 			# The current migration is the last migration that was run.

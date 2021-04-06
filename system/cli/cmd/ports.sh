@@ -19,7 +19,7 @@ case $CMD in
 		open_ports=$(flapctl ports list)
 
 		# Open ports.
-		for port in "${NEEDED_PORTS[@]}"
+		for port in $NEEDED_PORTS
 		do
 			protocol=$(echo "$port" | cut -d '/' -f2 | tr '[:lower:]' '[:upper:]')
 			port=$(echo "$port" | cut -d '/' -f1)
