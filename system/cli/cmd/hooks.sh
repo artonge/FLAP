@@ -18,7 +18,7 @@ pre_run_has_run=false
 function pre_run_all {
 	local hook=$1
 
-	if [ $pre_run_has_run == "true" ]
+	if [ "$pre_run_has_run" == "true" ]
 	then
 		return 0
 	fi
@@ -102,7 +102,7 @@ function post_run_all {
 	esac
 
 	# Return if no hooks has been executed.
-	if [ $pre_run_has_run == "false" ]
+	if [ "$pre_run_has_run" == "false" ]
 	then
 		return 0
 	fi

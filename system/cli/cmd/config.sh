@@ -39,7 +39,7 @@ case $CMD in
 				if [ -f "$FLAP_DIR/$service/nginx.conf" ]
 				then
 					echo "  + $service"
-					export DOMAIN_NAME=$domain
+					export DOMAIN_NAME="$domain"
 					envsubst "$FLAP_ENV_VARS \${DOMAIN_NAME}" < "$FLAP_DIR/$service/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
 				fi
 			done

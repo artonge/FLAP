@@ -59,7 +59,7 @@ Commands:
 					"$FLAP_DIR/$service/scripts/migrations/$((current_migration+1)).sh" &&
 					current_migration=$((current_migration+1)) &&
 					echo "* [migrate] Migration $current_migration done." &&
-					echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
+					echo "$current_migration" > "$FLAP_DATA/$service/current_migration.txt"
 				} || {
 					echo "* [migrate] ERROR - Fail to run migrations for $service."
 					break

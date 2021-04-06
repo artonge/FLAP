@@ -92,7 +92,7 @@ case $CMD in
 					current_migration=$((current_migration+1))
 				done
 				echo "Setup base migration of $current_migration for $service"
-				echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
+				echo "$current_migration" > "$FLAP_DATA/$service/current_migration.txt"
 			fi
 		done
 	;;
