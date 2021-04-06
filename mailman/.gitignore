@@ -1,0 +1,3 @@
+mailman.env
+config/core/mailman-extra.cfg
+config/web/settings_local.py
