@@ -56,7 +56,7 @@ case $CMD in
 
 		echo "* [tls] Generating certificates for $domain"
 
-		mkdir -p $cert_path
+		mkdir -p "$cert_path"
 
 		# Write root CA configuration file.
 		echo "[ req ]
@@ -70,10 +70,10 @@ organizationName = FLAP
 commonName = FLAP local Root CA
 [ x509_ext ]
 basicConstraints=critical,CA:true,pathlen:0
-keyUsage=critical,keyCertSign,cRLSign" > $cert_path/root_ca.conf
+keyUsage=critical,keyCertSign,cRLSign" > "$cert_path/root_ca.conf"
 
 		# Prevent overriding existing root CA.
-		if [ ! -f $cert_path/root.cer ]
+		if [ ! -f "$cert_path/root.cer" ]
 		then
 			# Creating root CA.
 			openssl req \
@@ -81,9 +81,9 @@ keyUsage=critical,keyCertSign,cRLSign" > $cert_path/root_ca.conf
 				-nodes \
 				-x509 \
 				-new \
-				-keyout $cert_path/root.key \
-				-out $cert_path/root.cer \
-				-config $cert_path/root_ca.conf
+				-keyout "$cert_path/root.key" \
+				-out "$cert_path/root.cer" \
+				-config "$cert_path/root_ca.conf"
 		fi
 
 		# Write certificates configuration file.
@@ -100,7 +100,7 @@ commonName = $domain
 keyUsage=critical,digitalSignature,keyAgreement
 subjectAltName = @alt_names
 [alt_names]
-DNS.1 = $domain" > $cert_path/server_cert.conf
+DNS.1 = $domain" > "$cert_path/server_cert.conf"
 
 		# Add all subdomains to the server_cert.conf file.
 		# shellcheck disable=SC2153
@@ -108,7 +108,7 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 		subdomains+=(lemon)
 		for i in "${!subdomains[@]}"
 		do
-			echo "DNS.$((i + 2)) = ${subdomains[$i]}.$domain" >> $cert_path/server_cert.conf
+			echo "DNS.$((i + 2)) = ${subdomains[$i]}.$domain" >> "$cert_path/server_cert.conf"
 		done
 
 		# Generating TLS certificate.
@@ -116,26 +116,26 @@ DNS.1 = $domain" > $cert_path/server_cert.conf
 			-days 3650 \
 			-nodes \
 			-new \
-			-keyout $cert_path/server.key \
-			-out $cert_path/server.csr \
-			-config $cert_path/server_cert.conf
+			-keyout "$cert_path/server.key" \
+			-out "$cert_path/server.csr" \
+			-config "$cert_path/server_cert.conf"
 
 		# Signing certificate with root CA.
 		openssl x509 \
 			-days 3650 \
 			-req \
-			-in $cert_path/server.csr \
-			-CA $cert_path/root.cer \
-			-CAkey $cert_path/root.key \
-			-set_serial $RANDOM \
-			-out $cert_path/server.cer \
-			-extfile $cert_path/server_cert.conf \
+			-in "$cert_path/server.csr" \
+			-CA "$cert_path/root.cer" \
+			-CAkey "$cert_path/root.key" \
+			-set_serial "$RANDOM" \
+			-out "$cert_path/server.cer" \
+			-extfile "$cert_path/server_cert.conf" \
 			-extensions x509_ext
 
 		# Copy certificates to Nginx exploitable files.
-		cp $cert_path/server.cer $cert_path/fullchain.pem
-		cp $cert_path/server.key $cert_path/privkey.pem
-		cp $cert_path/root.cer $cert_path/chain.pem
+		cp "$cert_path/server.cer" "$cert_path/fullchain.pem"
+		cp "$cert_path/server.key" "$cert_path/privkey.pem"
+		cp "$cert_path/root.cer" "$cert_path/chain.pem"
 
 		# Setup primary domain.
 		echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"

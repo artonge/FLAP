@@ -100,4 +100,4 @@ Commands:
 		;;
 esac
 
-exit $EXIT_CODE
+exit "$EXIT_CODE"

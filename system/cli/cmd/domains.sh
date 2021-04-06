@@ -169,15 +169,15 @@ case $CMD in
 
         provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
-        if [ ! -f "$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" ]
+        if [ ! -f "$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" ]
         then
             exit 0
         fi
 
 		echo "* [domains] Registering domain name"
 
-		"$FLAP_DIR/system/cli/lib/tls/register/${provider}.sh" "$domain"
-		"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
+		"$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" "$domain"
+		"$FLAP_DIR/system/cli/lib/tls/update/$provider.sh" "$domain"
 
 		elapse=0
 		until [ "$(flapctl ip dns "$domain")" == "$(flapctl ip external)" ] > /dev/null
@@ -186,7 +186,7 @@ case $CMD in
 			sleep 60
 			elapse+=60
 
-			if [ $elapse -gt $(( 60 * 30 )) ]
+			if [ "$elapse" -gt $(( 60 * 30 )) ]
 			then
 				echo "* [domains] ERROR: DNS propagation timeout (30 minutes)"
 				exit 1
@@ -230,7 +230,7 @@ case $CMD in
 
 			echo "* [domains:$domain] Updating, $external_ip != $host_ip."
 
-			"$FLAP_DIR/system/cli/lib/tls/update/${provider}.sh" "$domain"
+			"$FLAP_DIR/system/cli/lib/tls/update/$provider.sh" "$domain"
 		done
 		;;
     list)
