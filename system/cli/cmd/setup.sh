@@ -58,7 +58,7 @@ case $CMD in
 		fi
 
 		# Add service's firewall rules.
-		for port in $NEEDED_PORTS
+		for port in "${NEEDED_PORTS[@]}"
 		do
 			protocol=$(echo "$port" | cut -d '/' -f2)
 			port=$(echo "$port" | cut -d '/' -f1)
@@ -73,7 +73,7 @@ case $CMD in
 		# Create log folder
 		mkdir -p /var/log/flap
 
-		for service in $FLAP_SERVICES
+		for service in "${FLAP_SERVICES[@]}"
 		do
 			# Skip if the directory is already created.
 			if [ ! -d "$FLAP_DATA/$service" ]
@@ -109,7 +109,7 @@ case $CMD in
 		cron_string+="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"$'\n\n'
 
 		# Build cron_string from services cron files
-		for service in $FLAP_SERVICES
+		for service in "${FLAP_SERVICES[@]}"
 		do
 			if [ -f "$FLAP_DIR/$service/$service.cron" ]
 			then

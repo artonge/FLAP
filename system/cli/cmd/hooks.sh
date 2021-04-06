@@ -78,7 +78,7 @@ function post_run_all {
 		post_install)
 			# Mark all enabled services as installed.
 			installed_services=()
-			for service in $FLAP_SERVICES
+			for service in "${FLAP_SERVICES[@]}"
 			do
 				if [ -f "$FLAP_DATA/$service/installed.txt" ]
 				then
@@ -139,7 +139,7 @@ case $cmd in
 		# Default services list to FLAP_SERVICES.
 		services_list=${services_list:-$FLAP_SERVICES}
 
-		for service in $services_list
+		for service in "${services_list[@]}"
 		do
 			service=$(basename "$service")
 

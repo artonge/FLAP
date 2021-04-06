@@ -238,13 +238,13 @@ case $CMD in
         "$FLAP_DIR/system/cli/lib/tls/list_domains.sh"
         ;;
     list_all)
-        for domain in $DOMAIN_NAMES
+        for domain in "${DOMAIN_NAMES[@]}"
         do
             status=$(cat "$FLAP_DATA/system/data/domains/$domain/status.txt")
             provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
             echo "$domain - $status - $provider"
-            for subdomain in $SUBDOMAINS
+            for subdomain in "${SUBDOMAINS[@]}"
             do
                 echo "$subdomain.$domain - $status - $provider - SUB"
             done
