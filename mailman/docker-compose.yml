@@ -1,0 +1,52 @@
+services:
+
+  mailman-core:
+    image: maxking/mailman-core:0.3
+    container_name: flap_mailman_core
+    env_file: [$FLAP_DIR/mailman/mailman.env]
+    restart: unless-stopped
+    logging:
+        driver: ${LOG_DRIVER:-journald}
+    volumes:
+        - ${FLAP_DIR}/mailman/config/core/mailman-extra.cfg:/opt/mailman/core/mailman-extra.cfg # [emmc] -> [mailman] Mailman core settings.
+        - mailmanVar:/opt/mailman/core/var # [mailman] -> [mail] Mailman var folder.
+    depends_on: [postgres]
+    # ports:
+    # - "127.0.0.1:8001:8001" # API
+    # - "127.0.0.1:8024:8024" # LMTP - incoming emails
+    networks:
+        stores-net:
+        apps-net:
+            aliases: [mailman_core]
+
+  mailman-web:
+    image: maxking/mailman-web:0.3
+    container_name: flap_mailman_web
+    env_file: [$FLAP_DIR/mailman/mailman.env]
+    restart: unless-stopped
+    logging:
+        driver: ${LOG_DRIVER:-journald}
+    depends_on: [postgres]
+    volumes:
+        - ${FLAP_DIR}/mailman/config/web/settings_local.py:/opt/mailman/web/settings_local.py # [emmc] -> [mailman] Mailman web settings.
+        - ${FLAP_DATA}/mailman/data:/opt/mailman-web-data # [mailman] -> [nginx] Mailman data.
+        - mailmanStaticFiles:/opt/mailman-web-data/static/ # [mailman] -> [nginx] Mailman static files.
+    # ports:
+    # - "127.0.0.1:8000:8000" # HTTP
+    # - "127.0.0.1:8080:8080" # uwsgi
+    networks:
+        stores-net:
+        apps-net:
+            aliases: [mailman_web]
+
+volumes:
+    mailmanStaticFiles:
+        name: flap_mailmanStaticFiles
+    mailmanVar:
+        name: flap_mailmanVar
+
+x-nginx-extra-volumes:
+    - mailmanStaticFiles:/var/www/mailman:ro # [mailman] -> [nginx] Mailman static files.
+
+x-mail-extra-volumes:
+    - mailmanVar:/opt/mailman/core/var:ro # [mailman] -> [mail] Mailman var folder.

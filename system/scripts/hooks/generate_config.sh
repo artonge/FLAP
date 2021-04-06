@@ -23,7 +23,8 @@ yq \
 	--yaml-output \
 	--yaml-roundtrip \
 	--slurp \
-	'reduce .[] as $service ({}; . * $service)' "${compose_files[@]}" > "$main_compose_file.tmp"
+	'reduce .[] as $service ({}; . * $service)' "${compose_files[@]}" > "$main_compose_file"
+
 
 debug "Merge services' nginx-extra-volumes properties."
 # shellcheck disable=SC2016
@@ -40,9 +41,30 @@ yq \
 	--yaml-output \
 	--yaml-roundtrip \
 	--slurp \
+	--in-place \
 	--argjson volumes "$nginx_volumes" \
 	'.[0] * {"services": {"nginx": {"volumes": (.[0].services.nginx.volumes + $volumes)}}}' \
-	"$main_compose_file.tmp" > "$main_compose_file"
+	"$main_compose_file"
+
+
+echo "Merge services' mail-extra-volumes properties."
+# shellcheck disable=SC2016
+mail_volumes=$(
+	yq \
+		--slurp \
+		'reduce .[] as $service ([]; . + $service["x-mail-extra-volumes"])' \
+		"${compose_files[@]}"
+)
+
+# shellcheck disable=SC2016
+yq \
+	--yaml-output \
+	--yaml-roundtrip \
+	--slurp \
+	--in-place \
+	--argjson volumes "$mail_volumes" \
+	'.[0] * {"services": {"mail": {"volumes": (.[0].services.mail.volumes + $volumes)}}}' \
+	"$main_compose_file"
 
 
 if [ "${ENABLE_MONITORING:-}" == "true" ]

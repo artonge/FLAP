@@ -1,0 +1,13 @@
+django-admin qcluster --pythonpath example_project --settings settings
+@daily /path/to/mailman digests --periodic
+0 8 * * * /path/to/mailman notify
+
+
+
+@hourly  mailman  /opt/mailman/venv/bin/mailman-web runjobs hourly
+@daily   mailman  /opt/mailman/venv/bin/mailman-web runjobs daily
+@weekly  mailman  /opt/mailman/venv/bin/mailman-web runjobs weekly
+@monthly mailman  /opt/mailman/venv/bin/mailman-web runjobs monthly
+@yearly  mailman  /opt/mailman/venv/bin/mailman-web runjobs yearly
+* * * * *  mailman  /opt/mailman/venv/bin/mailman-web runjobs minutely
+2,17,32,47 * * * * mailman  /opt/mailman/venv/bin/mailman-web runjobs quarter_hourly

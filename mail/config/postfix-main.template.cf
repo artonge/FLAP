@@ -3,3 +3,15 @@ virtual_mailbox_domains = ${SECONDARY_DOMAIN_NAMES}
 local_transport = lmtp:unix:/var/run/dovecot/lmtp
 local_recipient_maps = ldap:/etc/postfix/ldap-users.cf
 smtpd_sender_login_maps = hash:/tmp/docker-mailserver/smtpd_sender
+
+# Support the default VERP delimiter.
+recipient_delimiter = +
+unknown_local_recipient_reject_code = 550
+owner_request_special = no
+
+transport_maps =
+    regexp:/opt/mailman/core/var/data/postfix_lmtp
+local_recipient_maps =
+    regexp:/opt/mailman/core/var/data/postfix_lmtp
+relay_domains =
+    regexp:/opt/mailman/core/var/data/postfix_domains

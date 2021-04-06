@@ -17,9 +17,7 @@ services:
                     - reload.$PRIMARY_DOMAIN_NAME
 
 x-nginx-extra-volumes:
-    # Nginx configurations.
     - ${FLAP_DIR}/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro # [emmc] -> [nginx] NGINX main conf file
     - ${FLAP_DIR}/nginx/config/conf.d:/etc/nginx/conf.d:ro # [emmc] -> [nginx] NGINX services conf files
     - ${FLAP_DIR}/nginx/config/parts.d:/etc/nginx/parts.d:ro # [emmc] -> [nginx] NGINX parts conf files
-    # TLS Certificates.
     - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [nginx] SSL certificates
