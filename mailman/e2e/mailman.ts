@@ -16,4 +16,21 @@ Scenario("launch mailman", async (I) => {
 
 	I.switchToNextTab()
 	I.seeInCurrentUrl("https://lists.flap.test")
+
+	I.click("Login")
+
+	within("form", () => {
+		I.fillField("login", "theadmin")
+		I.fillField("password", "password")
+		I.click("Sign In")
+	})
+	
+	I.waitForNavigation({})
+	I.seeInCurrentUrl(`https://list.${process.env.PRIMARY_DOMAIN_NAME}`)
+
+	I.waitForText("Available lists")
+
+	I.click("theadmin")
+	I.click("Logout")
+	I.click("Sign Out")
 })
