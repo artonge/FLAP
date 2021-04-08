@@ -80,8 +80,10 @@ Commands:
 		services=("${@:1}")
 
 		flapctl config generate_templates
-		flapctl hooks generate_config "${services[@]}"
+		flapctl hooks generate_config system "${services[@]}"
 
 		docker-compose up --remove-orphans --detach "${services[@]}"
+
+		flapctl hooks wait_ready "${services[@]}"
 		;;
 esac

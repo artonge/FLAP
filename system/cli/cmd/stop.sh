@@ -18,13 +18,19 @@ Commands:
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
 
-		# Generate configuration so docker-compose does not complains because of a missing config file.
-		flapctl config generate_templates
-		flapctl hooks generate_config system
-
-		# Stop all services. If an error occurs, the docker daemon will be restarted before retrying.
+		# Stop all services. If an error occurs:
+		# - regenerate the config and retry.
+		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
-		docker-compose down --remove-orphans || systemctl restart docker || docker-compose down --remove-orphans
+		{
+			docker-compose down --remove-orphans
+		} || {
+			flapctl config generate
+			docker-compose down --remove-orphans
+		} || { 
+			systemctl restart docker
+			docker-compose down --remove-orphans
+		}
 		;;
 	*)
 		# Get services list from args.
@@ -33,7 +39,7 @@ Commands:
 
 		for service in "${services[@]}"
 		do
-			if docker ps --format '{{.Names}}' | grep "flap_$service"
+			if docker ps --format '{{.Names}}' | grep -E "flap_$service$"
 			then
 				services_list+=("flap_$service")
 			fi
