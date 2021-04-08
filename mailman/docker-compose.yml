@@ -7,9 +7,9 @@ services:
     logging:
         driver: ${LOG_DRIVER:-journald}
     volumes:
-        - ${FLAP_DIR}/mailman/config/core/mailman-extra.cfg:/opt/mailman/core/mailman-extra.cfg:ro # [emmc] -> [mailman] Mailman core settings.
+        - ${FLAP_DIR}/mailman/config/core/mailman-extra.cfg:/opt/mailman/core/mailman-extra.cfg # [emmc] -> [mailman] Mailman core settings.
         - ${FLAP_DATA}/mailman/data/core/var:/opt/mailman/var # [mailman] -> [mail] Mailman var folder.
-        - mailmanVar:/opt/mailman/var/data/postfix # [mailman] -> [mail] Mailman var folder.
+        - mailmanVar:/opt/mailman/var/data # [mailman] -> [mail] Mailman var folder.
     depends_on: [postgres]
     networks:
         stores-net:
@@ -43,4 +43,4 @@ x-nginx-extra-volumes:
     - mailmanStaticFiles:/var/www/mailman:ro # [mailman] -> [nginx] Mailman static files.
 
 x-mail-extra-volumes:
-    - mailmanVar:/opt/mailman/var/data/postfix:ro # [mailman] -> [mail] Mailman var folder.
+    - mailmanVar:/opt/mailman/var/data:ro # [mailman] -> [mail] Mailman var folder.
