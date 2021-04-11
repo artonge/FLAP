@@ -18,12 +18,12 @@ Commands:
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
 
-		# Stop all services. If an error occurs:
+		# Stop all services and grep-out output. If an error occurs:
 		# - regenerate the config and retry.
 		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
 		{
-			docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing'
+			docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
 		} || {
 			flapctl config generate
 			docker-compose down --remove-orphans
