@@ -15,11 +15,11 @@ Commands:
 	'' | | Start." | column -t -s "|"
 	;;
 	"")
-		echo '* [start] Running setup operations.'
-
 		# Run some setup operations if necessary.
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
+			echo '* [start] Running setup operations.'
+	
 			flapctl setup hostname
 			flapctl setup docker_images
 			flapctl disks setup
@@ -34,21 +34,12 @@ Commands:
 		flapctl hooks init_db
 		flapctl hooks pre_install
 
-		# Clean volumes and networks of services.
 		flapctl hooks clean
 
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
-
 		echo '* [start] Starting services.'
-		if [ "${CI_JOB_NAME:-}" != "setup_with_serial_updates" ]
-		then
-			docker-compose up --detach
-		else
-			# Debug overlapping network error happening during serial updates.
-			ip a
-			docker-compose --verbose --log-level DEBUG up --detach
-		fi
+		docker-compose --ansi never up --detach 2> /dev/stdout | grep -v -E '^Creating'
 
 		# Wait dor services to be up.
 		flapctl hooks wait_ready
@@ -73,7 +64,6 @@ Commands:
 		fi
 		;;
 	*)
-		# Get services list from args.
 		services=("${@:1}")
 
 		flapctl config generate_templates

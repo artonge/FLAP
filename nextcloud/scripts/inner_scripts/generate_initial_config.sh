@@ -79,7 +79,7 @@ php occ config:system:set mail_smtpsecure --value "tls"
 # DISABLE DASHBOARD
 php occ app:disable dashboard
 
-# DISABLE FUNCTIONNALITIES
+# DISABLE FUNCTIONALITIES
 php occ config:system:set updatechecker --value false --type boolean
 php occ config:system:set upgrade.disable-web --value true --type boolean
 php occ config:system:set appstoreenabled --value false --type boolean

@@ -25,8 +25,6 @@ function pre_run_all {
 
 	pre_run_has_run=true
 
-	echo "* [hooks] Running $hook hooks."
-
 	case $hook in
 		init_db)
 			echo "* [hooks] Starting PostgreSQL and MariaDB for init_db hook."
