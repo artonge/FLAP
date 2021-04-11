@@ -15,7 +15,7 @@ FUNKWHALE_DJANGO_SECRET_KEY=$(generatePassword funkwhale funkwhale_django_secret
 # Set the funkwhale domain if primary domain is set.
 touch "$FLAP_DATA/funkwhale/domain.txt"
 FUNKWHALE_DOMAIN_NAME=$(cat "$FLAP_DATA/funkwhale/domain.txt")
-if [ "$FUNKWHALE_DOMAIN_NAME" == "" ]
+if [ "$FUNKWHALE_DOMAIN_NAME" == "" ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
 then
 	FUNKWHALE_DOMAIN_NAME=$PRIMARY_DOMAIN_NAME
 	echo "$FUNKWHALE_DOMAIN_NAME" > "$FLAP_DATA/funkwhale/domain.txt"
