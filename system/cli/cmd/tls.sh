@@ -5,29 +5,29 @@ set -eu
 CMD=${1:-}
 
 case $CMD in
-    generate)
+	generate)
 		if [ "${FLAG_NO_TLS_GENERATION:-}" == "true" ]
 		then
 			echo '* [tls:FEATURE_FLAG] Skipping TLS generation.'
 			exit
 		fi
 
-        echo '* [tls] Generating certificates for domain names.'
+		echo '* [tls] Generating certificates for domain names.'
 
-        # Filter domains that are either OK or HANDLED and not for "local" or "localhost"
-        domains=()
-        for domain in "$FLAP_DATA"/system/data/domains/*
-        do
-            [[ -e "$domain" ]] || break  # handle the case of no domain
+		# Filter domains that are either OK or HANDLED and not for "local" or "localhost"
+		domains=()
+		for domain in "$FLAP_DATA"/system/data/domains/*
+		do
+			[[ -e "$domain" ]] || break  # handle the case of no domain
 
-            status=$(cat "$domain/status.txt")
-            provider=$(cat "$domain/provider.txt")
+			status=$(cat "$domain/status.txt")
+			provider=$(cat "$domain/provider.txt")
 
-            if { [ "$status" == "OK" ] || [ "$status" == "HANDLED" ]; } && [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
-            then
-                domains+=("$(basename "$domain")")
-            fi
-        done
+			if { [ "$status" == "OK" ] || [ "$status" == "HANDLED" ]; } && [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
+			then
+				domains+=("$(basename "$domain")")
+			fi
+		done
 
 		# Exit now if there is no domains to setup.
 		if [ ${#domains[@]} == "0" ]
@@ -35,15 +35,15 @@ case $CMD in
 			exit 0
 		fi
 
-        {
-            # Generate TLS certificates
-            "$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
-        } || { # Catch error
-            echo "Failed to generate certificates."
-            exit 1
-        }
-        ;;
-    generate_localhost)
+		{
+			# Generate TLS certificates
+			"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
+		} || { # Catch error
+			echo "Failed to generate certificates."
+			exit 1
+		}
+		;;
+	generate_localhost)
 		domain=${2:-flap.test}
 		cert_path=/etc/letsencrypt/live/flap
 
@@ -53,6 +53,11 @@ case $CMD in
 		echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
 		touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
 		touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
+		
+		# Resource load_env_vars to refresh $SUBDOMAINS
+		# Load feature flags and services environment variables.
+		# shellcheck source=system/cli/lib/load_env_vars.sh
+		source "$FLAP_LIBS/load_env_vars.sh"
 
 		echo "* [tls] Generating certificates for $domain"
 
@@ -143,11 +148,11 @@ DNS.1 = $domain" > "$cert_path/server_cert.conf"
 		echo ""
 		echo "You can install the following CA in your browser to ease development: $cert_path/root.cer"
 		;;
-    summarize)
-        echo "tls | [generate, generate_localhost, help] | Manage TLS certificates."
-        ;;
-    help|*)
-        echo "
+	summarize)
+		echo "tls | [generate, generate_localhost, help] | Manage TLS certificates."
+		;;
+	help|*)
+		echo "
 $(flapctl tls summarize)
 Commands:
     generate | | Generate certificates for the current domain name.
