@@ -46,6 +46,19 @@ case $CMD in
 		echo ""
 		echo "* [users] The domain '$domainname was added."
 	;;
+	generate_local)
+		domain=${2:-flap.test}
+
+		# Create default flap.test domain if it is missing.
+		mkdir -p "$FLAP_DATA/system/data/domains/$domain"
+		echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
+		echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
+		touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
+		touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
+
+		# Setup primary domain.
+		echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
+		;;
     handle_request)
         flapctl domains handle_request_primary_update
         flapctl domains handle_request_domain_deletion

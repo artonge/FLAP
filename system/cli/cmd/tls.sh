@@ -14,52 +14,51 @@ case $CMD in
 
 		echo '* [tls] Generating certificates for domain names.'
 
-		# Filter domains that are either OK or HANDLED and not for "local" or "localhost"
+		# Filter domains that are either OK or HANDLED and not for "local" or "localhost".
 		domains=()
+		locals_domains=()
 		for domain in "$FLAP_DATA"/system/data/domains/*
 		do
-			[[ -e "$domain" ]] || break  # handle the case of no domain
+			[[ -e "$domain" ]] || break  # handle the case of no domain.
 
 			status=$(cat "$domain/status.txt")
 			provider=$(cat "$domain/provider.txt")
 
-			if { [ "$status" == "OK" ] || [ "$status" == "HANDLED" ]; } && [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
+			if [ "$status" == "OK" ] || [ "$status" == "HANDLED" ]
 			then
-				domains+=("$(basename "$domain")")
+				if [ "$provider" != "localhost" ] && [ "$provider" != "local" ]
+				then
+					domains+=("$(basename "$domain")")
+				else
+					locals_domains+=("$(basename "$domain")")
+				fi
 			fi
 		done
 
-		# Exit now if there is no domains to setup.
-		if [ ${#domains[@]} == "0" ]
+		# Generate TLS certificates for domains.
+		if [ ${#domains[@]} != "0" ]
 		then
-			exit 0
+			{
+				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
+			} || { # Catch error
+				echo "Failed to generate certificates."
+				exit 1
+			}
 		fi
 
-		{
-			# Generate TLS certificates
-			"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
-		} || { # Catch error
-			echo "Failed to generate certificates."
-			exit 1
-		}
+		# Generate TLS certificates for locals domains.
+		if [ ${#locals_domains[@]} != "0" ]
+		then
+			flapctl tls generate_local_certs "${locals_domains[@]}"
+		fi
 		;;
-	generate_localhost)
-		domain=${2:-flap.test}
+	generate_local_certs)
+		domains=("$@")
+		domains=("${domains[@]:1}")
+
 		cert_path=/etc/letsencrypt/live/flap
 
-		# Create default flap.test domain if it is missing
-		mkdir -p "$FLAP_DATA/system/data/domains/$domain"
-		echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
-		echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
-		touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
-		touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
-		
-		# Resource load_env_vars to refresh $SUBDOMAINS
-		# Load feature flags and services environment variables.
-		# shellcheck source=system/cli/lib/load_env_vars.sh
-		source "$FLAP_LIBS/load_env_vars.sh"
-
-		echo "* [tls] Generating certificates for $domain"
+		echo "* [tls] Generating certificates for ${domains[*]}"
 
 		mkdir -p "$cert_path"
 
@@ -100,21 +99,28 @@ distinguished_name = req_distinguished_name
 x509_extensions    = x509_ext
 [ req_distinguished_name ]
 organizationName = FLAP
-commonName = $domain
+commonName = ${domains[0]}
 [ x509_ext ]
 keyUsage=critical,digitalSignature,keyAgreement
 subjectAltName = @alt_names
-[alt_names]
-DNS.1 = $domain" > "$cert_path/server_cert.conf"
+[alt_names]" > "$cert_path/server_cert.conf"
 
 		# Add all subdomains to the server_cert.conf file.
 		# shellcheck disable=SC2153
 		read -r -a subdomains <<< "$SUBDOMAINS"
 		subdomains+=(lemon)
-		for i in "${!subdomains[@]}"
+
+		for i in "${!domains[@]}"
 		do
-			echo "DNS.$((i + 2)) = ${subdomains[$i]}.$domain" >> "$cert_path/server_cert.conf"
+			base=$((i * (${#subdomains[@]} + 1) + 1))
+			echo "DNS.$base = ${domains[$i]}" >> "$cert_path/server_cert.conf"
+
+			for j in "${!subdomains[@]}"
+			do
+				echo "DNS.$((base + j + 1)) = ${subdomains[$j]}.${domains[$i]}" >> "$cert_path/server_cert.conf"
+			done
 		done
+		cat "$cert_path/server_cert.conf"
 
 		# Generating TLS certificate.
 		openssl req \
@@ -141,9 +147,6 @@ DNS.1 = $domain" > "$cert_path/server_cert.conf"
 		cp "$cert_path/server.cer" "$cert_path/fullchain.pem"
 		cp "$cert_path/server.key" "$cert_path/privkey.pem"
 		cp "$cert_path/root.cer" "$cert_path/chain.pem"
-
-		# Setup primary domain.
-		echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
 
 		echo ""
 		echo "You can install the following CA in your browser to ease development: $cert_path/root.cer"
