@@ -149,6 +149,12 @@ test_cli:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
+        # TODO: remove when we don't need to test versions older than v1.14.7.
+        - old_setup=$(docker exec flap flapctl tls help | grep generate_localhost)
+        - if "$old_setup"; then docker exec flap flapctl tls generate_localhost; fi
+        - if "$old_setup"; then docker exec flap flapctl restart; fi
+        - if "$old_setup"; then docker exec flap flapctl hooks post_domain_update; fi
+
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
         # Sync nextcloud user base.
@@ -173,7 +179,7 @@ test_update_to_tag:
 setup_with_serial_updates:
     stage: setup
     extends: .start_flap
-    only: [tags]
+    # only: [tags]
     needs: []
     allow_failure: true
     variables:
@@ -184,6 +190,12 @@ setup_with_serial_updates:
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
+        
+        # TODO: remove when we don't need to test versions older than v1.14.7.
+        - old_setup=$(docker exec flap flapctl tls help | grep generate_localhost)
+        - if "$old_setup"; then docker exec flap flapctl tls generate_localhost; fi
+        - if "$old_setup"; then docker exec flap flapctl restart; fi
+        - if "$old_setup"; then docker exec flap flapctl hooks post_domain_update; fi
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
