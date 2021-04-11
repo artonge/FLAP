@@ -17,19 +17,19 @@ for user in "${users[@]}"
 do
 	mapfile -t aliases < <(flapctl users list_mail_aliases "$user")
 
-	echo "- $user"
+	debug "- $user"
 
 	for alias in "${aliases[@]}"
 	do
-		echo "	$alias"
+		debug "	$alias"
 		echo "$alias $user@$PRIMARY_DOMAIN_NAME" >> "$FLAP_DIR/mail/config/smtpd_sender"
 	done
 done
 
 # Add addresses for admin.
-echo "- admin"
+debug "- admin"
 for domain in $DOMAIN_NAMES
 do
-	echo "	admin@$domain"
+	debug "	admin@$domain"
 	echo "admin@$domain admin@$PRIMARY_DOMAIN_NAME" >> "$FLAP_DIR/mail/config/smtpd_sender"
 done

@@ -79,7 +79,7 @@ case $CMD in
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
 				# Create data directory for the service.
-				echo "Create $FLAP_DATA/$service"
+				debug "Create $FLAP_DATA/$service"
 				mkdir --parents "$FLAP_DATA/$service"
 			fi
 
@@ -91,7 +91,7 @@ case $CMD in
 				do
 					current_migration=$((current_migration+1))
 				done
-				echo "Setup base migration of $current_migration for $service"
+				debug "Setup base migration of $current_migration for $service"
 				echo "$current_migration" > "$FLAP_DATA/$service/current_migration.txt"
 			fi
 		done

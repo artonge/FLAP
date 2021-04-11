@@ -2,7 +2,7 @@
 
 set -eu
 
-echo "Getting SAML metadata for peertube."
+debug "Getting SAML metadata for peertube."
 # Check certificates with local CA for local PEERTUBE_DOMAIN_NAMEs.
 provider=$(cat "$FLAP_DATA/system/data/domains/$PEERTUBE_DOMAIN_NAME/provider.txt")
 if [ "$provider" == "local" ]

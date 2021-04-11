@@ -12,10 +12,10 @@ case $CMD in
 		;;
 	generate_nginx)
 		echo "* [config] Generating Nginx config files."
-		echo "Create Nginx directory structure."
+		debug "Create Nginx directory structure."
 		mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains"
 
-		echo "Reset domains' includes files."
+		debug "Reset domains' includes files."
 		if [ "$PRIMARY_DOMAIN_NAME" == "" ]
 		then
 			echo "" > "$FLAP_DIR/nginx/config/conf.d/domains.conf"
@@ -23,14 +23,14 @@ case $CMD in
 			echo "include /etc/nginx/parts.d/tls.inc;" > "$FLAP_DIR/nginx/config/conf.d/domains.conf"
 		fi
 
-		echo "Clean old domains config files."
+		debug "Clean old domains config files."
 		rm -rf "$FLAP_DIR"/nginx/config/conf.d/domains/*
 
-		echo 'Generate Nginx configurations files for each domains.'
+		debug 'Generate Nginx configurations files for each domains.'
 		# shellcheck disable=SC2153
 		for domain in $DOMAIN_NAMES
 		do
-			echo "- $domain"
+			debug "- $domain"
 			echo "include /etc/nginx/conf.d/domains/$domain/*.conf;" >> "$FLAP_DIR/nginx/config/conf.d/domains.conf"
 			mkdir -p "$FLAP_DIR/nginx/config/conf.d/domains/$domain"
 
@@ -38,7 +38,7 @@ case $CMD in
 			do
 				if [ -f "$FLAP_DIR/$service/nginx.conf" ]
 				then
-					echo "  + $service"
+					debug "  + $service"
 					export DOMAIN_NAME="$domain"
 					envsubst "$FLAP_ENV_VARS \${DOMAIN_NAME}" < "$FLAP_DIR/$service/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$domain/$service.conf"
 				fi

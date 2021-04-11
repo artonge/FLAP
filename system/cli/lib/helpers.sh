@@ -14,3 +14,12 @@ generatePassword() {
 	cat "$FLAP_DATA/$1/passwd/$2.txt"
 }
 export -f generatePassword
+
+debug() {
+	if "${FLAP_DEBUG:-false}"
+	then
+		echo "$1"
+	fi
+}
+
+export -f debug
