@@ -16,7 +16,7 @@ SYNAPSE_DB_PWD=$(generatePassword matrix synapse_db_pwd)
 # Set the matrix domain if primary domain is set.
 touch "$FLAP_DATA/matrix/domain.txt"
 MATRIX_DOMAIN_NAME=$(cat "$FLAP_DATA/matrix/domain.txt")
-if [ "$MATRIX_DOMAIN_NAME" == "" ]
+if [ "$MATRIX_DOMAIN_NAME" == "" ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
 then
 	MATRIX_DOMAIN_NAME=$PRIMARY_DOMAIN_NAME
 	echo "$MATRIX_DOMAIN_NAME" > "$FLAP_DATA/matrix/domain.txt"
