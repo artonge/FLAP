@@ -59,133 +59,133 @@ case $CMD in
 		# Setup primary domain.
 		echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
 		;;
-    handle_request)
-        flapctl domains handle_request_primary_update
-        flapctl domains handle_request_domain_deletion
-        flapctl domains handle_request_domain_creation
-        ;;
-    handle_request_primary_update)
-        # Exit if there is no request.
-        if [ ! -f "$FLAP_DATA/system/data/domain_update_primary.txt" ]
-        then
-            exit 0
-        fi
+	handle_request)
+		flapctl domains handle_request_primary_update
+		flapctl domains handle_request_domain_deletion
+		flapctl domains handle_request_domain_creation
+		;;
+	handle_request_primary_update)
+		# Exit if there is no request.
+		if [ ! -f "$FLAP_DATA/system/data/domain_update_primary.txt" ]
+		then
+			exit 0
+		fi
 
-        # Exit if the request is HANDLED
-        status=$(cat "$FLAP_DATA/system/data/domain_update_primary.txt")
-        if [ "$status" == "HANDLED" ]
-        then
-            exit 0
-        fi
+		# Exit if the request is HANDLED
+		status=$(cat "$FLAP_DATA/system/data/domain_update_primary.txt")
+		if [ "$status" == "HANDLED" ]
+		then
+			exit 0
+		fi
 
-        echo '* [domains] Handling domain update request'
-        # Handle primary domain update
-        {
-            echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_primary.txt" &&
-            flapctl hooks post_domain_update &&
-            rm "$FLAP_DATA/system/data/domain_update_primary.txt"
-        } || { # Catch error
-            echo "" > "$FLAP_DATA/system/data/domain_update_primary.txt"
-            exit 1
-        }
-        ;;
-    handle_request_domain_deletion)
-        # Exit if their is no request
-        if [ ! -f "$FLAP_DATA/system/data/domain_update_delete.txt" ]
-        then
-            exit 0
-        fi
+		echo '* [domains] Handling domain update request'
+		# Handle primary domain update
+		{
+			echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_primary.txt" &&
+			flapctl hooks post_domain_update &&
+			rm "$FLAP_DATA/system/data/domain_update_primary.txt"
+		} || { # Catch error
+			echo "" > "$FLAP_DATA/system/data/domain_update_primary.txt"
+			exit 1
+		}
+		;;
+	handle_request_domain_deletion)
+		# Exit if their is no request
+		if [ ! -f "$FLAP_DATA/system/data/domain_update_delete.txt" ]
+		then
+			exit 0
+		fi
 
-        # Exit if the request is HANDLED
-        status=$(cat "$FLAP_DATA/system/data/domain_update_delete.txt")
-        if [ "$status" == "HANDLED" ]
-        then
-            exit 0
-        fi
+		# Exit if the request is HANDLED
+		status=$(cat "$FLAP_DATA/system/data/domain_update_delete.txt")
+		if [ "$status" == "HANDLED" ]
+		then
+			exit 0
+		fi
 
-        echo '* [domains] Handling domain delete request'
-        # Handle domain deletion request
-        {
-            echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_delete.txt" &&
-            flapctl tls generate &&
-            flapctl hooks post_domain_update &&
-            rm "$FLAP_DATA/system/data/domain_update_delete.txt"
-        } || { # Catch error
-            echo "" > "$FLAP_DATA/system/data/domain_update_delete.txt"
-            exit 1
-        }
+		echo '* [domains] Handling domain delete request'
+		# Handle domain deletion request
+		{
+			echo "HANDLED" > "$FLAP_DATA/system/data/domain_update_delete.txt" &&
+			flapctl tls generate &&
+			flapctl hooks post_domain_update &&
+			rm "$FLAP_DATA/system/data/domain_update_delete.txt"
+		} || { # Catch error
+			echo "" > "$FLAP_DATA/system/data/domain_update_delete.txt"
+			exit 1
+		}
 
-        ;;
-    handle_request_domain_creation)
-        # Handle new domains
-        mkdir -p "$FLAP_DATA/system/data/domains"
+		;;
+	handle_request_domain_creation)
+		# Handle new domains
+		mkdir -p "$FLAP_DATA/system/data/domains"
 
-        # Select a WAITING domain
-        for domain in "$FLAP_DATA"/system/data/domains/*
-        do
-            [[ -e "$domain" ]] || break  # handle the case of no domain
+		# Select a WAITING domain
+		for domain in "$FLAP_DATA"/system/data/domains/*
+		do
+			[[ -e "$domain" ]] || break  # handle the case of no domain
 
-            if [ "$(cat "$domain/status.txt")" == "WAITING" ]
-            then
-                DOMAIN=$(basename "$domain")
-                echo "HANDLED" > "$domain/status.txt"
-                break
-            fi
-        done
+			if [ "$(cat "$domain/status.txt")" == "WAITING" ]
+			then
+				DOMAIN=$(basename "$domain")
+				echo "HANDLED" > "$domain/status.txt"
+				break
+			fi
+		done
 
-        # If there was no WAITING domain, exit
-        if [ -z "${DOMAIN:-}" ]
-        then
-            exit 0
-        fi
+		# If there was no WAITING domain, exit
+		if [ -z "${DOMAIN:-}" ]
+		then
+			exit 0
+		fi
 
-        echo '* [domains] Handling domain create request'
+		echo '* [domains] Handling domain create request'
 
-        # Give time to the server to pick up the status change.
-        sleep 2
+		# Give time to the server to pick up the status change.
+		sleep 2
 
-        {
-            flapctl domains register_domain "$DOMAIN" &&
-            flapctl stop &&
-            flapctl tls generate &&
-            echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
-            {
-                # If primary domain is empty, set the handled domain as primary.
-                if [ "$(flapctl domains primary)" == "" ]
-                then
-                    echo "* [domains] Set $DOMAIN as primary."
-                    echo "$DOMAIN" > "$FLAP_DATA/system/data/primary_domain.txt"
-                fi
-            } &&
-            flapctl start &&
-            flapctl hooks post_domain_update
-        } || { # Catch error
-            echo "Failed to handle domain request."
-            echo "ERROR" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt"
-            # Generate certificates if they were remove
-            if [ ! -d /etc/letsencrypt/live/flap ]
-            then
-                flapctl tls generate
-            fi
-            flapctl start
-            exit 1
-        }
-        ;;
-    register_domain)
-        # Execute update script for each OK domain or the provided ones.
-        domain=${2:-}
+		{
+			flapctl domains register_domain "$DOMAIN" &&
+			flapctl stop &&
+			flapctl tls generate &&
+			echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
+			{
+				# If primary domain is empty, set the handled domain as primary.
+				if [ "$(flapctl domains primary)" == "" ]
+				then
+					echo "* [domains] Set $DOMAIN as primary."
+					echo "$DOMAIN" > "$FLAP_DATA/system/data/primary_domain.txt"
+				fi
+			} &&
+			flapctl start &&
+			flapctl hooks post_domain_update
+		} || { # Catch error
+			echo "Failed to handle domain request."
+			echo "ERROR" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt"
+			# Generate certificates if they were remove
+			if [ ! -d /etc/letsencrypt/live/flap ]
+			then
+				flapctl tls generate
+			fi
+			flapctl start
+			exit 1
+		}
+		;;
+	register_domain)
+		# Execute update script for each OK domain or the provided ones.
+		domain=${2:-}
 
-        if [ "$domain" == ""  ]
-        then
-            exit 0
-        fi
+		if [ "$domain" == ""  ]
+		then
+			exit 0
+		fi
 
-        provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
+		provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
-        if [ ! -f "$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" ]
-        then
-            exit 0
-        fi
+		if [ ! -f "$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" ]
+		then
+			exit 0
+		fi
 
 		echo "* [domains] Registering domain name"
 
@@ -229,11 +229,11 @@ case $CMD in
 		do
 			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
-            # Do not try to update DNS records for local or localhost domains.
-            if [ "$provider" == "localhost" ] && [ "$provider" == "local" ]
-            then
-                continue
-            fi
+			# Do not try to update DNS records for local or localhost domains.
+			if [ "$provider" == "localhost" ] && [ "$provider" == "local" ]
+			then
+				continue
+			fi
 
 			# Do not update DNS records if the ip is correct.
 			host_ip=$(flapctl ip dns "$domain")
@@ -247,37 +247,39 @@ case $CMD in
 			"$FLAP_DIR/system/cli/lib/tls/update/$provider.sh" "$domain"
 		done
 		;;
-    list)
-        "$FLAP_DIR/system/cli/lib/tls/list_domains.sh"
-        ;;
-    list_all)
-        for domain in $DOMAIN_NAMES
-        do
-            status=$(cat "$FLAP_DATA/system/data/domains/$domain/status.txt")
-            provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
+	list)
+		"$FLAP_DIR/system/cli/lib/tls/list_domains.sh"
+		;;
+	list_all)
+		for domain in $DOMAIN_NAMES
+		do
+			status=$(cat "$FLAP_DATA/system/data/domains/$domain/status.txt")
+			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
-            echo "$domain - $status - $provider"
-            for subdomain in $SUBDOMAINS
-            do
-                echo "$subdomain.$domain - $status - $provider - SUB"
-            done
-        done
-        ;;
-    primary)
-        echo "$PRIMARY_DOMAIN_NAME"
-        ;;
-    summarize)
-        echo "domains | [handle_request, list, list_all, primary, help] | Toolbox to manage domains."
-        ;;
-    help|*)
-        echo "
+			echo "$domain - $status - $provider"
+			for subdomain in $SUBDOMAINS
+			do
+				echo "$subdomain.$domain - $status - $provider - SUB"
+			done
+		done
+		;;
+	primary)
+		echo "$PRIMARY_DOMAIN_NAME"
+		;;
+	summarize)
+		echo "domains | [add, generate_localhost, handle_request, register_domain, update_dns_records, list, list_all, primary, help] | Toolbox to manage domains."
+		;;
+	help|*)
+		echo "
 $(flapctl domains summarize)
 Commands:
+	add | | Start domain creation form.
+	generate_local | [<domain_name>] | Generate local domain for development.
 	handle_request | | Handle domain requests in the file system.
 	register_domain | | Register a domain if necessary.
 	update_dns_records | | Update DNS records for all OK domains.
-    list | | Show the full list of domain names and their information.
-    list_all | | Same as 'list' but with subdomains.
-    primary | | Show the primary domain name." | column -t -s "|"
-        ;;
+	list | | Show the full list of domain names and their information.
+	list_all | | Same as 'list' but with subdomains.
+	primary | | Show the primary domain name." | column -t -s "|"
+		;;
 esac

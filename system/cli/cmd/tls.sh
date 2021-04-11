@@ -158,7 +158,7 @@ subjectAltName = @alt_names
 		echo "
 $(flapctl tls summarize)
 Commands:
-    generate | | Generate certificates for the current domain name.
-    generate_localhost | | Create flap.test domain and generate certificates if none exists." | column -t -s "|"
-        ;;
+	generate | | Generate certificates for the current domain name.
+	generate_local_certs | | Generate certificates if none exists." | column -t -s "|"
+		;;
 esac
