@@ -58,7 +58,7 @@ docker run \
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
 CI_COMMIT_REF_SLUG=
-CI_COMMIT_SHA=v1.13.2
+CI_COMMIT_SHA=v1.14.6
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 
