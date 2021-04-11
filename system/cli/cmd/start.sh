@@ -19,8 +19,6 @@ Commands:
 		# Run some setup operations if necessary.
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
-			echo '* [start] Running setup operations.'
-	
 			flapctl setup hostname
 			flapctl setup docker_images
 			flapctl disks setup
