@@ -145,27 +145,41 @@ case $CMD in
 
 		{
 			flapctl domains register_domain "$DOMAIN" &&
+
 			flapctl stop &&
-			flapctl tls generate &&
-			echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
+
 			{
-				# If primary domain is empty, set the handled domain as primary.
 				if [ "$(flapctl domains primary)" == "" ]
 				then
 					echo "* [domains] Set $DOMAIN as primary."
 					echo "$DOMAIN" > "$FLAP_DATA/system/data/primary_domain.txt"
 				fi
 			} &&
+
+			flapctl tls generate &&
+
+			echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
+
 			flapctl start &&
+
 			flapctl hooks post_domain_update
 		} || { # Catch error
 			echo "Failed to handle domain request."
+
 			echo "ERROR" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt"
-			# Generate certificates if they were remove
+
+			# Generate certificates if they were remove.
 			if [ ! -d /etc/letsencrypt/live/flap ]
 			then
 				flapctl tls generate
 			fi
+
+			# Unset the domain as primary if needed.
+			if [ "$(flapctl domains primary)" == "$domain" ]
+			then
+				echo "" > "$FLAP_DATA/system/data/primary_domain.txt"
+			fi
+
 			flapctl start
 			exit 1
 		}
@@ -180,15 +194,19 @@ case $CMD in
 
 		provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
-		if [ ! -f "$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" ]
+		if [ -f "$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" ]
 		then
-			exit 0
+			echo "* [domains] Registering domain name."
+
+			"$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" "$domain"
+			"$FLAP_DIR/system/cli/lib/tls/update/$provider.sh" "$domain"
 		fi
 
-		echo "* [domains] Registering domain name."
-
-		"$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" "$domain"
-		"$FLAP_DIR/system/cli/lib/tls/update/$provider.sh" "$domain"
+		# We don't need to wait for the domain to point to the server for local domains.
+		if [ "$provider" == "localhost" ] || [ "$provider" == "local" ]
+		then
+			exit 0;
+		fi
 
 		elapse=0
 		until [ "$(flapctl ip dns "$domain")" == "$(flapctl ip external)" ] > /dev/null
