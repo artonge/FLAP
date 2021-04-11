@@ -6,12 +6,6 @@ CMD=${1:-}
 
 case $CMD in
 	generate)
-		if [ "${FLAG_NO_TLS_GENERATION:-}" == "true" ]
-		then
-			echo '* [tls:FEATURE_FLAG] Skipping TLS generation.'
-			exit
-		fi
-
 		echo '* [tls] Generating certificates for domain names.'
 
 		# Filter domains that are either OK or HANDLED and not for "local" or "localhost".
@@ -36,7 +30,7 @@ case $CMD in
 		done
 
 		# Generate TLS certificates for domains.
-		if [ ${#domains[@]} != "0" ]
+		if [ ${#domains[@]} != "0" ] && [ "${FLAG_NO_TLS_GENERATION:-}" != "true" ]
 		then
 			{
 				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
