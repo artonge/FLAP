@@ -12,7 +12,6 @@ case $CMD in
 	single)
 		if [ "${FLAG_DISK_MODE_SINGLE:-}" != "true" ]
 		then
-			echo "* [setup:FEATURE_FLAG] Skip single disk setup."
 			exit 0
 		fi
 
