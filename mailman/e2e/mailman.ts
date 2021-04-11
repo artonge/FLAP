@@ -19,16 +19,14 @@ Scenario("launch mailman", async (I) => {
 
 	I.click("Login")
 
-	within("form", () => {
-		I.fillField("login", "theadmin")
-		I.fillField("password", "password")
-		I.click("Sign In")
-	})
+	I.fillField("login", "theadmin")
+	I.fillField("password", "password")
+	I.click("button", "form.login")
 	
 	I.waitForNavigation({})
-	I.seeInCurrentUrl(`https://list.${process.env.PRIMARY_DOMAIN_NAME}`)
+	I.seeInCurrentUrl(`https://lists.${process.env.PRIMARY_DOMAIN_NAME}`)
 
-	I.waitForText("Available lists")
+	I.waitForText("Mailing Lists")
 
 	I.click("theadmin")
 	I.click("Logout")
