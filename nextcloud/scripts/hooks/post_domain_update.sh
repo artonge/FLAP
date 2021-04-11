@@ -2,10 +2,10 @@
 
 set -eu
 
-echo "Generate domains specific config."
+debug "Generate domains specific config."
 docker-compose exec -T --user www-data nextcloud /inner_scripts/generate_post_domain_update_config.sh
 
-echo "Getting SAML metadata for each domains."
+debug "Getting SAML metadata for each domains."
 for domain in $DOMAIN_NAMES
 do
 	# Check certificates with local CA for local domains.
