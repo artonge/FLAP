@@ -68,8 +68,6 @@ case $CMD in
 		done
 	;;
 	fs)
-		echo '* [setup] Creating data directories.'
-
 		# Create log folder
 		mkdir -p /var/log/flap
 
@@ -78,6 +76,8 @@ case $CMD in
 			# Skip if the directory is already created.
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
+				echo "* [setup] Creating data directories for $service."
+	
 				# Create data directory for the service.
 				debug "Create $FLAP_DATA/$service"
 				mkdir --parents "$FLAP_DATA/$service"

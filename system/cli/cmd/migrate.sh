@@ -42,7 +42,6 @@ Commands:
 		# Default services list to FLAP_SERVICES.
 		services=${services:-$FLAP_SERVICES}
 
-		echo "* [migrate] Running migrations for $services."
 		# Run the hook for each services.
 		for service in $services
 		do

@@ -23,7 +23,7 @@ Commands:
 		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
 		{
-			docker-compose down --remove-orphans
+			docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing'
 		} || {
 			flapctl config generate
 			docker-compose down --remove-orphans
