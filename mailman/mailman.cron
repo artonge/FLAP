@@ -1,6 +1,6 @@
 # Mailman Core cron jobs.
 @daily                docker-compose exec --user mailman mailman_core mailman digests --periodic
-0 8 * * *             docker-compose exec --user mailman mailman_core mailman  notify
+0 8 * * *             docker-compose exec --user mailman mailman_core mailman notify
 
 # Mailman Web cron jobs.
 @hourly               docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs hourly
