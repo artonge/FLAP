@@ -96,6 +96,11 @@ function post_run_all {
 				flapctl start
 				flapctl hooks post_domain_update "${installed_services[@]}"
 			fi
+
+			# Run other setup operations.
+			flapctl ports setup
+			flapctl setup firewall
+			flapctl setup cron
 		;;
 	esac
 

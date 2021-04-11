@@ -50,11 +50,6 @@ Commands:
 
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
-			# Run other setup operations.
-			flapctl ports setup
-			flapctl setup firewall
-			flapctl setup cron
-
 			# Mark the installation as done.
 			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
