@@ -8,7 +8,7 @@ set -eu
 # Those sub-hooks allow us to make some setup, or to prevent the execution of hooks.
 # Examples:
 # 	- The pre and post_install hooks are run only if $FLAP_DATA/$service/installed.txt do not exists.
-# 	- The init_db hooks supose to have the database running.
+# 	- The init_db hooks expect to have the database running.
 
 cmd=${1:-}
 
