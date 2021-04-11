@@ -69,10 +69,7 @@ Commands:
 
 		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl domains primary)" == "" ]
 		then
-			# Generate certificates for flap.test.
-			flapctl tls generate_localhost
-			flapctl restart
-			flapctl hooks post_domain_update
+			flapctl domains generate_local flap.test
 		fi
 		;;
 	*)

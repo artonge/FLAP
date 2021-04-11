@@ -123,9 +123,7 @@ docker exec flap ln -sf "/flap_dir/system/cli/flapctl.sh" /bin/flapctl
 docker exec flap flapctl start
 
 docker exec flap flapctl users create_admin
-docker exec flap flapctl tls generate_localhost
-docker exec flap flapctl restart
-docker exec flap flapctl hooks post_domain_update
+docker exec flap flapctl domains generate_local flap.test
 
 docker exec --user www-data flap_nextcloud php occ user:list
 docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar

@@ -137,7 +137,7 @@ FLAP supports self signed TLS certificates for development. This can be abused t
 
 ```bash
 # By default the domain name is `flap.test`.
-flapctl tls generate_localhost [<domain_name>]
+flapctl domains generate_local [<domain_name>]
 ```
 
 You will then need to set the DNS of your devices to resolve the domain name and to configure your devices to accept the TLS certificates without warning or error. For that, you can use the `/etc/letsencrypt/live/flap/root.cer` file on the FLAP server.
