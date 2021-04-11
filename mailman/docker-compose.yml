@@ -41,6 +41,7 @@ volumes:
 
 x-nginx-extra-volumes:
     - mailmanStaticFiles:/var/www/mailman:ro # [mailman] -> [nginx] Mailman static files.
+    - ${FLAP_DIR}/mailman/medias:/var/www/mailman_medias:ro # [emmc] -> [nginx] Mailman static files.
 
 x-mail-extra-volumes:
     - mailmanVar:/opt/mailman/var/data:ro # [mailman] -> [mail] Mailman var folder.
