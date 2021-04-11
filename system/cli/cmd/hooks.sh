@@ -29,7 +29,6 @@ function pre_run_all {
 		init_db)
 			echo "* [hooks] Starting PostgreSQL and MariaDB for init_db hook."
 			flapctl start postgres mariadb
-			flapctl hooks wait_ready postgres mariadb
 		;;
 	esac
 }
@@ -114,7 +113,7 @@ function post_run_all {
 	case $hook in
 		init_db)
 			echo "* [hooks] Shutting PostgreSQL and MariaDB down for init_db hook."
-			flapctl stop
+			flapctl stop postgres mariadb
 		;;
 		pre_install)
 			echo "* [hooks] Regenerating config after pre_install."
