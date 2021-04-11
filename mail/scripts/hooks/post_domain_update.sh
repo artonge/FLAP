@@ -10,7 +10,7 @@ do
     echo "$domain" >> "$FLAP_DIR/mail/config/vhost.tmp"
 done
 docker-compose exec -T mail cp /tmp/docker-mailserver/vhost.tmp /tmp/vhost.tmp
-docker-compose exec -T mail generate-dkim-config
+docker-compose exec -T mail open-dkim
 
 # Update DNS records.
 flapctl domains update_dns_records
