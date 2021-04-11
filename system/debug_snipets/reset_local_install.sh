@@ -16,9 +16,7 @@ sudo cp "$FLAP_DIR/system/flapctl.examples.d/local.env" "$FLAP_DATA/system/flapc
 sudo -E flapctl start
 
 sudo -E flapctl users create_admin
-sudo -E flapctl tls generate_localhost
-sudo -E flapctl restart
-sudo -E flapctl hooks post_domain_update
+sudo -E flapctl generate_local
 
 sudo -E docker exec --user www-data flap_nextcloud php occ user:list
 sudo -E docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar

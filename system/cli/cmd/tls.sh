@@ -152,7 +152,7 @@ subjectAltName = @alt_names
 		echo "You can install the following CA in your browser to ease development: $cert_path/root.cer"
 		;;
 	summarize)
-		echo "tls | [generate, generate_localhost, help] | Manage TLS certificates."
+		echo "tls | [generate, generate_local_certs, help] | Manage TLS certificates."
 		;;
 	help|*)
 		echo "

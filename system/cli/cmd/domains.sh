@@ -45,19 +45,18 @@ case $CMD in
 
 		echo ""
 		echo "* [users] The domain '$domainname was added."
-	;;
+		;;
 	generate_local)
 		domain=${2:-flap.test}
 
 		# Create default flap.test domain if it is missing.
 		mkdir -p "$FLAP_DATA/system/data/domains/$domain"
-		echo "OK" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
+		echo "WAITING" > "$FLAP_DATA/system/data/domains/$domain/status.txt"
 		echo "local" > "$FLAP_DATA/system/data/domains/$domain/provider.txt"
 		touch "$FLAP_DATA/system/data/domains/$domain/authentication.txt"
 		touch "$FLAP_DATA/system/data/domains/$domain/logs.txt"
 
-		# Setup primary domain.
-		echo "$domain" > "$FLAP_DATA/system/data/primary_domain.txt"
+		flapctl domains handle_request
 		;;
 	handle_request)
 		flapctl domains handle_request_primary_update
@@ -172,10 +171,9 @@ case $CMD in
 		}
 		;;
 	register_domain)
-		# Execute update script for each OK domain or the provided ones.
 		domain=${2:-}
 
-		if [ "$domain" == ""  ]
+		if [ "$domain" == "" ]
 		then
 			exit 0
 		fi
@@ -187,7 +185,7 @@ case $CMD in
 			exit 0
 		fi
 
-		echo "* [domains] Registering domain name"
+		echo "* [domains] Registering domain name."
 
 		"$FLAP_DIR/system/cli/lib/tls/register/$provider.sh" "$domain"
 		"$FLAP_DIR/system/cli/lib/tls/update/$provider.sh" "$domain"
@@ -266,7 +264,7 @@ case $CMD in
 		echo "$PRIMARY_DOMAIN_NAME"
 		;;
 	summarize)
-		echo "domains | [add, generate_localhost, handle_request, register_domain, update_dns_records, list, list_all, primary, help] | Toolbox to manage domains."
+		echo "domains | [add, generate_local, handle_request, register_domain, update_dns_records, list, list_all, primary, help] | Toolbox to manage domains."
 		;;
 	help|*)
 		echo "

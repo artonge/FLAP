@@ -123,7 +123,6 @@ test_dockerfile_sanity:
         # Restore flap_data if it exists.
         - apk add tar
         - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
-        - if [ -f flap.tar.gz ]; then docker exec flap flapctl tls generate_localhost; fi
         - if [ -f flap.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
         - docker exec flap flapctl start
@@ -148,9 +147,7 @@ test_cli:
     needs: []
     script:
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
+        - docker exec flap flapctl domains generate_local flap.test
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
@@ -186,9 +183,7 @@ setup_with_serial_updates:
             - flap.tar.gz
     script:
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
+        - docker exec flap flapctl domains generate_local flap.test
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
@@ -214,9 +209,7 @@ setup_flap:
             - flap.tar.gz
     script:
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
+        - docker exec flap flapctl domains generate_local flap.test
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
