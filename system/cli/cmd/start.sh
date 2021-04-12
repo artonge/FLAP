@@ -39,7 +39,7 @@ Commands:
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
 		echo '* [start] Running services.'
-		docker-compose --ansi never up --detach 2> /dev/stdout | grep -v -E '^Creating' | cat
+		docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | cat
 
 		# Wait dor services to be up.
 		flapctl hooks wait_ready
@@ -64,7 +64,7 @@ Commands:
 		flapctl config generate_templates
 		flapctl hooks generate_config system "${services[@]}"
 
-		docker-compose up --remove-orphans --detach "${services[@]}"
+		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${services[@]}"
 
 		flapctl hooks wait_ready "${services[@]}"
 		;;
