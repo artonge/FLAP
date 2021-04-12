@@ -16,5 +16,3 @@ openssl req \
 
 echo "Changing private key rights to allow synapse process to read it."
 chmod og+r "$FLAP_DATA/matrix/saml/private_key.pem"
-
-flapctl hooks post_domain_update matrix

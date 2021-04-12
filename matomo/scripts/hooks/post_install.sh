@@ -63,6 +63,3 @@ docker-compose exec -T mariadb mysql \
 
 debug "Finish matomo install."
 docker-compose exec -T --user www-data matomo /inner_scripts/generate_initial_config.sh
-
-
-flapctl hooks post_domain_update matomo
