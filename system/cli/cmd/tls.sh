@@ -32,8 +32,10 @@ case $CMD in
 		# Generate TLS certificates for domains.
 		if [ ${#domains[@]} != "0" ] && [ "${FLAG_NO_TLS_GENERATION:-}" != "true" ]
 		then
-			{
-				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
+			{			
+				flapctl stop nginx &&
+				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}" &&
+				flapctl start nginx
 			} || { # Catch error
 				echo "Failed to generate certificates."
 				exit 1
