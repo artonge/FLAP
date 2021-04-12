@@ -2,7 +2,7 @@
 
 set -eu
 
-echo 'Generate authorized smtp senders map.'
+debug 'Generate authorized smtp senders map.'
 
 echo "" > "$FLAP_DIR/mail/config/smtpd_sender"
 
