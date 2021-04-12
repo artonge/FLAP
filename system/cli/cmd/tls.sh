@@ -118,7 +118,7 @@ subjectAltName = @alt_names
 				echo "DNS.$((base + j + 1)) = ${subdomains[$j]}.${domains[$i]}" >> "$cert_path/server_cert.conf"
 			done
 		done
-		cat "$cert_path/server_cert.conf"
+
 		# Generating TLS certificate.
 		openssl req \
 			-days 3650 \
