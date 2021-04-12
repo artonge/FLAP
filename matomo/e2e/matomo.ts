@@ -2,7 +2,7 @@
 
 Feature("matomo")
 
-Scenario("launch matomo", async (I) => {
+Scenario("launch matomo", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 

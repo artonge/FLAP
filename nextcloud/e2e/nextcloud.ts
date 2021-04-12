@@ -2,7 +2,7 @@
 
 Feature("nextcloud")
 
-Scenario("launch nextcloud", async (I) => {
+Scenario("launch nextcloud", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 

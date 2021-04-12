@@ -2,7 +2,7 @@
 
 Feature("funkwhale")
 
-Scenario("launch funkwhale", async (I) => {
+Scenario("launch funkwhale", async ({ I }) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 

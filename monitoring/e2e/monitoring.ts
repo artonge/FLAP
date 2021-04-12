@@ -2,7 +2,7 @@
 
 Feature("monitoring")
 
-Scenario("launch monitoring", (I) => {
+Scenario("launch monitoring", ({I}) => {
 	I.amOnPage(`https://monitoring.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.waitForText("Welcome to Grafana")
