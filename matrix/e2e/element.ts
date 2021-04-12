@@ -2,7 +2,7 @@
 
 Feature("element")
 
-Scenario("launch element", async (I) => {
+Scenario("launch element", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
