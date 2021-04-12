@@ -15,7 +15,7 @@ Commands:
 	'' | | Start." | column -t -s "|"
 	;;
 	"")
-		echo '* [start] Running start preparation.'
+		echo '* [start] Starting services.'
 		# Run some setup operations if necessary.
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
@@ -28,6 +28,7 @@ Commands:
 
 		flapctl migrate
 
+		echo '* [start] Generating config.'
 		flapctl config generate
 
 		flapctl hooks init_db
@@ -37,7 +38,7 @@ Commands:
 
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
-		echo '* [start] Starting services.'
+		echo '* [start] Running services.'
 		docker-compose --ansi never up --detach 2> /dev/stdout | grep -v -E '^Creating' | cat
 
 		# Wait dor services to be up.

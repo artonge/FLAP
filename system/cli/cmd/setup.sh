@@ -8,7 +8,6 @@ case $CMD in
 	docker_images)
 		if [ ! -f /var/lib/flap/images ]
 		then
-			echo "* [setup] No docker images to load, exiting."
 			exit 0
 		fi
 
@@ -24,7 +23,6 @@ case $CMD in
 	hostname)
 		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
 		then
-			echo "* [setup:FEATURE_FLAG] Skip hostnames setup."
 			exit 0
 		fi
 

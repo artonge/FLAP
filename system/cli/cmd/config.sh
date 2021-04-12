@@ -6,7 +6,6 @@ CMD=${1:-}
 
 case $CMD in
 	generate)
-		echo '* [start] Generating config.'
 		flapctl config generate_templates
 		flapctl config generate_nginx
 		flapctl hooks generate_config
