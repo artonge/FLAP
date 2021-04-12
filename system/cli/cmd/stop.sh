@@ -37,7 +37,14 @@ Commands:
 		services=("${@:1}")
 		services_list=()
 
+		sub_services=()
 		for service in "${services[@]}"
+		do
+			mapfile -t tmp_services < <(yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml");
+			sub_services+=("${tmp_services[@]}")
+		done
+
+		for service in "${sub_services[@]}"
 		do
 			if docker ps --format '{{.Names}}' | grep -E "flap_$service$"
 			then
