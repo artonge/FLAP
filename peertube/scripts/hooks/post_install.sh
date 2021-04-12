@@ -15,3 +15,6 @@ saml_config=$(jq \
 )
 
 docker-compose exec -T --user postgres postgres psql peertube --command "UPDATE public.plugin SET settings='$saml_config' WHERE name='auth-saml2';"
+
+# Restart peertube so the plugin is activated.
+flapctl restart peertube
