@@ -38,7 +38,7 @@ case $CMD in
 			umount "$FLAP_DATA"
 		fi
 
-		echo '* [setup] Seting up disk for FLAP.'
+		echo '* [setup] Setting up disk for FLAP.'
 		mkfs -t ext4 "$disk"
 		mount "$disk" "$FLAP_DATA"
 		mkdir --parents "$FLAP_DATA/system/data"
@@ -52,7 +52,6 @@ case $CMD in
 	raid1)
 		if [ "${FLAG_DISK_MODE_RAID1:-}" != "true" ]
 		then
-			echo "* [disks:FEATURE_FLAG] Skip RAID array creation."
 			exit 0
 		fi
 
