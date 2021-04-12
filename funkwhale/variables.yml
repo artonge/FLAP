@@ -4,6 +4,6 @@ ENABLE_FUNKWHALE:
     group: services
 
 FUNKWHALE_DOMAIN_NAME:
-    type: string
-    info: "Domain on which funkwhale will run: 'music.$FUNKWHALE_DOMAIN_NAME'".
+    type: "string"
+    info: "Domain on which funkwhale will run: 'music.$FUNKWHALE_DOMAIN_NAME'"
     group: funkwhale

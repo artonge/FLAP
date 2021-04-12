@@ -5,5 +5,5 @@ ENABLE_PEERTUBE:
 
 PEERTUBE_DOMAIN_NAME:
     type: string
-    info: "Domain on which peertube will run: 'video.$PEERTUBE_DOMAIN_NAME'".
+    info: "Domain on which peertube will run: 'video.$PEERTUBE_DOMAIN_NAME'"
     group: peertube
