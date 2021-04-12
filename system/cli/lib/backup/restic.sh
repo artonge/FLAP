@@ -5,7 +5,7 @@ set -eu
 # Restic arguments are passed with environment variables.
 # https://restic.readthedocs.io/en/stable/040_backup.html#environment-variables
 
-# Alias restic to reduce its ressource usage.
+# Alias restic to reduce its resource usage.
 restic() { nice --adjustment 10 ionice --class 2 restic "$@"; }
 
 # Exit early if restic does not have the correct environment variables.

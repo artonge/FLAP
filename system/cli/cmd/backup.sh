@@ -11,12 +11,14 @@ fi
 
 case $CMD in
 	"")
-		flapctl hooks pre_backup > /dev/null
+		if [ "$FLAP_DEBUG" == "true" ]
+		then
+			output=/dev/stdout
+		else
+			output=/dev/null
+		fi
 
-		# Save current_tag.txt.
-		cd "$FLAP_DIR"
-		current_tag=$(git describe --tags --abbrev=0)
-		echo "$current_tag" > "$FLAP_DATA/system/current_tag.txt"
+		flapctl hooks pre_backup > $output
 
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" backup
 	;;
@@ -28,23 +30,20 @@ case $CMD in
 		mkdir -p "$FLAP_DATA"/system
 		cp /tmp/flapctl.env "$FLAP_DATA"/system/flapctl.env
 
-		echo "* [backup] Restoring FLAP_DATA."
+		echo "* [backup] Restoring FLAP_DATA with $BACKUP_TOOL."
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" "$@"
 
-		# If git head is a tag, checkout current_tag.
+		# If git head is a tag, checkout version.
 		cd "$FLAP_DIR"
 		if [ "$(git rev-parse --abbrev-ref HEAD)" == "HEAD" ]
 		then
-			current_tag=$(cat "$FLAP_DATA"/system/current_tag.txt)
-			git checkout "$current_tag"
+			version=$(cat "$FLAP_DATA"/system/version.txt)
+			git checkout "$version"
 		fi
 
 		flapctl config generate
-
 		flapctl tls generate
-
 		flapctl hooks post_restore
-
 		flapctl start
 	;;
 	list)
