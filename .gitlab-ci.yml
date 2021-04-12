@@ -204,7 +204,7 @@ setup_with_serial_updates:
 
         - docker exec flap flapctl update
 
-        - if [ ! -z "$CI_COMMIT_BRANCH" ]; then docker exec flap flapctl update; fi
+        - if [ ! -n "$CI_COMMIT_BRANCH" ]; then docker exec flap flapctl update; fi
 
         - test "$(docker exec flap flapctl migrate status)" == ""
 
