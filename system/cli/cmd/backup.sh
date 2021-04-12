@@ -11,7 +11,7 @@ fi
 
 case $CMD in
 	"")
-		if [ "$FLAP_DEBUG" == "true" ]
+		if [ "${FLAP_DEBUG:-}" == "true" ]
 		then
 			output=/dev/stdout
 		else
