@@ -6,4 +6,4 @@ config/synapse.allow_registrations.yaml
 
 config/element.json
 
-config/nginx.conf
+config/nginx-synapse-extra.conf
