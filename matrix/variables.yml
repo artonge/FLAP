@@ -1,8 +1,14 @@
-FLAG_SYNAPSE_USE_EXTERNAL_JITSI_SERVER:
-    type: boolean
-    info: Use an external Jitsi server provided by FLAP.
-    group: matrix
 ENABLE_MATRIX:
     type: boolean
     info: Enable Matrix.
     group: services
+
+MATRIX_DOMAIN_NAME:
+    type: string
+    info: "Domain on which matrix will run: 'matrix.$MATRIX_DOMAIN_NAME'".
+    group: matrix
+
+FLAG_SYNAPSE_USE_EXTERNAL_JITSI_SERVER:
+    type: boolean
+    info: Use an external Jitsi server provided by FLAP.
+    group: matrix
