@@ -1,2 +1,2 @@
 funkwhale.env
-config/nginx.conf
+config/nginx-funkwhale-extra.conf
