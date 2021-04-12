@@ -70,33 +70,6 @@ function post_run_all {
 	local services=("$@")
 	local services=("${services[@]:1}")
 
-	# Post-hooks executed even if no hook has been executed.
-	case $hook in
-		post_install)
-			# Mark all enabled services as installed.
-			installed_services=()
-			for service in $FLAP_SERVICES
-			do
-				if [ -f "$FLAP_DATA/$service/installed.txt" ]
-				then
-					continue
-				fi
-				echo "* [hooks] Marking $service as installed."
-				touch "$FLAP_DATA/$service/installed.txt"
-				installed_services+=("$service")
-			done
-
-			if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
-			then
-				flapctl tls generate
-			fi
-
-			flapctl ports setup
-			flapctl setup firewall
-			flapctl setup cron
-		;;
-	esac
-
 	# Return if no hooks has been executed.
 	if [ "$pre_run_has_run" == "false" ]
 	then
@@ -108,6 +81,44 @@ function post_run_all {
 		init_db)
 			echo "* [hooks] Shutting PostgreSQL and MariaDB down after init_db hook."
 			flapctl stop postgres mariadb
+		;;
+		pre_install)
+			echo "* [hooks] Regenerating config after pre_install."
+			flapctl config generate
+			echo "* [hooks] Generating TLS certificates for new services."
+			flapctl tls generate
+		;;
+		post_install)
+			installed_services=()
+			# All services in $FLAP_SERVICES should be ready to be marked as installed.
+			for service in $FLAP_SERVICES
+			do
+				if [ -f "$FLAP_DATA/$service/installed.txt" ]
+				then
+					continue
+				fi
+				installed_services+=("$service")
+			done
+
+			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
+			then
+				echo "* [hooks] Running post_domain_update for ${installed_services[*]} after post_install."
+				flapctl hooks post_domain_update "${installed_services[@]}"
+			fi
+
+			echo "* [hooks] Restarting lemon after post_install."
+			flapctl restart lemon
+
+			echo "* [hooks] Finish services install."
+			flapctl ports setup
+			flapctl setup firewall
+			flapctl setup cron
+
+			for service in "${installed_services[@]}"
+			do
+				echo "* [hooks] Marking $service as installed."
+				touch "$FLAP_DATA/$service/installed.txt"
+			done
 		;;
 		post_domain_update)
 			echo "* [hooks] Restarting lemon after post_install."

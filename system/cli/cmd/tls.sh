@@ -29,13 +29,13 @@ case $CMD in
 			fi
 		done
 
+		flapctl stop nginx
+
 		# Generate TLS certificates for domains.
 		if [ ${#domains[@]} != "0" ] && [ "${FLAG_NO_TLS_GENERATION:-}" != "true" ]
 		then
 			{			
-				flapctl stop nginx &&
-				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}" &&
-				flapctl start nginx
+				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
 			} || { # Catch error
 				echo "Failed to generate certificates."
 				exit 1
@@ -47,6 +47,8 @@ case $CMD in
 		then
 			flapctl tls generate_local_certs "${locals_domains[@]}"
 		fi
+
+		flapctl start nginx
 		;;
 	generate_local_certs)
 		domains=("$@")
@@ -116,7 +118,7 @@ subjectAltName = @alt_names
 				echo "DNS.$((base + j + 1)) = ${subdomains[$j]}.${domains[$i]}" >> "$cert_path/server_cert.conf"
 			done
 		done
-
+		cat "$cert_path/server_cert.conf"
 		# Generating TLS certificate.
 		openssl req \
 			-days 3650 \
