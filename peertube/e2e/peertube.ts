@@ -1,5 +1,3 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("peertube")
 
 Scenario("launch peertube", async ({I}) => {

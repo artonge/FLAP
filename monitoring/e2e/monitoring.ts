@@ -1,5 +1,3 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("monitoring")
 
 Scenario("launch monitoring", ({I}) => {

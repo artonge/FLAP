@@ -1,5 +1,3 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("matomo")
 
 Scenario("launch matomo", async ({I}) => {
