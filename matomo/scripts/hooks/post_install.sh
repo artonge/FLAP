@@ -61,5 +61,8 @@ docker-compose exec -T mariadb mysql \
 	--execute 'INSERT INTO `option` (option_name, option_value) VALUES ("enableBrowserTriggerArchiving", 0);'
 
 
-echo "Finish matomo install."
+debug "Finish matomo install."
 docker-compose exec -T --user www-data matomo /inner_scripts/generate_initial_config.sh
+
+
+flapctl hooks post_domain_update matomo

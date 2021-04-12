@@ -8,3 +8,8 @@ docker-compose exec -T nextcloud chown www-data:www-data /data
 
 echo "Generate config.php with the config."
 docker-compose exec -T --user www-data nextcloud /inner_scripts/generate_initial_config.sh
+
+if [ "$PRIMARY_DOMAIN_NAME" != "" ]
+then
+	flapctl hooks post_domain_update nextcloud
+fi
