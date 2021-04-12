@@ -2,3 +2,8 @@ ENABLE_FUNKWHALE:
     type: boolean
     info: Enable Funkwhale.
     group: services
+
+FUNKWHALE_DOMAIN_NAME:
+    type: string
+    info: "Domain on which funkwhale will run: 'music.$FUNKWHALE_DOMAIN_NAME'".
+    group: funkwhale
