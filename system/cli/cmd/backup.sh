@@ -20,6 +20,7 @@ case $CMD in
 
 		flapctl hooks pre_backup > $output
 
+		debug "* [backup] Creating backup with $BACKUP_TOOL."
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" backup
 	;;
 	restore)
