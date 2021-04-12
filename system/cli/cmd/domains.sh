@@ -151,9 +151,16 @@ case $CMD in
 					echo "$waiting_domain" > "$FLAP_DATA/system/data/primary_domain.txt"
 				fi
 			} &&
+
 			flapctl domains register_domain "$waiting_domain" &&
-			flapctl tls generate
-			echo "OK" > "$FLAP_DATA/system/data/domains/$waiting_domain/status.txt"
+			flapctl tls generate &&
+
+			echo "OK" > "$FLAP_DATA/system/data/domains/$waiting_domain/status.txt" &&
+
+			echo "* [domains] Restarting services after domain creation." &&
+			mapfile -t flap_services < <(echo "${FLAP_SERVICES:-}") &&
+			flapctl restart &&
+			flapctl hooks post_domain_update "${flap_services[@]}"
 		} || { # Catch error
 			echo "Failed to handle domain request."
 
@@ -173,10 +180,6 @@ case $CMD in
 
 			exit 1
 		}
-
-		echo "* [domains] Restarting services after domain creation."
-		flapctl restart
-		flapctl hooks post_domain_update
 		;;
 	register_domain)
 		domain=${2:-}
@@ -239,7 +242,7 @@ case $CMD in
 			provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 
 			# Do not try to update DNS records for local or localhost domains.
-			if [ "$provider" == "localhost" ] && [ "$provider" == "local" ]
+			if [ "$provider" == "localhost" ] || [ "$provider" == "local" ]
 			then
 				continue
 			fi
