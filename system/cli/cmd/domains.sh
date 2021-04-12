@@ -126,14 +126,14 @@ case $CMD in
 
 			if [ "$(cat "$domain/status.txt")" == "WAITING" ]
 			then
-				DOMAIN=$(basename "$domain")
+				waiting_domain=$(basename "$domain")
 				echo "HANDLED" > "$domain/status.txt"
 				break
 			fi
 		done
 
 		# If there was no WAITING domain, exit
-		if [ -z "${DOMAIN:-}" ]
+		if [ -z "${waiting_domain:-}" ]
 		then
 			exit 0
 		fi
@@ -144,29 +144,26 @@ case $CMD in
 		sleep 2
 
 		{
-			flapctl domains register_domain "$DOMAIN" &&
-
-			flapctl stop &&
-
 			{
 				if [ "$(flapctl domains primary)" == "" ]
 				then
-					echo "* [domains] Set $DOMAIN as primary."
-					echo "$DOMAIN" > "$FLAP_DATA/system/data/primary_domain.txt"
+					echo "* [domains] Set $waiting_domain as primary."
+					echo "$waiting_domain" > "$FLAP_DATA/system/data/primary_domain.txt"
 				fi
 			} &&
-
-			flapctl tls generate &&
-
-			echo "OK" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt" &&
-
-			flapctl start &&
-
-			flapctl hooks post_domain_update
+			flapctl domains register_domain "$waiting_domain" &&
+			flapctl tls generate
+			echo "OK" > "$FLAP_DATA/system/data/domains/$waiting_domain/status.txt"
 		} || { # Catch error
 			echo "Failed to handle domain request."
 
-			echo "ERROR" > "$FLAP_DATA/system/data/domains/$DOMAIN/status.txt"
+			echo "ERROR" > "$FLAP_DATA/system/data/domains/$waiting_domain/status.txt"
+
+			# Unset the domain as primary if needed.
+			if [ "$(flapctl domains primary)" == "$waiting_domain" ]
+			then
+				echo "" > "$FLAP_DATA/system/data/primary_domain.txt"
+			fi
 
 			# Generate certificates if they were remove.
 			if [ ! -d /etc/letsencrypt/live/flap ]
@@ -174,15 +171,12 @@ case $CMD in
 				flapctl tls generate
 			fi
 
-			# Unset the domain as primary if needed.
-			if [ "$(flapctl domains primary)" == "$domain" ]
-			then
-				echo "" > "$FLAP_DATA/system/data/primary_domain.txt"
-			fi
-
-			flapctl start
 			exit 1
 		}
+
+		echo "* [domains] Restarting services after domain creation."
+		flapctl restart
+		flapctl hooks post_domain_update
 		;;
 	register_domain)
 		domain=${2:-}

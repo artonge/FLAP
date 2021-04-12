@@ -86,17 +86,11 @@ function post_run_all {
 				installed_services+=("$service")
 			done
 
-			# If a primary domain name is set,
-			# we need to run post_domain_update hooks for freshly installed services.
 			if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
 			then
-				flapctl stop
 				flapctl tls generate
-				flapctl start
-				flapctl hooks post_domain_update "${installed_services[@]}"
 			fi
 
-			# Run other setup operations.
 			flapctl ports setup
 			flapctl setup firewall
 			flapctl setup cron
@@ -112,16 +106,12 @@ function post_run_all {
 	# Post-hooks executed only if a least one hook has been executed.
 	case $hook in
 		init_db)
-			echo "* [hooks] Shutting PostgreSQL and MariaDB down for init_db hook."
+			echo "* [hooks] Shutting PostgreSQL and MariaDB down after init_db hook."
 			flapctl stop postgres mariadb
 		;;
 		pre_install)
 			echo "* [hooks] Regenerating config after pre_install."
 			flapctl config generate
-		;;
-		post_domain_update)
-			echo "* [hooks] Restarting services after post_domain_update hook."
-			flapctl restart
 		;;
 	esac
 }
