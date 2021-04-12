@@ -95,6 +95,8 @@ Commands:
 			exit 1
 		fi
 
+		echo "$current_head" > "$FLAP_DATA/system/version.txt"
+
 		# Recursively continue to newer updates.
 		flapctl update
 		;;
