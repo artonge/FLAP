@@ -6,7 +6,7 @@ set -eu
 # This is needed because synapse can not be multi-domains.
 # So we have to choose a MATRIX_DOMAIN_NAME that will always be the same,
 # and generate a nginx config file for that domain only.
-echo "Generating Synapse's Nginx configuration."
+debug "Generating Synapse's Nginx configuration."
 # shellcheck disable=SC2016
 envsubst "$FLAP_ENV_VARS" < "$FLAP_DIR/matrix/config/nginx.conf" > "$FLAP_DIR/nginx/config/conf.d/domains/$MATRIX_DOMAIN_NAME/synapse.conf"
 
@@ -15,7 +15,7 @@ then
 	synapse_final_config="$FLAP_DATA/matrix/synapse/data/homeserver.yaml"
 	config_files=("$synapse_final_config" "$FLAP_DIR/matrix/config/synapse.yaml")
 
-	echo "Merging synapse.yaml with homeserver.yaml."
+	debug "Merging synapse.yaml with homeserver.yaml."
 	# shellcheck disable=SC2016
 	yq \
 		--yaml-output \
