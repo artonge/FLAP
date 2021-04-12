@@ -285,7 +285,7 @@ test_e2e_current:
 
 test_e2e_after_serial_updates:
     extends: .test_e2e
-    only: [tags]
+    # only: [tags]
     needs: [setup_with_serial_updates]
     allow_failure: true
     variables:
