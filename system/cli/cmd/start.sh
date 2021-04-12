@@ -28,7 +28,7 @@ Commands:
 
 		flapctl migrate
 
-		echo '* [start] Generating for startup.'
+		echo '* [start] Generating config for startup.'
 		flapctl config generate
 
 		flapctl hooks init_db
@@ -59,7 +59,14 @@ Commands:
 		flapctl config generate_templates
 		flapctl hooks generate_config system "${services[@]}"
 
-		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${services[@]}"
+		sub_services=()
+		for service in "${services[@]}"
+		do
+			mapfile -t tmp_services < <(yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml");
+			sub_services+=("${tmp_services[@]}")
+		done
+
+		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | grep -v -E '^Creating' | cat
 
 		flapctl hooks wait_ready "${services[@]}"
 		;;
