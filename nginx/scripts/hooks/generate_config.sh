@@ -39,7 +39,7 @@ done
 debug "Copy all nginx-extra files."
 rm -rf "$FLAP_DIR/nginx/config/conf.d/extra.d"
 mkdir -p "$FLAP_DIR/nginx/config/conf.d/extra.d"
-rm "$FLAP_DIR/nginx/config/conf.d/extra.conf"
+rm -f "$FLAP_DIR/nginx/config/conf.d/extra.conf"
 touch "$FLAP_DIR/nginx/config/conf.d/extra.conf"
 for service in $FLAP_SERVICES
 do
