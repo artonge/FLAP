@@ -28,7 +28,7 @@ Commands:
 
 		flapctl migrate
 
-		echo '* [start] Generating config.'
+		echo '* [start] Generating for startup.'
 		flapctl config generate
 
 		flapctl hooks init_db
@@ -51,11 +51,6 @@ Commands:
 		then
 			# Mark the installation as done.
 			touch "$FLAP_DATA/system/data/installation_done.txt"
-		fi
-
-		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl domains primary)" == "" ]
-		then
-			flapctl domains generate_local flap.test
 		fi
 		;;
 	*)
