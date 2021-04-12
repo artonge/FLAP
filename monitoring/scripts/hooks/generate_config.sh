@@ -12,8 +12,6 @@ do
         continue
     fi
 
-    ls "$FLAP_DIR/$service/monitoring/dashboards"
-
     cp "$FLAP_DIR/$service/monitoring/dashboards/"* "$FLAP_DIR/monitoring/config/grafana/dashboards"
 done
 
