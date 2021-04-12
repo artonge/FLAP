@@ -109,9 +109,9 @@ function post_run_all {
 			echo "* [hooks] Shutting PostgreSQL and MariaDB down after init_db hook."
 			flapctl stop postgres mariadb
 		;;
-		pre_install)
-			echo "* [hooks] Regenerating config after pre_install."
-			flapctl config generate
+		post_domain_update)
+			echo "* [hooks] Restarting lemon after post_install."
+			flapctl restart lemon
 		;;
 	esac
 }
