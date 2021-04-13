@@ -197,9 +197,9 @@ setup_with_serial_updates:
         - docker exec flap flapctl domains help | grep generate_local || true
         - has_new_function=$(docker exec flap flapctl domains help | grep generate_local) || true
         - echo "$has_new_function"
-        - if [ "$has_new_function" == ""]; then docker exec flap flapctl tls generate_localhost; fi
-        - if [ "$has_new_function" == ""]; then docker exec flap flapctl restart; fi
-        - if [ "$has_new_function" == ""]; then docker exec flap flapctl hooks post_domain_update; fi
+        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl tls generate_localhost; fi
+        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl restart; fi
+        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
