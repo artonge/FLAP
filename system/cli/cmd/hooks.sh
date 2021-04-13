@@ -100,12 +100,6 @@ function post_run_all {
 				installed_services+=("$service")
 			done
 
-			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
-			then
-				echo "* [hooks] Running post_domain_update for ${installed_services[*]} after post_install."
-				flapctl hooks post_domain_update "${installed_services[@]}"
-			fi
-
 			echo "* [hooks] Restarting lemon after post_install."
 			flapctl restart lemon
 
@@ -119,9 +113,15 @@ function post_run_all {
 				echo "* [hooks] Marking $service as installed."
 				touch "$FLAP_DATA/$service/installed.txt"
 			done
+
+			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
+			then
+				echo "* [hooks] Running post_domain_update for ${installed_services[*]} after post_install."
+				flapctl hooks post_domain_update "${installed_services[@]}"
+			fi
 		;;
 		post_domain_update)
-			echo "* [hooks] Restarting lemon after post_install."
+			echo "* [hooks] Restarting lemon after post_domain_update."
 			flapctl restart lemon
 		;;
 	esac
