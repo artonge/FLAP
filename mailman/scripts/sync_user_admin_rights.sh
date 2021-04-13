@@ -27,7 +27,12 @@ do
 		admin_access=TRUE
 	fi
 
-	docker-compose exec -T --user postgres postgres psql mailman -c "UPDATE auth_user SET is_superuser='$admin_access' WHERE username='$username';"
+	if [ "${FLAP_DEBUG:-}" != "true" ]
+	then
+		args=(--quiet)
+	fi
+
+	docker-compose exec -T --user postgres postgres psql "${args[@]}" mailman -c "UPDATE auth_user SET is_superuser='$admin_access' WHERE username='$username';"
 
 done
 
