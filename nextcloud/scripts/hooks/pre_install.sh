@@ -2,7 +2,7 @@
 
 set -eu
 
-echo "Generating SAML key for nextcloud."
+debug "Generating SAML key for nextcloud."
 mkdir -p "$FLAP_DATA/nextcloud/saml"
 openssl req \
     -new \
