@@ -13,17 +13,22 @@ case $CMD in
 		echo '* [config] Generate template files.'
 
 		# Transform each files matching *.template.*
-		shopt -s globstar nullglob
-		for template in "$FLAP_DIR"/**/*.template.*
+		for service in $FLAP_SERVICES
 		do
-			dir=$(dirname "$template") # Get template's directory
-			name=$(basename "$template") # Get template's name (without the directory)
-			ext="${name##*.}"
-			name="${name%.*}" # Remove extension
-			name="${name%.*}" # Remove ".template"
+			shopt -s globstar nullglob
+			for template in "$FLAP_DIR/$service"/**/*.template.*
+			do
+				dir=$(dirname "$template") # Get template's directory
+				name=$(basename "$template") # Get template's name (without the directory)
+				ext="${name##*.}"
+				name="${name%.*}" # Remove extension
+				name="${name%.*}" # Remove ".template"
 
-			# shellcheck disable=SC2016
-			envsubst "$FLAP_ENV_VARS" < "$dir/$name.template.$ext" > "$dir/$name.$ext"
+				debug "$name.template.$ext"
+
+				# shellcheck disable=SC2016
+				envsubst "$FLAP_ENV_VARS" < "$dir/$name.template.$ext" > "$dir/$name.$ext"
+			done
 		done
 		;;
 	show)
