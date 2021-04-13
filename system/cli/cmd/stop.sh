@@ -22,15 +22,19 @@ Commands:
 		# - regenerate the config and retry.
 		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
-		{
-			docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
-		} || {
-			flapctl config generate
-			docker-compose down --remove-orphans
-		} || { 
-			systemctl restart docker
-			docker-compose down --remove-orphans
-		}
+		docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
+
+		exit_code=${PIPESTATUS[0]}
+		if [ "$exit_code" != "0" ]
+		then
+			{
+				flapctl config generate &&
+				docker-compose down --remove-orphans
+			} || { 
+				systemctl restart docker &&
+				docker-compose down --remove-orphans
+			}
+		fi
 		;;
 	*)
 		# Get services list from args.

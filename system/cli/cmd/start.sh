@@ -39,7 +39,13 @@ Commands:
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
 		echo '* [start] Running services.'
-		docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | cat
+		docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E '^is up-to-date' | cat
+
+		exit_code=${PIPESTATUS[0]}
+		if [ "$exit_code" != "0" ]
+		then
+			exit "$exit_code"
+		fi
 
 		# Wait dor services to be up.
 		flapctl hooks wait_ready
@@ -66,7 +72,13 @@ Commands:
 			sub_services+=("${tmp_services[@]}")
 		done
 
-		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | grep -v -E '^Creating' | cat
+		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E '^is up-to-date' | cat
+
+		exit_code=${PIPESTATUS[0]}
+		if [ "$exit_code" != "0" ]
+		then
+			exit "$exit_code"
+		fi
 
 		flapctl hooks wait_ready "${services[@]}"
 		;;
