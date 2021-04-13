@@ -207,6 +207,9 @@ setup_with_serial_updates:
 
         - echo $CI_COMMIT_BRANCH
         - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
+        - echo $CI_COMMIT_BRANCH
+        - git status
+        - docker exec flap flapctl config show
 
         - test "$(docker exec flap flapctl migrate status)" == ""
 
