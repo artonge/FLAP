@@ -2,9 +2,9 @@
 
 set -eu
 
-until docker-compose exec -T mariadb mysql --password="$ADMIN_PWD" --execute "SHOW DATABASES" > /dev/null
+until docker-compose exec -T mariadb mysql --silent --password="$ADMIN_PWD" --execute "SHOW DATABASES" > /dev/null
 do
-    echo "MariaDB is unavailable - sleeping"
+    debug "MariaDB is unavailable - sleeping"
     sleep 1
 done
 

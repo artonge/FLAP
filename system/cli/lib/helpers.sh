@@ -32,14 +32,21 @@ get_saml_metadata() {
 	domain=$2
 	url=$3
 
+	args=()
+
 	# Check certificates with local CA for local domains.
 	provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 	if [ "$provider" == "local" ]
 	then
-		ca_cert=(--cacert /etc/letsencrypt/live/flap/root.cer)
+		args+=(--cacert /etc/letsencrypt/live/flap/root.cer)
 	fi
 
-	echo "Fetching $service's SAML metadata for $domain."
-	curl "$url" --output "$FLAP_DATA/$service/saml/metadata_$domain.xml" "${ca_cert[@]}"
+	if [ "${FLAP_DEBUG:-}" != "true" ]
+	then
+		args+=(--silent)
+	fi
+
+	debug "Fetching $service's SAML metadata for $domain."
+	curl "$url" --output "$FLAP_DATA/$service/saml/metadata_$domain.xml" "${args[@]}"
 }
 export -f get_saml_metadata
