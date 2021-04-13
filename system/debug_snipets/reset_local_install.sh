@@ -2,10 +2,14 @@
 
 # Example: ./reset_local_install.sh
 
-set -eux
+set -eu
 
 # Guard to prevent executing this file on a real instance.
-test "$(cat "$FLAP_DATA/system/data/primary_domain.txt")" == "flap.test"
+if [ "$(cat "$FLAP_DATA/system/data/primary_domain.txt")" != "flap.test" ]
+then
+	echo "WARNING: Instance is not using flap.test. Are you on a live instance ?"
+	exit 0
+fi
 
 sudo -E flapctl stop
 sudo -E flapctl clean data -y
