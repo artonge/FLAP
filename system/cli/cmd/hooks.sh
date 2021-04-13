@@ -62,6 +62,56 @@ function post_run_all {
 	local services=("$@")
 	local services=("${services[@]:1}")
 
+	# Services in $FLAP_SERVICES without an install.txt file are not yet installed but will be after post_install.
+	pending_install_services=()
+	for service in $FLAP_SERVICES
+	do
+		if [ -f "$FLAP_DATA/$service/installed.txt" ]
+		then
+			continue
+		fi
+		pending_install_services+=("$service")
+	done
+
+	# Post-hooks executed event if no hook has been executed.
+	case $hook in
+		pre_install)
+			if [ "${#pending_install_services}" == "0" ]
+			then
+				exit 0
+			fi
+
+			echo "* [hooks] Generating TLS certificates for new services."
+			flapctl tls generate
+		;;
+		post_install)
+			if [ "${#pending_install_services}" == "0" ]
+			then
+				exit 0
+			fi
+
+			echo "* [hooks] Restarting lemon and nginx after post_install."
+			flapctl restart lemon nginx
+
+			echo "* [hooks] Finish services install."
+			flapctl ports setup
+			flapctl setup firewall
+			flapctl setup cron
+
+			for service in "${pending_install_services[@]}"
+			do
+				echo "* [hooks] Marking $service as installed."
+				touch "$FLAP_DATA/$service/installed.txt"
+			done
+
+			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
+			then
+				echo "* [hooks] Running post_domain_update for ${pending_install_services[*]} after post_install."
+				flapctl hooks post_domain_update "${pending_install_services[@]}"
+			fi
+		;;
+	esac
+
 	# Return if no hooks has been executed.
 	if [ "$pre_run_has_run" == "false" ]
 	then
@@ -77,40 +127,6 @@ function post_run_all {
 		pre_install)
 			echo "* [hooks] Regenerating config after pre_install."
 			flapctl config generate
-			echo "* [hooks] Generating TLS certificates for new services."
-			flapctl tls generate
-		;;
-		post_install)
-			installed_services=()
-			# All services in $FLAP_SERVICES should be ready to be marked as installed.
-			for service in $FLAP_SERVICES
-			do
-				if [ -f "$FLAP_DATA/$service/installed.txt" ]
-				then
-					continue
-				fi
-				installed_services+=("$service")
-			done
-
-			echo "* [hooks] Restarting lemon after post_install."
-			flapctl restart lemon
-
-			echo "* [hooks] Finish services install."
-			flapctl ports setup
-			flapctl setup firewall
-			flapctl setup cron
-
-			for service in "${installed_services[@]}"
-			do
-				echo "* [hooks] Marking $service as installed."
-				touch "$FLAP_DATA/$service/installed.txt"
-			done
-
-			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
-			then
-				echo "* [hooks] Running post_domain_update for ${installed_services[*]} after post_install."
-				flapctl hooks post_domain_update "${installed_services[@]}"
-			fi
 		;;
 		post_domain_update)
 			echo "* [hooks] Restarting lemon after post_domain_update."
