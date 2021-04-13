@@ -6,5 +6,5 @@ set -eu
 sed '/trusted_hosts\[\] = "/d' -i /var/www/html/config/config.ini.php
 for domain in $DOMAIN_NAMES
 do
-	php /var/www/html/console config:set --section="General" --key="trusted_hosts" --value="analytics.$domain"
+	php /var/www/html/console --quiet config:set --section="General" --key="trusted_hosts" --value="analytics.$domain"
 done

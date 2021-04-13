@@ -19,4 +19,9 @@ docker-compose exec -T --user postgres postgres psql "${args[@]}" -c "CREATE EXT
 docker-compose exec -T --user postgres postgres psql "${args[@]}" -c "CREATE EXTENSION unaccent;" funkwhale
 
 debug "Run initials migrations."
-docker-compose run --rm funkwhale_api python manage.py migrate
+if [ "${FLAP_DEBUG:-}" != "true" ]
+then
+	args=(-v 0)
+fi
+
+docker-compose run --rm funkwhale_api python manage.py migrate "${args[@]}"
