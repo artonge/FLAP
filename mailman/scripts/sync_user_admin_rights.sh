@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 # Update mailman users access rights depending on theirs FLAP admin status.
 
