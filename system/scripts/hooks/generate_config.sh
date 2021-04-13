@@ -47,24 +47,27 @@ yq \
 	"$main_compose_file"
 
 
-echo "Merge services' mail-extra-volumes properties."
-# shellcheck disable=SC2016
-mail_volumes=$(
-	yq \
-		--slurp \
-		'reduce .[] as $service ([]; . + $service["x-mail-extra-volumes"])' \
-		"${compose_files[@]}"
-)
+if [ "${PRIMARY_DOMAIN_NAME:-}" != "" ]
+then
+	debug "Merge services' mail-extra-volumes properties."
+	# shellcheck disable=SC2016
+	mail_volumes=$(
+		yq \
+			--slurp \
+			'reduce .[] as $service ([]; . + $service["x-mail-extra-volumes"])' \
+			"${compose_files[@]}"
+	)
 
-# shellcheck disable=SC2016
-yq \
-	--yaml-output \
-	--yaml-roundtrip \
-	--slurp \
-	--in-place \
-	--argjson volumes "$mail_volumes" \
-	'.[0] * {"services": {"mail": {"volumes": (.[0].services.mail.volumes + $volumes)}}}' \
-	"$main_compose_file"
+	# shellcheck disable=SC2016
+	yq \
+		--yaml-output \
+		--yaml-roundtrip \
+		--slurp \
+		--in-place \
+		--argjson volumes "$mail_volumes" \
+		'.[0] * {"services": {"mail": {"volumes": (.[0].services.mail.volumes + $volumes)}}}' \
+		"$main_compose_file"
+fi
 
 
 if [ "${ENABLE_MONITORING:-}" == "true" ]
