@@ -76,7 +76,7 @@ function post_run_all {
 	# Post-hooks executed event if no hook has been executed.
 	case $hook in
 		pre_install)
-			if [ "${#pending_install_services}" == "0" ]
+			if [ "${pending_install_services[*]}" == "" ]
 			then
 				exit 0
 			fi
@@ -85,7 +85,7 @@ function post_run_all {
 			flapctl tls generate
 		;;
 		post_install)
-			if [ "${#pending_install_services}" == "0" ]
+			if [ "${pending_install_services[*]}" == "" ]
 			then
 				exit 0
 			fi
