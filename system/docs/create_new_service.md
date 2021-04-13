@@ -70,6 +70,8 @@ The `nginx.conf` file will be copied for each registered domains.
 <!-- div:right-panel -->
 For example, home:
 
+<!-- [gist: home/nginx.conf](https://docs.flap.cloud/src/home/nginx.conf ':include :type=code') -->
+
 ```nginx
 server {
 	server_name $DOMAIN_NAME;
