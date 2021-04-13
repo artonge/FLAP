@@ -2,7 +2,7 @@
 
 set -eu
 
-echo "Add services' custom config to the postfix-main config."
+debug "Add services' custom config to the postfix-main config."
 for service in $FLAP_SERVICES
 do
 	# Check if a 'postfix-main-extra.cf' file exists for the service.
