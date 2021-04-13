@@ -1,8 +1,6 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("mailman")
 
-Scenario("launch mailman", async (I) => {
+Scenario("launch mailman", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
