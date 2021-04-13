@@ -193,10 +193,7 @@ setup_with_serial_updates:
         - docker exec flap flapctl domains generate_local flap.test
         
         # TODO: remove when we don't need to test versions older than v1.14.7.
-        - docker exec flap flapctl domains help
-        - docker exec flap flapctl domains help | grep generate_local || true
         - has_new_function=$(docker exec flap flapctl domains help | grep generate_local) || true
-        - echo "$has_new_function"
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl tls generate_localhost; fi
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl restart; fi
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
