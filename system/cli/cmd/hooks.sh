@@ -57,14 +57,6 @@ function should_run {
 	esac
 }
 
-function post_run {
-	local hook=$1
-	local service=$2
-
-	case $hook in
-	esac
-}
-
 function post_run_all {
 	local hook=$1
 	local services=("$@")
@@ -155,20 +147,11 @@ case $cmd in
 			pre_run_all "$hook" "$services_list"
 
 			echo "* [hooks] Running $hook hook for $service."
-			"$FLAP_DIR/$service/scripts/hooks/$hook.sh"
-
-			hook_exit_code=${PIPESTATUS[0]}
-			# Catch error code
-			if [ "$hook_exit_code" != "0" ]
-			then
-				exit_code=1
-			fi
-
-			# Do not run post_run sub-hook if the hook failed.
-			if [ "$hook_exit_code" == "0" ]
+			if "$FLAP_DIR/$service/scripts/hooks/$hook.sh"
 			then
 				hooks_ran+=("$service")
-				post_run "$hook" "$service"
+			else
+				exit_code=1
 			fi
 		done
 
