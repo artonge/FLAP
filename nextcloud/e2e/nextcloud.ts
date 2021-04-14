@@ -17,10 +17,9 @@ Scenario("launch nextcloud", async ({I}) => {
 	I.seeInCurrentUrl(`https://files.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.wait(2)
-	if (await I.grabNumberOfVisibleElements(".header-close") > 0) {
-		I.waitForElement(".header-close")
+	if (await I.grabNumberOfVisibleElements("#firstrunwizard") > 0) {
 		I.click(".header-close")
-		I.waitToHide(".header-close")
+		I.waitToHide("#firstrunwizard")
 	}
 
 	I.waitForText("All files")
