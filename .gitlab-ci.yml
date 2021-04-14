@@ -297,7 +297,7 @@ test_e2e_after_serial_updates:
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME:-latest}
 
 build_disk_image:
     stage: build
