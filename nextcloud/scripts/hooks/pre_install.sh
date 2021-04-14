@@ -2,4 +2,4 @@
 
 set -eu
 
-generate_saml_keys peertube
+generate_saml_keys nextcloud
