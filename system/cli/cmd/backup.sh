@@ -38,6 +38,7 @@ case $CMD in
 		cd "$FLAP_DIR"
 		if [ "$(git rev-parse --abbrev-ref HEAD)" == "HEAD" ]
 		then
+			echo "* [backup] Checking out $version."
 			version=$(cat "$FLAP_DATA"/system/version.txt)
 			git checkout "$version"
 		fi
