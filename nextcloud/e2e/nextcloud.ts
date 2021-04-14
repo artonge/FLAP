@@ -20,7 +20,7 @@ Scenario("launch nextcloud", async ({I}) => {
 	if (await I.grabNumberOfVisibleElements(".header-close") > 0) {
 		I.waitForElement(".header-close")
 		I.click(".header-close")
-		I.wait(2)
+		I.wait(5)
 	}
 
 	I.waitForText("All files")
