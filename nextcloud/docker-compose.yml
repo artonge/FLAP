@@ -11,12 +11,12 @@ services:
             driver: ${LOG_DRIVER:-journald}
         depends_on: [postgres, redis, ldap]
         volumes:
-            - ${FLAP_DATA}/nextcloud/saml:/saml/nextcloud # [hd] -> [nextcloud] nextcloud's SAML keys.
-            - ${FLAP_DATA}/lemon/saml:/saml/idp # [hd] -> [nextcloud] IDP's SAML keys.
+            - ${FLAP_DATA}/nextcloud/saml:/saml/nextcloud:ro # [hd] -> [nextcloud] Nextcloud's SAML keys.
+            - ${FLAP_DATA}/lemon/saml:/saml/idp:ro # [hd] -> [nextcloud] IDP's SAML keys.
             - ${FLAP_DATA}/nextcloud/data:/data # [nextcloud] <-> [hd] Data
             - ${FLAP_DATA}/nextcloud/config:/var/www/html/config # [nextcloud] <-> [hd] Config
             - ${FLAP_DATA}/nextcloud/html:/var/www/html # [nextcloud] <-> [hd] WWW
-            - ${FLAP_DIR}/nextcloud/scripts/inner_scripts:/inner_scripts # [emmc] <-> [nextcloud] Script to generate config.php
+            - ${FLAP_DIR}/nextcloud/scripts/inner_scripts:/inner_scripts:ro # [emmc] <-> [nextcloud] Script to generate config.php
         networks:
             stores-net:
             apps-net:
