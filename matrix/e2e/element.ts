@@ -19,7 +19,7 @@ Scenario("launch element", async ({I}) => {
 	I.click(".mx_SSOButton")
 	I.click("Continue")
 
-	I.see("Mr. Admin")
+	I.waitForText("Mr. Admin")
 
 	I.waitForText("#general:​flap.test")
 	I.click(".mx_RoomSublist_tiles")
