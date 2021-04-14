@@ -104,9 +104,11 @@ Commands:
 			EXIT_CODE=1
 		}
 
+		flapctl ports setup
+		flapctl setup firewall
 		flapctl setup cron
-
-		# Check new current HEAD.
+			
+		# Get new current HEAD.
 		current_head=$(git rev-parse --abbrev-ref HEAD)
 		if [ "$current_head" == "HEAD" ]
 		then
