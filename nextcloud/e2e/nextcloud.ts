@@ -1,5 +1,3 @@
-/// <reference path='../../home/e2e/steps.d.ts' />
-
 Feature("nextcloud")
 
 Scenario("launch nextcloud", async ({I}) => {
