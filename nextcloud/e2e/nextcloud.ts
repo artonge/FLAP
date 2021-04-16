@@ -29,6 +29,7 @@ Scenario("launch nextcloud", async ({I}) => {
 	I.see("Settings")
 
 	I.click(".button.new")
+	I.click(".button.new")
 	I.waitForText("New text document")
 	I.click("New text document")
 	I.waitForElement("#view12-input-file")
