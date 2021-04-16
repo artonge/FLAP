@@ -1,3 +1,5 @@
+/// <reference path='../../home/e2e/steps.d.ts' />
+
 Feature("nextcloud")
 
 Scenario("launch nextcloud", async ({I}) => {
@@ -18,17 +20,16 @@ Scenario("launch nextcloud", async ({I}) => {
 
 	I.wait(2)
 	if (await I.grabNumberOfVisibleElements("#firstrunwizard") > 0) {
-		I.click(".header-close")
+		I.pressKey('Escape')
 		I.waitToHide("#firstrunwizard")
-		I.wait(5)
 	}
+	
+	I.refreshPage()
 
 	I.waitForText("All files")
-	I.see("All files")
 	I.see("Deleted files")
 	I.see("Settings")
 
-	I.click(".button.new")
 	I.click(".button.new")
 	I.waitForText("New text document")
 	I.click("New text document")
