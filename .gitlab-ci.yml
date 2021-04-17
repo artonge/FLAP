@@ -71,6 +71,7 @@ test_dockerfile_sanity:
         # Share the docker container network with this container so it can talk to itself.
         #  ==> the network ports are being serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
         # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
+        - echo $FLAP_DEBUG
         - >
             docker run \
                 --detach \
