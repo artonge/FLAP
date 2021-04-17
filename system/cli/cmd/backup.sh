@@ -47,6 +47,9 @@ case $CMD in
 		flapctl tls generate
 		flapctl hooks post_restore
 		flapctl start
+		flapctl ports setup
+		flapctl setup firewall
+		flapctl setup cron
 	;;
 	list)
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" list
