@@ -27,6 +27,7 @@ fi
 # --expand - allow to merge new domains to the existing ones in the same certificates.
 # --force-renewal - prevent certbot return 1 when the certificates is already generated.
 certbot certonly \
+    --rsa-key-size 4096 \
     --cert-name flap \
     --non-interactive \
     --standalone \
