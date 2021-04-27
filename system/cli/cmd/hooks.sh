@@ -167,6 +167,7 @@ case $cmd in
 			then
 				hooks_ran+=("$service")
 			else
+				echo "* [hook] Error: Hook failed for $service"
 				exit_code=1
 			fi
 		done
