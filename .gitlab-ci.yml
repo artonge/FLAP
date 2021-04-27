@@ -4,6 +4,7 @@ include:
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    FLAP_DEBUG: true
 
 stages:
   - build
