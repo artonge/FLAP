@@ -111,7 +111,7 @@ case $CMD in
 		do
 			if [ -f "$FLAP_DIR/$service/$service.cron" ]
 			then
-				debug - "$service.cron"
+				debug "- $service.cron"
 				cron_string+="############## $service ##############"$'\n'
 				cron_string+="$(cat "$service/$service.cron")"$'\n\n'
 			fi
