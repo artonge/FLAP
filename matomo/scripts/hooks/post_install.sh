@@ -3,6 +3,7 @@
 set -eu
 
 echo "Download extra plugins."
+args=()
 if [ "${FLAP_DEBUG:-}" != "true" ]
 then
 	args=(--quiet)
@@ -55,6 +56,7 @@ curl "https://analytics.$PRIMARY_DOMAIN_NAME/index.php?action=finished&clientPro
 	"${args[@]}"
 
 
+args=()
 if [ "${FLAP_DEBUG:-}" != "true" ]
 then
 	args=(--silent)
