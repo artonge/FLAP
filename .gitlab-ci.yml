@@ -125,7 +125,7 @@ test_dockerfile_sanity:
         - if [ ! -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
 
         # Restore flap_data if it exists.
-        - if [ -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
+        - if [ -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
         - apk add tar
         - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
         - if [ -f flap.tar.gz ]; then docker exec flap flapctl backup restore; fi
