@@ -3,7 +3,7 @@
 set -eu
 
 echo "Listing nextcloud app."
-docker exec --tty --user www-data flap_nextcloud php occ app:list
+docker exec --tty --user www-data flap_nextcloud php occ app:list --shipped=false
 
 # Concider running the following commands to repaire potential nextcloud issues.
 # php occ db:add-missing-indices
