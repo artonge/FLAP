@@ -43,6 +43,9 @@ case $CMD in
 			git checkout "$version"
 		fi
 
+		echo "* [backup] Starting reanimation with the following flapctl.env."
+		cat "$FLAP_DATA/system/flapctl.env"
+
 		flapctl config generate
 		flapctl tls generate
 		flapctl hooks post_restore
