@@ -2,4 +2,4 @@
 
 set -eu
 
-test "$ENABLE_MONITORING" == "true"
+test "${ENABLE_MONITORING:-false}" == "true"
