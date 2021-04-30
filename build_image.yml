@@ -6,6 +6,8 @@
     variables:
         # Until this issue is resolved: https://gitlab.com/gitlab-org/gitlab-runner/issues/1736
         GIT_STRATEGY: none
+    rules:
+      - if: '"$CI_PIPELINE_SOURCE" != "schedule" || "$SCHEDULED_BUILD" == "true"'
     script:
         # Connect to gitlab registry.
         - DOCKER_DRIVER=overlay2
