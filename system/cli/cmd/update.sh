@@ -51,6 +51,12 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
+		# Stop update when we are on a branch.
+		if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+		then
+			exit 0
+		fi
+
 		git fetch --force --tags --prune --prune-tags --recurse-submodules &> /dev/null
 
 		current_tag=$(flapctl version)
@@ -110,10 +116,8 @@ Commands:
 			
 		# Get new current HEAD.
 		current_head=$(git rev-parse --abbrev-ref HEAD)
-		is_tag=false
 		if [ "$current_head" == "HEAD" ]
 		then
-			is_tag=true
 			current_head=$(git describe --tags --abbrev=0)
 		fi
 
@@ -125,11 +129,7 @@ Commands:
 
 		echo "$current_head" > "$FLAP_DATA/system/version.txt"
 
-		# Recursively continue to newer updates if current HEAD is a tag.
-		if [ "$is_tag" == "true" ]
-		then
-			flapctl update
-		fi
+		flapctl update
 		;;
 esac
 
