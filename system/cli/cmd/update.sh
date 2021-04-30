@@ -110,8 +110,10 @@ Commands:
 			
 		# Get new current HEAD.
 		current_head=$(git rev-parse --abbrev-ref HEAD)
+		is_tag=false
 		if [ "$current_head" == "HEAD" ]
 		then
+			is_tag=true
 			current_head=$(git describe --tags --abbrev=0)
 		fi
 
@@ -123,8 +125,11 @@ Commands:
 
 		echo "$current_head" > "$FLAP_DATA/system/version.txt"
 
-		# Recursively continue to newer updates.
-		flapctl update
+		# Recursively continue to newer updates if current HEAD is a tag.
+		if [ "$is_tag" ]
+		then
+			flapctl update
+		fi
 		;;
 esac
 
