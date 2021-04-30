@@ -126,7 +126,7 @@ Commands:
 		echo "$current_head" > "$FLAP_DATA/system/version.txt"
 
 		# Recursively continue to newer updates if current HEAD is a tag.
-		if [ "$is_tag" ]
+		if [ "$is_tag" == "true" ]
 		then
 			flapctl update
 		fi
