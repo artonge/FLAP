@@ -5,7 +5,7 @@
 set -eu
 
 # Guard to prevent executing this file on a real instance.
-if [ "$(cat "$FLAP_DATA/system/data/primary_domain.txt")" != "flap.test" ]
+if [ "$(cat "$FLAP_DATA/system/data/primary_domain.txt")" != "flap.test" ] && [ -f "$FLAP_DATA/system/data/installation_done.txt" ]
 then
 	echo "WARNING: Instance is not using flap.test. Are you on a live instance ?"
 	exit 0
