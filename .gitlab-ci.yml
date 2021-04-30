@@ -72,7 +72,7 @@ test_dockerfile_sanity:
         # Share the docker container network with this container so it can talk to itself.
         #  ==> the network ports are being serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
         # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
-        - echo $FLAP_DEBUG
+        - echo "Starting $(eval $FLAP_IMAGE_TAG)"
         - >
             docker run \
                 --detach \
@@ -125,6 +125,7 @@ test_dockerfile_sanity:
         - if [ ! -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
 
         # Restore flap_data if it exists.
+        - ls $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/
         - if [ -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
         - apk add tar
         - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
