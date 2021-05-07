@@ -109,7 +109,7 @@ merge_upstream:
 
     - git fetch
 
-    - git checkout "${CI_COMMIT_BRANCH:-flap_test}"
+    - git checkout "${CI_COMMIT_BRANCH:-flap}"
 
     - current_tag=$(git describe --tags --abbrev=0)
     - echo $current_tag
@@ -120,7 +120,7 @@ merge_upstream:
     - if [ "$next_tag" == "" ]; then exit 0; fi
 
     - git rebase "$next_tag"
-    - git tag "$next_tag-flap_test.1"
+    - git tag "$next_tag-flap.1"
 
     - git push --force
     - git push --tag
