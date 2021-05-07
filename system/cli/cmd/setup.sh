@@ -8,7 +8,6 @@ case $CMD in
 	docker_images)
 		if [ ! -f /var/lib/flap/images ]
 		then
-			echo "* [setup] No docker images to load, exiting."
 			exit 0
 		fi
 
@@ -24,7 +23,6 @@ case $CMD in
 	hostname)
 		if [ "${FLAG_NO_NAT_NETWORK_SETUP:-}" == "true" ]
 		then
-			echo "* [setup:FEATURE_FLAG] Skip hostnames setup."
 			exit 0
 		fi
 
@@ -68,8 +66,6 @@ case $CMD in
 		done
 	;;
 	fs)
-		echo '* [setup] Creating data directories.'
-
 		# Create log folder
 		mkdir -p /var/log/flap
 
@@ -78,8 +74,10 @@ case $CMD in
 			# Skip if the directory is already created.
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
+				echo "* [setup] Creating data directories for $service."
+	
 				# Create data directory for the service.
-				echo "Create $FLAP_DATA/$service"
+				debug "Create $FLAP_DATA/$service"
 				mkdir --parents "$FLAP_DATA/$service"
 			fi
 
@@ -91,8 +89,8 @@ case $CMD in
 				do
 					current_migration=$((current_migration+1))
 				done
-				echo "Setup base migration of $current_migration for $service"
-				echo $current_migration > "$FLAP_DATA/$service/current_migration.txt"
+				debug "Setup base migration of $current_migration for $service"
+				echo "$current_migration" > "$FLAP_DATA/$service/current_migration.txt"
 			fi
 		done
 	;;
@@ -113,7 +111,7 @@ case $CMD in
 		do
 			if [ -f "$FLAP_DIR/$service/$service.cron" ]
 			then
-				echo - "$service.cron"
+				debug "- $service.cron"
 				cron_string+="############## $service ##############"$'\n'
 				cron_string+="$(cat "$service/$service.cron")"$'\n\n'
 			fi

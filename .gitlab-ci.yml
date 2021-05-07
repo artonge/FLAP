@@ -4,6 +4,7 @@ include:
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    FLAP_DEBUG: 'true'
 
 stages:
   - build
@@ -59,7 +60,7 @@ test_dockerfile_sanity:
     services:
         - name: docker:dind
           # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
-          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test
+          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test
     needs: [build]
     before_script:
         # Get DinD's ip.
@@ -71,6 +72,7 @@ test_dockerfile_sanity:
         # Share the docker container network with this container so it can talk to itself.
         #  ==> the network ports are being serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
         # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
+        - echo "Starting $(eval $FLAP_IMAGE_TAG)"
         - >
             docker run \
                 --detach \
@@ -91,6 +93,7 @@ test_dockerfile_sanity:
                 --add-host="video.flap.test:$FLAP_IP" \
                 --add-host="monitoring.flap.test:$FLAP_IP" \
                 --add-host="music.flap.test:$FLAP_IP" \
+                --add-host="lists.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -105,6 +108,7 @@ test_dockerfile_sanity:
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 --env COMPOSE_HTTP_TIMEOUT=800 \
                 --env CI_JOB_NAME=$CI_JOB_NAME \
+                --env FLAP_DEBUG=$FLAP_DEBUG \
             \
                 $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
@@ -118,12 +122,13 @@ test_dockerfile_sanity:
 
         # Copy flapctl.env for pipeline.
         - mkdir --parents $CI_BUILDS_DIR/flap_data/system
-        - cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env
+        - if [ ! -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
 
         # Restore flap_data if it exists.
+        - ls $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/
+        - if [ -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
         - apk add tar
         - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
-        - if [ -f flap.tar.gz ]; then docker exec flap flapctl tls generate_localhost; fi
         - if [ -f flap.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
         - docker exec flap flapctl start
@@ -148,9 +153,13 @@ test_cli:
     needs: []
     script:
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
+        - docker exec flap flapctl domains generate_local flap.test
+
+        # TODO: remove when we don't need to test versions older than v1.14.7.
+        - old_setup=$(docker exec flap flapctl tls help | grep generate_localhost)
+        - if "$old_setup"; then docker exec flap flapctl tls generate_localhost; fi
+        - if "$old_setup"; then docker exec flap flapctl restart; fi
+        - if "$old_setup"; then docker exec flap flapctl hooks post_domain_update; fi
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
@@ -176,7 +185,7 @@ test_update_to_tag:
 setup_with_serial_updates:
     stage: setup
     extends: .start_flap
-    only: [tags]
+    # only: [tags]
     needs: []
     allow_failure: true
     variables:
@@ -186,9 +195,13 @@ setup_with_serial_updates:
             - flap.tar.gz
     script:
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
+        - docker exec flap flapctl domains generate_local flap.test
+        
+        # TODO: remove when we don't need to test versions older than v1.14.7.
+        - has_new_function=$(docker exec flap flapctl domains help | grep generate_local) || true
+        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl tls generate_localhost; fi
+        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl restart; fi
+        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
@@ -196,6 +209,8 @@ setup_with_serial_updates:
         - docker exec --user www-data flap_nextcloud php occ user:list
 
         - docker exec flap flapctl update
+
+        - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
 
         - test "$(docker exec flap flapctl migrate status)" == ""
 
@@ -214,9 +229,7 @@ setup_flap:
             - flap.tar.gz
     script:
         - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl tls generate_localhost
-        - docker exec flap flapctl restart
-        - docker exec flap flapctl hooks post_domain_update
+        - docker exec flap flapctl domains generate_local flap.test
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
@@ -259,8 +272,7 @@ setup_flap:
         - cd ./home
         - npm install codeceptjs puppeteer mocha-junit-reporter
 
-        # - mkdir -p e2e/tests/services
-        - npm run e2e:copy
+        - docker exec flap flapctl exec home copyE2ETests
 
         - eval "$(docker exec flap flapctl config show)"
 
@@ -278,13 +290,14 @@ test_e2e_current:
 
 test_e2e_after_serial_updates:
     extends: .test_e2e
-    only: [tags]
+    # only: [tags]
     needs: [setup_with_serial_updates]
     allow_failure: true
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
+        # FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}
 
 build_disk_image:
     stage: build

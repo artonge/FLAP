@@ -1,8 +1,6 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("funkwhale")
 
-Scenario("launch funkwhale", async (I) => {
+Scenario("launch funkwhale", async ({ I }) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 

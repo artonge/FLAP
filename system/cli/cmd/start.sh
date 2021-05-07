@@ -15,8 +15,7 @@ Commands:
 	'' | | Start." | column -t -s "|"
 	;;
 	"")
-		echo '* [start] Running setup operations.'
-
+		echo '* [start] Starting services.'
 		# Run some setup operations if necessary.
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
@@ -29,25 +28,23 @@ Commands:
 
 		flapctl migrate
 
+		echo '* [start] Generating config for startup.'
 		flapctl config generate
 
 		flapctl hooks init_db
 		flapctl hooks pre_install
 
-		# Clean volumes and networks of services.
 		flapctl hooks clean
 
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
+		echo '* [start] Running services.'
+		docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E 'is up-to-date$' | cat
 
-		echo '* [start] Starting services.'
-		if [ "${CI_JOB_NAME:-}" != "setup_with_serial_updates" ]
+		exit_code=${PIPESTATUS[0]}
+		if [ "$exit_code" != "0" ]
 		then
-			docker-compose up --detach
-		else
-			# Debug overlapping network error happening during serial updates.
-			ip a
-			docker-compose --verbose --log-level DEBUG up --detach
+			exit "$exit_code"
 		fi
 
 		# Wait dor services to be up.
@@ -58,30 +55,31 @@ Commands:
 
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
-			# Run other setup operations.
-			flapctl ports setup
-			flapctl setup firewall
-			flapctl setup cron
-
 			# Mark the installation as done.
 			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
-
-		if [ "${FLAG_LOCALHOST_TLS_INSTALL:-}" == "true" ] && [ "$(flapctl domains primary)" == "" ]
-		then
-			# Generate certificates for flap.test.
-			flapctl tls generate_localhost
-			flapctl restart
-			flapctl hooks post_domain_update
-		fi
 		;;
 	*)
-		# Get services list from args.
 		services=("${@:1}")
 
 		flapctl config generate_templates
-		flapctl hooks generate_config "${services[@]}"
+		flapctl hooks generate_config system "${services[@]}"
 
-		docker-compose up --remove-orphans --detach "${services[@]}"
+		sub_services=()
+		for service in "${services[@]}"
+		do
+			mapfile -t tmp_services < <(yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml");
+			sub_services+=("${tmp_services[@]}")
+		done
+
+		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E 'is up-to-date$' | cat
+
+		exit_code=${PIPESTATUS[0]}
+		if [ "$exit_code" != "0" ]
+		then
+			exit "$exit_code"
+		fi
+
+		flapctl hooks wait_ready "${services[@]}"
 		;;
 esac

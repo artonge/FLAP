@@ -2,7 +2,9 @@
 
 set -eu
 
-echo "Generating Synapse's homserver.yaml configuration file."
+debug "Generating Synapse's homeserver.yaml configuration file."
 docker-compose run -T --rm --no-deps synapse generate
 
 flapctl hooks generate_config matrix
+
+generate_saml_keys matrix

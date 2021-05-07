@@ -2,3 +2,8 @@ ENABLE_PEERTUBE:
     type: boolean
     info: Enable Peertube.
     group: services
+
+PEERTUBE_DOMAIN_NAME:
+    type: string
+    info: "Domain on which peertube will run: 'video.$PEERTUBE_DOMAIN_NAME'"
+    group: peertube

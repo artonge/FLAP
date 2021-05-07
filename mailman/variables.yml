@@ -1,0 +1,4 @@
+ENABLE_MAILMAN:
+    type: boolean
+    info: Enable Mailman.
+    group: services

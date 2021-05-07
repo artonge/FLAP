@@ -26,25 +26,18 @@ export NEEDED_PORTS
 NEEDED_PORTS=""
 
 export FLAP_ENV_VARS
-FLAP_ENV_VARS="\${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS}"
-
-# Load services environnement variables.
-# This will populate FLAP_ENV_VARS, SUBDOMAINS and NEEDED_PORTS.
-for service in "$FLAP_DIR"/*/
-do
-	if [ ! -f "$service/scripts/hooks/load_env.sh" ]
-	then
-		continue
-	fi
-
-	# shellcheck source=system/scripts/hooks/load_env.sh
-	# shellcheck disable=SC1091
-	source "$service/scripts/hooks/load_env.sh"
-done
-
+FLAP_ENV_VARS="\${ADMIN_EMAIL} \${FLAP_SERVICES} \${PRIMARY_DOMAIN_NAME} \${SECONDARY_DOMAIN_NAMES} \${DOMAIN_NAMES} \${NEEDED_PORTS} \${ARCH} \${FLAP_VERSION}"
 
 export FLAP_SERVICES
 FLAP_SERVICES=""
+
+export ARCH
+ARCH=$(uname -m)
+
+cd "$FLAP_DIR"
+export FLAP_VERSION
+FLAP_VERSION=$(git describe --tags --abbrev=0)
+
 
 # Populate FLAP_SERVICES with activated services.
 for service in "$FLAP_DIR"/*
@@ -64,3 +57,17 @@ done
 
 # Trim leading white space.
 FLAP_SERVICES=${FLAP_SERVICES:1}
+
+# Load services environnement variables.
+# This will populate FLAP_ENV_VARS, SUBDOMAINS and NEEDED_PORTS.
+for service in $FLAP_SERVICES
+do
+	if [ ! -f "$service/scripts/hooks/load_env.sh" ]
+	then
+		continue
+	fi
+
+	# shellcheck source=system/scripts/hooks/load_env.sh
+	# shellcheck disable=SC1091
+	source "$service/scripts/hooks/load_env.sh"
+done

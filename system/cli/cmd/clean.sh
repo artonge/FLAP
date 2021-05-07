@@ -13,7 +13,7 @@ fi
 
 case $CMD in
     services)
-        if [ $FORCE_YES == 0 ]
+        if [ "$FORCE_YES" == 0 ]
         then
             echo "* [clean] This will remove all the users data. Continue ? [Y/N]:"
             read -r answer
@@ -29,7 +29,7 @@ case $CMD in
         flapctl hooks clean
         ;;
     config)
-        if [ $FORCE_YES == 0 ]
+        if [ "$FORCE_YES" == 0 ]
         then
             echo "* [clean] This will remove all the configuration. Continue ? [Y/N]:"
             read -r answer
@@ -51,7 +51,7 @@ case $CMD in
         git submodule foreach "git clean -Xdf"
         ;;
     data)
-        if [ $FORCE_YES == 0 ]
+        if [ "$FORCE_YES" == 0 ]
         then
             echo "* [clean] This will remove all the users data. Continue ? [Y/N]:"
             read -r answer
@@ -69,7 +69,7 @@ case $CMD in
         docker volume prune -f
         ;;
     docker)
-        if [ $FORCE_YES == 0 ]
+        if [ "$FORCE_YES" == 0 ]
         then
             echo "* [clean] This will remove all the docker objects. Continue ? [Y/N]:"
             read -r answer

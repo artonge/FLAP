@@ -2,7 +2,7 @@
 
 set -eu
 
-echo "Copy dashboard to grafana directory."
+debug "Copy dashboard to grafana directory."
 rm -rf "$FLAP_DIR/monitoring/config/grafana/dashboards"
 mkdir -p "$FLAP_DIR/monitoring/config/grafana/dashboards"
 for service in $FLAP_SERVICES
@@ -12,13 +12,11 @@ do
         continue
     fi
 
-    ls "$FLAP_DIR/$service/monitoring/dashboards"
-
     cp "$FLAP_DIR/$service/monitoring/dashboards/"* "$FLAP_DIR/monitoring/config/grafana/dashboards"
 done
 
 
-echo "Merge services' prometheus.yml files."
+debug "Merge services' prometheus.yml files."
 prometheus_files=()
 
 for service in $FLAP_SERVICES
@@ -29,7 +27,7 @@ do
 	fi
 done
 
-echo "Merge services' scrape_configs properties."
+debug "Merge services' scrape_configs properties."
 # shellcheck disable=SC2016
 scrape_configs=$(
 	yq \
@@ -38,7 +36,7 @@ scrape_configs=$(
 		"${prometheus_files[@]}"
 )
 
-echo "Insert scrape_configs into final the prometheus.yml file."
+debug "Insert scrape_configs into final the prometheus.yml file."
 # shellcheck disable=SC2016
 yq \
 	--yaml-output \
@@ -49,7 +47,7 @@ yq \
 	"$FLAP_DIR/monitoring/monitoring/prometheus.yml" > "$FLAP_DIR/monitoring/config/prometheus/prometheus.yml"
 
 
-echo "Merge services' alert.rules files."
+debug "Merge services' alert.rules files."
 alert_files=()
 
 for service in $FLAP_SERVICES
@@ -60,7 +58,7 @@ do
 	fi
 done
 
-echo "Merge services' groups properties."
+debug "Merge services' groups properties."
 # shellcheck disable=SC2016
 groups=$(
 	yq \
@@ -69,7 +67,7 @@ groups=$(
 		"${alert_files[@]}"
 )
 
-echo "Insert groups into final the alerts.rules file."
+debug "Insert groups into final the alerts.rules file."
 # shellcheck disable=SC2016
 echo '[]' | yq \
 	--yaml-output \

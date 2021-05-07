@@ -18,22 +18,39 @@ Commands:
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
 
-		# Generate configuration so docker-compose does not complains because of a missing config file.
-		flapctl config generate_templates
-		flapctl hooks generate_config system
-
-		# Stop all services. If an error occurs, the docker daemon will be restarted before retrying.
+		# Stop all services and grep-out output. If an error occurs:
+		# - regenerate the config and retry.
+		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
-		docker-compose down --remove-orphans || systemctl restart docker || docker-compose down --remove-orphans
+		docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
+
+		exit_code=${PIPESTATUS[0]}
+		if [ "$exit_code" != "0" ]
+		then
+			{
+				flapctl config generate &&
+				docker-compose down --remove-orphans
+			} || { 
+				systemctl restart docker &&
+				docker-compose down --remove-orphans
+			}
+		fi
 		;;
 	*)
 		# Get services list from args.
 		services=("${@:1}")
 		services_list=()
 
+		sub_services=()
 		for service in "${services[@]}"
 		do
-			if docker ps --format '{{.Names}}' | grep "flap_$service"
+			mapfile -t tmp_services < <(yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml");
+			sub_services+=("${tmp_services[@]}")
+		done
+
+		for service in "${sub_services[@]}"
+		do
+			if docker ps --format '{{.Names}}' | grep -E "flap_$service$"
 			then
 				services_list+=("flap_$service")
 			fi

@@ -1,8 +1,6 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("matomo")
 
-Scenario("launch matomo", async (I) => {
+Scenario("launch matomo", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 

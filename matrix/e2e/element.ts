@@ -1,8 +1,6 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("element")
 
-Scenario("launch element", async (I) => {
+Scenario("launch element", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
@@ -17,11 +15,11 @@ Scenario("launch element", async (I) => {
 	I.switchToNextTab()
 	I.seeInCurrentUrl(`https://chat.${process.env.PRIMARY_DOMAIN_NAME}`)
 
-	I.click("Sign In")
+	I.waitForText("Sign in with single sign-on")
 	I.click(".mx_SSOButton")
 	I.click("Continue")
 
-	I.see("Mr. Admin")
+	I.waitForText("Mr. Admin")
 
 	I.waitForText("#general:​flap.test")
 	I.click(".mx_RoomSublist_tiles")

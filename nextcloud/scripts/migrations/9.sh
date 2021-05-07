@@ -2,6 +2,8 @@
 
 set -eu
 
+# v1.14.7
+
 docker-compose --no-ansi up --detach nextcloud
 
 flapctl hooks wait_ready nextcloud

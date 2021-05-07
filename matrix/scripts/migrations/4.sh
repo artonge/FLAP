@@ -4,9 +4,6 @@ set -eu
 
 # Version 1.14.6
 
-echo "* [4] Update Synapse's SAML metadata."
-# flapctl exec matrix hooks/post_domain_update
-
 echo "* [4] Update homeserver.yml to remove templates"
 synapse_final_config="$FLAP_DATA/matrix/synapse/data/homeserver.yaml"
 config_files=("$synapse_final_config" "$FLAP_DIR/matrix/config/synapse.yaml")

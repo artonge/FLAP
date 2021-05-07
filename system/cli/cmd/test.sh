@@ -40,6 +40,6 @@ case $CMD in
                 echo ""
             fi
         done
-        exit $EXIT
+        exit "$EXIT"
         ;;
 esac

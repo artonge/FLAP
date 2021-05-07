@@ -1,0 +1,47 @@
+services:
+  mailman_core:
+    image: maxking/mailman-core:0.3
+    container_name: flap_mailman_core
+    env_file: [$FLAP_DIR/mailman/mailman.env]
+    restart: unless-stopped
+    logging:
+        driver: ${LOG_DRIVER:-journald}
+    volumes:
+        - ${FLAP_DIR}/mailman/config/core/mailman-extra.cfg:/opt/mailman/core/mailman-extra.cfg # [emmc] -> [mailman] Mailman core settings.
+        - ${FLAP_DATA}/mailman/data/core/var:/opt/mailman/var # [mailman] -> [mail] Mailman var folder.
+        - mailmanVar:/opt/mailman/var/data # [mailman] -> [mail] Mailman var folder.
+    depends_on: [postgres]
+    networks:
+        stores-net:
+        apps-net:
+            aliases: [mailman_core]
+
+  mailman_web:
+    image: maxking/mailman-web:0.3
+    container_name: flap_mailman_web
+    env_file: [$FLAP_DIR/mailman/mailman.env]
+    restart: unless-stopped
+    logging:
+        driver: ${LOG_DRIVER:-journald}
+    depends_on: [postgres]
+    volumes:
+        - ${FLAP_DIR}/mailman/config/web/settings_local.py:/opt/mailman-web-data/settings_local.py # [emmc] -> [mailman] Mailman web settings.
+        - ${FLAP_DATA}/mailman/data/web/fulltext_index:/opt/mailman-web-data/fulltext_index # [mailman] -> [nginx] Mailman data.
+        - mailmanStaticFiles:/opt/mailman-web-data/static/ # [mailman] -> [nginx] Mailman static files.
+    networks:
+        stores-net:
+        apps-net:
+            aliases: [mailman_web]
+
+volumes:
+    mailmanStaticFiles:
+        name: flap_mailmanStaticFiles
+    mailmanVar:
+        name: flap_mailmanVar
+
+x-nginx-extra-volumes:
+    - mailmanStaticFiles:/var/www/mailman:ro # [mailman] -> [nginx] Mailman static files.
+    - ${FLAP_DIR}/mailman/medias:/var/www/mailman_medias:ro # [emmc] -> [nginx] Mailman static files.
+
+x-mail-extra-volumes:
+    - mailmanVar:/opt/mailman/var/data:ro # [mailman] -> [mail] Mailman var folder.

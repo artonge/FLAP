@@ -52,13 +52,14 @@ docker run \
 	--add-host="video.flap.test:$FLAP_IP" \
 	--add-host="monitoring.flap.test:$FLAP_IP" \
 	--add-host="music.flap.test:$FLAP_IP" \
+	--add-host="lists.flap.test:$FLAP_IP" \
 	docker:stable \
 	sh
 
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
 CI_COMMIT_REF_SLUG=
-CI_COMMIT_SHA=v1.13.2
+CI_COMMIT_SHA=v1.14.6
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 
@@ -89,6 +90,7 @@ docker run \
 	--add-host="video.flap.test:$FLAP_IP" \
 	--add-host="monitoring.flap.test:$FLAP_IP" \
 	--add-host="music.flap.test:$FLAP_IP" \
+	--add-host="lists.flap.test:$FLAP_IP" \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \
@@ -123,9 +125,7 @@ docker exec flap ln -sf "/flap_dir/system/cli/flapctl.sh" /bin/flapctl
 docker exec flap flapctl start
 
 docker exec flap flapctl users create_admin
-docker exec flap flapctl tls generate_localhost
-docker exec flap flapctl restart
-docker exec flap flapctl hooks post_domain_update
+docker exec flap flapctl domains generate_local flap.test
 
 docker exec --user www-data flap_nextcloud php occ user:list
 docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar

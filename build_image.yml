@@ -1,11 +1,14 @@
 .build_docker:
     stage: build
-    only: [master, tags, schedules]
     image: docker:stable
     services: ["docker:dind"]
     variables:
         # Until this issue is resolved: https://gitlab.com/gitlab-org/gitlab-runner/issues/1736
         GIT_STRATEGY: none
+    rules:
+      - if: '"$CI_PIPELINE_SOURCE" == "schedule" && "$SCHEDULED_BUILD" == "true"'
+      - if: '"$CI_PIPELINE_SOURCE" == "tags"
+      - if: '"$CI_COMMIT_BRANCH" == "master"
     script:
         # Connect to gitlab registry.
         - DOCKER_DRIVER=overlay2
@@ -77,3 +80,44 @@ create_manifest:
 
         - "docker manifest push $CI_REGISTRY_IMAGE:$(eval $VERSION_SCRIPT)"
         - "docker manifest push $CI_REGISTRY_IMAGE:latest"
+
+merge_upstream:
+  image: alpine
+  stage: build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $SCHEDULED_MERGE_UPSTREAM == "true"'
+  script:
+    - apk add git gnupg openssh-client
+
+    - eval `ssh-agent -s`
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null # add ssh key
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - mv "$KNOWN_HOSTS" ~/.ssh/known_hosts
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$GITLAB_USER_NAME"
+
+    - url=${CI_PROJECT_URL//https:\/\//git@}
+    - url=${url//gitlab.com\//gitlab.com:}
+    - url=${url//git\//git}
+    - git remote set-url origin "$url"
+
+    - git fetch
+
+    - git checkout "${CI_COMMIT_BRANCH:-flap_test}"
+
+    - current_tag=$(git describe --tags --abbrev=0)
+    - echo $current_tag
+
+    - next_tag=$(git tag --sort version:refname | grep -v rc | grep -A 1 "$current_tag" | grep -v "$current_tag" | grep -v flap | cat)
+    - echo $next_tag
+
+    - if [ "$next_tag" == "" ]; then exit 0; fi
+
+    - git rebase "$next_tag"
+    - git tag "$next_tag-flap_test.1"
+
+    - git push --force
+    - git push --tag

@@ -10,6 +10,6 @@ fi
 
 until docker-compose logs synapse | grep "Synapse now listening on TCP port 8008" > /dev/null
 do
-    echo "Synapse is unavailable - sleeping"
+    debug "Synapse is unavailable - sleeping"
     sleep 1
 done

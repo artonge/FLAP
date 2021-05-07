@@ -1,8 +1,6 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("peertube")
 
-Scenario("launch peertube", async (I) => {
+Scenario("launch peertube", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 

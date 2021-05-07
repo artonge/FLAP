@@ -1,0 +1,14 @@
+# Mailman Core cron jobs.
+@daily                docker-compose exec --user mailman mailman_core mailman digests --periodic
+0 8 * * *             docker-compose exec --user mailman mailman_core mailman notify
+
+# Mailman Web cron jobs.
+@hourly               docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs hourly
+@daily                docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs daily
+@weekly               docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs weekly
+@monthly              docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs monthly
+@yearly               docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs yearly
+* * * * *             docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs minutely
+2,17,32,47 * * * *    docker-compose exec --user mailman mailman_web /opt/mailman-web/manage.py runjobs quarter_hourly
+
+@hourly flapctl exec mailman sync_user_admin_rights

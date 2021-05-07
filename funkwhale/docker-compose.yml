@@ -1,6 +1,7 @@
 services:
     funkwhale_celeryworker:
-        image: funkwhale/funkwhale:1.0.1
+        # Before upgrade: https://docs.funkwhale.audio/changelog.html
+        image: funkwhale/funkwhale:1.1
         container_name: flap_funkwhale_celeryworker
         # Celery workers handle background tasks (such file imports or federation
         # messaging). The more processes a worker gets, the more tasks
@@ -25,7 +26,7 @@ services:
                 aliases: [funkwhale_celeryworker]
 
     funkwhale_celerybeat:
-        image: funkwhale/funkwhale:1.0.1
+        image: funkwhale/funkwhale:1.1
         container_name: flap_funkwhale_celerybeat
         command: celery -A funkwhale_api.taskapp beat --pidfile= -l INFO
         env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
@@ -39,7 +40,7 @@ services:
                 aliases: [funkwhale_celerybeat]
 
     funkwhale_api:
-        image: funkwhale/funkwhale:1.0.1
+        image: funkwhale/funkwhale:1.1
         container_name: flap_funkwhale_api
         env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
         restart: unless-stopped

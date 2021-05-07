@@ -4,3 +4,6 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: same-origin
   Content-Security-Policy: default-src https:; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; img-src 'self' data: gitlab.com www.flap.cloud
+
+/src/*
+  Access-Control-Allow-Origin: *

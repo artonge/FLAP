@@ -8,7 +8,7 @@ set -eu
 # Those sub-hooks allow us to make some setup, or to prevent the execution of hooks.
 # Examples:
 # 	- The pre and post_install hooks are run only if $FLAP_DATA/$service/installed.txt do not exists.
-# 	- The init_db hooks supose to have the database running.
+# 	- The init_db hooks expect to have the database running.
 
 cmd=${1:-}
 
@@ -18,20 +18,17 @@ pre_run_has_run=false
 function pre_run_all {
 	local hook=$1
 
-	if [ $pre_run_has_run == "true" ]
+	if [ "$pre_run_has_run" == "true" ]
 	then
 		return 0
 	fi
 
 	pre_run_has_run=true
 
-	echo "* [hooks] Running $hook hooks."
-
 	case $hook in
 		init_db)
 			echo "* [hooks] Starting PostgreSQL and MariaDB for init_db hook."
 			flapctl start postgres mariadb
-			flapctl hooks wait_ready postgres mariadb
 		;;
 	esac
 }
@@ -60,49 +57,63 @@ function should_run {
 	esac
 }
 
-function post_run {
-	local hook=$1
-	local service=$2
-
-	case $hook in
-	esac
-}
-
 function post_run_all {
 	local hook=$1
 	local services=("$@")
 	local services=("${services[@]:1}")
 
-	# Post-hooks executed even if no hook has been executed.
+	# Services in $FLAP_SERVICES without an install.txt file are not yet installed but will be after post_install.
+	pending_install_services=()
+	for service in $FLAP_SERVICES
+	do
+		if [ -f "$FLAP_DATA/$service/installed.txt" ]
+		then
+			continue
+		fi
+		pending_install_services+=("$service")
+	done
+
+	# Post-hooks executed event if no hook has been executed.
 	case $hook in
+		pre_install)
+			if [ "${pending_install_services[*]}" == "" ]
+			then
+				exit 0
+			fi
+
+			echo "* [hooks] Generating TLS certificates for new services."
+			flapctl tls generate
+		;;
 		post_install)
-			# Mark all enabled services as installed.
-			installed_services=()
-			for service in $FLAP_SERVICES
+			if [ "${pending_install_services[*]}" == "" ]
+			then
+				exit 0
+			fi
+
+			echo "* [hooks] Restarting lemon and nginx after post_install."
+			flapctl restart lemon nginx
+
+			echo "* [hooks] Finish services install."
+			flapctl ports setup
+			flapctl setup firewall
+			flapctl setup cron
+
+			for service in "${pending_install_services[@]}"
 			do
-				if [ -f "$FLAP_DATA/$service/installed.txt" ]
-				then
-					continue
-				fi
 				echo "* [hooks] Marking $service as installed."
 				touch "$FLAP_DATA/$service/installed.txt"
-				installed_services+=("$service")
 			done
 
-			# If a primary domain name is set,
-			# we need to run post_domain_update hooks for freshly installed services.
-			if [ ${#installed_services[@]} != 0 ] && [ "$PRIMARY_DOMAIN_NAME" != "" ]
+			if [ "$PRIMARY_DOMAIN_NAME" != "" ]
 			then
-				flapctl stop
-				flapctl tls generate
-				flapctl start
-				flapctl hooks post_domain_update "${installed_services[@]}"
+				echo "* [hooks] Running post_domain_update for ${pending_install_services[*]} after post_install."
+				flapctl hooks post_domain_update "${pending_install_services[@]}"
 			fi
 		;;
 	esac
 
 	# Return if no hooks has been executed.
-	if [ $pre_run_has_run == "false" ]
+	if [ "$pre_run_has_run" == "false" ]
 	then
 		return 0
 	fi
@@ -110,16 +121,16 @@ function post_run_all {
 	# Post-hooks executed only if a least one hook has been executed.
 	case $hook in
 		init_db)
-			echo "* [hooks] Shutting PostgreSQL and MariaDB down for init_db hook."
-			flapctl stop
+			echo "* [hooks] Shutting PostgreSQL and MariaDB down after init_db hook."
+			flapctl stop postgres mariadb
 		;;
 		pre_install)
 			echo "* [hooks] Regenerating config after pre_install."
 			flapctl config generate
 		;;
 		post_domain_update)
-			echo "* [hooks] Restarting services after post_domain_update hook."
-			flapctl restart
+			echo "* [hooks] Restarting lemon after post_domain_update."
+			flapctl restart lemon
 		;;
 	esac
 }
@@ -152,20 +163,12 @@ case $cmd in
 			pre_run_all "$hook" "$services_list"
 
 			echo "* [hooks] Running $hook hook for $service."
-			"$FLAP_DIR/$service/scripts/hooks/$hook.sh"
-
-			hook_exit_code=${PIPESTATUS[0]}
-			# Catch error code
-			if [ "$hook_exit_code" != "0" ]
-			then
-				exit_code=1
-			fi
-
-			# Do not run post_run sub-hook if the hook failed.
-			if [ "$hook_exit_code" == "0" ]
+			if "$FLAP_DIR/$service/scripts/hooks/$hook.sh"
 			then
 				hooks_ran+=("$service")
-				post_run "$hook" "$service"
+			else
+				echo "* [hook] Error: Hook $hook failed for $service"
+				exit_code=1
 			fi
 		done
 

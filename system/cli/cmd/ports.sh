@@ -33,7 +33,7 @@ case $CMD in
 		done
 		;;
 	open)
-		echo "Opening port $PORT/$PROTOCOL"
+		debug "Opening port $PORT/$PROTOCOL"
 
 		IP=${4:-$(flapctl ip internal)}
 
@@ -44,21 +44,21 @@ case $CMD in
 			# Create port mapping.
 			upnpc -e "$DESCRIPTION" -a "$IP" "$PORT" "$PORT" "$PROTOCOL" > /dev/null &&
 
-			echo "* [ports] Port mapping created ($PORT)."
+			debug "* [ports] Port mapping created ($PORT)."
 		} || { # Catch error
-			echo "* [ports] Failed to create port mapping ($PORT)."
+			debug "* [ports] Failed to create port mapping ($PORT)."
 			exit 1
 		}
 		;;
 	close)
-		echo "Closing port $PORT/$PROTOCOL"
+		debug "Closing port $PORT/$PROTOCOL"
 
 		{
 			# Delete port mapping.
 			upnpc -d "$PORT" "$PROTOCOL" > /dev/null &&
-			echo "* [ports] Port mapping deleted ($PORT)."
+			debug "* [ports] Port mapping deleted ($PORT)."
 		} || { # Catch error
-			echo "* [ports] Failed to delete port mapping ($PORT)."
+			debug "* [ports] Failed to delete port mapping ($PORT)."
 			exit 1
 		}
 		;;

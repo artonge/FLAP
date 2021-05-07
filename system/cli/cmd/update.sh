@@ -20,12 +20,42 @@ Commands:
 	update | [branch_name] | Update FLAP to the most recent version. Specify <branch_name> if you want to update to a given branch." | column -t -s "|"
 		;;
 	images)
-		docker-compose pull
-		flapctl restart
+		services_to_restart=()
+	
+		for service in $FLAP_SERVICES
+		do
+			mapfile -t sub_services < <(yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml");
+
+			for sub_service in "${sub_services[@]}"
+			do
+				# shellcheck disable=SC2016
+				image=$(yq -r --arg sub_service "$sub_service" '.services[$sub_service].image' "$FLAP_DIR/$service/docker-compose.yml")
+	
+				image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
+				docker-compose pull --quiet "$sub_service"
+				new_image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
+
+				if [ "$image_digest" != "$new_image_digest" ]
+				then
+					services_to_restart+=("$sub_service")
+				fi
+			done
+		done
+
+		if [ "${services_to_restart[*]}" != "" ]
+		then
+			docker-compose restart "${services_to_restart[@]}"
+		fi
 		;;
 	""|*)
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
+
+		# Stop update when we are on a branch.
+		if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+		then
+			exit 0
+		fi
 
 		git fetch --force --tags --prune --prune-tags --recurse-submodules &> /dev/null
 
@@ -56,7 +86,7 @@ Commands:
 			flapctl config generate_templates &&
 			flapctl hooks generate_config system &&
 			echo '* [update] Pulling new docker images.' &&
-			docker-compose pull
+			docker-compose pull --quiet
 		} || {
 			# When either the git update or the docker pull fails, it is safer to go back to the previous tag.
 			# This will prevent from:
@@ -80,9 +110,11 @@ Commands:
 			EXIT_CODE=1
 		}
 
+		flapctl ports setup
+		flapctl setup firewall
 		flapctl setup cron
-
-		# Check new current HEAD.
+			
+		# Get new current HEAD.
 		current_head=$(git rev-parse --abbrev-ref HEAD)
 		if [ "$current_head" == "HEAD" ]
 		then
@@ -95,9 +127,11 @@ Commands:
 			exit 1
 		fi
 
+		echo "$current_head" > "$FLAP_DATA/system/version.txt"
+
 		# Recursively continue to newer updates.
 		flapctl update
 		;;
 esac
 
-exit $EXIT_CODE
+exit "$EXIT_CODE"

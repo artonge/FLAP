@@ -1,8 +1,6 @@
-/// <reference path="../../home/e2e/steps.d.ts" />
-
 Feature("nextcloud")
 
-Scenario("launch nextcloud", async (I) => {
+Scenario("launch nextcloud", async ({I}) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
@@ -19,14 +17,14 @@ Scenario("launch nextcloud", async (I) => {
 	I.seeInCurrentUrl(`https://files.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.wait(2)
-	if (await I.grabNumberOfVisibleElements(".header-close") > 0) {
-		I.waitForElement(".header-close")
-		I.click(".header-close")
-		I.wait(2)
+	if (await I.grabNumberOfVisibleElements("#firstrunwizard") > 0) {
+		I.pressKey('Escape')
+		I.waitToHide("#firstrunwizard")
 	}
+	
+	I.refreshPage()
 
 	I.waitForText("All files")
-	I.see("All files")
 	I.see("Deleted files")
 	I.see("Settings")
 
