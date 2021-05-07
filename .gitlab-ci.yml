@@ -84,6 +84,7 @@ build_docker_image:
         matrix:
             - SERVICE_BUNDLE_NAME: office
               ENABLE_NEXTCLOUD: "true"
+              ENABLE_COLLABORA: "true"
               ENABLE_SOGO: "true"
               ENABLE_MATRIX: "true"
               ENABLE_JITSI: "true"
@@ -97,7 +98,7 @@ build_docker_image:
     services:
         - name: docker:dind
           # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
-          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test
+          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test editor.flap.test
     needs: [build_docker_image]
     before_script:
         # Get DinD's ip.
@@ -131,6 +132,7 @@ build_docker_image:
                 --add-host="monitoring.flap.test:$FLAP_IP" \
                 --add-host="music.flap.test:$FLAP_IP" \
                 --add-host="lists.flap.test:$FLAP_IP" \
+                --add-host="editor.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
