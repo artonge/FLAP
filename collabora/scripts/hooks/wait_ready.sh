@@ -2,8 +2,8 @@
 
 set -eu
 
-# until docker-compose logs collabora | grep "Application startup complete." > /dev/null
-# do
-#     debug "Collabora is unavailable - sleeping"
-#     sleep 1
-# done
+until docker-compose logs collabora | grep "Ready to accept connections on port 9980." > /dev/null
+do
+    debug "Collabora is unavailable - sleeping"
+    sleep 2
+done

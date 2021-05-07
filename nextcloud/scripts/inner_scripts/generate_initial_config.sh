@@ -57,12 +57,10 @@ php occ --quiet app:enable previewgenerator
 # ENABLE RANSOMWARE PLUGINS
 php occ --quiet app:enable ransomware_protection
 
-# ENABLE ONLYOFFICE
-if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
-
+# ENABLE COLLABORA
+if echo "$FLAP_SERVICES" | grep collabora
 then
-	php occ --quiet app:install documentserver_community
-	php occ --quiet app:install onlyoffice
+	php occ --quiet app:install richdocuments
 fi
 
 # MAIL
@@ -80,9 +78,7 @@ php occ --quiet config:system:set mail_smtpsecure --value "tls"
 php occ --quiet app:disable dashboard
 
 # DISABLE FUNCTIONALITIES
-php occ --quiet config:system:set updatechecker --value false --type boolean
 php occ --quiet config:system:set upgrade.disable-web --value true --type boolean
-php occ --quiet config:system:set appstoreenabled --value false --type boolean
 
 # CONFIGURE CACHE
 php occ --quiet config:system:set memcache.local --value '\OC\Memcache\Redis'

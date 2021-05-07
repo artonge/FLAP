@@ -17,12 +17,7 @@ Scenario("launch nextcloud", async ({I}) => {
 	I.seeInCurrentUrl(`https://files.${process.env.PRIMARY_DOMAIN_NAME}`)
 
 	I.wait(2)
-	if (await I.grabNumberOfVisibleElements("#firstrunwizard") > 0) {
-		I.pressKey('Escape')
-		I.waitToHide("#firstrunwizard")
-	}
-	
-	I.refreshPage()
+	I.pressKey('Escape')
 
 	I.waitForText("All files")
 	I.see("Deleted files")

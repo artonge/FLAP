@@ -1,13 +1,15 @@
 services:
-    image: collabora/code:latest
     collabora:
+        image: collabora/code:latest
         container_name: flap_collabora
         env_file: [$FLAP_DIR/collabora/collabora.env]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
+        volumes:
+            - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [nginx] SSL certificates
         networks:
             apps-net:
                 aliases: [collabora]
-        # cap_add:
-        # - MKNOD
+        cap_add:
+            - SYS_CHROOT
