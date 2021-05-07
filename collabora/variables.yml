@@ -1,0 +1,4 @@
+ENABLE_COLLABORA:
+    type: boolean
+    info: Enable Collabora.
+    group: services
