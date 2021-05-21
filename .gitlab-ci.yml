@@ -348,7 +348,7 @@ build_disk_image:
         - ssh root@flap.id "mv /mnt/volume1/armbian_build/output/images/Armbian_20.05.0-trunk_Odroidxu4_buster_current_5.4.23_minimal.img.gz /root/flap-$CI_COMMIT_REF_SLUG-$(date +"%Y.%m.%d")-odroidxu4.img.gz"
 
 deploy_doc:
-    step: deploy
+    stage: deploy
     needs: []
     only: [master]
     script:
