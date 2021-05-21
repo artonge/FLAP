@@ -144,52 +144,36 @@ test_cli:
     script:
         - docker exec flap flapctl test setup tls
 
-# Start the last production version of flap, then update to $CI_COMMIT_REF_NAME.
-.test_update:
-    stage: test
+setup_flap:
+    stage: setup
     extends: .start_flap
+    only: [branches]
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(eval $LATEST_TAG)
-    needs: []
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    artifacts:
+        paths:
+            - flap.tar.gz
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
-
-        # TODO: remove when we don't need to test versions older than v1.14.7.
-        - old_setup=$(docker exec flap flapctl tls help | grep generate_localhost)
-        - if "$old_setup"; then docker exec flap flapctl tls generate_localhost; fi
-        - if "$old_setup"; then docker exec flap flapctl restart; fi
-        - if "$old_setup"; then docker exec flap flapctl hooks post_domain_update; fi
 
         # Add content to SOGo so pre_backup hooks does not fails.
         - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
         # Sync nextcloud user base.
         - docker exec --user www-data flap_nextcloud php occ user:list
 
-        - docker exec flap flapctl update $CI_COMMIT_REF_NAME
+        # Backup $FLAP_DATA
+        - docker exec flap flapctl backup
+        - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
 
-        - test "$(docker exec flap flapctl migrate status)" == ""
-
-test_update_to_commit:
-    extends: .test_update
-    only: [branches]
-    variables:
-        LATEST_TAG: git tag --sort version:refname | tail -1
-
-test_update_to_tag:
-    extends: .test_update
-    only: [tags]
-    variables:
-        LATEST_TAG: git tag --sort version:refname | grep -B 1 $CI_COMMIT_REF_NAME | grep -v $CI_COMMIT_REF_NAME
-
-setup_with_serial_updates:
+.setup_with_serial_updates:
     stage: setup
     extends: .start_flap
-    # only: [tags]
+    only: [branches, tags]
     needs: []
     allow_failure: true
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(git tag --sort version:refname | tail -1 | head -1)
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(eval $BASE_VERSION)
     artifacts:
         paths:
             - flap.tar.gz
@@ -218,31 +202,20 @@ setup_with_serial_updates:
         - docker exec flap flapctl backup
         - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
 
-setup_flap:
-    stage: setup
-    extends: .start_flap
-    only: [branches]
+setup_with_serial_update_to_tag_1:
+    extends: .setup_with_serial_updates
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
-    artifacts:
-        paths:
-            - flap.tar.gz
-    script:
-        - docker exec flap flapctl users create_admin
-        - docker exec flap flapctl domains generate_local flap.test
+        BASE_VERSION: git tag --sort version:refname | tail -1 | head -1
 
-        # Add content to SOGo so pre_backup hooks does not fails.
-        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
-        # Sync nextcloud user base.
-        - docker exec --user www-data flap_nextcloud php occ user:list
-
-        # Backup $FLAP_DATA
-        - docker exec flap flapctl backup
-        - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
+setup_with_serial_update_to_tag_2:
+    extends: .setup_with_serial_updates
+    variables:
+        BASE_VERSION: git tag --sort version:refname | tail -1 | head -1
 
 .test_e2e:
     stage: test
     extends: .start_flap
+    only: [branches, tags]
     retry: 1
     artifacts:
         when: always
@@ -265,7 +238,6 @@ setup_flap:
         - apk add nodejs npm python3 make
 
         # Don't download chromium during puppeteer installation.
-        # shellcheck disable=SC2034
         - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
         # Install codecept and puppeteer.
@@ -273,6 +245,7 @@ setup_flap:
         - npm install codeceptjs puppeteer mocha-junit-reporter
 
         - docker exec flap flapctl exec home copyE2ETests
+        - cp "$CI_BUILDS_DIR"/flap_dir/home/e2e/tests/services/* ./e2e/tests/services
 
         - eval "$(docker exec flap flapctl config show)"
 
@@ -288,16 +261,23 @@ test_e2e_current:
         SCREEN_HEIGHT: "1080"
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
-test_e2e_after_serial_updates:
+test_e2e_after_serial_updates_1:
     extends: .test_e2e
-    # only: [tags]
-    needs: [setup_with_serial_updates]
+    needs: [setup_with_serial_update_to_tag_1]
     allow_failure: true
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
-        # FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}
+
+test_e2e_after_serial_updates_2:
+    extends: .test_e2e
+    needs: [setup_with_serial_update_to_tag_2]
+    allow_failure: true
+    variables:
+        SCREEN_WIDTH: "1920"
+        SCREEN_HEIGHT: "1080"
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
 
 build_disk_image:
     stage: build

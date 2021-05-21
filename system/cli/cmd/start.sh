@@ -39,12 +39,16 @@ Commands:
 		# Go to FLAP_DIR for docker-compose.
 		cd "$FLAP_DIR"
 		echo '* [start] Running services.'
-		docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E 'is up-to-date$' | cat
-
-		exit_code=${PIPESTATUS[0]}
-		if [ "$exit_code" != "0" ]
+		if [ "${FLAP_DEBUG:-}" == "true" ]
 		then
-			exit "$exit_code"
+			docker-compose --ansi never up --quiet-pull --detach
+		else
+			docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E 'is up-to-date$' | cat
+			exit_code=${PIPESTATUS[0]}
+			if [ "$exit_code" != "0" ]
+			then
+				exit "$exit_code"
+			fi
 		fi
 
 		# Wait dor services to be up.
