@@ -114,7 +114,7 @@ merge_upstream:
     - current_tag=$(git describe --tags --abbrev=0)
     - echo $current_tag
 
-    - next_tag=$(git tag --sort version:refname | grep -v rc | grep -A 1 "$current_tag" | grep -v "$current_tag" | grep -v flap | cat)
+    - next_tag=$(git tag --sort version:refname | grep -v rc | grep -A 1 "$current_tag" | grep -v "$current_tag" | grep -v flap) || true
     - echo $next_tag
 
     - if [ "$next_tag" == "" ]; then exit 0; fi
