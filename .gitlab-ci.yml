@@ -4,24 +4,24 @@ include:
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
-    FLAP_DEBUG: 'true'
+    FLAP_DEBUG: "true"
 
 stages:
-  - build
-  - setup
-  - test
-  - deploy  # dummy stage to follow the template guidelines
-  - review
-  - dast
-  - staging
-  - canary
-  - production
-  - incremental rollout 10%
-  - incremental rollout 25%
-  - incremental rollout 50%
-  - incremental rollout 100%
-  - performance
-  - cleanup
+    - build
+    - setup
+    - test
+    - deploy # dummy stage to follow the template guidelines
+    - review
+    - dast
+    - staging
+    - canary
+    - production
+    - incremental rollout 10%
+    - incremental rollout 25%
+    - incremental rollout 50%
+    - incremental rollout 100%
+    - performance
+    - cleanup
 
 test_script_executable:
     image: debian
@@ -189,14 +189,14 @@ setup_with_serial_updates:
     needs: []
     allow_failure: true
     variables:
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(git tag --sort version:refname | tail -3 | head -1)
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(git tag --sort version:refname | tail -2 | head -1)
     artifacts:
         paths:
             - flap.tar.gz
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
-        
+
         # TODO: remove when we don't need to test versions older than v1.14.7.
         - has_new_function=$(docker exec flap flapctl domains help | grep generate_local) || true
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl tls generate_localhost; fi
