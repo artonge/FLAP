@@ -352,5 +352,7 @@ deploy_doc:
     needs: []
     only: [master]
     script:
+        - apt update
+        - apt install -y rclone
         - rclone delete --config "$RCLONE_CONFIG" scaleway:docs.flap.cloud
         - rclone sync --verbose --config "$RCLONE_CONFIG" ./system/docs  scaleway:docs.flap.cloud
