@@ -22,7 +22,12 @@ Commands:
 		# - regenerate the config and retry.
 		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
-		docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
+		if [ "${FLAP_DEBUG:-}" == "true" ]
+		then
+			docker-compose --ansi never down --remove-orphans | cat
+		else
+			docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
+		fi
 
 		exit_code=${PIPESTATUS[0]}
 		if [ "$exit_code" != "0" ]
