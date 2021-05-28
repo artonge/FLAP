@@ -40,6 +40,8 @@ Preventing FLAP to access the internet is not supported but should be possible. 
 
 First you need to download and run the `install_flap.sh` script.
 
+All FLAP scripts, including this install script, expect to be executed as root so it can install some dependencies and manage docker.
+
 > [!WARNING]
 > **This script was tested on debian buster only.**
 
@@ -90,11 +92,13 @@ You can find more information on configuration options:
 
 ## First start
 
-You can now start FLAP for the first time:
+You can now start FLAP for the first time. Run the following command as root:
 
 ```bash
 flapctl start
 ```
+> [!ERROR]
+> If you see an error like: `/usr/bin/flapctl: line 13: FLAP_DIR: unbound variable`, try to open a new terminal.
 
 - If you are on the same network than your server: go to <http://flap.local>.
 - If your server is not on your network, you will need to setup your domain name and the first user in the terminal.
