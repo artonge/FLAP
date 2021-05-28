@@ -77,7 +77,9 @@ curl https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/
 
 `flapctl` also load environment variables from `$FLAP_DATA/system/flapctl.env`. This file is used to store configuration and feature flags options.
 
-You can find examples for:
+You need to create your `flapctl.env` file before starting FLAP for the first time.
+
+You can find examples bellow:
 
 - [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/vps.env)
 - [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/xu4.env)
