@@ -258,7 +258,6 @@ setup_with_serial_update_to_tag_2:
 
 test_e2e_current:
     extends: .test_e2e
-    only: [branches]
     needs: [setup_flap]
 
 test_e2e_after_serial_updates_1:
