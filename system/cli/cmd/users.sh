@@ -54,7 +54,7 @@ case $CMD in
 		fi
 
 		# HACK: wget output does not contain a new line, so the log is weird.
-		# We can not exec an 'echo ""' because when it fails the script return ealry.
+		# We can not exec an 'echo ""' because when it fails the script return early.
 		# We add a `| cat` to prevent exiting early on error.
 		# Then we catch the error code with PIPESTATUS, exec `echo ""` and return the exit code.
 		wget \
@@ -160,7 +160,7 @@ case $CMD in
 		echo "
 $(flapctl users summarize)
 Commands:
-	create_admin | [<username>] [<password>] [<fullname>] [<email>] [<isAdmin>] | Create first admin.
+	create | | Tool to create the first user on an instance.
 	list | | List existing users." | column -t -s "|"
 		;;
 esac
