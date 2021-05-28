@@ -76,6 +76,9 @@ Commands:
 		{
 			echo "* [update] Updating code from $current_tag to $target." &&
 			git checkout --force --recurse-submodules "$target" &&
+			# Hard clean the repo.
+			git add . &&
+			git reset --hard &&
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
