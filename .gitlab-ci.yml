@@ -335,3 +335,4 @@ deploy_doc:
         - apk add rclone
         - rclone delete --config "$RCLONE_CONFIG" scaleway:docs.flap.cloud
         - rclone sync --verbose --config "$RCLONE_CONFIG" ./system/docs  scaleway:docs.flap.cloud
+        - rclone sync --config "$RCLONE_CONFIG" --exclude '**/node_modules/' --exclude ''.git/ ./  scaleway:docs.flap.cloud/src
