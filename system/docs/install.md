@@ -63,10 +63,10 @@ This will do the following action, please ensure none of them will break your sy
 ```bash
 echo "Getting and running flap_install.sh script."
 curl https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/overlay/install_flap.sh | bash
-
-echo "Loading new environment variables."
-source /etc/environment
 ```
+
+> [!ATTENTION]
+> You need to log out and in again to make use of the new environment variables.
 
 ## Configuration file
 
@@ -97,11 +97,16 @@ You can now start FLAP for the first time. Run the following command as root:
 ```bash
 flapctl start
 ```
-> [!ERROR]
-> If you see an error like: `/usr/bin/flapctl: line 13: FLAP_DIR: unbound variable`, try to open a new terminal.
 
 - If you are on the same network than your server: go to <http://flap.local>.
 - If your server is not on your network, you will need to setup your domain name and the first user in the terminal.
+
+> [!TIP]
+> You can make `flapctl` more verbose by settings the `FLAP_DEBUG` environment variable to true.
+>
+> Either run `export FLAP_DEBUG=true` or add it to your `flapctl.env` file to make it permanent.
+>
+> If you **really** want to debug, you can add `set -x` at the top of any script file to see every command as they are run.
 
 ## Set the domain name
 
