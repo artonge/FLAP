@@ -217,6 +217,10 @@ setup_with_serial_update_to_tag_2:
     extends: .start_flap
     only: [branches, tags]
     retry: 1
+    variables:
+        SCREEN_WIDTH: "1920"
+        SCREEN_HEIGHT: "1080"
+        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     artifacts:
         when: always
         reports:
@@ -256,28 +260,15 @@ test_e2e_current:
     extends: .test_e2e
     only: [branches]
     needs: [setup_flap]
-    variables:
-        SCREEN_WIDTH: "1920"
-        SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
 test_e2e_after_serial_updates_1:
     extends: .test_e2e
     needs: [setup_with_serial_update_to_tag_1]
-    allow_failure: true
-    variables:
-        SCREEN_WIDTH: "1920"
-        SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
 
 test_e2e_after_serial_updates_2:
     extends: .test_e2e
     needs: [setup_with_serial_update_to_tag_2]
     allow_failure: true
-    variables:
-        SCREEN_WIDTH: "1920"
-        SCREEN_HEIGHT: "1080"
-        FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
 
 build_disk_image:
     stage: build
