@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ue
+set -eu
 
 # generatePassword <service> <var_name>
 # Will store a password in a file in the service's `passwd` directory.
@@ -18,7 +18,7 @@ export -f generatePassword
 
 # debug <string>
 debug() {
-	if "${FLAP_DEBUG:-false}"
+	if [ "${FLAP_DEBUG:-false}" == "true" ]
 	then
 		echo "$1"
 	fi
