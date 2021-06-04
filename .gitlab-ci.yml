@@ -27,7 +27,10 @@ test_script_executable:
     image: debian
     stage: test
     needs: []
-    only: [branches]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
     script:
         - find . -path './**/node_modules' -prune -o  -name '*.sh' ! -executable -print
         - test $(find . -path './**/node_modules' -prune -o  -name '*.sh' ! -executable -print | wc -l) == "0"
@@ -36,7 +39,10 @@ shellcheck:
     image: koalaman/shellcheck-alpine:latest
     stage: test
     needs: []
-    only: [branches]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
     before_script:
         - shellcheck --version
     script:
@@ -49,11 +55,32 @@ test_dockerfile_sanity:
         entrypoint: [""]
     stage: test
     needs: []
-    only: [branches]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
     before_script:
         - conftest --version
     script:
         - find ./ -name Dockerfile | xargs -I {} conftest test --policy dockerfile-security.rego {}
+
+build:
+    rules:
+        - when: never
+
+build_docker_image:
+    stage: build
+    image: docker:stable
+    services: ["docker:dind"]
+    script:
+        - DOCKER_DRIVER=overlay2
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+        - >
+            docker build \
+                --tag $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA} \
+                --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME \
+                ./
+        - docker push $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
 .start_flap:
     image: docker:stable
@@ -61,7 +88,7 @@ test_dockerfile_sanity:
         - name: docker:dind
           # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
           alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test
-    needs: [build]
+    needs: [build_docker_image]
     before_script:
         # Get DinD's ip.
         - FLAP_IP=$(cat /etc/hosts | grep flap.local | cut -f1)
@@ -137,8 +164,11 @@ test_dockerfile_sanity:
 test_cli:
     stage: test
     extends: .start_flap
-    only: [branches]
-    needs: [build]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
+    needs: [build_docker_image]
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     script:
@@ -147,7 +177,10 @@ test_cli:
 setup_flap:
     stage: setup
     extends: .start_flap
-    only: [branches]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     artifacts:
@@ -169,7 +202,10 @@ setup_flap:
 .setup_with_serial_updates:
     stage: setup
     extends: .start_flap
-    only: [branches, tags]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
     needs: []
     allow_failure: true
     variables:
@@ -215,7 +251,10 @@ setup_with_serial_update_to_tag_2:
 .test_e2e:
     stage: test
     extends: .start_flap
-    only: [branches, tags]
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
     retry: 1
     artifacts:
         when: always
@@ -254,7 +293,6 @@ setup_with_serial_update_to_tag_2:
 
 test_e2e_current:
     extends: .test_e2e
-    only: [branches]
     needs: [setup_flap]
     variables:
         SCREEN_WIDTH: "1920"
@@ -282,8 +320,9 @@ test_e2e_after_serial_updates_2:
 build_disk_image:
     stage: build
     image: ubuntu:18.04
-    when: manual
-    only: [tags]
+    rules:
+        - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-flap\.\d+/'
+          when: manual
     allow_failure: true
     artifacts:
         name: "$CI_COMMIT_REF_NAME"
@@ -330,7 +369,8 @@ build_disk_image:
 deploy_doc:
     stage: deploy
     needs: []
-    only: [master]
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "master"'
     script:
         - apk add rclone
         - rclone sync --verbose --config "$RCLONE_CONFIG" ./system/docs  scaleway:docs.flap.cloud
