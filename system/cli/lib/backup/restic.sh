@@ -2,11 +2,16 @@
 
 set -eu
 
+if [ "${FLAP_DEBUG:-}" != "true" ]
+then
+	args=(--quiet)
+fi
+
 # Restic arguments are passed with environment variables.
 # https://restic.readthedocs.io/en/stable/040_backup.html#environment-variables
 
 # Alias restic to reduce its resource usage.
-restic() { nice --adjustment 10 ionice --class 2 restic "$@"; }
+restic() { nice --adjustment 10 ionice --class 2 restic "${args[@]}" "$@"; }
 
 # Exit early if restic does not have the correct environment variables.
 if [ "${RESTIC_REPOSITORY:-}" == "" ] || [ "${RESTIC_PASSWORD:-}" == "" ]
@@ -22,17 +27,17 @@ fi
 CMD=${1:-}
 case $CMD in
 	backup)
-		restic backup --quiet "$FLAP_DATA" --tag "$FLAP_VERSION"
-		restic forget --quiet --prune --keep-hourly 2 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
-		restic rebuild-index --quiet
+		restic backup "$FLAP_DATA" --tag "$FLAP_VERSION"
+		restic forget --prune --keep-hourly 2 --keep-daily 7 --keep-weekly 5 --keep-monthly 12
+		restic rebuild-index
 		if [ "${FLAG_NO_BACKUP_CHECK:-}" != "true" ]
 		then
-			restic check --quiet
+			restic check
 		fi
 	;;
 	restore)
 		snapshot_id=${2:-"$(restic snapshots --last --json --path "$FLAP_DATA" | jq --raw-output '.[-1].id')"}
-		restic restore --quiet --target / "$snapshot_id"
+		restic restore --target / "$snapshot_id"
 	;;
 	list)
 		restic snapshots
