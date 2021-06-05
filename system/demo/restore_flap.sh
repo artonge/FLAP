@@ -14,9 +14,6 @@ mkdir -p /flap/system
 touch /flap/system/flapctl.env
 flapctl backup restore
 
-echo STARTING
-flapctl start
-
 echo UPDATING
 flapctl update
 
