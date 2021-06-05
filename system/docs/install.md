@@ -40,6 +40,8 @@ Preventing FLAP to access the internet is not supported but should be possible. 
 
 First you need to download and run the `install_flap.sh` script.
 
+All FLAP scripts, including this install script, expect to be executed as root so it can install some dependencies and manage docker.
+
 > [!WARNING]
 > **This script was tested on debian buster only.**
 
@@ -61,10 +63,10 @@ This will do the following action, please ensure none of them will break your sy
 ```bash
 echo "Getting and running flap_install.sh script."
 curl https://gitlab.com/flap-box/flap/-/raw/master/system/img_build/userpatches/overlay/install_flap.sh | bash
-
-echo "Loading new environment variables."
-source /etc/environment
 ```
+
+> [!ATTENTION]
+> You need to log out and in again to make use of the new environment variables.
 
 ## Configuration file
 
@@ -75,7 +77,9 @@ source /etc/environment
 
 `flapctl` also load environment variables from `$FLAP_DATA/system/flapctl.env`. This file is used to store configuration and feature flags options.
 
-You can find examples for:
+You need to create your `flapctl.env` file before starting FLAP for the first time.
+
+You can find examples bellow:
 
 - [VPS](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/vps.env)
 - [Home server](https://gitlab.com/flap-box/flap/-/tree/master/system/flapctl.examples.d/xu4.env)
@@ -90,7 +94,7 @@ You can find more information on configuration options:
 
 ## First start
 
-You can now start FLAP for the first time:
+You can now start FLAP for the first time. Run the following command as root:
 
 ```bash
 flapctl start
@@ -98,6 +102,13 @@ flapctl start
 
 - If you are on the same network than your server: go to <http://flap.local>.
 - If your server is not on your network, you will need to setup your domain name and the first user in the terminal.
+
+> [!TIP]
+> You can make `flapctl` more verbose by settings the `FLAP_DEBUG` environment variable to true.
+>
+> Either run `export FLAP_DEBUG=true` or add it to your `flapctl.env` file to make it permanent.
+>
+> If you **really** want to debug, you can add `set -x` at the top of any script file to see every command as they are run.
 
 ## Set the domain name
 

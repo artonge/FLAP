@@ -38,6 +38,7 @@ case $CMD in
 
 		if [ "$exit_code" != "0" ]
 		then
+			echo "Could not the contact home docker container, make sure your containers are up."
 			exit "$exit_code"
 		fi
 
@@ -45,6 +46,29 @@ case $CMD in
 
 		echo ""
 		echo "* [users] The domain '$domainname was added."
+		;;
+	delete)
+		domainname=$2
+
+		echo "Do you really want to delete $domainname, make sure no services depend on it ? [Y/N]:"
+		read -r answer
+
+		if [ "$answer" == "${answer#[Yy]}" ]
+		then
+			exit 0
+		fi
+
+		# Unset the domain as primary if needed.
+		if [ "$(flapctl domains primary)" == "$domainname" ]
+		then
+			echo "" > "$FLAP_DATA/system/data/primary_domain.txt"
+		fi
+
+		rm -rf "$FLAP_DATA/system/data/domains/$domainname"
+
+		touch "$FLAP_DATA/system/data/domain_update_delete.txt"
+		
+		flapctl domains handle_request
 		;;
 	generate_local)
 		domain=${2:-flap.test}
