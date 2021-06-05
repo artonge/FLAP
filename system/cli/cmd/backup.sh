@@ -38,8 +38,8 @@ case $CMD in
 		cd "$FLAP_DIR"
 		if [ "$(git rev-parse --abbrev-ref HEAD)" == "HEAD" ]
 		then
-			echo "* [backup] Checking out $version."
 			version=$(cat "$FLAP_DATA"/system/version.txt)
+			echo "* [backup] Checking out $version."
 			git checkout "$version"
 		fi
 
@@ -48,7 +48,6 @@ case $CMD in
 		flapctl config show
 	
 		flapctl config generate
-		flapctl tls generate
 		flapctl hooks post_restore
 		flapctl start
 		flapctl ports setup
