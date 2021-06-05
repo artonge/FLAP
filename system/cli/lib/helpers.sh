@@ -56,6 +56,13 @@ get_saml_metadata() {
 
 	args=()
 
+	# Exit early if the domain is empty.
+	# This can happen during the deletion of the only domain name.
+	if [ "${domain:-}" == "" ]
+	then
+		exit 0
+	fi
+
 	# Check certificates with local CA for local domains.
 	provider=$(cat "$FLAP_DATA/system/data/domains/$domain/provider.txt")
 	if [ "$provider" == "local" ]

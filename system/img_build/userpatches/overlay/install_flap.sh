@@ -165,6 +165,9 @@ then
 	git checkout --force --recurse-submodules "$BRANCH_OR_TAG"
 fi
 
+echo "CREATING FLAP_DATA DIRECTORY"
+mkdir --parent "$FLAP_DATA/system"
+
 echo "INSTALLING FLAP'S SYSTEMD SERVICE"
 cp "$FLAP_DIR/system/flap.service" /etc/systemd/system
 if [ "$(command -v systemctl || true)" != "" ]
