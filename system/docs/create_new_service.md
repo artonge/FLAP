@@ -67,13 +67,45 @@ If the service needs to be exposed by Nginx you can add a `nginx.conf` file.
 
 The `nginx.conf` file will be copied for each registered domains.
 
-`nginx.conf` file will are also template, so you can use all the environment variables listed by `flapctl config show`. There is also the `$DOMAIN_NAME` variable that will be replaced by each registered domains.
+`nginx.conf` files are also templates, so you can use all the environment variables listed by `flapctl config show`. There is also the `$DOMAIN_NAME` variable that will be replaced by each registered domains.
 
 <!-- div:right-panel -->
 
 For example, home:
 
 [home/nginx.conf](src/home/nginx.conf ':include :type=code nginx')
+
+<!-- panels:end -->
+
+---
+
+### `<service>/config/nginx-*-extra.conf`
+
+<!-- div:left-panel -->
+
+This kind of files allow the the service to add an extra configuration to nginx.
+
+<!-- div:right-panel -->
+
+For example, Synapse can only be exposed on a single domain, so it can't use the default `nginx.conf` file. Therefore, an `nginx-*-extra.conf` file has been created to only expose synapse on one domain.
+
+[synapse/config/nginx-synapse-extra.template.conf](src/synapse/config/nginx-synapse-extra.template.conf ':include :type=code nginx')
+
+<!-- panels:end -->
+
+---
+
+### `<service>/config/nginx-*-root.conf`
+
+<!-- div:left-panel -->
+
+This kind of files allow the the service to add configuration for the root domain.
+
+<!-- div:right-panel -->
+
+For example, SOGo need adds `.well-known` endpoint to redirect caldav and cardav requests to himself.
+
+[sogo/config/nginx-sogo-dav-root.conf](src/sogo/config/nginx-sogo-dav-root.conf ':include :type=code nginx')
 
 <!-- panels:end -->
 
