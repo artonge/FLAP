@@ -15,7 +15,7 @@ Scenario("launch element", async ({I}) => {
 	I.switchToNextTab()
 	I.seeInCurrentUrl(`https://chat.${process.env.PRIMARY_DOMAIN_NAME}`)
 
-	I.waitForText("Sign in with single sign-on")
+	I.waitForText("Continue with SAML")
 	I.click(".mx_SSOButton")
 	I.click("Continue")
 
