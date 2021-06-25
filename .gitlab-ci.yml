@@ -68,8 +68,6 @@ build_docker_image:
     stage: build
     image: docker:stable
     services: ["docker:dind"]
-    rules:
-        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     script:
         - DOCKER_DRIVER=overlay2
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
