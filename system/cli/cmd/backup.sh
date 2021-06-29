@@ -11,6 +11,8 @@ fi
 
 case $CMD in
 	"")
+		flapctl start
+
 		if [ "${FLAP_DEBUG:-}" == "true" ]
 		then
 			output=/dev/stdout

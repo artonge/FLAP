@@ -7,3 +7,4 @@ config/synapse.allow_registrations.yaml
 config/element.json
 
 config/nginx-synapse-extra.conf
+config/nginx-matrix-root.conf

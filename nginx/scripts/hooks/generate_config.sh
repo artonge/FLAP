@@ -48,6 +48,22 @@ do
 		[[ -e "$config" ]] || break # break if config does not exists.
 
 		cp "$config" "$FLAP_DIR/nginx/config/conf.d/extra.d/"
-		echo "include /etc/nginx/conf.d/extra.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/extra.conf"
+		debug "include /etc/nginx/conf.d/extra.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/extra.conf"
+	done
+done
+
+debug "Copy all nginx-root files."
+rm -rf "$FLAP_DIR/nginx/config/conf.d/root.d"
+mkdir -p "$FLAP_DIR/nginx/config/conf.d/root.d"
+rm -f "$FLAP_DIR/nginx/config/conf.d/root.conf"
+touch "$FLAP_DIR/nginx/config/conf.d/root.conf"
+for service in $FLAP_SERVICES
+do
+	for config in "$FLAP_DIR/$service"/config/nginx-*-root.conf
+	do
+		[[ -e "$config" ]] || break # break if config does not exists.
+
+		cp "$config" "$FLAP_DIR/nginx/config/conf.d/root.d/"
+		debug "include /etc/nginx/conf.d/root.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/root.conf"
 	done
 done
