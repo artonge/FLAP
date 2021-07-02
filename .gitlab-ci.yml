@@ -242,7 +242,12 @@ setup_with_serial_update_to_tag_1:
 setup_with_serial_update_to_tag_2:
     extends: .setup_with_serial_updates
     variables:
-        BASE_VERSION: git tag --sort version:refname | tail -1 | head -1
+        BASE_VERSION: git tag --sort version:refname | tail -2 | head -1
+
+setup_with_serial_update_to_tag_3:
+    extends: .setup_with_serial_updates
+    variables:
+        BASE_VERSION: git tag --sort version:refname | tail -3 | head -1
 
 .test_e2e:
     stage: test
@@ -302,6 +307,11 @@ test_e2e_after_serial_updates_1:
 test_e2e_after_serial_updates_2:
     extends: .test_e2e
     needs: [setup_with_serial_update_to_tag_2]
+    allow_failure: true
+
+test_e2e_after_serial_updates_3:
+    extends: .test_e2e
+    needs: [setup_with_serial_update_to_tag_3]
     allow_failure: true
 
 build_disk_image:
