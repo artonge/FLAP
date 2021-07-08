@@ -48,7 +48,7 @@ do
 		[[ -e "$config" ]] || break # break if config does not exists.
 
 		cp "$config" "$FLAP_DIR/nginx/config/conf.d/extra.d/"
-		debug "include /etc/nginx/conf.d/extra.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/extra.conf"
+		echo "include /etc/nginx/conf.d/extra.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/extra.conf"
 	done
 done
 
@@ -64,6 +64,6 @@ do
 		[[ -e "$config" ]] || break # break if config does not exists.
 
 		cp "$config" "$FLAP_DIR/nginx/config/conf.d/root.d/"
-		debug "include /etc/nginx/conf.d/root.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/root.conf"
+		echo "include /etc/nginx/conf.d/root.d/$(basename "$config");" >> "$FLAP_DIR/nginx/config/conf.d/root.conf"
 	done
 done
