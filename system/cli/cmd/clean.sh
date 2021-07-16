@@ -89,9 +89,9 @@ case $CMD in
         echo '* [clean] Cleaning docker objects.'
 
         # Remove docker objects
-        docker container prune --force
-        docker network   prune --force
-        docker image     prune --force --all
+        docker --log-level warn container prune --force
+        docker --log-level warn network   prune --force
+        docker --log-level warn image     prune --force --all
         ;;
     ""|"-y")
         if [ "${1:-}" != "-y" ]
