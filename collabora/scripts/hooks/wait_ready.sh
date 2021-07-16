@@ -2,11 +2,11 @@
 
 set -eu
 
-i=0
+i=1
 until docker-compose logs collabora | grep "Read to accept connections on port 9980." > /dev/null
 do
     (( i++ ))
-    if [ "$i" == "10" ]
+    if [ "$i" == "50" ]
     then
         docker-compose logs collabora
         exit 1
