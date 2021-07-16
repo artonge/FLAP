@@ -47,7 +47,7 @@ shellcheck:
         - shellcheck --version
     script:
         - apk add git
-        - git ls-files --exclude='*.sh' --ignored | xargs shellcheck --external-sources --shell=bash
+        - git ls-files '*.sh' -z | xargs -r0 shellcheck --external-sources --shell=bash
 
 test_dockerfile_sanity:
     image:
