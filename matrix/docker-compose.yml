@@ -18,7 +18,7 @@ services:
                 aliases: [synapse]
 
     element:
-        image: registry.gitlab.com/flap-box/element:v1.7.32-flap.1
+        image: registry.gitlab.com/flap-box/element:latest
         container_name: flap_element
         restart: unless-stopped
         logging:
