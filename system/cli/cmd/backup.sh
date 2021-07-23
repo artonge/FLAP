@@ -13,6 +13,8 @@ case $CMD in
 	"")
 		flapctl start
 
+		flapctl version > "$FLAP_DATA/system/version.txt"
+
 		if [ "${FLAP_DEBUG:-}" == "true" ]
 		then
 			output=/dev/stdout
@@ -48,7 +50,7 @@ case $CMD in
 		echo "* [backup] Starting reanimation with the following flapctl.env."
 		cat "$FLAP_DATA/system/flapctl.env"
 		flapctl config show
-	
+
 		flapctl config generate
 		flapctl hooks post_restore
 		flapctl start
