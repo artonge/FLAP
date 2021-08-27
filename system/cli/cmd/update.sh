@@ -21,7 +21,7 @@ Commands:
 		;;
 	images)
 		services_to_restart=()
-	
+
 		for service in $FLAP_SERVICES
 		do
 			mapfile -t sub_services < <(yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml");
@@ -30,7 +30,7 @@ Commands:
 			do
 				# shellcheck disable=SC2016
 				image=$(yq -r --arg sub_service "$sub_service" '.services[$sub_service].image' "$FLAP_DIR/$service/docker-compose.yml")
-	
+
 				image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
 				docker-compose pull --quiet "$sub_service"
 				new_image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
@@ -116,7 +116,7 @@ Commands:
 		flapctl ports setup
 		flapctl setup firewall
 		flapctl setup cron
-			
+
 		# Get new current HEAD.
 		current_head=$(git rev-parse --abbrev-ref HEAD)
 		if [ "$current_head" == "HEAD" ]
@@ -130,7 +130,7 @@ Commands:
 			exit 1
 		fi
 
-		echo "$current_head" > "$FLAP_DATA/system/version.txt"
+		flapctl version > "$FLAP_DATA/system/version.txt"
 
 		# Recursively continue to newer updates.
 		flapctl update
