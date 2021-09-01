@@ -11,8 +11,6 @@ fi
 
 case $CMD in
 	"")
-		flapctl start
-
 		flapctl version > "$FLAP_DATA/system/version.txt"
 
 		if [ "${FLAP_DEBUG:-}" == "true" ]
