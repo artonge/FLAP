@@ -2,9 +2,6 @@
 
 set -eu
 
-# Temporary enable the app store to allow installing apps.
-php occ --quiet config:system:set appstoreenabled --value true --type boolean
-
 # CHANGE DATA DIRECTORY
 php occ --quiet config:system:set datadirectory --value '/data'
 
