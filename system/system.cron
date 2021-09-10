@@ -1,7 +1,7 @@
 @reboot      flapctl ports setup > /dev/null
 
 @midnight    flapctl update
-@daily      flapctl update images
+@daily       flapctl update images > /dev/null
 
 @hourly      flapctl ports setup > /dev/null
 
