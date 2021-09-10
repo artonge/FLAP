@@ -54,12 +54,6 @@ php occ --quiet app:enable previewgenerator
 # ENABLE RANSOMWARE PLUGINS
 php occ --quiet app:enable ransomware_protection
 
-# ENABLE COLLABORA
-if echo "$FLAP_SERVICES" | grep collabora
-then
-	php occ --quiet app:install richdocuments
-fi
-
 # MAIL
 php occ --quiet config:system:set mail_smtpmode --value "smtp"
 php occ --quiet config:system:set mail_sendmailmode --value "smtp"

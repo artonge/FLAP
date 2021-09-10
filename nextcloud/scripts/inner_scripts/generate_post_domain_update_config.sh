@@ -23,6 +23,8 @@ done
 # SET COLLABORA DOMAIN
 if echo "$FLAP_SERVICES" | grep collabora
 then
+	php occ --quiet app:install richdocuments
+
 	php occ --quiet config:app:set richdocuments wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
 	php occ --quiet config:app:set richdocuments public_wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
 	php occ --quiet config:app:set richdocuments disable_certificate_verification --value "no"
