@@ -180,6 +180,7 @@ build_docker_image:
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then tar -xzf flap.$SERVICE_BUNDLE_NAME.tar.gz -C $CI_BUILDS_DIR/..; fi
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
+        - docker exec flap flapctl config show
         - docker exec flap flapctl start
 
 # Run start_flap and CLI unit tests
@@ -319,6 +320,13 @@ setup_from_3:
         - cp "$CI_BUILDS_DIR"/flap_dir/home/e2e/tests/services/* ./e2e/tests/services
 
         - eval "$(docker exec flap flapctl config show)"
+
+        - df -h
+        - docker ps
+        - docker exec flap df -h
+        - docker exec flap docker ps
+        - docker exec flap docker exec flap_collabora df -h
+        - docker exec flap_collabora df -h
 
         # Run e2e tests.
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter

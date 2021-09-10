@@ -31,6 +31,8 @@ Scenario("launch collabora", async ({I}) => {
 	I.click("Create")
 
 	I.wait(2)
+	I.click("OK")
+
 	within({frame: ['#richdocumentsframe', '#loleafletframe'] as any}, () => {
 		I.waitForText("File")
 		I.see("Home")
