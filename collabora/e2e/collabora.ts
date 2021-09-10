@@ -19,7 +19,7 @@ Scenario("launch collabora", async ({I}) => {
 
 	I.wait(2)
 	I.pressKey('Escape')
-	
+
 	I.waitForText("All files")
 
 	I.click(".button.new")
@@ -41,6 +41,6 @@ Scenario("launch collabora", async ({I}) => {
 		I.fillField("#document-canvas", "New text document content.")
 		I.click("#closebutton")
 	})
-	
+
 	I.waitUrlEquals(`https://files.${process.env.PRIMARY_DOMAIN_NAME}/apps/files/?dir=/`)
 })
