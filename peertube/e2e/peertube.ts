@@ -1,6 +1,6 @@
 Feature("peertube")
 
-Scenario("launch peertube", async ({I}) => {
+Scenario("launch peertube", async ({ I }) => {
 	I.amOnPage("/")
 	I.login("theadmin", "password")
 
@@ -26,7 +26,7 @@ Scenario("launch peertube", async ({I}) => {
 	I.see("My library")
 
 	I.click("Remind me later")
-	
+
 	I.wait(2)
 	I.click(".logged-in-more")
 
