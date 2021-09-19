@@ -25,6 +25,8 @@ Scenario("launch peertube", async ({ I }) => {
 	I.waitForText("My account")
 	I.see("My library")
 
+	I.click("Remind me later")
+
 	I.wait(2)
 	I.click(".logged-in-more")
 
