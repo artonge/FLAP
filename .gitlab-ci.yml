@@ -80,6 +80,20 @@ build_docker_image:
 
 .start_flap:
     image: docker:stable
+    parallel:
+        matrix:
+            - SERVICE_BUNDLE_NAME: office
+              ENABLE_NEXTCLOUD: "true"
+              ENABLE_SOGO: "true"
+              ENABLE_MATRIX: "true"
+              ENABLE_JITSI: "true"
+              ENABLE_MONITORING: "true"
+            - SERVICE_BUNDLE_NAME: social
+              ENABLE_PEERTUBE: "true"
+              ENABLE_FUNKWHALE: "true"
+              ENABLE_MAILMAN: "true"
+              ENABLE_MONITORING: "true"
+              ENABLE_MATOMO: "true"
     services:
         - name: docker:dind
           # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
@@ -130,8 +144,18 @@ build_docker_image:
                 --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
                 --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
                 --env COMPOSE_HTTP_TIMEOUT=800 \
-                --env CI_JOB_NAME=$CI_JOB_NAME \
+                --env CI_JOB_NAME="$CI_JOB_NAME" \
                 --env FLAP_DEBUG=$FLAP_DEBUG \
+            \
+                --env ENABLE_NEXTCLOUD=$ENABLE_NEXTCLOUD \
+                --env ENABLE_SOGO=$ENABLE_SOGO \
+                --env ENABLE_MATRIX=$ENABLE_MATRIX \
+                --env ENABLE_JITSI=$ENABLE_JITSI \
+                --env ENABLE_PEERTUBE=$ENABLE_PEERTUBE \
+                --env ENABLE_FUNKWHALE=$ENABLE_FUNKWHALE \
+                --env ENABLE_MAILMAN=$ENABLE_MAILMAN \
+                --env ENABLE_MONITORING=$ENABLE_MONITORING \
+                --env ENABLE_MATOMO=$ENABLE_MATOMO \
             \
                 $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
@@ -145,14 +169,14 @@ build_docker_image:
 
         # Copy flapctl.env for pipeline.
         - mkdir --parents $CI_BUILDS_DIR/flap_data/system
-        - if [ ! -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
+        - if [ ! -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
 
         # Restore flap_data if it exists.
         - ls $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/
-        - if [ -f flap.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
         - apk add tar
-        - if [ -f flap.tar.gz ]; then tar -xzf flap.tar.gz -C $CI_BUILDS_DIR/..; fi
-        - if [ -f flap.tar.gz ]; then docker exec flap flapctl backup restore; fi
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then tar -xzf flap.$SERVICE_BUNDLE_NAME.tar.gz -C $CI_BUILDS_DIR/..; fi
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
         - docker exec flap flapctl start
 
@@ -181,19 +205,19 @@ setup_flap:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
     artifacts:
         paths:
-            - flap.tar.gz
+            - flap.$SERVICE_BUNDLE_NAME.tar.gz
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
         # Add content to SOGo so pre_backup hooks does not fails.
-        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+        - if [ "$ENABLE_SOGO" == "true" ]; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
-        - docker exec --user www-data flap_nextcloud php occ user:list
+        - if [ "$ENABLE_NEXTCLOUD" == "true" ]; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
         # Backup $FLAP_DATA
         - docker exec flap flapctl backup
-        - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
+        - tar -czf flap.$SERVICE_BUNDLE_NAME.tar.gz $CI_BUILDS_DIR/flap_backup
 
 .setup_with_serial_updates:
     stage: setup
@@ -203,12 +227,11 @@ setup_flap:
         - if: '$CI_COMMIT_BRANCH == "master"'
         - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/'
     needs: []
-    allow_failure: true
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(eval $BASE_VERSION)
     artifacts:
         paths:
-            - flap.tar.gz
+            - flap.$SERVICE_BUNDLE_NAME.tar.gz
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
@@ -220,9 +243,9 @@ setup_flap:
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
 
         # Add content to SOGo so pre_backup hooks does not fails.
-        - docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+        - if [ "$ENABLE_SOGO" == "true" ]; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
-        - docker exec --user www-data flap_nextcloud php occ user:list
+        - if [ "$ENABLE_NEXTCLOUD" == "true" ]; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
         - docker exec flap flapctl update
 
@@ -232,7 +255,7 @@ setup_flap:
 
         # Backup $FLAP_DATA
         - docker exec flap flapctl backup
-        - tar -czf flap.tar.gz $CI_BUILDS_DIR/flap_backup
+        - tar -czf flap.$SERVICE_BUNDLE_NAME.tar.gz $CI_BUILDS_DIR/flap_backup
 
 setup_with_serial_update_to_tag_1:
     extends: .setup_with_serial_updates
