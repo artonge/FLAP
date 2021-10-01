@@ -2,6 +2,9 @@
 
 ---
 
+> [!ATTENTION]
+> Installation is not as smooth as we would like it to be. Please come ask for help or share your feedback on the matrix chanel: [#flap-software:matrix.org](https://app.element.io/#/room/#flap-software:matrix.org).
+
 ## Requirements
 
 ### Hardware
