@@ -61,7 +61,7 @@ ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 Adding the following line to your `/etc/hosts` file:
 
 ```txt
-127.0.0.1 flap.test auth.flap.test home.flap.test lemon.flap.test monitoring.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test weblate.flap.test analytics.flap.test video.flap.test music.flap.test lists.flap.test office.flap.test
+127.0.0.1 flap.test auth.flap.test home.flap.test lemon.flap.test monitoring.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test jitsi.flap.test coturn.flap.test weblate.flap.test analytics.flap.test video.flap.test music.flap.test lists.flap.test office.flap.test blog.flap.test
 ```
 
 ## Setup feature flags

@@ -54,6 +54,7 @@ docker run \
 	--add-host="music.flap.test:$FLAP_IP" \
 	--add-host="lists.flap.test:$FLAP_IP" \
 	--add-host="office.flap.test:$FLAP_IP" \
+	--add-host="blog.flap.test:$FLAP_IP" \
 	docker:stable \
 	sh
 
@@ -93,6 +94,7 @@ docker run \
 	--add-host="music.flap.test:$FLAP_IP" \
 	--add-host="lists.flap.test:$FLAP_IP" \
 	--add-host="office.flap.test:$FLAP_IP" \
+	--add-host="blog.flap.test:$FLAP_IP" \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \

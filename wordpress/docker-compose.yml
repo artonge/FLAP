@@ -1,0 +1,23 @@
+services:
+    wordpress:
+        image: wordpress:5.8-fpm
+        container_name: flap_wordpress
+        env_file: [$FLAP_DIR/wordpress/wordpress.env]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        depends_on: [postgres, redis, ldap]
+        volumes:
+            - ${FLAP_DATA}/wordpress/saml:/saml/wordpress:ro # [hd] -> [wordpress] wordpress's SAML keys.
+            - ${FLAP_DATA}/lemon/saml:/saml/idp:ro # [hd] -> [wordpress] IDP's SAML keys.
+
+            - ${FLAP_DATA}/wordpress/data:/data # [wordpress] <-> [hd] Data
+            - ${FLAP_DATA}/wordpress/config:/var/www/html/config # [wordpress] <-> [hd] Config
+            - ${FLAP_DATA}/wordpress/html:/var/www/html # [wordpress] <-> [hd] WWW
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [wordpress]
+
+x-nginx-extra-volumes:
+    - ${FLAP_DATA}/wordpress/html:/var/www/wordpress:ro # [emmc] -> [nginx] wordpress static files.

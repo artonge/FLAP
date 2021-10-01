@@ -1,0 +1,4 @@
+ENABLE_WORDPRESS:
+    type: boolean
+    info: Enable Wordpress.
+    group: services

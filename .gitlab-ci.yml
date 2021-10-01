@@ -82,23 +82,26 @@ build_docker_image:
     image: docker:stable
     parallel:
         matrix:
-            - SERVICE_BUNDLE_NAME: office
+            - SERVICE_BUNDLE_NAME: base
               ENABLE_NEXTCLOUD: "true"
               ENABLE_COLLABORA: "true"
               ENABLE_SOGO: "true"
               ENABLE_MATRIX: "true"
+              ENABLE_MONITORING: "true"
+            - SERVICE_BUNDLE_NAME: office
               ENABLE_JITSI: "true"
+              ENABLE_MATOMO: "true"
+              ENABLE_WORDPRESS: "true"
               ENABLE_MONITORING: "true"
             - SERVICE_BUNDLE_NAME: social
               ENABLE_PEERTUBE: "true"
               ENABLE_FUNKWHALE: "true"
               ENABLE_MAILMAN: "true"
               ENABLE_MONITORING: "true"
-              ENABLE_MATOMO: "true"
     services:
         - name: docker:dind
           # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
-          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test office.flap.test
+          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test office.flap.test blog.flap.test
     needs: [build_docker_image]
     before_script:
         # Get DinD's ip.
@@ -133,6 +136,7 @@ build_docker_image:
                 --add-host="music.flap.test:$FLAP_IP" \
                 --add-host="lists.flap.test:$FLAP_IP" \
                 --add-host="office.flap.test:$FLAP_IP" \
+                --add-host="blog.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -159,6 +163,7 @@ build_docker_image:
                 --env ENABLE_MAILMAN=$ENABLE_MAILMAN \
                 --env ENABLE_MONITORING=$ENABLE_MONITORING \
                 --env ENABLE_MATOMO=$ENABLE_MATOMO \
+                --env ENABLE_WORDPRESS=$ENABLE_WORDPRESS \
             \
                 --workdir $CI_BUILDS_DIR/flap_dir \
                 $(eval $FLAP_IMAGE_TAG) \
