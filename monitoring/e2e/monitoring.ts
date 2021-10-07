@@ -15,6 +15,5 @@ Scenario("launch monitoring", ({I}) => {
 	I.see("Docker Containers")
 	I.see("Docker Host")
 	I.see("Monitor Services")
-	I.see("Synapse")
 	I.see("Nginx")
 })
