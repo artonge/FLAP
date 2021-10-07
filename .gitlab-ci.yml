@@ -194,7 +194,7 @@ test_cli:
     script:
         - docker exec flap flapctl test setup tls
 
-setup_flap:
+setup_current:
     stage: setup
     extends: .start_flap
     rules:
@@ -220,7 +220,7 @@ setup_flap:
         - docker exec flap flapctl backup
         - tar -czf flap.$SERVICE_BUNDLE_NAME.tar.gz $CI_BUILDS_DIR/flap_backup
 
-.setup_with_serial_updates:
+.setup_from:
     stage: setup
     extends: .start_flap
     rules:
@@ -259,22 +259,22 @@ setup_flap:
         - docker exec flap flapctl backup
         - tar -czf flap.$SERVICE_BUNDLE_NAME.tar.gz $CI_BUILDS_DIR/flap_backup
 
-setup_with_serial_update_to_tag_1:
-    extends: .setup_with_serial_updates
+setup_from_1:
+    extends: .setup_from
     variables:
         BASE_VERSION: git tag --sort version:refname | tail -1 | head -1
 
-setup_with_serial_update_to_tag_2:
-    extends: .setup_with_serial_updates
+setup_from_2:
+    extends: .setup_from
     variables:
         BASE_VERSION: git tag --sort version:refname | tail -2 | head -1
 
-setup_with_serial_update_to_tag_3:
-    extends: .setup_with_serial_updates
+setup_from_3:
+    extends: .setup_from
     variables:
         BASE_VERSION: git tag --sort version:refname | tail -3 | head -1
 
-.test_e2e:
+.e2e:
     stage: test
     extends: .start_flap
     rules:
@@ -321,22 +321,22 @@ setup_with_serial_update_to_tag_3:
         # Run e2e tests.
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
 
-test_e2e_current:
-    extends: .test_e2e
-    needs: [setup_flap]
+e2e_current:
+    extends: .e2e
+    needs: [setup_current]
 
-test_e2e_after_serial_updates_1:
-    extends: .test_e2e
-    needs: [setup_with_serial_update_to_tag_1]
+e2e_from_1:
+    extends: .e2e
+    needs: [setup_from_1]
 
-test_e2e_after_serial_updates_2:
-    extends: .test_e2e
-    needs: [setup_with_serial_update_to_tag_2]
+e2e_from_2:
+    extends: .e2e
+    needs: [setup_from_2]
     allow_failure: true
 
-test_e2e_after_serial_updates_3:
-    extends: .test_e2e
-    needs: [setup_with_serial_update_to_tag_3]
+e2e_from_3:
+    extends: .e2e
+    needs: [setup_from_3]
     allow_failure: true
 
 build_disk_image:
