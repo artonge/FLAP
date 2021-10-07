@@ -210,10 +210,11 @@ setup_flap:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
+        - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
         # Add content to SOGo so pre_backup hooks does not fails.
-        - if [ "$ENABLE_SOGO" == "true" ]; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
+        - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
-        - if [ "$ENABLE_NEXTCLOUD" == "true" ]; then docker exec --user www-data flap_nextcloud php occ user:list; fi
+        - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
         # Backup $FLAP_DATA
         - docker exec flap flapctl backup
@@ -242,10 +243,11 @@ setup_flap:
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl restart; fi
         - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
 
+        - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
         # Add content to SOGo so pre_backup hooks does not fails.
-        - if [ "$ENABLE_SOGO" == "true" ]; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
+        - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
-        - if [ "$ENABLE_NEXTCLOUD" == "true" ]; then docker exec --user www-data flap_nextcloud php occ user:list; fi
+        - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
         - docker exec flap flapctl update
 

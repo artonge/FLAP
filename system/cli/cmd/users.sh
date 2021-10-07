@@ -35,6 +35,18 @@ case $CMD in
 			exit "$exit_code"
 		fi
 
+		# Add content to SOGo so pre_backup hooks does not fails.
+		if [ "$ENABLE_SOGO" == "true" ]
+		then
+			docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
+		fi
+
+		# Sync nextcloud user base.
+		if [ "$ENABLE_NEXTCLOUD" == "true" ]
+		then
+			docker exec --user www-data flap_nextcloud php occ user:list
+		fi
+
 		echo "* [users] First user 'theadmin'/'password' was created."
 		;;
 	create)

@@ -127,9 +127,6 @@ docker exec flap flapctl start
 docker exec flap flapctl users create_admin
 docker exec flap flapctl domains generate_local flap.test
 
-docker exec --user www-data flap_nextcloud php occ user:list
-docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar
-
 # docker exec flap flapctl update
 
 # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
