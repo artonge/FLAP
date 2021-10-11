@@ -321,13 +321,6 @@ setup_from_3:
 
         - eval "$(docker exec flap flapctl config show)"
 
-        - df -h
-        - docker ps
-        - docker exec flap df -h
-        - docker exec flap docker ps
-        - docker exec flap docker exec flap_collabora df -h
-        - docker exec flap_collabora df -h
-
         # Run e2e tests.
         - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
 
