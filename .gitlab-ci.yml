@@ -150,6 +150,7 @@ build_docker_image:
                 --env FLAP_DEBUG=$FLAP_DEBUG \
             \
                 --env ENABLE_NEXTCLOUD=$ENABLE_NEXTCLOUD \
+                --env ENABLE_COLLABORA=$ENABLE_COLLABORA \
                 --env ENABLE_SOGO=$ENABLE_SOGO \
                 --env ENABLE_MATRIX=$ENABLE_MATRIX \
                 --env ENABLE_JITSI=$ENABLE_JITSI \
