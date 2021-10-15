@@ -201,6 +201,7 @@ test_cli:
 setup_current:
     stage: setup
     extends: .start_flap
+    retry: 1
     rules:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
         - if: '$CI_COMMIT_BRANCH == "master"'
@@ -227,6 +228,7 @@ setup_current:
 .setup_from:
     stage: setup
     extends: .start_flap
+    retry: 1
     rules:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
         - if: '$CI_COMMIT_BRANCH == "master"'
