@@ -179,6 +179,7 @@ build_docker_image:
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
         - apk add tar
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then tar -xzf flap.$SERVICE_BUNDLE_NAME.tar.gz -C $CI_BUILDS_DIR/..; fi
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then rm -rf flap.$SERVICE_BUNDLE_NAME.tar.gz; fi
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
         - docker exec flap flapctl config show
