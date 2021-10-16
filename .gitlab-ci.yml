@@ -217,6 +217,7 @@ setup_current:
         - docker exec flap flapctl domains generate_local flap.test
 
         - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
+        # TODO: remove when were are not testing v1.19.1 anymore
         # Add content to SOGo so pre_backup hooks does not fails.
         - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
@@ -245,14 +246,15 @@ setup_current:
         - docker exec flap flapctl domains generate_local flap.test
 
         - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
+        # TODO: remove when were are not testing v1.19.1 anymore
         # Add content to SOGo so pre_backup hooks does not fails.
         - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
         - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
+        # TODO: Remove when tested version checkout tag during builds
+        - docker exec flap git checkout "$BASE_VERSION"
         - docker exec flap flapctl update
-
-        - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
 
         - test "$(docker exec flap flapctl migrate status)" == ""
 

@@ -51,18 +51,18 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		# Stop update when we are on a branch.
-		if [ "$1" = "" ] && [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
-		then
-			exit 0
-		fi
-
 		git fetch --force --tags --prune --prune-tags --recurse-submodules &> /dev/null
 
 		current_tag=$(flapctl version)
 		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
 		arg_tag=${1:-}
 		target=${arg_tag:-$next_tag}
+
+		# Stop update when we are on a branch unless a target is provided.
+		if [ "$1" = "" ] && [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+		then
+			exit 0
+		fi
 
 		# Abort update if there is no target.
 		if [ "${target:-0.0.0}" == '0.0.0' ]
