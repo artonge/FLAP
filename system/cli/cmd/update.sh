@@ -52,7 +52,7 @@ Commands:
 		cd "$FLAP_DIR"
 
 		# Stop update when we are on a branch.
-		if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+		if [ "$1" = "" ] && [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 		then
 			exit 0
 		fi
