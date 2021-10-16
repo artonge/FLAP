@@ -244,12 +244,6 @@ setup_current:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
-        # TODO: remove when we don't need to test versions older than v1.14.7.
-        - has_new_function=$(docker exec flap flapctl domains help | grep generate_local) || true
-        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl tls generate_localhost; fi
-        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl restart; fi
-        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
-
         - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
         # Add content to SOGo so pre_backup hooks does not fails.
         - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
