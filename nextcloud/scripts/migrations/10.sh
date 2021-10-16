@@ -2,7 +2,7 @@
 
 set -eu
 
-# v1.18.0
+# v1.20.0
 
 if [ "${FLAG_NO_DOCUMENTSERVER:-false}" == "false" ]
 then
