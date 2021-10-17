@@ -59,7 +59,7 @@ Commands:
 		target=${arg_tag:-$next_tag}
 
 		# Stop update when we are on a branch unless a target is provided.
-		if [ "$1" = "" ] && [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+		if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ] && [ "$target" = "" ]
 		then
 			exit 0
 		fi
@@ -70,7 +70,7 @@ Commands:
 			exit 0
 		fi
 
-		echo "* [update] Backing up." &&
+		echo "* [update] Backing up."
 		flapctl backup
 
 		{
