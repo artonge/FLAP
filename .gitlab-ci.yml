@@ -253,7 +253,9 @@ setup_current:
         - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
         # TODO: Remove when tested version checkout tag during builds
+        - docker exec flap git rev-parse --abbrev-ref HEAD
         - docker exec flap git checkout "$(eval $BASE_VERSION)"
+        - docker exec flap git rev-parse --abbrev-ref HEAD
         - docker exec flap flapctl update
 
         - test "$(docker exec flap flapctl migrate status)" == ""
