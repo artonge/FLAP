@@ -256,7 +256,8 @@ setup_current:
         - docker exec flap git rev-parse --abbrev-ref HEAD
         - docker exec flap git checkout "$(eval $BASE_VERSION)"
         - docker exec flap git rev-parse --abbrev-ref HEAD
-        - docker exec flap flapctl version
+        - docker exec flap sed 's/set -eu/set -eux/' -i /opt/flap/system/cli/cmd/update.sh
+        - git fetch --force --tags --prune --prune-tags --recurse-submodules
         - docker exec flap git tag --sort version:refname || true
         - docker exec flap git tag --sort version:refname | grep -A 1 "$(docker exec flap flapctl version)" || true
         - docker exec flap git tag --sort version:refname | grep -A 1 "$(docker exec flap flapctl version)" | grep -v "$(docker exec flap flapctl version)" || true
