@@ -4,6 +4,8 @@ set -eu
 
 # v1.20.0
 
+docker-compose exec -T --user www-data nextcloud php occ config:system:set appstoreenabled --value true --type boolean
+
 if [ "${FLAG_NO_DOCUMENTSERVER:-false}" == "false" ]
 then
 	echo "* [10] Migrate from onlyoffice to collabora."
