@@ -6,7 +6,6 @@ mkdir --parents "$FLAP_DATA/system"
 
 # shellcheck source=system/flapctl.examples.d/pipeline.env
 # shellcheck disable=SC1091
-# shellcheck disable=SC1094
 source "$FLAP_DATA/system/flapctl.env"
 
 # Export global environnement variables.
