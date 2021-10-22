@@ -29,13 +29,13 @@ then
 
 	docker-compose exec -T --user www-data nextcloud php occ app:install richdocuments
 
-	php occ --quiet config:app:set richdocuments wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
-	php occ --quiet config:app:set richdocuments public_wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
-	php occ --quiet config:app:set richdocuments disable_certificate_verification --value "no"
+	docker-compose exec -T --user www-data nextcloud php occ config:app:set richdocuments wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
+	docker-compose exec -T --user www-data nextcloud php occ config:app:set richdocuments public_wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
+	docker-compose exec -T --user www-data nextcloud php occ config:app:set richdocuments disable_certificate_verification --value "no"
 
 	if [ "$PRIMARY_DOMAIN_NAME" == "flap.test" ]
 	then
-		php occ --quiet config:app:set richdocuments disable_certificate_verification --value "yes"
+		docker-compose exec -T --user www-data nextcloud php occ --quiet config:app:set richdocuments disable_certificate_verification --value "yes"
 	fi
 
 	docker-compose --ansi never down
