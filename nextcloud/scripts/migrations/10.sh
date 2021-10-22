@@ -13,17 +13,17 @@ then
 	# shellcheck disable=SC1091
 	source "$FLAP_DATA"/system/flapctl.env
 
-	docker-compose --no-ansi up --detach nextcloud
+	docker-compose --ansi never up --detach nextcloud
 
 	docker-compose exec -T --user www-data nextcloud php occ app:disable documentserver_community
 	docker-compose exec -T --user www-data nextcloud php occ app:disable onlyoffice
 
-	docker-compose --no-ansi down
+	docker-compose --ansi never down
 fi
 
 if [ "${ENABLE_COLLABORA:-false}" == "true" ]
 then
-	docker-compose --no-ansi up --detach nextcloud
+	docker-compose --ansi never up --detach nextcloud
 
 	docker-compose exec -T --user www-data nextcloud php occ app:install richdocuments
 
@@ -36,5 +36,5 @@ then
 		php occ --quiet config:app:set richdocuments disable_certificate_verification --value "yes"
 	fi
 
-	docker-compose --no-ansi down
+	docker-compose --ansi never down
 fi
