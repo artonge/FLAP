@@ -117,16 +117,27 @@ Commands:
 		flapctl setup firewall
 		flapctl setup cron
 
-		# Get new current HEAD.
-		current_head=$(git rev-parse --abbrev-ref HEAD)
-		if [ "$current_head" == "HEAD" ]
+		# Get new current info.
+		current_commit="$(git rev-parse HEAD)"
+		current_branch=$(git rev-parse --abbrev-ref HEAD)
+		current_tag=$(git describe --tags --abbrev=0)
+		current=$current_branch
+
+		if [ "$current_branch" == "HEAD" ]
 		then
-			current_head=$(git describe --tags --abbrev=0)
+			current="$current_tag"
+			tag_head="$(git show-ref --tags --hash "$current_tag")"
+
+			# Use current commit if we are not exactly on a tag
+			if [ "$current_commit" != "$tag_head" ]
+			then
+				current="$current_commit"
+			fi
 		fi
 
-		if [ "$current_head" != "$target" ]
+		if [ "$current" != "$target" ]
 		then
-			echo "* [update] ERROR - FLAP is on $current_head instead of $target."
+			echo "* [update] ERROR - FLAP is on $current instead of $target."
 			exit 1
 		fi
 
