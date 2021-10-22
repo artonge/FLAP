@@ -270,6 +270,7 @@ setup_current:
         # Update to the current commit if we are on a branch or on a merge request.
         - echo $CI_COMMIT_BRANCH
         - echo $CI_PIPELINE_SOURCE
+        - echo $CI_COMMIT_SHA
         - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
         - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
 
