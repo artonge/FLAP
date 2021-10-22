@@ -160,6 +160,7 @@ build_docker_image:
                 --env ENABLE_MONITORING=$ENABLE_MONITORING \
                 --env ENABLE_MATOMO=$ENABLE_MATOMO \
             \
+                --workdir $CI_BUILDS_DIR/flap_dir \
                 $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
