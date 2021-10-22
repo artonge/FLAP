@@ -258,6 +258,7 @@ setup_current:
         - docker exec flap flapctl update
 
         # Update to the current commit if we are on a branch or on a merge request.
+        # TODO: The condition is broken, it is always true, but the update do not work as the arg is empty.
         - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
         # Todo: uncomment when we are not testing 1.19.1 anymore
         # - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then docker exec flap flapctl update $CI_COMMIT_SHA; fi
