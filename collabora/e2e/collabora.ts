@@ -30,7 +30,7 @@ Scenario("launch collabora", async ({I}) => {
 	I.click(".icon-confirm")
 	I.click("Create")
 
-	I.wait(2)
+	I.wait(5)
 	within({frame: ['#richdocumentsframe', '#loleafletframe'] as any}, () => {
 		I.waitForText("File")
 		I.see("Home")
