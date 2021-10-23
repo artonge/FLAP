@@ -186,7 +186,7 @@ build_docker_image:
         - docker exec flap flapctl start
 
         - ls -aslh
-        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then rm -rf flap.$SERVICE_BUNDLE_NAME.tar.gz; fi
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then rm -rf flap.*.tar.gz; fi
 
 # Run start_flap and CLI unit tests
 test_cli:
