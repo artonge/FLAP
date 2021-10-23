@@ -53,13 +53,14 @@ docker run \
 	--add-host="monitoring.flap.test:$FLAP_IP" \
 	--add-host="music.flap.test:$FLAP_IP" \
 	--add-host="lists.flap.test:$FLAP_IP" \
+	--add-host="office.flap.test:$FLAP_IP" \
 	docker:stable \
 	sh
 
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
 CI_COMMIT_REF_SLUG=
-CI_COMMIT_SHA=v1.14.6
+CI_COMMIT_SHA=v1.19.1
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 
@@ -91,6 +92,7 @@ docker run \
 	--add-host="monitoring.flap.test:$FLAP_IP" \
 	--add-host="music.flap.test:$FLAP_IP" \
 	--add-host="lists.flap.test:$FLAP_IP" \
+	--add-host="office.flap.test:$FLAP_IP" \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume /flap_dir:/flap_dir \
 	--volume /flap_data:/flap_data \
@@ -102,8 +104,6 @@ docker run \
 	"$CI_REGISTRY_IMAGE${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}" \
 	/bin/sh -c "while true; do sleep 1000; done"
 
-docker exec flap flapctl stop
-
 # Chose one of the following option:
 
 # To copy the container's FLAP_DIR, use the following command from the docker container.
@@ -112,6 +112,8 @@ docker exec flap flapctl stop
 
 # To use your local files run the following command from your host machine.
 # sudo rsync -a --delete $FLAP_DIR/* /flap_dir
+
+docker exec flap flapctl stop
 
 docker exec flap flapctl clean config -y
 docker exec flap flapctl clean data -y

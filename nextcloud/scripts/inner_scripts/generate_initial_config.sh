@@ -2,9 +2,6 @@
 
 set -eu
 
-# Temporary enable the app store to allow installing apps.
-php occ --quiet config:system:set appstoreenabled --value true --type boolean
-
 # CHANGE DATA DIRECTORY
 php occ --quiet config:system:set datadirectory --value '/data'
 
@@ -57,14 +54,6 @@ php occ --quiet app:enable previewgenerator
 # ENABLE RANSOMWARE PLUGINS
 php occ --quiet app:enable ransomware_protection
 
-# ENABLE ONLYOFFICE
-if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
-
-then
-	php occ --quiet app:install documentserver_community
-	php occ --quiet app:install onlyoffice
-fi
-
 # MAIL
 php occ --quiet config:system:set mail_smtpmode --value "smtp"
 php occ --quiet config:system:set mail_sendmailmode --value "smtp"
@@ -80,9 +69,7 @@ php occ --quiet config:system:set mail_smtpsecure --value "tls"
 php occ --quiet app:disable dashboard
 
 # DISABLE FUNCTIONALITIES
-php occ --quiet config:system:set updatechecker --value false --type boolean
 php occ --quiet config:system:set upgrade.disable-web --value true --type boolean
-php occ --quiet config:system:set appstoreenabled --value false --type boolean
 
 # CONFIGURE CACHE
 php occ --quiet config:system:set memcache.local --value '\OC\Memcache\Redis'

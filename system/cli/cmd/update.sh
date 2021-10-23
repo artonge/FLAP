@@ -51,12 +51,6 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		# Stop update when we are on a branch.
-		if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
-		then
-			exit 0
-		fi
-
 		git fetch --force --tags --prune --prune-tags --recurse-submodules &> /dev/null
 
 		current_tag=$(flapctl version)
@@ -64,13 +58,19 @@ Commands:
 		arg_tag=${1:-}
 		target=${arg_tag:-$next_tag}
 
+		# Stop update when we are on a branch unless a target is provided.
+		if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ] && [ "$target" = "" ]
+		then
+			exit 0
+		fi
+
 		# Abort update if there is no target.
 		if [ "${target:-0.0.0}" == '0.0.0' ]
 		then
 			exit 0
 		fi
 
-		echo "* [update] Backing up." &&
+		echo "* [update] Backing up."
 		flapctl backup
 
 		{
@@ -117,16 +117,27 @@ Commands:
 		flapctl setup firewall
 		flapctl setup cron
 
-		# Get new current HEAD.
-		current_head=$(git rev-parse --abbrev-ref HEAD)
-		if [ "$current_head" == "HEAD" ]
+		# Get new current info.
+		current_commit="$(git rev-parse HEAD)"
+		current_branch=$(git rev-parse --abbrev-ref HEAD)
+		current_tag=$(git describe --tags --abbrev=0)
+		current=$current_branch
+
+		if [ "$current_branch" == "HEAD" ]
 		then
-			current_head=$(git describe --tags --abbrev=0)
+			current="$current_tag"
+			tag_head="$(git show-ref --tags --hash "$current_tag")"
+
+			# Use current commit if we are not exactly on a tag
+			if [ "$current_commit" != "$tag_head" ]
+			then
+				current="$current_commit"
+			fi
 		fi
 
-		if [ "$current_head" != "$target" ]
+		if [ "$current" != "$target" ]
 		then
-			echo "* [update] ERROR - FLAP is on $current_head instead of $target."
+			echo "* [update] ERROR - FLAP is on $current instead of $target."
 			exit 1
 		fi
 

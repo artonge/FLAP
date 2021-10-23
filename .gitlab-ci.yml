@@ -84,6 +84,7 @@ build_docker_image:
         matrix:
             - SERVICE_BUNDLE_NAME: office
               ENABLE_NEXTCLOUD: "true"
+              ENABLE_COLLABORA: "true"
               ENABLE_SOGO: "true"
               ENABLE_MATRIX: "true"
               ENABLE_JITSI: "true"
@@ -97,7 +98,7 @@ build_docker_image:
     services:
         - name: docker:dind
           # We use flap.test instead of flap.localhost because chrome won't resolve *.localhost on another IP.
-          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test
+          alias: flap.local flap.test auth.flap.test home.flap.test files.flap.test mail.flap.test matrix.flap.test chat.flap.test coturn.flap.test jitsi.flap.test weblate.flap.test analytics.flap.test video.flap.test monitoring.flap.test music.flap.test lists.flap.test office.flap.test
     needs: [build_docker_image]
     before_script:
         # Get DinD's ip.
@@ -131,6 +132,7 @@ build_docker_image:
                 --add-host="monitoring.flap.test:$FLAP_IP" \
                 --add-host="music.flap.test:$FLAP_IP" \
                 --add-host="lists.flap.test:$FLAP_IP" \
+                --add-host="office.flap.test:$FLAP_IP" \
             \
                 --env LOG_DRIVER=json-file \
             \
@@ -148,6 +150,7 @@ build_docker_image:
                 --env FLAP_DEBUG=$FLAP_DEBUG \
             \
                 --env ENABLE_NEXTCLOUD=$ENABLE_NEXTCLOUD \
+                --env ENABLE_COLLABORA=$ENABLE_COLLABORA \
                 --env ENABLE_SOGO=$ENABLE_SOGO \
                 --env ENABLE_MATRIX=$ENABLE_MATRIX \
                 --env ENABLE_JITSI=$ENABLE_JITSI \
@@ -157,6 +160,7 @@ build_docker_image:
                 --env ENABLE_MONITORING=$ENABLE_MONITORING \
                 --env ENABLE_MATOMO=$ENABLE_MATOMO \
             \
+                --workdir $CI_BUILDS_DIR/flap_dir \
                 $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
@@ -178,7 +182,10 @@ build_docker_image:
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then tar -xzf flap.$SERVICE_BUNDLE_NAME.tar.gz -C $CI_BUILDS_DIR/..; fi
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then docker exec flap flapctl backup restore; fi
 
+        - docker exec flap flapctl config show
         - docker exec flap flapctl start
+
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then rm -rf flap.*.tar.gz; fi
 
 # Run start_flap and CLI unit tests
 test_cli:
@@ -197,6 +204,7 @@ test_cli:
 setup_current:
     stage: setup
     extends: .start_flap
+    retry: 1
     rules:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
         - if: '$CI_COMMIT_BRANCH == "master"'
@@ -211,6 +219,7 @@ setup_current:
         - docker exec flap flapctl domains generate_local flap.test
 
         - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
+        # TODO: remove when were are not testing v1.19.1 anymore
         # Add content to SOGo so pre_backup hooks does not fails.
         - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
@@ -223,6 +232,7 @@ setup_current:
 .setup_from:
     stage: setup
     extends: .start_flap
+    retry: 1
     rules:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
         - if: '$CI_COMMIT_BRANCH == "master"'
@@ -237,21 +247,22 @@ setup_current:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
-        # TODO: remove when we don't need to test versions older than v1.14.7.
-        - has_new_function=$(docker exec flap flapctl domains help | grep generate_local) || true
-        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl tls generate_localhost; fi
-        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl restart; fi
-        - if [ "$has_new_function" == "" ]; then docker exec flap flapctl hooks post_domain_update; fi
-
         - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
+        # TODO: remove when were are not testing v1.19.1 anymore
         # Add content to SOGo so pre_backup hooks does not fails.
         - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
         # Sync nextcloud user base.
         - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
 
+        # TODO: Remove when tested versions checkout tag during builds
+        - docker exec flap git checkout "$(eval $BASE_VERSION)"
         - docker exec flap flapctl update
 
+        # Update to the current commit if we are on a branch or on a merge request.
+        # TODO: The condition is broken, it is always true, but the update do not work as the arg is empty.
         - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
+        # Todo: uncomment when we are not testing 1.19.1 anymore
+        # - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then docker exec flap flapctl update $CI_COMMIT_SHA; fi
 
         - test "$(docker exec flap flapctl migrate status)" == ""
 
@@ -332,12 +343,10 @@ e2e_from_1:
 e2e_from_2:
     extends: .e2e
     needs: [setup_from_2]
-    allow_failure: true
 
 e2e_from_3:
     extends: .e2e
     needs: [setup_from_3]
-    allow_failure: true
 
 build_disk_image:
     stage: build

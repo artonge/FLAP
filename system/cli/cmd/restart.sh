@@ -7,6 +7,7 @@ CMD=${1:-}
 case $CMD in
 	summarize)
         echo "restart | | Restart flap services."
+		echo "restart | <service> [<service> ...] | Restart specific services. Will generate template and run generate_config hooks."
     ;;
     help)
         echo "

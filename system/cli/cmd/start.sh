@@ -7,6 +7,7 @@ CMD=${1:-}
 case $CMD in
 	summarize)
 		echo "start | | Start flap services."
+		echo "start | <service> [<service> ...] | Start specific services. Will generate template and run generate_config hooks."
 		;;
 	help)
 		echo "

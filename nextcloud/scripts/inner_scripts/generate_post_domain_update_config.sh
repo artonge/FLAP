@@ -17,12 +17,22 @@ read -r -a DOMAINS <<< "$DOMAIN_NAMES"
 for i in "${!DOMAINS[@]}"
 do
     php occ --quiet config:system:set trusted_domains "$i" --value files."${DOMAINS[$i]}"
+    php occ --quiet config:system:set trusted_domains "$i" --value files."${DOMAINS[$i]}"
 done
 
-# SET ONLYOFFICE DOMAIN
-if [ "$ARCH" == "x86_64" ] && [ "${FLAG_NO_DOCUMENTSERVER:-}" != "true" ]
+# SET COLLABORA DOMAIN
+if echo "$FLAP_SERVICES" | grep collabora
 then
-	php occ --quiet config:app:set onlyoffice DocumentServerUrl --value "https://files.$PRIMARY_DOMAIN_NAME/index.php/apps/documentserver_community/"
+	php occ --quiet app:install richdocuments
+
+	php occ --quiet config:app:set richdocuments wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
+	php occ --quiet config:app:set richdocuments public_wopi_url --value "https://office.$PRIMARY_DOMAIN_NAME"
+	php occ --quiet config:app:set richdocuments disable_certificate_verification --value "no"
+
+	if [ "$PRIMARY_DOMAIN_NAME" == "flap.test" ]
+	then
+		php occ --quiet config:app:set richdocuments disable_certificate_verification --value "yes"
+	fi
 fi
 
 # MAIL
