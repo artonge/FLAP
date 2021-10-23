@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 # This file handles the update logic of a FLAP box.
 # WARNING: If you change this file, the following update will not use the updated version. So make sure you don't break self calls.

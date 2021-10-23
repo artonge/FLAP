@@ -185,7 +185,6 @@ build_docker_image:
         - docker exec flap flapctl config show
         - docker exec flap flapctl start
 
-        - ls -aslh
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then rm -rf flap.*.tar.gz; fi
 
 # Run start_flap and CLI unit tests
@@ -344,12 +343,10 @@ e2e_from_1:
 e2e_from_2:
     extends: .e2e
     needs: [setup_from_2]
-    allow_failure: true
 
 e2e_from_3:
     extends: .e2e
     needs: [setup_from_3]
-    allow_failure: true
 
 build_disk_image:
     stage: build
