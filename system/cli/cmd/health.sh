@@ -8,7 +8,7 @@ case $CMD in
 	"")
 		for check in "$FLAP_DIR"/system/cli/lib/health/*
 		do
-			echo "* [health] Running $(basename "$check")"
+			echo "* [health] Checking $(basename "$check")"
 
 			"$check" || true
 
