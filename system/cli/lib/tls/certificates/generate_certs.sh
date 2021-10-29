@@ -16,6 +16,19 @@ do
     done
 done
 
+# Dry run first.
+certbot certonly \
+    --dry-run \
+    --rsa-key-size 4096 \
+    --cert-name flap \
+    --non-interactive \
+    --standalone \
+    --expand \
+    --force-renewal \
+    --agree-tos \
+    --email "$ADMIN_EMAIL" \
+    "${domains[@]}"
+
 if [ -d /etc/letsencrypt/live/flap ]
 then
     certbot delete --cert-name flap
