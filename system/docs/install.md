@@ -95,6 +95,14 @@ You can find more information on configuration options:
 - [Feature flags](environment_variables.md)
 - [Backup](backup.md)
 
+## Health check
+
+You can run the `checkup` command to uncover some issues before starting FLAP. This command is a work in progress, so feel free to suggest additional tests if you encounter any difficulties during the installation.
+
+```bash
+flapctl checkup
+```
+
 ## First start
 
 You can now start FLAP for the first time. Run the following command as root:
