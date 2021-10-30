@@ -37,6 +37,9 @@ Commands:
 				flapctl config generate &&
 				docker-compose down --remove-orphans
 			} || {
+				sleep 10 &&
+				docker-compose down --remove-orphans
+			} || {
 				systemctl restart docker &&
 				docker-compose down --remove-orphans
 			}
