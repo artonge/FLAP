@@ -1,5 +1,0 @@
-services:
-    nginx:
-        networks:
-            apps-net:
-                aliases:
