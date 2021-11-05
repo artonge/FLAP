@@ -11,5 +11,6 @@ services:
         networks:
             apps-net:
                 aliases: [collabora]
+        privileged: true
         cap_add:
             - SYS_CHROOT
