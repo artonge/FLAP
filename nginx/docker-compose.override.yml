@@ -1,7 +1,0 @@
-services:
-    nginx:
-        networks:
-            apps-net:
-                aliases:
-                    - office.$PRIMARY_DOMAIN_NAME
-                    - files.$PRIMARY_DOMAIN_NAME
