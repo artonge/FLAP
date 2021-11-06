@@ -59,6 +59,9 @@ case $CMD in
 	list)
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" list
 	;;
+	last)
+		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" last
+	;;
 	summarize)
 		echo "backup | [restore, list] | Backup and restore FLAP's data."
 	;;

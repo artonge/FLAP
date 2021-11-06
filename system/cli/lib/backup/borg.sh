@@ -30,6 +30,9 @@ case $CMD in
 		cd "$(dirname "$FLAP_DATA")"
 		borg extract --progress ::"$archive"
 	;;
+	last)
+		echo "TODO"
+	;;
 	list)
 		borg list
 	;;
