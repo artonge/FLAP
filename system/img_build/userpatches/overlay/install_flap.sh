@@ -86,7 +86,7 @@ echo "SETTING UP ENV VARS"
 echo "FLAP_DIR=/opt/flap" > /etc/environment
 echo "FLAP_DATA=/flap" >> /etc/environment
 # shellcheck disable=SC1091
-source /etc/environment
+. /etc/environment
 ln -sf "$FLAP_DIR/system/cli/flapctl.sh" /bin/flapctl
 
 ################################################################################
