@@ -21,14 +21,14 @@ Scenario("launch funkwhale", async ({ I }) => {
 		I.click("Login")
 	})
 
-	I.see('My Library')
+	I.waitForText('My Library')
 	I.see('Recently listened')
-	
+
 	I.click('.user-dropdown')
 	I.wait(1)
 	I.click('Logout')
 	I.wait(1)
 	I.click('Yes, log me out!')
-	
+
 	I.dontSee('My Library')
 })
