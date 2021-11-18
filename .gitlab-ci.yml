@@ -256,6 +256,14 @@ setup_current:
 
         # TODO: Remove when tested versions checkout tag during builds
         - docker exec flap git checkout "$(eval $BASE_VERSION)"
+        - df -sh || true
+        - du -sh * || true
+        - du -sh $CI_BUILDS_DIR/flap_dir/* || true
+        - du -sh $CI_BUILDS_DIR/flap_data/* || true
+        - du -sh $CI_BUILDS_DIR/flap_backup/* || true
+        - du -sh /* || true
+        - du -sh /var/* || true
+        - du -sh /var/lib/* || true
         - docker exec flap flapctl update
 
         # Update to the current commit if we are on a branch or on a merge request.
@@ -284,6 +292,11 @@ setup_from_3:
     extends: .setup_from
     variables:
         BASE_VERSION: git tag --sort version:refname | tail -3 | head -1
+
+setup_from_4:
+    extends: .setup_from
+    variables:
+        BASE_VERSION: git tag --sort version:refname | tail -4 | head -1
 
 .e2e:
     stage: test
@@ -347,6 +360,10 @@ e2e_from_2:
 e2e_from_3:
     extends: .e2e
     needs: [setup_from_3]
+
+e2e_from_4:
+    extends: .e2e
+    needs: [setup_from_4]
 
 build_disk_image:
     stage: build
