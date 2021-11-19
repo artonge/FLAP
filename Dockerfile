@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:experimental
 
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 ARG CI_COMMIT_REF_NAME
 
