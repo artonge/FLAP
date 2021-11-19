@@ -1,21 +1,21 @@
 services:
     synapse:
         # https://github.com/matrix-org/synapse/blob/develop/UPGRADE.rst
-        image: registry.gitlab.com/flap-box/synapse:v1.44.0-flap.1
+        image: registry.gitlab.com/flap-box/synapse:v1.47.0-flap.2
         container_name: flap_synapse
-        env_file: [./matrix/synapse.env]
+        env_file: [ ./matrix/synapse.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        depends_on: [postgres, ldap]
+        depends_on: [ postgres, ldap ]
         volumes:
             - ${FLAP_DATA}/matrix/synapse/data:/data # [synapse] -> [hd] Synapse's data.
             - ${FLAP_DATA}/matrix/saml:/saml/matrix # [hd] -> [synapse] synapse's SAML keys.
             - ${FLAP_DATA}/lemon/saml:/saml/idp # [hd] -> [synapse] IDP's SAML keys.
         networks:
-            stores-net:
+            stores-net: null
             apps-net:
-                aliases: [synapse]
+                aliases: [ synapse ]
 
     element:
         image: registry.gitlab.com/flap-box/element:latest
@@ -27,7 +27,7 @@ services:
             - ${FLAP_DIR}/matrix/config/element.json:/app/config.json # [emmc] -> [element] Element config.
         networks:
             apps-net:
-                aliases: [element]
+                aliases: [ element ]
 
 x-nginx-extra-volumes:
     - ${FLAP_DIR}/matrix/medias:/var/www/matrix_medias:ro # [emmc] -> [nginx] Matrix static files.
