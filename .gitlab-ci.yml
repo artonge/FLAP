@@ -264,7 +264,9 @@ setup_current:
         - du -hs /[^.]* || true
         - du -hs /var/[^.]* || true
         - du -hs /var/lib/[^.]* || true
+        - docker images
         - docker exec flap flapctl update
+        - docker images
 
         # Update to the current commit if we are on a branch or on a merge request.
         # TODO: The condition is broken, it is always true, but the update do not work as the arg is empty.
