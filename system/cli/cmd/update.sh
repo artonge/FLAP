@@ -107,7 +107,10 @@ Commands:
 			flapctl hooks post_update &&
 
 			echo '* [update] Cleaning docker objects.' &&
-			flapctl clean docker -y
+			docker images &&
+			flapctl clean docker -y &&
+			docker images
+
 		} || {
 			echo '* [update] ERROR - Fail to restart containers.'
 			EXIT_CODE=1
