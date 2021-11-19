@@ -266,6 +266,14 @@ setup_current:
         - du -hs /var/lib/[^.]* || true
         - docker images
         - docker exec flap flapctl update
+        - df -h || true
+        - du -hs [^.]* || true
+        - du -hs $CI_BUILDS_DIR/flap_dir/[^.]* || true
+        - du -hs $CI_BUILDS_DIR/flap_data/[^.]* || true
+        - du -hs $CI_BUILDS_DIR/flap_backup/[^.]* || true
+        - du -hs /[^.]* || true
+        - du -hs /var/[^.]* || true
+        - du -hs /var/lib/[^.]* || true
         - docker images
 
         # Update to the current commit if we are on a branch or on a merge request.
