@@ -257,13 +257,13 @@ setup_current:
         # TODO: Remove when tested versions checkout tag during builds
         - docker exec flap git checkout "$(eval $BASE_VERSION)"
         - df -h || true
-        - du -sh * || true
-        - du -sh $CI_BUILDS_DIR/flap_dir/* || true
-        - du -sh $CI_BUILDS_DIR/flap_data/* || true
-        - du -sh $CI_BUILDS_DIR/flap_backup/* || true
-        - du -sh /* || true
-        - du -sh /var/* || true
-        - du -sh /var/lib/* || true
+        - du -hs [^.]* || true
+        - du -hs $CI_BUILDS_DIR/flap_dir/[^.]* || true
+        - du -hs $CI_BUILDS_DIR/flap_data/[^.]* || true
+        - du -hs $CI_BUILDS_DIR/flap_backup/[^.]* || true
+        - du -hs /[^.]* || true
+        - du -hs /var/[^.]* || true
+        - du -hs /var/lib/[^.]* || true
         - docker exec flap flapctl update
 
         # Update to the current commit if we are on a branch or on a merge request.
