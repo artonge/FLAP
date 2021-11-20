@@ -9,6 +9,12 @@ CMD=${1:-}
 
 EXIT_CODE=0
 
+output_device=/dev/null
+if [ "${FLAP_DEBUG:-}" != "true" ]
+then
+	output_device=/dev/stdout
+fi
+
 case $CMD in
 	summarize)
 		echo "update | [<branch_name>, help] | Handle update logic for FLAP."
@@ -51,7 +57,7 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		git fetch --force --tags --prune --prune-tags --recurse-submodules &> /dev/null
+		git fetch --force --tags --prune --prune-tags --recurse-submodules &> $output_device
 
 		current_tag=$(flapctl version)
 		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
@@ -118,17 +124,18 @@ Commands:
 		flapctl setup cron
 
 		# Get new current info.
-		current_commit="$(git rev-parse HEAD)"
 		current_branch=$(git rev-parse --abbrev-ref HEAD)
 		current_tag=$(git describe --tags --abbrev=0)
+		current_commit="$(git rev-parse HEAD)"
 		current=$current_branch
 
+		# If we are not on a branch, use current_tag.
 		if [ "$current_branch" == "HEAD" ]
 		then
 			current="$current_tag"
 			tag_head="$(git show-ref --tags --hash "$current_tag")"
 
-			# Use current commit if we are not exactly on a tag
+			# If we are not on a tag, use current_commit.
 			if [ "$current_commit" != "$tag_head" ]
 			then
 				current="$current_commit"

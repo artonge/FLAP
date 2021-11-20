@@ -218,13 +218,6 @@ setup_current:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
-        - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
-        # TODO: remove when were are not testing v1.19.1 anymore
-        # Add content to SOGo so pre_backup hooks does not fails.
-        - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
-        # Sync nextcloud user base.
-        - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
-
         # Backup $FLAP_DATA
         - docker exec flap flapctl backup
         - tar -czf flap.$SERVICE_BUNDLE_NAME.tar.gz $CI_BUILDS_DIR/flap_backup
@@ -247,13 +240,6 @@ setup_current:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
 
-        - flap_services=$(docker exec flap flapctl config show | grep FLAP_SERVICES)
-        # TODO: remove when were are not testing v1.19.1 anymore
-        # Add content to SOGo so pre_backup hooks does not fails.
-        - if echo "$flap_services" | grep sogo; then docker exec flap_sogo sogo-tool create-folder theadmin Calendar TestCalendar; fi
-        # Sync nextcloud user base.
-        - if echo "$flap_services" | grep nextcloud; then docker exec --user www-data flap_nextcloud php occ user:list; fi
-
         # TODO: Remove when tested versions checkout tag during builds
         - docker exec flap git checkout "$(eval $BASE_VERSION)"
         - docker exec flap flapctl update
@@ -261,8 +247,7 @@ setup_current:
         # Update to the current commit if we are on a branch or on a merge request.
         # TODO: The condition is broken, it is always true, but the update do not work as the arg is empty.
         - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
-        # Todo: uncomment when we are not testing 1.19.1 anymore
-        # - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then docker exec flap flapctl update $CI_COMMIT_SHA; fi
+        - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then docker exec flap flapctl update $CI_MERGE_REQUEST_SOURCE_BRANCH_SHA; fi
 
         - test "$(docker exec flap flapctl migrate status)" == ""
 
