@@ -12,7 +12,7 @@ Scenario("launch collabora", async ({I}) => {
 		nb = await I.grabNumberOfOpenTabs()
 		I.wait(1)
 	} while (nb === 1)
-	I.wait(20)
+	I.wait(2)
 
 	I.switchToNextTab()
 	I.seeInCurrentUrl(`https://files.${process.env.PRIMARY_DOMAIN_NAME}`)
@@ -25,8 +25,9 @@ Scenario("launch collabora", async ({I}) => {
 	I.click(".button.new")
 	I.waitForText("New document")
 	I.click("New document")
-	I.waitForElement("#view12-input-file")
-	I.fillField("#view12-input-file", "rich file.odt")
+	const input = locate('input').withAttr({ value: 'New document.odt' })
+	I.waitForElement(input)
+	I.fillField(input, "rich file.odt")
 	I.click(".icon-confirm")
 	I.click("Create")
 
