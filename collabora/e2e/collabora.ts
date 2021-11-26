@@ -12,7 +12,7 @@ Scenario("launch collabora", async ({I}) => {
 		nb = await I.grabNumberOfOpenTabs()
 		I.wait(1)
 	} while (nb === 1)
-	I.wait(2)
+	I.wait(20)
 
 	I.switchToNextTab()
 	I.seeInCurrentUrl(`https://files.${process.env.PRIMARY_DOMAIN_NAME}`)

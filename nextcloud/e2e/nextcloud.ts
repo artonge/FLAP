@@ -26,7 +26,7 @@ Scenario("launch nextcloud", async ({I}) => {
 	I.click(".button.new")
 	I.waitForText("New text document")
 	I.click("New text document")
-	const input = locate('input').withAttr({ value: 'New document.odt' })
+	const input = locate('input').withAttr({ value: 'New text document.md' })
 	I.waitForElement(input)
 	I.fillField(input, "test.md")
 	I.click(".icon-confirm")
