@@ -15,7 +15,8 @@ FLAP_LIBS="$FLAP_DIR/system/cli/lib"
 
 # Load helpers functions.
 # shellcheck source=system/cli/lib/helpers.sh
-source "$FLAP_LIBS/helpers.sh"
+# shellcheck disable=SC1091
+. "$FLAP_LIBS/helpers.sh"
 
 # Check for flapctl.env file.
 if [ ! -f "$FLAP_DATA/system/flapctl.env" ]
@@ -25,7 +26,8 @@ fi
 
 # Load feature flags and services environment variables.
 # shellcheck source=system/cli/lib/load_env_vars.sh
-source "$FLAP_LIBS/load_env_vars.sh"
+# shellcheck disable=SC1091
+. "$FLAP_LIBS/load_env_vars.sh"
 
 # Show the help if the command is not found.
 if [ ! -f "$FLAP_DIR/system/cli/cmd/$CMD.sh" ]

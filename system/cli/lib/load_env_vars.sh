@@ -6,7 +6,7 @@ mkdir --parents "$FLAP_DATA/system"
 
 # shellcheck source=system/flapctl.examples.d/pipeline.env
 # shellcheck disable=SC1091
-source "$FLAP_DATA/system/flapctl.env"
+. "$FLAP_DATA/system/flapctl.env"
 
 # Export global environnement variables.
 export PRIMARY_DOMAIN_NAME
@@ -68,5 +68,5 @@ do
 
 	# shellcheck source=system/scripts/hooks/load_env.sh
 	# shellcheck disable=SC1091
-	source "$service/scripts/hooks/load_env.sh"
+	. "$service/scripts/hooks/load_env.sh"
 done
