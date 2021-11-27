@@ -28,10 +28,11 @@ case $CMD in
 	restore)
 		flapctl stop
 
-		cp "$FLAP_DATA"/system/flapctl.env /tmp/flapctl.env
+		backup_filename="/tmp/flapctl.env.$(date --iso).bak"
+		cp "$FLAP_DATA"/system/flapctl.env "$backup_filename"
 		rm -rf "${FLAP_DATA:?}"/*
 		mkdir -p "$FLAP_DATA"/system
-		cp /tmp/flapctl.env "$FLAP_DATA"/system/flapctl.env
+		cp "$backup_filename" "$FLAP_DATA"/system/flapctl.env
 
 		echo "* [backup] Restoring FLAP_DATA with $BACKUP_TOOL."
 		"$FLAP_LIBS/backup/$BACKUP_TOOL.sh" "$@"
