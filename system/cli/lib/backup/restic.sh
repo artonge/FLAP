@@ -36,11 +36,11 @@ case $CMD in
 		fi
 	;;
 	restore)
-		snapshot_id=${2:-"$(restic snapshots --last --json --path "$FLAP_DATA" | jq --raw-output '.[-1].id')"}
+		snapshot_id=${2:-"$(restic snapshots --latest --json --path "$FLAP_DATA" | jq --raw-output '.[-1].id')"}
 		restic restore --target / "$snapshot_id"
 	;;
 	last)
-		date --utc --date "$(restic snapshots --last --json --path "$FLAP_DATA" | jq --raw-output '.[-1].time')" +"%Y-%m-%d"
+		date --utc --date "$(restic snapshots --latest --json --path "$FLAP_DATA" | jq --raw-output '.[-1].time')" +"%Y-%m-%d"
 	;;
 	list)
 		restic snapshots
