@@ -1,17 +1,17 @@
 services:
     mail:
-        image: mailserver/docker-mailserver:10.2
+        image: mailserver/docker-mailserver:10.3
         container_name: flap_mail
-        env_file: [./mail/mail.env]
+        env_file: [ ./mail/mail.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        depends_on: [ldap]
-        ports: ["25:25", "143:143", "587:587"]
+        depends_on: [ ldap ]
+        ports: [ "25:25", "143:143", "587:587" ]
         networks:
-            stores-net:
+            stores-net: null
             apps-net:
-                aliases: [mail]
+                aliases: [ mail ]
 
 x-mail-extra-volumes:
     - ${FLAP_DATA}/mail/data/mail:/var/mail # [mail] -> [hd] Mail.
