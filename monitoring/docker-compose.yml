@@ -1,6 +1,6 @@
 services:
     prometheus:
-        image: prom/prometheus:v2.23.0
+        image: prom/prometheus:latest
         container_name: flap_prometheus
         volumes:
             - ${FLAP_DIR}/monitoring/config/prometheus:/etc/prometheus
@@ -15,15 +15,15 @@ services:
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: [9090]
+        expose: [ 9090 ]
         networks:
             monitor-net:
-                aliases: [prometheus]
+                aliases: [ prometheus ]
         labels:
             org.label-schema.group: "monitoring"
 
     alertmanager:
-        image: prom/alertmanager:v0.21.0
+        image: prom/alertmanager:latest
         container_name: flap_alertmanager
         volumes:
             - ${FLAP_DIR}/monitoring/config/alertmanager:/etc/alertmanager
@@ -33,42 +33,42 @@ services:
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: [9093]
+        expose: [ 9093 ]
         networks:
             monitor-net:
-                aliases: [alertmanager]
+                aliases: [ alertmanager ]
         labels:
             org.label-schema.group: "monitoring"
 
     grafana:
-        image: grafana/grafana:7.3.4
+        image: grafana/grafana:latest
         container_name: flap_grafana
         volumes:
             - grafana_data:/var/lib/grafana
             - ${FLAP_DIR}/monitoring/config/grafana/provisioning:/etc/grafana/provisioning
             - ${FLAP_DIR}/monitoring/config/grafana/dashboards:/etc/grafana/dashboards
-        env_file: [$FLAP_DIR/monitoring/grafana.env]
+        env_file: [ $FLAP_DIR/monitoring/grafana.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: [3000]
+        expose: [ 3000 ]
         networks:
-            monitor-net:
+            monitor-net: null
             apps-net:
-                aliases: [grafana]
+                aliases: [ grafana ]
         labels:
             org.label-schema.group: "monitoring"
 
     pushgateway:
-        image: prom/pushgateway:v1.3.0
+        image: prom/pushgateway:latest
         container_name: flap_pushgateway
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: [9091]
+        expose: [ 9091 ]
         networks:
             monitor-net:
-                aliases: [pushgateway]
+                aliases: [ pushgateway ]
         labels:
             org.label-schema.group: "monitoring"
 

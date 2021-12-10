@@ -1,6 +1,6 @@
 services:
     nodeexporter:
-        image: prom/node-exporter:v1.0.1
+        image: prom/node-exporter:latest
         container_name: flap_nodeexporter
         volumes:
             - /proc:/host/proc:ro
@@ -10,32 +10,37 @@ services:
             - "--path.procfs=/host/proc"
             - "--path.rootfs=/rootfs"
             - "--path.sysfs=/host/sys"
-            - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)"
+            - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host\
+              |etc)($$|/)"
         restart: always
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: [9100]
+        expose: [ 9100 ]
         networks:
             monitor-net:
-                aliases: [nodeexporter]
+                aliases: [ nodeexporter ]
         labels:
             org.label-schema.group: "monitoring"
 
     cadvisor:
-        image: gcr.io/google-containers/cadvisor:v0.36.0
+        image: gcr.io/cadvisor/cadvisor:latest
         container_name: flap_cadvisor
+        privileged: true
+        devices:
+            - /dev/kmsg:/dev/kmsg
         volumes:
             - /:/rootfs:ro
-            - /var/run:/var/run:rw
+            - /var/run:/var/run:ro
             - /sys:/sys:ro
             - /var/lib/docker:/var/lib/docker:ro
             - /cgroup:/cgroup:ro
+            - /dev/disk/:/dev/disk:ro
         restart: always
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: [8080]
+        expose: [ 8080 ]
         networks:
             monitor-net:
-                aliases: [cadvisor]
+                aliases: [ cadvisor ]
         labels:
             org.label-schema.group: "monitoring"
