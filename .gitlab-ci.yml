@@ -211,9 +211,10 @@ setup_current:
         - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/'
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
-    artifacts:
-        paths:
-            - flap.$SERVICE_BUNDLE_NAME.tar.gz
+    cache:
+        key: flap_data_$SERVICE_BUNDLE_NAME
+        paths: [flap.$SERVICE_BUNDLE_NAME.tar.gz]
+        policy: push
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
@@ -233,9 +234,10 @@ setup_current:
     needs: []
     variables:
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE:$(eval $BASE_VERSION)
-    artifacts:
-        paths:
-            - flap.$SERVICE_BUNDLE_NAME.tar.gz
+    cache:
+        key: flap_data_$SERVICE_BUNDLE_NAME
+        paths: [flap.$SERVICE_BUNDLE_NAME.tar.gz]
+        policy: push
     script:
         - docker exec flap flapctl users create_admin
         - docker exec flap flapctl domains generate_local flap.test
@@ -272,12 +274,16 @@ setup_from_3:
 
 .e2e:
     stage: test
+    retry: 1
     extends: .start_flap
     rules:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
         - if: '$CI_COMMIT_BRANCH == "master"'
         - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/'
-    retry: 1
+    cache:
+        key: flap_data_$SERVICE_BUNDLE_NAME
+        paths: [flap.$SERVICE_BUNDLE_NAME.tar.gz]
+        policy: pull
     variables:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
