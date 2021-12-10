@@ -10,7 +10,7 @@ CMD=${1:-}
 EXIT_CODE=0
 
 output_device=/dev/null
-if [ "${FLAP_DEBUG:-}" != "true" ]
+if [ "${FLAP_DEBUG:-}" == "true" ]
 then
 	output_device=/dev/stdout
 fi
