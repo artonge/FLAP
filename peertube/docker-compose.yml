@@ -1,21 +1,22 @@
 services:
     peertube:
-        image: chocobozzz/peertube:v3.4.1-buster
+        image: chocobozzz/peertube:v4.0.0-bullseye
         container_name: flap_peertube
-        ports: ["1935:1935"] # Live port.
-        env_file: [$FLAP_DIR/peertube/peertube.env]
+        # 1935: live video port
+        ports: [ "1935:1935" ]
+        env_file: [ $FLAP_DIR/peertube/peertube.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        depends_on: [postgres, redis, ldap, mail]
+        depends_on: [ postgres, redis, ldap, mail ]
         volumes:
             - ${FLAP_DATA}/peertube/data:/data # [peertube] <-> [hd] Users' data.
             - ${FLAP_DATA}/peertube/config:/config # [peertube] <-> [emmc] Config files.
             - peertubeStaticFiles:/app/client/dist # [peertube] <-> [nginx] Static files needed by nginx.
         networks:
-            stores-net:
+            stores-net: null
             apps-net:
-                aliases: [peertube]
+                aliases: [ peertube ]
 
 volumes:
     peertubeStaticFiles:
