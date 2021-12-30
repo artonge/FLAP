@@ -1,7 +1,7 @@
 services:
     funkwhale_celeryworker:
         # Before upgrade: https://docs.funkwhale.audio/changelog.html
-        image: funkwhale/funkwhale:1.1
+        image: funkwhale/funkwhale:1.2
         container_name: flap_funkwhale_celeryworker
         # Celery workers handle background tasks (such file imports or federation
         # messaging). The more processes a worker gets, the more tasks
@@ -11,50 +11,51 @@ services:
         # of CPUs. You can adjust this, by explicitly setting the --concurrency
         # flag:
         #   celery -A funkwhale_api.taskapp worker -l INFO --concurrency=4
-        command: celery -A funkwhale_api.taskapp worker -l INFO --concurrency=${CELERYD_CONCURRENCY-0}
-        env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
-        environment: ["C_FORCE_ROOT=true"]
+        command: celery -A funkwhale_api.taskapp worker -l INFO
+            --concurrency=${CELERYD_CONCURRENCY-0}
+        env_file: [ $FLAP_DIR/funkwhale/funkwhale.env ]
+        environment: [ "C_FORCE_ROOT=true" ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        depends_on: [postgres, redis]
+        depends_on: [ postgres, redis ]
         volumes:
             - ${FLAP_DATA}/funkwhale/data/media:/srv/funkwhale/data/media
         networks:
-            stores-net:
+            stores-net: null
             apps-net:
-                aliases: [funkwhale_celeryworker]
+                aliases: [ funkwhale_celeryworker ]
 
     funkwhale_celerybeat:
-        image: funkwhale/funkwhale:1.1
+        image: funkwhale/funkwhale:1.2
         container_name: flap_funkwhale_celerybeat
         command: celery -A funkwhale_api.taskapp beat --pidfile= -l INFO
-        env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
+        env_file: [ $FLAP_DIR/funkwhale/funkwhale.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        depends_on: [postgres, redis]
+        depends_on: [ postgres, redis ]
         networks:
-            stores-net:
+            stores-net: null
             apps-net:
-                aliases: [funkwhale_celerybeat]
+                aliases: [ funkwhale_celerybeat ]
 
     funkwhale_api:
-        image: funkwhale/funkwhale:1.1
+        image: funkwhale/funkwhale:1.2
         container_name: flap_funkwhale_api
-        env_file: [$FLAP_DIR/funkwhale/funkwhale.env]
+        env_file: [ $FLAP_DIR/funkwhale/funkwhale.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        depends_on: [postgres, redis]
+        depends_on: [ postgres, redis ]
         volumes:
             - ${FLAP_DATA}/funkwhale/data/media:/srv/funkwhale/data/media
             - funkwhaleStaticFiles:/srv/funkwhale/data/static
             - funkwhaleFrontend:/frontend
         networks:
-            stores-net:
+            stores-net: null
             apps-net:
-                aliases: [funkwhale_api]
+                aliases: [ funkwhale_api ]
 
 volumes:
     funkwhaleStaticFiles:
@@ -67,5 +68,3 @@ x-nginx-extra-volumes:
     - funkwhaleFrontend:/var/www/funkwhale/frontend:ro # [funkwhale] -> [nginx] funkwhale frontend files.
     - ${FLAP_DATA}/funkwhale/data/media:/var/www/funkwhale/media:ro # [HD] -> [nginx] funkwhale media files.
     - ${FLAP_DIR}/funkwhale/medias:/var/www/funkwhale_medias:ro # [emmc] -> [nginx] funkwhale extra static files.
-
-

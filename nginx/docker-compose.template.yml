@@ -7,7 +7,7 @@ services:
         logging:
             driver: ${LOG_DRIVER:-journald}
         # 8448 is for Matrix federation
-        ports: ["80:80", "443:443", "8448:8448"]
+        ports: [ "80:80", "443:443", "8448:8448" ]
         networks:
             apps-net:
                 aliases:
@@ -17,6 +17,7 @@ services:
                     - reload.$PRIMARY_DOMAIN_NAME
                     - office.$PRIMARY_DOMAIN_NAME
                     - files.$PRIMARY_DOMAIN_NAME
+                    - music.$PRIMARY_DOMAIN_NAME
 
 x-nginx-extra-volumes:
     - ${FLAP_DIR}/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro # [emmc] -> [nginx] NGINX main conf file
