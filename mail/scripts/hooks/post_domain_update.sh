@@ -11,6 +11,8 @@ do
 done
 docker-compose exec -T mail cp /tmp/docker-mailserver/vhost.dkim.tmp /tmp/vhost.dkim.tmp
 docker-compose exec -T mail open-dkim
+# Give read rights to group and other for public keys.
+chmod go+r "$FLAP_DIR"/mail/config/opendkim/keys/*/*.txt
 
 debug "Update DNS records."
 flapctl domains update_dns_records
