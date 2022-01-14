@@ -49,13 +49,13 @@ Templates are rendered with [`envsubst`](https://www.gnu.org/software/gettext/ma
 
 Advantages:
 
--   Having up to date configuration files on each starts. This also allows fast experimentation.
--   Using the service's configuration file syntax so we do not have to invent a new one.
--   Clear visualization of the current service's configurations.
+- Having up to date configuration files on each starts. This also allows fast experimentation.
+- Using the service's configuration file syntax so we do not have to invent a new one.
+- Clear visualization of the current service's configurations.
 
 Limits:
 
--   Does not support complex configuration tweaks. For example, matrix needs the `pre_install` hooks to further customize the configuration.
+- Does not support complex configuration tweaks. For example, matrix needs the `pre_install` hooks to further customize the configuration.
 
 ## Special files
 
@@ -125,9 +125,9 @@ You can use this file to integrate the service with [LemonLDAP](https://lemonlda
 
 You will also need to configure SSO in the Nginx configuration file.
 
--   [`exportedHeaders` documentation](https://lemonldap-ng.org/documentation/latest/writingrulesand_headers.html#headers)
--   [`locationRules` documentation](https://lemonldap-ng.org/documentation/latest/presentation.html?#authorization)
--   `vhostOptions` is always the same.
+- [`exportedHeaders` documentation](https://lemonldap-ng.org/documentation/latest/writingrulesand_headers.html#headers)
+- [`locationRules` documentation](https://lemonldap-ng.org/documentation/latest/presentation.html?#authorization)
+- `vhostOptions` is always the same.
 
 <!-- div:right-panel -->
 
@@ -150,21 +150,21 @@ For the service to be started in `flapctl start`, you must add a `docker-compose
 
 You must specify:
 
--   the image tag, preferably with a precise subversion.
--   the container name, so it do not depend on the main folder name.
--   the restart strategy, preferably `always`
--   the logging driver, preferably `${LOG_DRIVER:-journald}`.
+- the image tag, preferably with a precise subversion.
+- the container name, so it do not depend on the main folder name.
+- the restart strategy, preferably `always`
+- the logging driver, preferably `${LOG_DRIVER:-journald}`.
 
 You can specify:
 
--   any volumes linked to permanently store data.
--   volumes that nginx need to bind with through the `x-nginx-extra-volumes` property.
--   docker network connection and its hostname.
+- any volumes linked to permanently store data.
+- volumes that nginx need to bind with through the `x-nginx-extra-volumes` property.
+- docker network connection and its hostname.
 
 You can also create `docker-compose.ci.yml` and `docker-compose.override.yml` files. They will be used to override some configuration if respectively those variables are set:
 
--   `FLAG_GENERATE_DOCKER_COMPOSE_CI`.
--   `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE`
+- `FLAG_GENERATE_DOCKER_COMPOSE_CI`.
+- `FLAG_GENERATE_DOCKER_COMPOSE_OVERRIDE`
 
 <!-- div:right-panel -->
 
@@ -222,14 +222,14 @@ This hook is used to load environment variables specific to the service. This ca
 
 This is the place to populate some special FLAP environment variables.
 
--   `FLAP_ENV_VARS`: is used to expose variables during script execution and template rendering.
--   `SUBDOMAINS`: is used during TLS certificates generation.
--   `NEEDED_PORTS`: is used during `flapctl ports setup` and `flapctl setup firewall`.
+- `FLAP_ENV_VARS`: is used to expose variables during script execution and template rendering.
+- `SUBDOMAINS`: is used during TLS certificates generation.
+- `NEEDED_PORTS`: is used during `flapctl ports setup` and `flapctl setup firewall`.
 
 Context:
 
--   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
--   Services can either be up or down, do not make any assumptions.
+- This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
+- Services can either be up or down, do not make any assumptions.
 
 <!-- div:right-panel -->
 
@@ -256,9 +256,9 @@ You can also create a special variables for the service to enable or disable it.
 
 Context:
 
--   This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
--   This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
--   Services can either be up or down, do not make any assumptions.
+- This hook is called at every `flapctl` calls, do not make long operations here, or cache the result.
+- This hook is called to populate the `FLAP_SERVICES` global variable and by the `hooks.sh` script before hooks every execution.
+- Services can either be up or down, do not make any assumptions.
 
 <!-- div:right-panel -->
 
@@ -283,8 +283,8 @@ For example, matrix use this hook to generate a Nginx configuration file for the
 
 Context:
 
--   This hook is ran at every `flapctl start` calls.
--   Services should be down.
+- This hook is ran at every `flapctl start` calls.
+- Services should be down.
 
 <!-- div:right-panel -->
 
@@ -307,10 +307,10 @@ This hook is used to let the service run some command to setup the database, lik
 
 Context:
 
--   This hook is ran only once during the service's installation phase.
--   This hook is ran during `flapctl start` before services are started.
--   Services should be down.
--   The database will specially be running during this hook so there is no need to start it.
+- This hook is ran only once during the service's installation phase.
+- This hook is ran during `flapctl start` before services are started.
+- Services should be down.
+- The database will specially be running during this hook so there is no need to start it.
 
 <!-- div:right-panel -->
 
@@ -335,9 +335,9 @@ This hook is ran only once during the service's installation phase.
 
 Context:
 
--   This hook is ran only once during the service's installation phase.
--   This hook is ran during `flapctl start` before services are started.
--   Services should be down.
+- This hook is ran only once during the service's installation phase.
+- This hook is ran during `flapctl start` before services are started.
+- Services should be down.
 
 <!-- div:right-panel -->
 
@@ -360,7 +360,7 @@ This hook is used to wait for the service to be up. Execute whatever commands to
 
 Context:
 
--   This hook is called after `flapctl start` calls.
+- This hook is called after `flapctl start` calls.
 
 <!-- div:right-panel -->
 
@@ -387,9 +387,9 @@ For example, `nextcloud` runs some configuration with a command inside the docke
 
 Context:
 
--   This hook is ran only once during the service's installation phase.
--   This hook is ran during `flapctl start` after services are started.
--   Services should be up.
+- This hook is ran only once during the service's installation phase.
+- This hook is ran during `flapctl start` after services are started.
+- Services should be up.
 
 <!-- div:right-panel -->
 
@@ -412,7 +412,7 @@ This hook is called whenever a domain is added, deleted, or promoted to main dom
 
 Context:
 
--   Services should be up.
+- Services should be up.
 
 <!-- div:right-panel -->
 
@@ -435,7 +435,7 @@ This hook is called after a FLAP update.
 
 Context:
 
--   Services should be up.
+- Services should be up.
 
 <!-- div:right-panel -->
 
@@ -458,7 +458,7 @@ This hook is called before a backup. Use this hook to make extra backup tasks.
 
 Context:
 
--   Services are up.
+- Services are up.
 
 <!-- div:right-panel -->
 
@@ -481,7 +481,7 @@ This hook is called after a restoration.
 
 Context:
 
--   Services are not started yet.
+- Services are not started yet.
 
 <!-- div:right-panel -->
 
@@ -502,10 +502,10 @@ For example, Nextcloud load its database that was dumped to disk in `pre_backup`
 
 FLAP includes a Prometheus and Grafana instance. Services can expose some dashboards, alerts and exporters to populate this system.
 
--   You can add additional monitoring services in `<service>/docker-compose.monitoring.yml`
--   You can specify additional Prometheus config here: `$FLAP_DIR/$service/monitoring/prometheus.yml`
--   And you can setup alerts here: `$FLAP_DIR/$service/monitoring/alerts.yml`
--   Dashboards goes here: `$FLAP_DIR/$service/monitoring/dashboards`
+- You can add additional monitoring services in `<service>/docker-compose.monitoring.yml`
+- You can specify additional Prometheus config here: `$FLAP_DIR/$service/monitoring/prometheus.yml`
+- And you can setup alerts here: `$FLAP_DIR/$service/monitoring/alerts.yml`
+- Dashboards goes here: `$FLAP_DIR/$service/monitoring/dashboards`
 
 <!-- div:right-panel -->
 
