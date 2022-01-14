@@ -4,6 +4,11 @@ set -eu
 
 CMD=${1:-}
 
+if [ "${FLAP_DEBUG:-}" != "true" ]
+then
+	args=(--quiet)
+fi
+
 if [ "${BACKUP_TOOL:-}" == "" ]
 then
 	exit 0
@@ -43,7 +48,7 @@ case $CMD in
 		then
 			version=$(cat "$FLAP_DATA"/system/version.txt)
 			echo "* [backup] Checking out $version."
-			git checkout "$version"
+			git checkout "${args[@]}" "$version"
 		fi
 
 		echo "* [backup] Starting reanimation with the following flapctl.env."
