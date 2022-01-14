@@ -19,7 +19,11 @@ Scenario("launch element", async ({I}) => {
 	I.click(".mx_SSOButton")
 	I.click("Continue")
 
+	I.waitForText("Welcome to Element")
+
+	I.click(".mx_UserMenu")
 	I.waitForText("Mr. Admin")
+	I.click(".mx_UserMenu")
 
 	I.waitForText("#general:​flap.test")
 	I.click(".mx_RoomSublist_tiles")
