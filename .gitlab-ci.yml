@@ -401,9 +401,9 @@ deploy_doc:
 
 auto-rebase:
     image: node:14-alpine
-  stage: run
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-  script:
-    - apk add jq curl
-    - sh system/scripts/pipelines/auto_rebase.sh
+    stage: run
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "master"'
+    script:
+        - apk add jq curl
+        - sh system/scripts/pipelines/auto_rebase.sh
