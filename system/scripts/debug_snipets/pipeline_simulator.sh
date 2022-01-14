@@ -60,14 +60,14 @@ docker run \
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
 CI_COMMIT_REF_SLUG=
-CI_COMMIT_SHA=v1.22.1
+CI_COMMIT_SHA=v1.21.0
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 
 # Run the specified FLAP images.
 # Pass some flags env var.
 # Share the docker container network with this container so it can talk to itself.
-#  ==> the network ports are being serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
+#  ==> the network ports are beeing serve from the DinD container, that can be reach from the docker container but not from this container if we do not share the host network stack.
 # Add entry to the /etc/hosts file to resolve flap.local and *.flap.test
 # Bind our working directories.
 # docker pull $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
@@ -100,17 +100,17 @@ docker run \
 	--volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
 	--env FLAP_DIR=/flap_dir \
 	--env FLAP_DATA=/flap_data \
-	--env FLAP_DEBUG="${FLAP_DEBUG:-false}" \
-	--env ENABLE_NEXTCLOUD="${ENABLE_NEXTCLOUD:-false}" \
-	--env ENABLE_COLLABORA="${ENABLE_COLLABORA:-false}" \
-	--env ENABLE_SOGO="${ENABLE_SOGO:-false}" \
-	--env ENABLE_MATRIX="${ENABLE_MATRIX:-false}" \
-	--env ENABLE_JITSI="${ENABLE_JITSI:-false}" \
-	--env ENABLE_PEERTUBE="${ENABLE_PEERTUBE:-false}" \
-	--env ENABLE_FUNKWHALE="${ENABLE_FUNKWHALE:-false}" \
-	--env ENABLE_MAILMAN="${ENABLE_MAILMAN:-false}" \
-	--env ENABLE_MONITORING="${ENABLE_MONITORING:-false}" \
-	--env ENABLE_MATOMO="${ENABLE_MATOMO:-false}" \
+	--env FLAP_DEBUG="${FLAP_DEBUG:-true}" \
+	--env ENABLE_NEXTCLOUD="${ENABLE_NEXTCLOUD:-true}" \
+	--env ENABLE_COLLABORA="${ENABLE_COLLABORA:-true}" \
+	--env ENABLE_SOGO="${ENABLE_SOGO:-true}" \
+	--env ENABLE_MATRIX="${ENABLE_MATRIX:-true}" \
+	--env ENABLE_JITSI="${ENABLE_JITSI:-true}" \
+	--env ENABLE_PEERTUBE="${ENABLE_PEERTUBE:-true}" \
+	--env ENABLE_FUNKWHALE="${ENABLE_FUNKWHALE:-true}" \
+	--env ENABLE_MAILMAN="${ENABLE_MAILMAN:-true}" \
+	--env ENABLE_MONITORING="${ENABLE_MONITORING:-true}" \
+	--env ENABLE_MATOMO="${ENABLE_MATOMO:-true}" \
 	--workdir /flap_dir \
 	"$CI_REGISTRY_IMAGE${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}" \
 	/bin/sh -c "while true; do sleep 1000; done"
@@ -118,8 +118,8 @@ docker run \
 # Chose one of the following option:
 
 # To copy the container's FLAP_DIR, use the following command from the docker container.
-docker exec flap rm -rf /flap_dir/*
-docker exec flap cp -rT /opt/flap /flap_dir
+# docker exec flap rm -rf /flap_dir/*
+# docker exec flap cp -rT /opt/flap /flap_dir
 
 # To use your local files run the following command from your host machine.
 # sudo rsync -a --delete $FLAP_DIR/* /flap_dir
@@ -140,8 +140,7 @@ docker exec flap flapctl start
 docker exec flap flapctl users create_admin
 docker exec flap flapctl domains generate_local flap.test
 
-docker exec flap git checkout "$CI_COMMIT_SHA"
-docker exec flap flapctl update
+# docker exec flap flapctl update
 
 # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
 apk add --no-cache \
