@@ -481,7 +481,7 @@ This hook is called after a restoration.
 
 Context:
 
--   Services should be up.
+-   Services are not started yet.
 
 <!-- div:right-panel -->
 
