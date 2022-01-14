@@ -4,6 +4,11 @@ set -eu
 
 CMD=${1:-}
 
+if [ "${FLAP_DEBUG:-}" == "true" ]
+then
+	args=(--quiet)
+fi
+
 if [ "${2:-}" == "-y" ]
 then
     FORCE_YES=1
@@ -47,8 +52,8 @@ case $CMD in
 
         # Remove files listed in gitignore
         cd "$FLAP_DIR"
-        git clean -Xdf
-        git submodule foreach "git clean -Xdf"
+        git clean "${args[@]}" -Xd --force
+        git submodule "${args[@]}" foreach "git clean ${args[*]} -Xd --force"
         ;;
     data)
         if [ "$FORCE_YES" == 0 ]

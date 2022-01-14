@@ -9,10 +9,9 @@ CMD=${1:-}
 
 EXIT_CODE=0
 
-output_device=/dev/null
 if [ "${FLAP_DEBUG:-}" == "true" ]
 then
-	output_device=/dev/stdout
+	args=(--quiet)
 fi
 
 case $CMD in
@@ -38,7 +37,7 @@ Commands:
 				image=$(yq -r --arg sub_service "$sub_service" '.services[$sub_service].image' "$FLAP_DIR/$service/docker-compose.yml")
 
 				image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
-				docker-compose pull --quiet "$sub_service"
+				docker-compose pull "${args[@]}" "$sub_service"
 				new_image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
 
 				if [ "$image_digest" != "$new_image_digest" ]
@@ -57,7 +56,7 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		git fetch --force --tags --prune --prune-tags --recurse-submodules &> $output_device
+		git fetch "${args[@]}" --force --tags --prune --prune-tags --recurse-submodules
 
 		current_tag=$(flapctl version)
 		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
@@ -81,28 +80,28 @@ Commands:
 
 		{
 			echo "* [update] Updating code from $current_tag to $target." &&
-			git checkout --force --recurse-submodules "$target" &&
+			git checkout "${args[@]}" --force --recurse-submodules "$target" &&
 			# Hard clean the repo.
 			git add . &&
-			git reset --hard &&
+			git reset "${args[@]}" --hard &&
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
-				git pull --force --recurse-submodules
+				git pull "${args[@]}" --force --recurse-submodules
 			fi
 
 			# Update docker-compose.yml to pull new images.
 			flapctl config generate_templates &&
 			flapctl hooks generate_config system &&
 			echo '* [update] Pulling new docker images.' &&
-			docker-compose pull --quiet
+			docker-compose pull "${args[@]}"
 		} || {
 			# When either the git update or the docker pull fails, it is safer to go back to the previous tag.
 			# This will prevent from:
 			# - starting without the docker images,
 			# - running migrations on an unknown state.
 			echo '* [update] ERROR - Fail to update, going back to previous commit.'
-			git checkout --force --recurse-submodules "$current_tag"
+			git checkout "${args[@]}" --force --recurse-submodules "$current_tag"
 			exit 1
 		}
 
