@@ -26,7 +26,7 @@ Scenario("launch funkwhale", async ({ I }) => {
 
 	I.click('.user-dropdown')
 	I.wait(1)
-	I.click('Logout')
+	I.click('Log out')
 	I.wait(1)
 	I.click('Yes, log me out!')
 
