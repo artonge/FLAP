@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Generate SAML keys for Netcloud.
 mkdir -p "$FLAP_DATA/nextcloud/saml"
