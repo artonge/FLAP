@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [12] Move admin_pwd file."
 mkdir --parents "$FLAP_DATA/system/passwd"

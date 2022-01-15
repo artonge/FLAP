@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [4] Update user_saml and previewgenerator app."
 

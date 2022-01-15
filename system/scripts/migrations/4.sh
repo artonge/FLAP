@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Change flapctl's name for flapctl.
 ln -sf "$FLAP_DIR"/system/cli/flapctl.sh /bin/flapctl

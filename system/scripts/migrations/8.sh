@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Touch installed.txt file for all services except for matrix.
 for service in "$FLAP_DATA"/*
