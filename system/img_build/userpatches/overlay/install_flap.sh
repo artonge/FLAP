@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 BRANCH_OR_TAG=${1:-master}
 echo "INSTALLING BRANCH_OR_TAG: $BRANCH_OR_TAG"

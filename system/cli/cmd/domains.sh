@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 CMD=${1:-}
 
@@ -67,7 +67,7 @@ case $CMD in
 		rm -rf "$FLAP_DATA/system/data/domains/$domainname"
 
 		touch "$FLAP_DATA/system/data/domain_update_delete.txt"
-		
+
 		flapctl domains handle_request
 		;;
 	generate_local)
