@@ -11,7 +11,8 @@
 # NOTE: If you want to transfer files between chroot and host
 # userpatches/overlay directory on host is bind-mounted to /tmp/overlay in chroot
 
-set -eu
+set -euo pipefail
+
 
 # Avahi and mysql/mariadb needs to do some stuff which conflicts with
 # the "change the root password asap" so we disable it.

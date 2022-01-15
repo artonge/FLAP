@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 docker-compose exec --user www-data nextcloud php occ db:add-missing-columns
 docker-compose exec --user www-data nextcloud php occ db:add-missing-indices

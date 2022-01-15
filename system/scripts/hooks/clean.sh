@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Cleaning networks."
 if docker network ls | grep flap_apps-net

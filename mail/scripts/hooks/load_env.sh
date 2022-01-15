@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 # 25 - SMTP
 # 587 - SMTP with STARTLS

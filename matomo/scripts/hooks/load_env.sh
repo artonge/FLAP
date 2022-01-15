@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${MATOMO_DB_PWD}"
 SUBDOMAINS="$SUBDOMAINS analytics"

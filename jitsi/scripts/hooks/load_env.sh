@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 # shellcheck disable=SC2016
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${JICOFO_COMPONENT_SECRET} \${JICOFO_AUTH_PASSWORD} \${JVB_AUTH_PASSWORD} \${TURN_SECRET} \${TURN_SERVER} \${COTURN_LOCAL_ALLOWED_IP}"

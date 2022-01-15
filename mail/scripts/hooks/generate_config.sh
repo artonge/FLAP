@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Add services' custom config to the postfix-main config."
 for service in $FLAP_SERVICES

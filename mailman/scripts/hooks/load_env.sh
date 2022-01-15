@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${MAILMAN_DB_PWD} \${MAILMAN_DJANGO_SECRET_KEY} \${MAILMAN_HYPERKITTY_API_KEY}"
 SUBDOMAINS="$SUBDOMAINS lists"

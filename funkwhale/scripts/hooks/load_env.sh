@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${FUNKWHALE_DB_PWD} \${FUNKWHALE_DOMAIN_NAME} \${FUNKWHALE_DJANGO_SECRET_KEY}"
 SUBDOMAINS="$SUBDOMAINS music"

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 # Create DinD container.
 # Bind our working directories so docker can see them.

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 until docker-compose exec -T mariadb mysql --silent --password="$ADMIN_PWD" --execute "SHOW DATABASES" > /dev/null
 do

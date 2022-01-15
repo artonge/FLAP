@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 echo "* [2] Remove port in turn_server.txt"
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 if [ -f "$FLAP_DATA/matrix/synapse/data/homeserver.yaml" ]
 then
