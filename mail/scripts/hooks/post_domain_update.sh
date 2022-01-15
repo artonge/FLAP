@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Generate DKIM."
 rm -rf "$FLAP_DIR/mail/config/opendkim"

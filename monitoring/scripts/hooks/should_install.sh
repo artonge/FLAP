@@ -1,5 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 test "${ENABLE_MONITORING:-false}" == "true"

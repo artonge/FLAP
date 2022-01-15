@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 test "${ENABLE_MATRIX:-false}" == "true"
 test "${PRIMARY_DOMAIN_NAME:-}" != ""

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 docker-compose up --detach mariadb
 flapctl hooks wait_ready mariadb

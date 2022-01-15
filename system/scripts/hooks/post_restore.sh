@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Restoring TLS certificates."
 if [ -f "$FLAP_DATA/system/certificates.tar.gz" ]

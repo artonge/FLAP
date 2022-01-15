@@ -1,5 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 test "${PRIMARY_DOMAIN_NAME:-}" != ""

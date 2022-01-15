@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Giving permission to nextcloud user to access file in /data"
 docker-compose exec -T nextcloud touch /data/.ocdata

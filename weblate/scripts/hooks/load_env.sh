@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 # shellcheck disable=SC2016
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${WEBLATE_DB_PWD}"
