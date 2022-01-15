@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 echo "General configuration"
 php /var/www/html/console --quiet config:set --section="General" --key="force_ssl" --value="1"

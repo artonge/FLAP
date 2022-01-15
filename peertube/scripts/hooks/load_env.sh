@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${PEERTUBE_DB_PWD} \${PEERTUBE_DOMAIN_NAME} \${PEERTUBE_SAML_PLUGIN_VERSION}"
 SUBDOMAINS="$SUBDOMAINS video"

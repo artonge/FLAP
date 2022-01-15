@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 # Reset trusted_hosts[] since the config:set always creates a new entry.
 sed '/trusted_hosts\[\] = "/d' -i /var/www/html/config/config.ini.php

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 echo "Listing nextcloud app."
 docker exec --tty --user www-data flap_nextcloud php occ app:list --shipped=false

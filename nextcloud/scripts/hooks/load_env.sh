@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${NEXTCLOUD_DB_PWD}"
 SUBDOMAINS="$SUBDOMAINS files"
