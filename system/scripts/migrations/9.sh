@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [9] Remove 'export' statements from /etc/environment"
 echo "FLAP_DIR=$FLAP_DIR" > /etc/environment

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 docker-compose --no-ansi up --detach nextcloud
 

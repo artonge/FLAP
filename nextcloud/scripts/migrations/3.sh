@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [3] Move nextcloud_db_password file."
 mkdir --parents "$FLAP_DATA/nextcloud/passwd"

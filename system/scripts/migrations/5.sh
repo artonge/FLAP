@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Install msmtp to send mail from cmd line.
 apt install -y msmtp msmtp-mta

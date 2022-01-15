@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 if [ "$ARCH" == "x86_64" ]
 then
