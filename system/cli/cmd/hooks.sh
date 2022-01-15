@@ -73,7 +73,7 @@ function post_run_all {
 		pending_install_services+=("$service")
 	done
 
-	# Post-hooks executed event if no hook has been executed.
+	# Post-hooks executed even if no hook has been executed.
 	case $hook in
 		pre_install)
 			if [ "${pending_install_services[*]}" == "" ]
