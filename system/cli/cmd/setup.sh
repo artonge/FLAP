@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 CMD=${1:-}
 
@@ -75,7 +75,7 @@ case $CMD in
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
 				echo "* [setup] Creating data directories for $service."
-	
+
 				# Create data directory for the service.
 				debug "Create $FLAP_DATA/$service"
 				mkdir --parents "$FLAP_DATA/$service"

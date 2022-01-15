@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Usage: ./generate_certs.sh <domain name> [<domain name>, ...]
 

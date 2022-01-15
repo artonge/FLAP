@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo STOPPING and CLEANING
 mkdir -p /flap/system

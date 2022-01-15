@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Exit early if borg does not have the correct environment variables.
 if [ "${BORG_REPO:-}" == "" ] || [ "${BORG_PASSPHRASE:-}" == "" ]
