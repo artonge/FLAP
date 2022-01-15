@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 mkdir -p "$FLAP_DATA/system/data/domains"
 

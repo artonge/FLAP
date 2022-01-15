@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 if [ "${FLAP_DEBUG:-}" != "true" ]
 then

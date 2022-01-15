@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 CMD=${1:-}
 
@@ -34,7 +34,7 @@ case $CMD in
 		# Generate TLS certificates for domains.
 		if [ ${#domains[@]} != "0" ] && [ "${FLAG_NO_TLS_GENERATION:-}" != "true" ]
 		then
-			{			
+			{
 				"$FLAP_DIR/system/cli/lib/tls/certificates/generate_certs.sh" "${domains[@]}"
 			} || { # Catch error
 				echo "Failed to generate certificates."

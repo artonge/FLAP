@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # shellcheck disable=SC2002
 local_dkim=$(cat "$FLAP_DIR/mail/config/opendkim/keys/$PRIMARY_DOMAIN_NAME/mail.txt" | tr "\n" " " | grep --only-matching --extended-regexp 'p=.+"' | tr '"\t' ' ' | sed 's/[[:space:]]//g')

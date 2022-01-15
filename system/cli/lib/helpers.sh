@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # generatePassword <service> <var_name>
 # Will store a password in a file in the service's `passwd` directory.

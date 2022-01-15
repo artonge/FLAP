@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Run hooks located in service's 'scripts/hooks' directory.
 # This hooks are called during FLAP lifecycle.
