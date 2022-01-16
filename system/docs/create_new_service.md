@@ -92,7 +92,7 @@ This kind of files allow the the service to add an extra configuration to nginx.
 
 For example, Synapse can only be exposed on a single domain, so it can't use the default `nginx.conf` file. Therefore, an `nginx-*-extra.conf` file has been created to only expose synapse on one domain.
 
-[synapse/config/nginx-synapse-extra.template.conf](src/synapse/config/nginx-synapse-extra.template.conf ':include :type=code nginx')
+[synapse/config/nginx-synapse-extra.template.conf](src/matrix/config/nginx-synapse-extra.template.conf ':include :type=code nginx')
 
 <!-- panels:end -->
 
