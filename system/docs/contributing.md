@@ -97,6 +97,11 @@ sudo -E flapctl start
 
 > [!INFO]
 > For now `sudo` is required to ease the manipulation of containers data. Any proposition to get rid of it would be appreciated.
+> You can alias the command for ease of use:
+>
+>```bash
+>echo "alias flapctl='sudo -E flapctl'" > ~/.bashrc
+>```
 
 To start a subset of services you can run:
 
