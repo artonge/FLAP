@@ -4,8 +4,10 @@ set -eu
 
 # Update mailman users access rights depending on theirs FLAP admin status.
 
-docker-compose ps --filter State=up | grep -E "^flap_ldap " | cat &> /dev/null
-was_up=${PIPESTATUS[1]}
+if ! docker-compose ps --filter State=up | grep --quiet -E "^flap_ldap "
+then
+	exit
+fi
 
 for username in $(flapctl users list)
 do
@@ -35,9 +37,3 @@ do
 	docker-compose exec -T --user postgres postgres psql "${args[@]}" mailman -c "UPDATE auth_user SET is_superuser='$admin_access' WHERE username='$username';"
 
 done
-
-if [ "$was_up" != "0" ]
-then
-	# Remove networks.
-	flapctl hooks clean system &> /dev/null
-fi
