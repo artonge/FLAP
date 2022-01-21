@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Update mailman users access rights depending on theirs FLAP admin status.
 
-if ! docker-compose ps --filter State=up | grep --quiet -E "^flap_ldap "
+if ! is_service_up ldap
 then
 	exit
 fi
