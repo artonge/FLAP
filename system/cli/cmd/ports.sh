@@ -63,7 +63,7 @@ case $CMD in
 		}
 		;;
 	list)
-		upnpc -l | grep -E "^ *[0-9]{1,2}" | cat
+		upnpc -l | { grep -E "^ *[0-9]{1,2}" || true; }
 		;;
 	summarize)
 		echo "ports | [open, close, list, help] | Manipulate ports forwarding."

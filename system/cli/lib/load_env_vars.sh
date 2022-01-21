@@ -13,7 +13,7 @@ export PRIMARY_DOMAIN_NAME
 PRIMARY_DOMAIN_NAME=$("$FLAP_LIBS/tls/show_primary_domain.sh")
 
 export DOMAIN_NAMES
-DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | grep OK | cut -d ' ' -f1 | paste -sd " " -)
+DOMAIN_NAMES=$("$FLAP_LIBS/tls/list_domains.sh" | { grep OK || true; } | cut -d ' ' -f1 | paste -sd " " -)
 
 export SECONDARY_DOMAIN_NAMES
 SECONDARY_DOMAIN_NAMES="${DOMAIN_NAMES//${PRIMARY_DOMAIN_NAME:-"none"}/}"

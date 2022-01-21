@@ -59,7 +59,7 @@ Commands:
 		git fetch "${args[@]}" --force --tags --prune --prune-tags --recurse-submodules
 
 		current_tag=$(flapctl version)
-		next_tag=$(git tag --sort version:refname | grep -A 1 "$current_tag" | grep -v "$current_tag" | cat)
+		next_tag=$(git tag --sort version:refname | { grep -A 1 "$current_tag" || true; } | { grep -v "$current_tag" || true; })
 		arg_tag=${1:-}
 		target=${arg_tag:-$next_tag}
 

@@ -44,12 +44,7 @@ Commands:
 		then
 			docker-compose --ansi never up --quiet-pull --detach
 		else
-			docker-compose --ansi never up --quiet-pull --detach 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E 'is up-to-date$' | cat
-			exit_code=${PIPESTATUS[0]}
-			if [ "$exit_code" != "0" ]
-			then
-				exit "$exit_code"
-			fi
+			docker-compose --ansi never up --quiet-pull --remove-orphans --detach 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 		fi
 
 		# Wait dor services to be up.
@@ -77,13 +72,7 @@ Commands:
 			sub_services+=("${tmp_services[@]}")
 		done
 
-		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | grep -v -E '^Creating' | grep -v -E 'is up-to-date$' | cat
-
-		exit_code=${PIPESTATUS[0]}
-		if [ "$exit_code" != "0" ]
-		then
-			exit "$exit_code"
-		fi
+		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 
 		flapctl hooks wait_ready "${services[@]}"
 	;;

@@ -56,8 +56,8 @@ fi
 # --color=always allow for the color not to be overridden.
 "$FLAP_DIR/system/cli/cmd/$CMD.sh" "${ARGS[@]}" 2> /dev/stdout | \
 	sed --unbuffered -E "s/\* \[([a-z:]+)\]/\* \[$CMD:\1\]/" | \
-	grep --line-buffered --color=always -E "^\* \[.+\].*|$" | \
-	cat
+	{ grep --line-buffered --color=always -E "^\* \[.+\].*|$" || true; }
+
 exit_code=${PIPESTATUS[0]}
 
 # Restore GREP_COLOR.
