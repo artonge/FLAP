@@ -19,28 +19,20 @@ case $CMD in
 			exit 0
 		fi
 
-		# HACK: wget output does not contain a new line, so the log is weird.
-		# We can not exec an 'echo ""' because when it fails the script return early.
-		# We add a `| cat` to prevent exiting early on error.
-		# Then we catch the error code with PIPESTATUS, exec `echo ""` and return the exit code.
-		wget \
-			--method POST \
-			--header 'Host: flap.local' \
-			--header 'Content-Type: application/json' \
-			--body-data "{ \"name\": \"$domainname\", \"provider\": \"unknown\" }" \
-			--quiet \
-			--output-document=- \
-			--content-on-error \
-			http://localhost/api/domains | cat
-
-		# Catch error code
-		exit_code=${PIPESTATUS[0]}
-
-		if [ "$exit_code" != "0" ]
-		then
+		{
+			wget \
+				--method POST \
+				--header 'Host: flap.local' \
+				--header 'Content-Type: application/json' \
+				--body-data "{ \"name\": \"$domainname\", \"provider\": \"unknown\" }" \
+				--quiet \
+				--output-document=- \
+				--content-on-error \
+				http://localhost/api/domains
+		} || {
 			echo "Could not the contact home docker container, make sure your containers are up."
-			exit "$exit_code"
-		fi
+			exit 1
+		}
 
 		flapctl domains handle_request
 

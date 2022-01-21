@@ -23,27 +23,23 @@ Commands:
 		# - regenerate the config and retry.
 		# - if it still persist, restart the docker daemon and retry.
 		echo '* [stop] Stopping services.'
-		if [ "${FLAP_DEBUG:-}" == "true" ]
-		then
-			docker-compose --ansi never down --remove-orphans | cat
-		else
-			docker-compose --ansi never down --remove-orphans 2> /dev/stdout | grep -v -E '^Stopping' | grep -v -E '^Removing' | cat
-		fi
-
-		exit_code=${PIPESTATUS[0]}
-		if [ "$exit_code" != "0" ]
-		then
-			{
-				flapctl config generate &&
-				docker-compose down --remove-orphans
-			} || {
-				sleep 10 &&
-				docker-compose down --remove-orphans
-			} || {
-				systemctl restart docker &&
-				docker-compose down --remove-orphans
-			}
-		fi
+		{
+			if [ "${FLAP_DEBUG:-}" == "true" ]
+			then
+				docker-compose --ansi never down --remove-orphans
+			else
+				docker-compose --ansi never down --remove-orphans 2> /dev/stdout | { grep -v -E '^(Stopping)|^(Removing)|(not found\.)$' || true; }
+			fi
+		} || {
+			flapctl config generate &&
+			docker-compose down --remove-orphans
+		} || {
+			sleep 10 &&
+			docker-compose down --remove-orphans
+		} || {
+			systemctl restart docker &&
+			docker-compose down --remove-orphans
+		}
 		;;
 	*)
 		# Get services list from args.
