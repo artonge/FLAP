@@ -3,4 +3,7 @@
 set -euo pipefail
 
 
-docker volume rm --force mailmanStaticFiles || true
+if ! is_service_up mailman && ! is_service_up nginx
+then
+	docker volume rm --force flap_mailmanStaticFiles
+fi

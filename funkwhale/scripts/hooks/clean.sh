@@ -2,5 +2,9 @@
 
 set -euo pipefail
 
-docker volume rm --force flap_funkwhaleStaticFiles || true
-docker volume rm --force flap_funkwhaleFrontend || true
+if ! is_service_up funkwhale && ! is_service_up nginx
+then
+	docker volume rm --force flap_funkwhaleStaticFiles
+	docker volume rm --force flap_funkwhaleFrontend
+fi
+
