@@ -79,3 +79,11 @@ get_saml_metadata() {
 	curl "$url" --output "$FLAP_DATA/$service/saml/metadata_$domain.xml" "${args[@]}"
 }
 export -f get_saml_metadata
+
+# Check wether or not the service is up.
+is_service_up() {
+	service=$1
+
+	docker-compose ps --filter State=up | grep -E --quiet "^flap_$service"
+}
+export -f is_service_up

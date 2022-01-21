@@ -3,4 +3,7 @@
 set -euo pipefail
 
 
-docker volume rm --force flap_peertubeStaticFiles || true
+if ! is_service_up peertube && ! is_service_up nginx
+then
+	docker volume rm --force flap_peertubeStaticFiles
+fi
