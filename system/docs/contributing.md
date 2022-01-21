@@ -76,6 +76,17 @@ cp $FLAP_DIR/system/flapctl.example.d/local.env flapctl.env
 
 Services can also support specific feature flags. Take a look at `$FLAP_DIR/<service>/variables.yml`.
 
+# Install home dependencies
+
+As the home folder is bind to its docker container in development, you have to install its npm dependencies for it to build properly.
+
+Go into `$FLAP_DIR/home` an
+
+```bash
+npm ci --prefix "$FLAP_DIR/home"
+npm ci --prefix "$FLAP_DIR/home/src/front"
+```
+
 ## Running services
 
 To start all services you can run:
