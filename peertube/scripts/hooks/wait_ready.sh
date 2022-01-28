@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 until docker-compose logs peertube | grep "listening on 0.0.0.0:9000" > /dev/null
 do

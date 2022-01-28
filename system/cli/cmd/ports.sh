@@ -24,7 +24,7 @@ case $CMD in
 			protocol=$(echo "$port" | cut -d '/' -f2 | tr '[:lower:]' '[:upper:]')
 			port=$(echo "$port" | cut -d '/' -f1)
 
-			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port" > /dev/null
+			if echo "$open_ports" | grep "$protocol" | grep --quiet "$ip:$port"
 			then
 				continue
 			fi

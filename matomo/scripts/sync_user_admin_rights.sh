@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Update matomo users access rights depending on theirs FLAP admin status.
 
