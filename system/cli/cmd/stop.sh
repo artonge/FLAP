@@ -7,7 +7,6 @@ CMD=${1:-}
 case $CMD in
 	summarize)
 		echo "stop | | Stop flap services."
-		echo "stop | <service> [<service> ...] | Stop specific services."
 	;;
 	help)
 		echo "
