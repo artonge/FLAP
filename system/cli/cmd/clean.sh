@@ -4,7 +4,7 @@ set -eu
 
 CMD=${1:-}
 
-if [ "${FLAP_DEBUG:-}" == "true" ]
+if [ "${FLAP_DEBUG:-}" != "true" ]
 then
 	args=(--quiet)
 fi

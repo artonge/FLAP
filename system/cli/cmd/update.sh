@@ -9,7 +9,7 @@ CMD=${1:-}
 
 EXIT_CODE=0
 
-if [ "${FLAP_DEBUG:-}" == "true" ]
+if [ "${FLAP_DEBUG:-}" != "true" ]
 then
 	args=(--quiet)
 fi
