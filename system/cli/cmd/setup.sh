@@ -75,7 +75,7 @@ case $CMD in
 			if [ ! -d "$FLAP_DATA/$service" ]
 			then
 				echo "* [setup] Creating data directories for $service."
-	
+
 				# Create data directory for the service.
 				debug "Create $FLAP_DATA/$service"
 				mkdir --parents "$FLAP_DATA/$service"
@@ -119,6 +119,12 @@ case $CMD in
 
 		# Set the built string as the cron file
 		echo "$cron_string" | crontab -
+	;;
+	certbot_renewal_hooks)
+		mkdir --parent /etc/letsencrypt/renewal-hooks/pre
+		mkdir --parent /etc/letsencrypt/renewal-hooks/post
+		cp "$FLAP_DIR"/system/scripts/certbot_renewal_hooks/stop_flap.sh /etc/letsencrypt/renewal-hooks/pre/stop_flap.sh
+		cp "$FLAP_DIR"/system/scripts/certbot_renewal_hooks/start_flap.sh /etc/letsencrypt/renewal-hooks/post/start_flap.sh
 	;;
 	summarize)
 		echo "setup | [cron, help] | Setup FLAP components."
