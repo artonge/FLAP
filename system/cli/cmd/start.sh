@@ -21,6 +21,7 @@ Commands:
 		if [ ! -f "$FLAP_DATA/system/data/installation_done.txt" ]
 		then
 			flapctl setup hostname
+			flapctl setup certbot_renewal_hooks
 			flapctl setup docker_images
 			flapctl disks setup
 		fi
