@@ -6,20 +6,19 @@ CMD=${1:-}
 
 case $CMD in
 	summarize)
-        echo "restart | | Restart flap services."
-		echo "restart | <service> [<service> ...] | Restart specific services. Will generate template and run generate_config hooks."
-    ;;
-    help)
-        echo "
+		echo "restart | | Restart flap services."
+	;;
+	help)
+		echo "
 $(flapctl restart summarize)
 Commands:
-    '' | | Restart flap services." | column -t -s "|"
-    ;;
-    "")
-        echo "* [restart] Restarting services."
-        flapctl stop
-        flapctl start
-    ;;
+	'' | | Restart flap services." | column -t -s "|"
+	;;
+	"")
+		echo "* [restart] Restarting services."
+		flapctl stop
+		flapctl start
+	;;
 	handle_request)
 		if [ ! -f "$FLAP_DATA/system/data/restart.txt" ]
 		then

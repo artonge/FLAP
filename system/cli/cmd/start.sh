@@ -7,8 +7,7 @@ CMD=${1:-}
 case $CMD in
 	summarize)
 		echo "start | | Start flap services."
-		echo "start | <service> [<service> ...] | Start specific services. Will generate template and run generate_config hooks."
-		;;
+	;;
 	help)
 		echo "
 $(flapctl start summarize)
@@ -64,7 +63,7 @@ Commands:
 			# Mark the installation as done.
 			touch "$FLAP_DATA/system/data/installation_done.txt"
 		fi
-		;;
+	;;
 	*)
 		services=("${@:1}")
 
@@ -87,5 +86,5 @@ Commands:
 		fi
 
 		flapctl hooks wait_ready "${services[@]}"
-		;;
+	;;
 esac
