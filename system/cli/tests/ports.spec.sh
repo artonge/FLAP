@@ -29,7 +29,7 @@ PORT=$RANDOM
 {
     echo "      - Listing port mappings"
     {
-        flapctl ports list | grep $PORT > /dev/null
+        flapctl ports list | grep --quiet $PORT
     } || {
         echo "     ❌ 'flapctl ports list' failed to list the open port $PORT."
         EXIT=1

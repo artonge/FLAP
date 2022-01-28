@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -ue
+set -euo pipefail
+
 
 mkdir --parents "$FLAP_DATA/system"
 
