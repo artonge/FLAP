@@ -1,7 +1,5 @@
 services:
   funkwhale_api:
-    ports:
-      - "5000:5000"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro # [emmc] -> [funkwhale] SSL certificates.
     environment:
