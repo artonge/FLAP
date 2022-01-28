@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ue
+set -euo pipefail
 
 exit_code=0
 
