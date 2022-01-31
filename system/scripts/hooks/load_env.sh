@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${ADMIN_PWD}"
 # 22 - SSH

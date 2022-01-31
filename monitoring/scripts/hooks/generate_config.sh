@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Copy dashboard to grafana directory."
 rm -rf "$FLAP_DIR/monitoring/config/grafana/dashboards"

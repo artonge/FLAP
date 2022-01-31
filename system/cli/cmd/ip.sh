@@ -1,24 +1,21 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 CMD=${1:-}
 
 case $CMD in
 	internal)
-		upnpc -l | grep "Local LAN" | cut -d ' '  -f6
+		upnpc -l | grep "Local LAN" | cut -d ' ' -f6
 		;;
 	external)
-		# Attempt to get the external IP with upnpc if we are behind a NAT.
-		ip=$(upnpc -l 2> /dev/stdout | grep "ExternalIPAddress" | cut -d ' '  -f3)
-
-		# Default to icanhazip.com.
-		if [ "$ip" == "" ]
-		then
-			ip=$(curl -4 https://icanhazip.com 2> /dev/null)
-		fi
-
-		echo "$ip"
+		{
+			# Try to get the external IP with upnpc if we are behind a NAT.
+			upnpc -l 2> /dev/stdout | grep "ExternalIPAddress" | cut -d ' ' -f3
+		} || {
+			# Default to icanhazip.com if upnpc does not work.
+			curl -4 --silent https://icanhazip.com
+		}
 		;;
 	dns)
 		host -t A "$2" | cut -d ' '  -f4

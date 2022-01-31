@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 docker exec --user www-data flap_nextcloud php occ maintenance:mode --on
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 docker-compose up --detach postgres
 flapctl hooks wait_ready postgres

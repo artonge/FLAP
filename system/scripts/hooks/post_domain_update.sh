@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 debug "Generating /etc/msmtprc and /etc/aliases."
 flapctl config generate_templates

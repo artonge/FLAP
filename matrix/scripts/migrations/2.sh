@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [2] Remove port from the TURN_SERVER URI."
 echo "demo.flap.cloud" > "$FLAP_DATA/system/data/turn_server.txt"

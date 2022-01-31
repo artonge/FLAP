@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 # Add SSO auth for jicofo.
 # jicofo_config="$FLAP_DATA/jitsi/jicofo/sip-communicator.properties"

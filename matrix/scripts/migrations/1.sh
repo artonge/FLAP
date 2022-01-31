@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [1] Update homeserver.yml to disable sso whitelist"
 "$FLAP_DIR/system/cli/lib/merge_yaml.sh" \

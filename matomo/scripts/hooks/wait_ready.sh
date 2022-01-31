@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
-until docker-compose logs matomo | grep "NOTICE: ready to handle connections" > /dev/null
+until docker-compose logs matomo | grep --quiet "NOTICE: ready to handle connections"
 do
     debug "Matomo is unavailable - sleeping"
     sleep 1

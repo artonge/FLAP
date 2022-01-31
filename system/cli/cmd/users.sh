@@ -1,39 +1,32 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 CMD=${1:-}
 
 case $CMD in
 	create_admin)
-		# HACK: wget output does not contain a new line, so the log is weird.
-		# We can not exec an 'echo ""' because when it fails the script return ealry.
-		# We add a `| cat` to prevent exiting early on error.
-		# Then we catch the error code with PIPESTATUS, exec `echo ""` and return the exit code.
-		wget \
-			--method POST \
-			--header "Content-Type: application/json" \
-			--header "Host: flap.local" \
-			--body-data '{
-					"username": "theadmin",
-					"password": "password",
-					"fullname": "Mr. Admin",
-					"email": "ad@m.in",
-					"admin": true
-				}' \
-			--quiet \
-			--output-document=- \
-			--content-on-error \
-			http://localhost/api/users | cat
-
-		# Catch error code
-		exit_code=${PIPESTATUS[0]}
-
-		if [ "$exit_code" != "0" ]
-		then
+		{
+			wget \
+				--method POST \
+				--header "Content-Type: application/json" \
+				--header "Host: flap.local" \
+				--body-data '{
+						"username": "theadmin",
+						"password": "password",
+						"fullname": "Mr. Admin",
+						"email": "ad@m.in",
+						"admin": true
+					}' \
+				--quiet \
+				--output-document=- \
+				--content-on-error \
+				http://localhost/api/users
+		} || {
+			# Improve output by echoing an empty line.
 			echo ""
-			exit "$exit_code"
-		fi
+			exit 1
+		}
 
 		# Add content to SOGo so pre_backup hooks does not fails.
 		if [ "${ENABLE_SOGO:-false}" == "true" ]
@@ -65,59 +58,46 @@ case $CMD in
 			exit 0
 		fi
 
-		# HACK: wget output does not contain a new line, so the log is weird.
-		# We can not exec an 'echo ""' because when it fails the script return early.
-		# We add a `| cat` to prevent exiting early on error.
-		# Then we catch the error code with PIPESTATUS, exec `echo ""` and return the exit code.
-		wget \
-			--method POST \
-			--header "Content-Type: application/json" \
-			--header "Host: flap.local" \
-			--body-data "{
-					\"username\": \"$username\",
-					\"fullname\": \"$displayname\",
-					\"email\": \"$email\",
-					\"admin\": true
-				}" \
-			--quiet \
-			--output-document=- \
-			--content-on-error \
-			http://localhost/api/users | cat
-
-		# Catch error code
-		exit_code=${PIPESTATUS[0]}
-
-		if [ "$exit_code" != "0" ]
-		then
+		{
+			wget \
+				--method POST \
+				--header "Content-Type: application/json" \
+				--header "Host: flap.local" \
+				--body-data "{
+						\"username\": \"$username\",
+						\"fullname\": \"$displayname\",
+						\"email\": \"$email\",
+						\"admin\": true
+					}" \
+				--quiet \
+				--output-document=- \
+				--content-on-error \
+				http://localhost/api/users
+		} || {
+			# Improve output by echoing an empty line.
 			echo ""
-			exit "$exit_code"
-		fi
+			exit 1
+		}
 
 		echo "* [users] The user '$username was created."
 		;;
 	sync_mail_aliases)
-		wget \
-			--method GET \
-			--header "Host: flap.local" \
-			--quiet \
-			--output-document=- \
-			--content-on-error \
-			http://localhost/api/crons/update-mail-aliases | cat
-
-		# Catch error code
-		exit_code=${PIPESTATUS[0]}
-
-		if [ "$exit_code" != "0" ]
-		then
+		{
+			wget \
+				--method GET \
+				--header "Host: flap.local" \
+				--quiet \
+				--output-document=- \
+				--content-on-error \
+				http://localhost/api/crons/update-mail-aliases
+		} || {
+			# Improve output by echoing an empty line.
 			echo ""
-			exit "$exit_code"
-		fi
+			exit 1
+		}
 		;;
 	list)
 		cd "$FLAP_DIR"
-
-		docker-compose ps --filter State=up | grep -E "^flap_ldap " | cat &> /dev/null
-		was_up=${PIPESTATUS[1]}
 
 		users=$(
 			docker-compose run --no-deps --rm ldap slapcat 2> /dev/null | \
@@ -139,7 +119,7 @@ case $CMD in
 
 		cd "$FLAP_DIR"
 
-		docker-compose ps --filter State=up | grep -E "^flap_ldap " | cat &> /dev/null
+		docker-compose ps --filter State=up | { grep --quiet -E "^flap_ldap " || true; }
 		was_up=${PIPESTATUS[1]}
 
 		docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif

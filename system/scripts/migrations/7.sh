@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 if [ "${FLAG_NO_RAID_SETUP:-}" == "true" ]
 then

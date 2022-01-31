@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 until docker-compose logs mail | grep "daemon started" > /dev/null
 do

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 until docker-compose logs collabora | grep "Ready to accept connections on port 9980." > /dev/null
 do

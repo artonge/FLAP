@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 CMD=${1:-}
 PORT=${2:-}
@@ -24,7 +24,7 @@ case $CMD in
 			protocol=$(echo "$port" | cut -d '/' -f2 | tr '[:lower:]' '[:upper:]')
 			port=$(echo "$port" | cut -d '/' -f1)
 
-			if echo "$open_ports" | grep "$protocol" | grep "$ip:$port" > /dev/null
+			if echo "$open_ports" | grep "$protocol" | grep --quiet "$ip:$port"
 			then
 				continue
 			fi
@@ -63,7 +63,7 @@ case $CMD in
 		}
 		;;
 	list)
-		upnpc -l | grep -E "^ *[0-9]{1,2}" | cat
+		upnpc -l | { grep -E "^ *[0-9]{1,2}" || true; }
 		;;
 	summarize)
 		echo "ports | [open, close, list, help] | Manipulate ports forwarding."

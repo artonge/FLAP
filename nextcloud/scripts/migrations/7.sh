@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 echo "* [7] Disable ransomware_detection plugin."
 docker-compose --no-ansi up --detach nextcloud

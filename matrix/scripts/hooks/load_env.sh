@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 FLAP_ENV_VARS="$FLAP_ENV_VARS \${SYNAPSE_DB_PWD} \${MATRIX_DOMAIN_NAME} \${JITSI_SERVER}"
 SUBDOMAINS="$SUBDOMAINS matrix chat"

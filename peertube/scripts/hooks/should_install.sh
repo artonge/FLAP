@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 test "${ENABLE_PEERTUBE:-false}" == "true"
 test "$ARCH" == "x86_64"

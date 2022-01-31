@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 # Create hash file for the smtpd_sender map.
 postmap /tmp/docker-mailserver/smtpd_sender

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
 
 debug "Generating Nginx config files."
 debug "Create Nginx directory structure."

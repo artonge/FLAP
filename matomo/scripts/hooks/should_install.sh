@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -euo pipefail
+
 
 test "${ENABLE_MATOMO:-false}" == "true"
 
