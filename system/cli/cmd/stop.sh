@@ -6,13 +6,13 @@ CMD=${1:-}
 
 case $CMD in
 	summarize)
-		echo "stop | | Stop flap services."
+		echo "stop | [<service-name> ...] | Stop flap services."
 	;;
 	help)
 		echo "
 $(flapctl stop summarize)
 Commands:
-	'' | | STOP." | column -t -s "|"
+	[<service-name> ...] | | Stop the given services, or stop them all if nothing is provided." | column -t -s "|"
 	;;
 	"")
 		# Go to FLAP_DIR for docker-compose.

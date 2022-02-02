@@ -6,13 +6,13 @@ CMD=${1:-}
 
 case $CMD in
 	summarize)
-		echo "start | | Start flap services."
+		echo "start | [<service> ...] | Start services. Will generate template and run generate_config hooks."
 	;;
 	help)
 		echo "
 $(flapctl start summarize)
 Commands:
-	'' | | Start." | column -t -s "|"
+	[<service-name> ...] | | Start the given services, or start them all if nothing is provided." | column -t -s "|"
 	;;
 	"")
 		echo '* [start] Starting services.'
