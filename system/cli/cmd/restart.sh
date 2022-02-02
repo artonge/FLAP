@@ -6,13 +6,13 @@ CMD=${1:-}
 
 case $CMD in
 	summarize)
-		echo "restart | | Restart flap services."
+		echo "restart | [<service-name> ...] | Restart flap services."
 	;;
 	help)
 		echo "
 $(flapctl restart summarize)
 Commands:
-	'' | | Restart flap services." | column -t -s "|"
+	[<service-name> ...] | | Restart the given services, or restart them all if nothing is provided." | column -t -s "|"
 	;;
 	"")
 		echo "* [restart] Restarting services."
