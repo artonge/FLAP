@@ -5,6 +5,8 @@ include:
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
     FLAP_DEBUG: "true"
+    FLAP_DIR: $CI_BUILDS_DIR/flap_dir
+    FLAP_DATA: $CI_BUILDS_DIR/flap_data
 
 stages:
     - build
@@ -139,13 +141,13 @@ build_docker_image:
             \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
             \
-                --volume $CI_BUILDS_DIR/flap_dir:$CI_BUILDS_DIR/flap_dir \
-                --volume $CI_BUILDS_DIR/flap_data:$CI_BUILDS_DIR/flap_data \
+                --volume $FLAP_DIR:$FLAP_DIR \
+                --volume $FLAP_DATA:$FLAP_DATA \
                 --volume $CI_BUILDS_DIR/flap_backup:$CI_BUILDS_DIR/flap_backup \
                 --volume /etc/letsencrypt/live/flap:/etc/letsencrypt/live/flap \
             \
-                --env FLAP_DIR=$CI_BUILDS_DIR/flap_dir \
-                --env FLAP_DATA=$CI_BUILDS_DIR/flap_data \
+                --env FLAP_DIR=$FLAP_DIR \
+                --env FLAP_DATA=$FLAP_DATA \
                 --env COMPOSE_HTTP_TIMEOUT=3000 \
                 --env CI_JOB_NAME="$CI_JOB_NAME" \
                 --env FLAP_DEBUG=$FLAP_DEBUG \
@@ -161,24 +163,24 @@ build_docker_image:
                 --env ENABLE_MONITORING=$ENABLE_MONITORING \
                 --env ENABLE_MATOMO=$ENABLE_MATOMO \
             \
-                --workdir $CI_BUILDS_DIR/flap_dir \
+                --workdir $FLAP_DIR \
                 $(eval $FLAP_IMAGE_TAG) \
                 /bin/sh -c "while true; do sleep 1000; done"
 
-        # Copy the content of flap:/opt/flap into flap:$CI_BUILDS_DIR/flap_dir.
+        # Copy the content of flap:/opt/flap into flap:$FLAP_DIR.
         # This is necessary to be able to bind volumes to containers started from the flap container.
         # https://stackoverflow.com/questions/46437147/gitlab-ci-docker-in-docker-cant-create-volume
-        - docker exec flap cp -rT /opt/flap $CI_BUILDS_DIR/flap_dir
+        - docker exec flap cp -rT /opt/flap $FLAP_DIR
         # Update the flapctl link so it maps to the new location.
-        - docker exec flap ln -sf $CI_BUILDS_DIR/flap_dir/system/cli/flapctl.sh /bin/flapctl
+        - docker exec flap ln -sf $FLAP_DIR/system/cli/flapctl.sh /bin/flapctl
 
         # Copy flapctl.env for pipeline.
-        - mkdir --parents $CI_BUILDS_DIR/flap_data/system
-        - if [ ! -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
+        - mkdir --parents $FLAP_DATA/system
+        - if [ ! -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $FLAP_DIR/system/flapctl.examples.d/pipeline.env $FLAP_DATA/system/flapctl.env; fi
 
         # Restore flap_data if it exists.
-        - ls $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/
-        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $CI_BUILDS_DIR/flap_dir/system/flapctl.examples.d/pipeline.restore.env $CI_BUILDS_DIR/flap_data/system/flapctl.env; fi
+        - ls $FLAP_DIR/system/flapctl.examples.d/
+        - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then cp $FLAP_DIR/system/flapctl.examples.d/pipeline.restore.env $FLAP_DATA/system/flapctl.env; fi
         - apk add tar
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then tar -xzf flap.$SERVICE_BUNDLE_NAME.tar.gz -C $CI_BUILDS_DIR/..; fi
         - if [ -f flap.$SERVICE_BUNDLE_NAME.tar.gz ]; then docker exec flap flapctl backup restore; fi
@@ -289,40 +291,32 @@ setup_from_3:
         SCREEN_WIDTH: "1920"
         SCREEN_HEIGHT: "1080"
         FLAP_IMAGE_TAG: echo $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+        # Don't download chromium during puppeteer installation.
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
     artifacts:
         when: always
         reports:
-            junit: home/output/result.xml
+            junit: system/e2e/output/result.xml
         paths:
-            - home/e2e/output
+            - system/e2e/output
     script:
         # Install chromium: https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-on-alpine
         - >
-            apk add --no-cache \
+            apk add --no-cache --update \
               chromium \
               nss \
               freetype \
               freetype-dev \
               harfbuzz \
               ca-certificates \
-              ttf-freefont
+              ttf-freefont \
+              bash \
+              nodejs \
+              npm \
+              python3 \
+              make
 
-        - apk add nodejs npm python3 make
-
-        # Don't download chromium during puppeteer installation.
-        - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-
-        # Install codecept and puppeteer.
-        - cd ./home
-        - npm install codeceptjs puppeteer mocha-junit-reporter
-
-        - docker exec flap flapctl exec home copyE2ETests
-        - cp "$CI_BUILDS_DIR"/flap_dir/home/e2e/tests/services/* ./e2e/tests/services
-
-        - eval "$(docker exec flap flapctl config show)"
-
-        # Run e2e tests.
-        - npx codeceptjs run --profile=chrome-ci --reporter mocha-junit-reporter
+        - bash ./system/scripts/run_e2e_tests.sh
 
 e2e_current:
     extends: .e2e
