@@ -15,7 +15,7 @@ do
 		pid="$(echo "$ss" | grep -oE 'pid=[0-9]+' | head -1 | cut -d '=' -f2)"
 		program="$(ps -p "$pid" -o comm=)"
 
-		if [ "$program" != "docker-proxy" ]
+		if [ "$program" != "docker-proxy" ] && [ "$program" != "sshd" ]
 		then
 			echo "- Port $port is already in use by $program."
 			exit_code=1
