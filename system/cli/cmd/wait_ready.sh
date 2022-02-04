@@ -14,8 +14,11 @@ $(flapctl wait_ready summarize)
 Commands:
 	| | Wait until all services are up." | column -t -s "|"
 	;;
-	"")
-		for service in $FLAP_SERVICES
+	""|*)
+		services="${*:1}"
+		services=${services:-$FLAP_SERVICES}
+
+		for service in $services
 		do
 			if [ ! -f "$FLAP_DIR/$service/scripts/hooks/is_up.sh" ]
 			then

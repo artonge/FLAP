@@ -48,7 +48,8 @@ Commands:
 		fi
 
 		# Wait dor services to be up.
-		flapctl hooks wait_ready
+		flapctl wait_ready
+		# flapctl hooks wait_ready
 
 		# Run post install hooks.
 		flapctl hooks post_install
