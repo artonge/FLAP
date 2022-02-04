@@ -31,7 +31,7 @@ Commands:
 			until "$FLAP_DIR/$service/scripts/hooks/is_up.sh"
 			do
 				i=$((i+1))
-				if [ $((i % 10)) = 0 ] && [ "${FLAP_DEBUG:-}" = "true" ]
+				if [ $((i % 50)) = 0 ] && [ "${FLAP_DEBUG:-}" = "true" ]
 				then
 					docker-compose ps
 					yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml" | xargs -I {} docker-compose logs {}
