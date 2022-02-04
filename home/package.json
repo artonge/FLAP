@@ -1,0 +1,64 @@
+{
+	"name": "flap-home",
+	"version": "1.8.0",
+	"description": "Home GUI for FLAP.",
+	"main": "build/main.js",
+	"scripts": {
+		"e2e:copy": "sudo -E flapctl exec home copyE2ETests",
+		"e2e": "eval $(sudo -E flapctl config show); npm run e2e:copy; codeceptjs run --steps",
+		"e2e:debug": "npm run e2e:copy; eval $(flapctl config show); codeceptjs run --steps --verbose --debug",
+		"test": "jest --coverage || true && cd src/front && npm ci && npm test",
+		"test:watch": "jest --watch",
+		"start": "NODE_ENV=production node build/main.js",
+		"build": "tsc",
+		"serve": "LOG_LEVEL=silly concurrently -k -p \"[{name}]\" -n \"TypeScript,Node,Front,VueUI\" -c \"cyan.bold,green.bold,magenta.bold,yellow.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\" \"npm run --prefix ./src/front serve\" \"npm run --prefix ./src/front ui\"",
+		"debug": "LOG_LEVEL=silly DEBUG=express:* concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"tsc -w --removeComments false\" \"nodemon --inspect build/main.js\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://gitlab.com/artonge/flap.git"
+	},
+	"keywords": [
+		"flap",
+		"home"
+	],
+	"author": "artonge",
+	"license": "AGPL-3.0",
+	"bugs": {
+		"url": "https://gitlab.com/flap-box/home/issues"
+	},
+	"homepage": "https://gitlab.com/flap-box/home#readme",
+	"dependencies": {
+		"@artonge/mobileconfig": "^3.2.2",
+		"asn1": "^0.2.6",
+		"core-js": "^3.19.1",
+		"dotenv": "^10.0.0",
+		"express": "^4.17.1",
+		"express-validator": "^6.13.0",
+		"fs-extra": "^10.0.0",
+		"handlebars": "^4.7.7",
+		"helmet": "^4.6.0",
+		"ldapjs": "^2.3.1",
+		"nodemailer": "^6.7.0",
+		"ts-node": "^10.4.0",
+		"winston": "^3.3.3"
+	},
+	"devDependencies": {
+		"@types/asn1": "^0.2.0",
+		"@types/express": "^4.17.13",
+		"@types/fs-extra": "^9.0.13",
+		"@types/node": "^16.11.7",
+		"@types/jest": "^27.0.2",
+		"@types/ldapjs": "^2.2.2",
+		"@types/nodemailer": "^6.4.4",
+		"codeceptjs": "^3.2.1",
+		"concurrently": "^6.4.0",
+		"jest": "^27.3.1",
+		"jest-junit": "^13.0.0",
+		"mocha-junit-reporter": "^2.0.2",
+		"nodemon": "^2.0.15",
+		"puppeteer": "^11.0.0",
+		"ts-jest": "^27.0.7",
+		"typescript": "^4.4.4"
+	}
+}
