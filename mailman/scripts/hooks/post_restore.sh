@@ -4,7 +4,7 @@ set -euo pipefail
 
 
 docker-compose up --detach postgres
-flapctl hooks wait_ready postgres
+flapctl wait_ready postgres
 
 if [ "${FLAP_DEBUG:-}" != "true" ]
 then

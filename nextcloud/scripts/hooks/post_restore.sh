@@ -4,7 +4,7 @@ set -euo pipefail
 
 
 docker-compose up --detach postgres
-flapctl hooks wait_ready postgres
+flapctl wait_ready postgres
 
 if [ "${FLAP_DEBUG:-}" != "true" ]
 then
@@ -17,6 +17,6 @@ docker exec --user postgres flap_postgres psql "${args[@]}" --command "CREATE DA
 gzip --decompress --stdout "$FLAP_DATA/nextcloud/backup.sql.gz" | docker exec --interactive --user postgres flap_postgres psql "${args[@]}" --dbname nextcloud
 
 docker-compose up --detach nextcloud
-flapctl hooks wait_ready nextcloud
+flapctl wait_ready nextcloud
 
 docker exec --user www-data flap_nextcloud php occ maintenance:data-fingerprint

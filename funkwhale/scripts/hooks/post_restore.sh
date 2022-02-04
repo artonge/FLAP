@@ -9,7 +9,7 @@ then
 fi
 
 docker-compose up --detach postgres
-flapctl hooks wait_ready postgres
+flapctl wait_ready postgres
 
 docker exec --user postgres flap_postgres psql "${args[@]}" --command "DROP DATABASE funkwhale;"
 docker exec --user postgres flap_postgres createdb -O funkwhale -E UTF8 -T template0 funkwhale
