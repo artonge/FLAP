@@ -14,9 +14,7 @@ Most of the heavy lifting is done by the [`flapctl` CLI tool](https://gitlab.com
 
 ## Cloning
 
-`git clone --recursive git@gitlab.com:flap-box/flap.git`
-
-We need the `--recursive` flag so submodules are also cloned.
+`git clone git@gitlab.com:flap-box/flap.git`
 
 ## Installing
 
