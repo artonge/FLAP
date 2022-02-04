@@ -7,6 +7,6 @@ services:
         environment:
             LOG_LEVEL: silly
         volumes:
-            - ./home:/opt/home
+            - ${FLAP_DIR}/../home:/opt/home
             - /etc/letsencrypt:/etc/letsencrypt:ro
         entrypoint: [ "npm", "run", "serve" ]
