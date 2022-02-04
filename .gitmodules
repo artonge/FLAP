@@ -2,10 +2,6 @@
 	path = home
 	url = https://gitlab.com/flap-box/home.git
 	ignore = dirty
-[submodule "sogo"]
-	path = sogo
-	url = https://gitlab.com/flap-box/sogo.git
-	ignore = dirty
 [submodule "lemon"]
 	path = lemon
 	url = https://gitlab.com/flap-box/lemon.git
