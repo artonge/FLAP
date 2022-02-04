@@ -1,0 +1,43 @@
+.section {
+	margin-top: 200px;
+}
+
+.flapskin-center {
+	text-align: center;
+}
+
+.flapskin-success-button {
+	background: #0067cb !important;
+}
+
+.flapskin-username-login-input-container {
+	display: flex;
+	align-content: center;
+}
+
+.flapskin-username-login-input-domain {
+	padding: 0.49em 0.5em;
+	font-weight: bold;
+	color: #444;
+}
+
+.flapskin-login-logo {
+	width: 100px !important;
+	height: 100px !important;
+}
+
+.flapskin-hide {
+	display: none;
+}
+
+.flapskin-no-margin {
+	margin: 0;
+}
+
+.flapskin-flex {
+	display: flex;
+}
+
+.col-3-5 {
+ width: 60%
+}

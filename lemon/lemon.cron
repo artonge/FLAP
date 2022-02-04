@@ -1,0 +1,4 @@
+# Handler - 1 time per hour
+1 * * * *        docker exec --tty --user www-data flap_lemon /usr/share/lemonldap-ng/bin/purgeLocalCache
+# Portal - 1 time every 10 minutes
+*/10 * * * *    docker exec --tty --user www-data flap_lemon /usr/share/lemonldap-ng/bin/purgeCentralCache
