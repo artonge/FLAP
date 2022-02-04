@@ -137,7 +137,7 @@ function post_run_all {
 
 
 case $cmd in
-	init_db|pre_install|post_install|generate_config|wait_ready|post_update|post_domain_update|health_check|clean|pre_backup|post_restore)
+	init_db|pre_install|post_install|generate_config|is_up|post_update|post_domain_update|health_check|clean|pre_backup|post_restore)
 		hook=$cmd
 		exit_code=0
 		hooks_ran=()
@@ -187,7 +187,7 @@ Commands:
 	pre_install | [<service-name> ...] | Run the pre_install hook for all or some services.
 	post_install | [<service-name> ...] | Run the post_install hook for all or some services.
 	generate_config | [<service-name> ...] | Run the generate_config hook for all or some services.
-	wait_ready | [<service-name> ...] | Check if the service is up.
+	is_up | [<service-name> ...] | Check if the service is up.
 	post_update | [<service-name> ...] | Run the post_update hook for all or some services.
 	post_domain_update | [<service-name> ...] | Run the post_domain_update hook for all or some services.
 	health_check | [<service-name> ...] | Run the health_check hook for all or some services.
