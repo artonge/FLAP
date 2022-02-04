@@ -1,0 +1,37 @@
+# SOGo docker image for FLAP
+
+---
+
+## Functionality
+
+- Expose a GUI for mails, calendars and contact.
+- Expose a Caldav and Cardav API.
+- SSO connection with Basic Auth header.
+- Connect to the mail service.
+- Use memcache.
+
+## Possible improvements
+
+- Enable SAML or CAS connection (See issue: https://www.sogo.nu/bugs/view.php?id=5292).
+
+## Contributing
+
+### Cloning
+
+It is preferable to clone the main project:
+
+`git clone --recursive git@gitlab.com:flap-box/flap.git`
+
+We need the `--recursive` flag so submodules are also cloned.
+
+Then follow the main FLAP `README.md` to setup your workspace.
+
+### Changing the configuration
+
+- Tweak the configuration in `./config/sogo.template.conf`.
+- Restart the containers.
+- Repeat.
+
+### Links
+
+- [Documentation](https://sogo.nu/files/docs/SOGoInstallationGuide.html)
