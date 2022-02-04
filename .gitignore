@@ -1,3 +1,7 @@
+# Editor config files.
+.vscode
+
+# Temporary or output docker-compose config files.
 /docker-compose.yml
 /docker-compose.yml.tmp
 /docker-compose.dev.yml
@@ -5,10 +9,14 @@
 /docker-compose.override.yml.tmp
 /docker-compose.nginx-extra-volumes.yml
 
+# FLAP config files that shold not be synced.
+# TODO: remove
 flapctl.env
-
 flap_init_config.yml
 
-.vscode
-
+# TODO: Describe what it is.
 public
+
+# e2e tests related files.
+node_modules
+output

@@ -30,6 +30,7 @@
   - [Migrations](#migrations)
   - [Custom docker image](#custom-docker-image)
   - [Cron jobs](#cron-jobs)
+  - [E2E tests](#e2e-tests)
 
 ## Templates
 
@@ -581,5 +582,19 @@ The commands will be executed from the host and not the container.
 Example, Nextcloud use this to regularly generate file previews and run various tasks:
 
 [nextcloud/nextcloud.cron](src/nextcloud/nextcloud.cron ':include :type=code bash')
+
+<!-- panels:end -->
+
+## E2E tests
+
+<!-- div:left-panel -->
+
+You can create e2e tests for your services. Those are usually simple script that tests whether the service basic functionalities works.
+
+<!-- div:right-panel -->
+
+Example, Nextcloud will simply create a new file, write in it, and check the content.
+
+[nextcloud/nextcloud.cron](src/nextcloud/e2e/nextcloud.ts ':include :type=code typescript')
 
 <!-- panels:end -->
