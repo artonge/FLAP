@@ -1,0 +1,4 @@
+FLAG_DISABLE_ADVANCED_SETTINGS:
+    type: boolean
+    info: Disable advanced settings.
+    group: tweaks

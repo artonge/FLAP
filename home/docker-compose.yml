@@ -1,0 +1,19 @@
+services:
+    home:
+        image: registry.gitlab.com/flap-box/home:1.8.0
+        container_name: flap_home
+        env_file: [ $FLAP_DIR/home/home.env ]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        volumes:
+            - ${FLAP_DATA}/system:/var/lib/flap # [hd] <-> [home] Data
+            - ${FLAP_DIR}/mail/config/opendkim/keys:/var/lib/opendkim:ro # [hd] <-> [home] DKIM.
+            - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys # [emmc] <-> [home] SSH authorized keys
+        networks:
+            stores-net: null
+            apps-net:
+                aliases: [ home ]
+
+x-nginx-extra-volumes:
+    - ${FLAP_DIR}/home/src/front/public/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.
