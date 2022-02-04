@@ -1,4 +1,0 @@
-[submodule "core"]
-	path = home
-	url = https://gitlab.com/flap-box/home.git
-	ignore = dirty
