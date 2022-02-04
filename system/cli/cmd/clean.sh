@@ -53,7 +53,6 @@ case $CMD in
         # Remove files listed in gitignore
         cd "$FLAP_DIR"
         git clean "${args[@]}" -Xd --force
-        git submodule "${args[@]}" foreach "git clean ${args[*]} -Xd --force"
         ;;
     data)
         if [ "$FORCE_YES" == 0 ]
