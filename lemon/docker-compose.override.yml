@@ -1,0 +1,13 @@
+services:
+    lemon:
+        build:
+            context: ./lemon
+            dockerfile: ./Dockerfile
+
+    nginx:
+        volumes:
+            - ${FLAP_DIR}/lemon/doc:/lemon-doc # [emmc] -> [lemon] Scripts.
+
+volumes:
+    lemonStaticFiles:
+        name: flap_lemonStaticFiles

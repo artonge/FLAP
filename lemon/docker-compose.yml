@@ -1,0 +1,34 @@
+services:
+    lemon:
+        # Release notes: https://lemonldap-ng.org/documentation/latest/upgrade
+        image: registry.gitlab.com/flap-box/lemon:2.0.13-flap.1
+        container_name: flap_lemon
+        env_file: [$FLAP_DIR/lemon/lemon.env]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        volumes:
+            - ${FLAP_DIR}/lemon/config/lemonldap-ng.ini:/etc/lemonldap-ng/lemonldap-ng.ini # [emmc] -> [lemon] Main config.
+            - ${FLAP_DIR}/lemon/config/lmConf-1.json:/etc/lemonldap-ng/conf/lmConf-1.json # [emmc] -> [lemon] Authentication config.
+            - ${FLAP_DIR}/lemon/skin/templates:/usr/share/lemonldap-ng/portal/templates/flapskin # [emmc] -> [lemon] Custom skin for lemon's portal.
+            - ${FLAP_DATA}/lemon/data:/var/lib/lemonldap-ng # [hd] -> [lemon] LemonLDAP's data.
+            - lemonStaticFiles:/usr/ # [lemon] -> [nginx] Lemon static files needed by nginx.
+            # Modules.
+            - ${FLAP_DIR}/lemon/modules/LDAP.pm:/usr/share/perl5/Lemonldap/NG/Portal/Register/LDAP.pm # [emmc] -> [lemon]
+            - ${FLAP_DIR}/lemon/modules/AD.pm:/usr/share/perl5/Lemonldap/NG/Portal/Register/AD.pm # [emmc] -> [lemon]
+            - ${FLAP_DIR}/lemon/modules/Demo.pm:/usr/share/perl5/Lemonldap/NG/Portal/Register/Demo.pm # [emmc] -> [lemon]
+            - ${FLAP_DIR}/lemon/modules/Register.pm:/usr/share/perl5/Lemonldap/NG/Portal/Plugins/Register.pm # [emmc] -> [lemon]
+            - ${FLAP_DIR}/lemon/modules/Attributes.pm:/usr/share/perl5/Lemonldap/NG/Manager/Build/Attributes.pm # [emmc] -> [lemon]
+            - ${FLAP_DIR}/lemon/modules/PortalConstants.pm:/usr/share/perl5/Lemonldap/NG/Manager/Build/PortalConstants.pm # [emmc] -> [lemon]
+        networks:
+            stores-net:
+            apps-net:
+                aliases: [lemon]
+
+volumes:
+    lemonStaticFiles:
+        name: flap_lemonStaticFiles
+
+x-nginx-extra-volumes:
+    - lemonStaticFiles:/var/www/lemon:ro # [lemon] -> [nginx] Lemon static files.
+    - ${FLAP_DIR}/lemon/skin/flapskin:/var/www/lemon_flapskin:ro # [emmc] -> [nginx] Custom scripts and styles for flapskin.
