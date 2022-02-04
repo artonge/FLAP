@@ -6,10 +6,6 @@
 	path = sogo
 	url = https://gitlab.com/flap-box/sogo.git
 	ignore = dirty
-[submodule "ldap"]
-	path = ldap
-	url = https://gitlab.com/flap-box/ldap.git
-	ignore = dirty
 [submodule "lemon"]
 	path = lemon
 	url = https://gitlab.com/flap-box/lemon.git
