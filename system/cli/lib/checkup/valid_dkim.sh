@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
+exit_code=0
+
 # shellcheck disable=SC2002
 local_dkim=$(cat "$FLAP_DIR/mail/config/opendkim/keys/$PRIMARY_DOMAIN_NAME/mail.txt" | tr "\n" " " | grep --only-matching --extended-regexp 'p=.+"' | tr '"\t' ' ' | sed 's/[[:space:]]//g')
-dns_dkim=$(dig mail._domainkey."$PRIMARY_DOMAIN_NAME" txt | grep '^[^;]')
+dns_dkim=$(dig mail._domainkey."$PRIMARY_DOMAIN_NAME" txt | grep '^[^;]' | grep --only-matching --extended-regexp 'p=.+;' | tr ';"\t' ' ' | sed 's/[[:space:]]//g')
 
 if [[ "$local_dkim" != "$dns_dkim" ]]
 then
