@@ -47,9 +47,8 @@ Commands:
 			docker-compose --ansi never up --quiet-pull --remove-orphans --detach 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 		fi
 
-		# Wait dor services to be up.
+		# Wait for services to be up.
 		flapctl wait_ready
-		# flapctl hooks wait_ready
 
 		# Run post install hooks.
 		flapctl hooks post_install
@@ -75,6 +74,6 @@ Commands:
 
 		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 
-		flapctl hooks wait_ready "${services[@]}"
+		flapctl wait_ready "${services[@]}"
 	;;
 esac

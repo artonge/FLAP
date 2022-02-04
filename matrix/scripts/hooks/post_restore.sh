@@ -9,7 +9,7 @@ then
 fi
 
 docker-compose --ansi never up --detach postgres
-flapctl hooks wait_ready postgres
+flapctl wait_ready postgres
 
 docker exec --user postgres flap_postgres psql "${args[@]}" -c "DROP DATABASE synapse;"
 docker exec --user postgres flap_postgres psql "${args[@]}" -c "CREATE DATABASE synapse ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER synapse;"
