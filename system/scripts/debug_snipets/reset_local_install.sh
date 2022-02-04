@@ -9,7 +9,7 @@ set -euo pipefail
 if [ "$(cat "$FLAP_DATA/system/data/primary_domain.txt")" != "flap.test" ] && [ -f "$FLAP_DATA/system/data/installation_done.txt" ]
 then
 	echo "WARNING: Instance is not using flap.test. Are you on a live instance ?"
-	# exit 0
+	exit 0
 fi
 
 sudo -E flapctl stop
