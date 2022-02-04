@@ -8,4 +8,4 @@ then
 	exit 0
 fi
 
-docker-compose logs synapse | grep --quiet "Synapse now listening on TCP port 8008"
+docker-compose exec -T synapse curl -fSs http://localhost:8008/health
