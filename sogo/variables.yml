@@ -1,0 +1,4 @@
+ENABLE_SOGO:
+    type: boolean
+    info: Enable SOGo.
+    group: services
