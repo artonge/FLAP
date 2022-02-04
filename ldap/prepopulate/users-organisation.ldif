@@ -1,0 +1,4 @@
+# Create the organisational unit that will store flap users.
+dn: ou=users,dc=flap,dc=local
+ou: users
+objectClass: organizationalUnit
