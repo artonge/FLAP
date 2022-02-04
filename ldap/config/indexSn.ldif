@@ -1,0 +1,5 @@
+# Create an index on the sn attribute to increase search speed.
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: sn eq

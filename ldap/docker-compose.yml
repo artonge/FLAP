@@ -1,0 +1,17 @@
+services:
+    ldap:
+        image: registry.gitlab.com/flap-box/ldap:2.4.57-1
+        container_name: flap_ldap
+        env_file: [ $FLAP_DIR/ldap/ldap.env ]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        volumes:
+            - ${FLAP_DIR}/ldap/config:/config:ro # [emmc] -> [ldap] Config files to load.
+            - ${FLAP_DIR}/ldap/schemas:/schemas:ro # [emmc] -> [ldap] Schemas files to load.
+            - ${FLAP_DIR}/ldap/prepopulate:/prepopulate:ro # [emmc] -> [ldap] Entities files to load.
+            - ${FLAP_DATA}/ldap/config:/etc/ldap # [ldap] <-> [hd] Config
+            - ${FLAP_DATA}/ldap/data:/var/lib/ldap # [ldap] <-> [hd] Data
+        networks:
+            stores-net:
+                aliases: [ ldap ]
