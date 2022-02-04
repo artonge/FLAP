@@ -1,0 +1,4 @@
+FLAG_ALLOW_REGISTRATIONS:
+    type: boolean
+    info: Allow registrations of external users.
+    group: tweaks
