@@ -20,7 +20,7 @@
     - [generate_config](#generate_config)
     - [init_db](#init_db)
     - [pre_install](#pre_install)
-    - [wait_ready](#wait_ready)
+    - [is_up](#is_up)
     - [post_install](#post_install)
     - [post_domain_update](#post_domain_update)
     - [post_update](#post_update)
@@ -352,21 +352,26 @@ For example, `matrix` needs to generate some files, and this can only be done by
 <!-- panels:start -->
 <!-- div:title-panel -->
 
-### wait_ready
+### is_up
 
 <!-- div:left-panel -->
 
-This hook is used to wait for the service to be up. Execute whatever commands to check for the service readiness.
+This hook is used to check whether a service is up or not.
+Execute whatever commands to check for the service readiness.
 
 Context:
 
 - This hook is called after `flapctl start` calls.
 
+Known issue:
+
+- Most services are checking for a specific log to appear, but the services logs are discarded after some time, so if you run those `is_up` scripts, the services will appear as down even if they are up.
+
 <!-- div:right-panel -->
 
-For example Nextcloud wait for some specific log to be:
+For example Nextcloud checks for some specific log:
 
-[nextcloud/scripts/hooks/wait_ready.sh](src/nextcloud/scripts/hooks/wait_ready.sh ':include :type=code bash')
+[nextcloud/scripts/hooks/is_up.sh](src/nextcloud/scripts/hooks/is_up.sh ':include :type=code bash')
 
 <!-- panels:end -->
 
