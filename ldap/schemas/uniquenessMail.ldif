@@ -1,0 +1,14 @@
+# Enable unique module and force uniqueness on the mail field.
+dn: cn=module,cn=config
+cn: module
+objectClass: olcModuleList
+objectClass: top
+olcModuleLoad: unique.la
+
+dn: olcOverlay={0}unique,olcDatabase={1}mdb,cn=config
+objectClass: olcConfig
+objectClass: olcOverlayConfig
+objectClass: olcUniqueConfig
+objectClass: top
+olcOverlay: unique
+olcUniqueURI: ldap:///?mail?sub
