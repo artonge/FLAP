@@ -6,13 +6,13 @@ CMD=${1:-}
 
 case $CMD in
 	summarize)
-		echo "start | | Start flap services."
+		echo "start | [<service> ...] | Start services. Will generate template and run generate_config hooks."
 	;;
 	help)
 		echo "
 $(flapctl start summarize)
 Commands:
-	'' | | Start." | column -t -s "|"
+	[<service-name> ...] | | Start the given services, or start them all if nothing is provided." | column -t -s "|"
 	;;
 	"")
 		echo '* [start] Starting services.'
@@ -47,8 +47,8 @@ Commands:
 			docker-compose --ansi never up --quiet-pull --remove-orphans --detach 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 		fi
 
-		# Wait dor services to be up.
-		flapctl hooks wait_ready
+		# Wait for services to be up.
+		flapctl wait_ready
 
 		# Run post install hooks.
 		flapctl hooks post_install
@@ -74,6 +74,6 @@ Commands:
 
 		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 
-		flapctl hooks wait_ready "${services[@]}"
+		flapctl wait_ready "${services[@]}"
 	;;
 esac
