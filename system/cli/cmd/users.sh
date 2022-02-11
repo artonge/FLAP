@@ -119,8 +119,7 @@ case $CMD in
 
 		cd "$FLAP_DIR"
 
-		docker-compose ps --filter State=up | { grep --quiet -E "^flap_ldap " || true; }
-		was_up=${PIPESTATUS[1]}
+		was_up=$(is_service_up ldap)
 
 		docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
 
