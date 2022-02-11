@@ -1,0 +1,26 @@
+services:
+    sogo:
+        image: registry.gitlab.com/flap-box/sogo:5.4.0-flap.1
+        container_name: flap_sogo
+        env_file: [ $FLAP_DIR/sogo/sogo.env ]
+        restart: unless-stopped
+        logging:
+            driver: ${LOG_DRIVER:-journald}
+        depends_on: [ postgres, ldap, memcached ]
+        volumes:
+            - ${FLAP_DIR}/sogo/config/sogo.conf:/etc/sogo/sogo.conf:ro # [emmc] -> [sogo] SOGo's config.
+            - ${FLAP_DATA}/sogo/backup:/backup # [hd] -> [sogo] Backup dir.
+            # - ${FLAP_DATA}/sogo/saml:/saml/sogo:ro # [hd] -> [nextcloud] SOGo's SAML keys.
+            # - ${FLAP_DATA}/lemon/saml:/saml/idp:ro # [hd] -> [nextcloud] IDP's SAML keys.
+            - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo # [sogo] -> [nginx] Static files needed by nginx
+        networks:
+            stores-net: null
+            apps-net:
+                aliases: [ sogo ]
+
+volumes:
+    sogoStaticFiles:
+        name: flap_sogoStaticFiles
+
+x-nginx-extra-volumes:
+    - sogoStaticFiles:/usr/local/lib/GNUstep/SOGo:ro # [sogo] -> [nginx] SOGo static files.

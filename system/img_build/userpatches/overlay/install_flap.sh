@@ -161,8 +161,8 @@ if [ "$BRANCH_OR_TAG" != 'master' ]
 then
 	echo "CHECKING OUT $BRANCH_OR_TAG"
 	cd "$FLAP_DIR"
-	git fetch --force --tags --prune --prune-tags --recurse-submodules
-	git checkout --force --recurse-submodules "$BRANCH_OR_TAG"
+	git fetch --force --tags --prune --prune-tags
+	git checkout --force "$BRANCH_OR_TAG"
 fi
 
 echo "CREATING FLAP_DATA DIRECTORY"

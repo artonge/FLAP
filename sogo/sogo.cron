@@ -1,0 +1,4 @@
+# EMail reminders
+# * * * * *     docker exec --tty --user sogo flap_sogo /usr/local/sbin/sogo-ealarms-notify
+# Vacation messages activation and expiration
+# 0 0 * * *     docker exec --tty --user sogo flap_sogo /usr/local/sbin/sogo-tool update-autoreply -p /etc/sogo/sieve.creds

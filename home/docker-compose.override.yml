@@ -1,0 +1,12 @@
+services:
+    home:
+        build:
+            context: ./home
+            dockerfile: ./Dockerfile
+        ports: [ "9000:9000", "8081:8000", "9230:9229" ]
+        environment:
+            LOG_LEVEL: silly
+        volumes:
+            - ${FLAP_DIR}/../home:/opt/home
+            - /etc/letsencrypt:/etc/letsencrypt:ro
+        entrypoint: [ "npm", "run", "serve" ]

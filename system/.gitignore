@@ -1,1 +1,4 @@
 msmtprc.conf
+
+e2e/tests/services/*
+!e2e/tests/services/.gitkeep
