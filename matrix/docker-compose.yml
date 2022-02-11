@@ -1,7 +1,7 @@
 services:
     synapse:
         # https://github.com/matrix-org/synapse/blob/develop/docs/upgrade.md
-        image: registry.gitlab.com/flap-box/synapse:v1.51-flap.1
+        image: registry.gitlab.com/flap-box/synapse:v1.52-flap.1
         container_name: flap_synapse
         env_file: [ ./matrix/synapse.env ]
         restart: unless-stopped
