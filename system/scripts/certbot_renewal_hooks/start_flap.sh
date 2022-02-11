@@ -9,3 +9,4 @@ export FLAP_DIR
 export FLAP_DATA
 
 flapctl start nginx
+flapctl restart mail
