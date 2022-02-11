@@ -31,6 +31,7 @@ Commands:
 			fi
 		} || {
 			flapctl config generate &&
+			docker-compose ps &&
 			docker-compose down --remove-orphans
 		} || {
 			sleep 10 &&
