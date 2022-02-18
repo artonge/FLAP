@@ -87,7 +87,9 @@ Commands:
 			# Pull changes if we are on a branch.
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
-				git pull "${args[@]}" --force --recurse-submodules
+				git reset "${args[@]}" --hard origin/"$target" &&
+				git add . &&
+				git reset "${args[@]}" --hard
 			fi
 
 			# Update docker-compose.yml to pull new images.
