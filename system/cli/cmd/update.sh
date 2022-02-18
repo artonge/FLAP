@@ -88,7 +88,7 @@ Commands:
 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
 			then
 				git pull "${args[@]}" --force --recurse-submodules
-			fi
+			fi &&
 
 			# Update docker-compose.yml to pull new images.
 			flapctl config generate_templates &&
