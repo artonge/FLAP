@@ -1,6 +1,6 @@
 services:
     sogo:
-        image: registry.gitlab.com/flap-box/sogo:5.5.0-flap.1
+        image: registry.gitlab.com/flap-box/sogo:5.5.1-flap.1
         container_name: flap_sogo
         env_file: [ $FLAP_DIR/sogo/sogo.env ]
         restart: unless-stopped
