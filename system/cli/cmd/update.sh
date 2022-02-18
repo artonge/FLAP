@@ -90,7 +90,7 @@ Commands:
 				git reset "${args[@]}" --hard origin/"$target" &&
 				git add . &&
 				git reset "${args[@]}" --hard
-			fi
+			fi &&
 
 			# Update docker-compose.yml to pull new images.
 			flapctl config generate_templates &&
