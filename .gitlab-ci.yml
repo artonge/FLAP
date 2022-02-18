@@ -252,6 +252,7 @@ setup_current:
         - if [ "${CI_COMMIT_BRANCH:-} != ''" ]; then docker exec flap flapctl update $CI_COMMIT_BRANCH; fi
         - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then docker exec flap flapctl update $CI_MERGE_REQUEST_SOURCE_BRANCH_SHA; fi
 
+        - test "$(git status --porcelain)" == ""
         - test "$(docker exec flap flapctl migrate status)" == ""
 
         # Backup $FLAP_DATA
