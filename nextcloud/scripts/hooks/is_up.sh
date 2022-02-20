@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-docker-compose logs nextcloud | grep --quiet "NOTICE: ready to handle connections"
+logs=$(docker-compose logs nextcloud)
+echo "$logs" | grep --quiet "NOTICE: ready to handle connections"
