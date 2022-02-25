@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-docker-compose logs mail | grep --quiet "daemon started"
+logs=$(docker-compose logs mail)
+echo "$logs" | grep --quiet "daemon started"

@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-docker-compose logs matomo | grep --quiet "NOTICE: ready to handle connections"
+logs=$(docker-compose logs matomo)
+echo "$logs" | grep --quiet "NOTICE: ready to handle connections"

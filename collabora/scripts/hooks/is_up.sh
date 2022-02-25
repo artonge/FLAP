@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-docker-compose logs collabora | grep --quiet "Ready to accept connections on port 9980."
+logs=$(docker-compose logs collabora)
+echo "$logs" | grep --quiet "Ready to accept connections on port 9980."

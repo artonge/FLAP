@@ -2,5 +2,8 @@
 
 set -euo pipefail
 
-docker-compose logs mailman_web | grep --quiet "getting INI configuration from /opt/mailman-web/uwsgi.ini"
-docker-compose logs mailman_core | grep --quiet "Using Postfix configuration"
+logs=$(docker-compose logs mailman_web)
+echo "$logs" | grep --quiet "getting INI configuration from /opt/mailman-web/uwsgi.ini"
+
+logs=$(docker-compose logs mailman_core)
+echo "$logs" | grep --quiet "Using Postfix configuration"
