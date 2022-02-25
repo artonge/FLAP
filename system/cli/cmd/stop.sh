@@ -30,12 +30,14 @@ Commands:
 				docker-compose --ansi never down --remove-orphans 2> /dev/stdout | { grep -v -E '^(Stopping)|^(Removing)|(not found\.)$' || true; }
 			fi
 		} || {
+			# shellcheck disable=SC2016
 			sleep 10 &&
 			flapctl config generate &&
 			docker-compose ps &&
 			docker ps -a &&
 			docker network ls &&
 			docker volume ls &&
+			docker network ls --format '{{ .Name }}' | xargs --verbose -I{} docker network inspect --format "{{range \$cid,\$v := .Containers}}{{printf \"%s: %s\n\" \$cid \$v.Name}}{{end}}" {} &&
 			docker-compose down --remove-orphans
 		} || {
 			systemctl restart docker &&
