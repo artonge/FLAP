@@ -124,7 +124,7 @@ case $CMD in
 		docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
 
 		aliases=$(
-			grep '^mailAlias: ' /tmp/export.ldif | \
+			{ grep '^mailAlias: ' /tmp/export.ldif || true; } | \
 			cut -d ' ' -f2 2> /dev/null
 		)
 
