@@ -34,7 +34,7 @@ function checkSpace() {
 		echo "	- Source: $source"
 		echo "	- Size: $size"
 		echo "	- Used: $used"
-		echo "	- Avail: ${avail}G"
+		echo "	- Avail: ${avail}"
 		echo "	- Percent: ${pcent}%"
 	fi
 }
