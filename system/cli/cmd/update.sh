@@ -56,7 +56,7 @@ Commands:
 		# Go to FLAP_DIR for git cmds.
 		cd "$FLAP_DIR"
 
-		git fetch "${args[@]}" --force --tags --prune --prune-tags --recurse-submodules
+		git fetch "${args[@]}" --force --tags --prune --prune-tags
 
 		current_tag=$(flapctl version)
 		next_tag=$(git tag --sort version:refname | { grep -A 1 "$current_tag" || true; } | { grep -v "$current_tag" || true; })
@@ -80,7 +80,7 @@ Commands:
 
 		{
 			echo "* [update] Updating code from $current_tag to $target." &&
-			git checkout "${args[@]}" --force --recurse-submodules "$target" &&
+			git checkout "${args[@]}" --force "$target" &&
 			# Hard clean the repo.
 			git add . &&
 			git reset "${args[@]}" --hard &&
@@ -103,7 +103,7 @@ Commands:
 			# - starting without the docker images,
 			# - running migrations on an unknown state.
 			echo '* [update] ERROR - Fail to update, going back to previous commit.'
-			git checkout "${args[@]}" --force --recurse-submodules "$current_tag"
+			git checkout "${args[@]}" --force "$current_tag"
 			exit 1
 		}
 
