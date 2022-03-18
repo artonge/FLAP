@@ -97,6 +97,7 @@ echo "INSTALLING FLAP DEPENDENCIES"
 # bsdmainutils: for the column cmd
 # certbot: generate TLS certificates
 # cron: periodic tasks
+# dnsutils: dig
 # fail2ban: ban multiple failed ssh connections
 # gettext: envsubst
 # git: fetch updates
@@ -117,6 +118,7 @@ apt install -y \
 	bsdmainutils \
 	certbot \
 	cron \
+	dnsutils \
 	fail2ban \
 	gettext \
 	git \
