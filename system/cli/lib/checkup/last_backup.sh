@@ -20,7 +20,7 @@ last_week=$(date --utc +"%Y-%m-%d" --date "-1week")
 
 if [[ $last_backup < $last_week ]]
 then
-	echo "- The last backup is older than a week ago."
+	echo "	- The last backup is older than a week ago."
 	exit_code=1
 fi
 

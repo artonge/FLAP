@@ -17,7 +17,7 @@ do
 
 		if [ "$program" != "docker-proxy" ] && [ "$program" != "sshd" ]
 		then
-			echo "- Port $port is already in use by $program."
+			echo "	- Port $port is already in use by $program."
 			exit_code=1
 		fi
 	fi

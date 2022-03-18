@@ -10,9 +10,9 @@ dns_dkim=$(dig mail._domainkey."$PRIMARY_DOMAIN_NAME" txt | grep '^[^;]' | grep 
 
 if [[ "$local_dkim" != "$dns_dkim" ]]
 then
-	echo "- Local and DNS DKIM are not the same."
-	echo "	- Local: $local_dkim."
-	echo "	- DNS: $dns_dkim."
+	echo "	- Local and DNS DKIM are not the same."
+	echo "		- Local: $local_dkim."
+	echo "		- DNS: $dns_dkim."
 	exit_code=1
 fi
 

@@ -16,9 +16,9 @@ one_year_before_last_release=$(date --utc +"%Y-%m-%d" --date "$last_upstream_doc
 
 if [[ $local_docker_version_date < $one_year_before_last_release ]]
 then
-	echo "- You docker version is old"
-	echo "	- local: $local_docker_version ($local_docker_version_date)"
-	echo "	- latest: $last_upstream_docker_version ($last_upstream_docker_version_date)"
+	echo "	- You docker version is old"
+	echo "		- local: $local_docker_version ($local_docker_version_date)"
+	echo "		- latest: $last_upstream_docker_version ($last_upstream_docker_version_date)"
 	exit_code=1
 fi
 
