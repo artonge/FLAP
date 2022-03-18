@@ -4,7 +4,7 @@
   <div class="col-1-4 space"></div>
   <div class="full-width-forms col-1-2 feed-card bg-white flapskin-center">
   <TMPL_IF NAME="AUTH_ERROR">
-    <div class="message message-<TMPL_VAR NAME="AUTH_ERROR_TYPE"> alert">
+    <div class="message message-<TMPL_VAR NAME="AUTH_ERROR_TYPE"> alert" role="<TMPL_VAR NAME="AUTH_ERROR_ROLE">">
     <span trmsg="<TMPL_VAR NAME="AUTH_ERROR">"></span>
     </div>
   </TMPL_IF>

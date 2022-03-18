@@ -14,7 +14,7 @@ extends qw(
   Lemonldap::NG::Portal::Register::Base
 );
 
-our $VERSION = '2.0.10';
+our $VERSION = '2.0.14';
 
 # RUNNING METHODS
 
@@ -82,7 +82,6 @@ sub createUser {
             "LDAP error " . $mesg->code . ": " . $mesg->error );
 
         $self->ldap->unbind();
-        $self->{flags}->{ldapActive} = 0;
 
         return PE_LDAPERROR;
     }

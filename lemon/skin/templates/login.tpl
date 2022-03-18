@@ -4,6 +4,16 @@
 
   <TMPL_INCLUDE NAME="customLoginHeader.tpl">
 
+  <div id="errormsg">
+    <TMPL_IF NAME="AUTH_ERROR">
+      <div class="message message-<TMPL_VAR NAME="AUTH_ERROR_TYPE"> alert" role="<TMPL_VAR NAME="AUTH_ERROR_ROLE">"><span trmsg="<TMPL_VAR NAME="AUTH_ERROR">"></span>
+        <TMPL_IF LOCKTIME>
+          <TMPL_VAR NAME="LOCKTIME"> <span trspan="seconds">seconds</span>.
+        </TMPL_IF>
+      </div>
+    </TMPL_IF>
+  </div>
+
   <TMPL_IF AUTH_LOOP>
 
     <div id="authMenu" class="card">
@@ -216,6 +226,14 @@
       </button>
       </div>
     </div>
+    <TMPL_IF NAME="DISPLAY_FINDUSER">
+      <div class="actions">
+      <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#finduserModal">
+        <span class="fa fa-search"></span>
+        <span trspan="searchAccount">Search for an account</span>
+      </button>
+      </div>
+    </TMPL_IF>
     </form>
   </div>
   </TMPL_IF>
