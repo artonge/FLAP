@@ -100,16 +100,10 @@ case $CMD in
 		cd "$FLAP_DIR"
 
 		users=$(
-			docker-compose run --no-deps --rm ldap slapcat 2> /dev/null | \
+			docker-compose exec ldap slapcat 2> /dev/null | \
 			grep '^uid:' | \
 			cut -d ' ' -f2 2> /dev/null
 		)
-
-		if [ "$was_up" != "0" ]
-		then
-			# Remove networks.
-			flapctl hooks clean system &> /dev/null
-		fi
 
 		# Remove \r char.
 		echo "${users//[$'\r']}"
@@ -119,12 +113,10 @@ case $CMD in
 
 		cd "$FLAP_DIR"
 
-		was_up=$(is_service_up ldap)
-
-		docker-compose run --no-deps --rm ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
+		docker-compose exec ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
 
 		aliases=$(
-			grep '^mailAlias: ' /tmp/export.ldif | \
+			{ grep '^mailAlias: ' /tmp/export.ldif || true; } | \
 			cut -d ' ' -f2 2> /dev/null
 		)
 
@@ -135,14 +127,8 @@ case $CMD in
 			tr " " "\n" 2> /dev/null
 		)
 
-		if [ "$was_up" != "0" ]
-		then
-			# Remove networks.
-			flapctl hooks clean system &> /dev/null
-		fi
-
 		# Remove \r char.
-		echo "${aliases//[$'\r']}""$aliases_base64"
+		echo "${aliases//[$'\r']}$aliases_base64"
 		;;
 	summarize)
 		echo "users | [list, create_admin] | Manage users."
