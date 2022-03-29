@@ -22,7 +22,7 @@ do
 
 	for alias in "${aliases[@]}"
 	do
-		debug "	$alias"
+		debug "	- $alias"
 		echo "$alias $user@$PRIMARY_DOMAIN_NAME" >> "$FLAP_DIR/mail/config/smtpd_sender"
 	done
 done
