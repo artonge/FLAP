@@ -72,6 +72,7 @@ Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
 Unattended-Upgrade::Automatic-Reboot "true";
 Unattended-Upgrade::Automatic-Reboot-Time "03:00";
+Unattended-Upgrade::MailOnlyOnError "true";
 ' > /etc/apt/apt.conf.d/50unattended-upgrades
 
 echo '
