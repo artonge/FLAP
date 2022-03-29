@@ -7,6 +7,8 @@ set -euo pipefail
 DOMAIN=$1
 TOKEN=$(cat "$FLAP_DATA/system/data/domains/$DOMAIN/authentication.txt")
 
+exit_code=0
+
 echo "* [dns-update:flap] Updating flap DNS for $DOMAIN."
 
 # shellcheck disable=SC2002
