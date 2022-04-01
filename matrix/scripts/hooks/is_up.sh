@@ -8,4 +8,4 @@ then
 	exit 0
 fi
 
-docker-compose exec -T synapse curl -fSs http://localhost:8008/health
+docker-compose exec -T synapse curl --fail --show-error --silent http://localhost:8008/health > /dev/null
