@@ -1,7 +1,7 @@
 services:
     synapse:
         # https://github.com/matrix-org/synapse/blob/develop/docs/upgrade.md
-        image: matrixdotorg/synapse:v1.58.0
+        image: matrixdotorg/synapse:v1.59.0
         container_name: flap_synapse
         env_file: [ ./matrix/synapse.env ]
         restart: unless-stopped
