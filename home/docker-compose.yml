@@ -1,6 +1,6 @@
 services:
     home:
-        image: registry.gitlab.com/flap-box/home:1.8.0
+        image: registry.gitlab.com/flap-box/home:1.9.0
         container_name: flap_home
         env_file: [ $FLAP_DIR/home/home.env ]
         restart: unless-stopped
