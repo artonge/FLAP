@@ -1,0 +1,10 @@
+diff --git a/system/scripts/migrations/26.sh b/system/scripts/migrations/26.sh
+index a143c20..5b83977 100755
+--- a/system/scripts/migrations/26.sh
++++ b/system/scripts/migrations/26.sh
+@@ -3,4 +3,5 @@
+ set -euo pipefail
+ 
+ echo "* [26] Install dnsutils."
++apt update
+ apt install -y dnsutils
