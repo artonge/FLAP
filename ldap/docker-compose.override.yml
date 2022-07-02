@@ -1,15 +1,15 @@
 services:
     ldap:
         build:
-            context: ./ldap
+            context: ../ldap
             dockerfile: ./Dockerfile
-        ports: ["389:389"]
+        ports: [ "389:389" ]
 
     ldapadmin:
         image: osixia/phpldapadmin
         container_name: flap_ldapadmin
         restart: unless-stopped
-        ports: ["6443:80"]
+        ports: [ "6443:80" ]
         environment:
             PHPLDAPADMIN_LDAP_HOSTS: ldap
             PHPLDAPADMIN_HTTPS: "false"

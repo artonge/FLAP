@@ -1,6 +1,6 @@
 services:
     ldap:
-        image: registry.gitlab.com/flap-box/ldap:2.4.57-1
+        image: registry.gitlab.com/flap-box/ldap:2.4.57-3
         container_name: flap_ldap
         env_file: [ $FLAP_DIR/ldap/ldap.env ]
         restart: unless-stopped

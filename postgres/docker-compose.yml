@@ -3,9 +3,10 @@ services:
         # Do not upgrade lightly. See:
         # Github issue for automatic upgrade in docker container: https://github.com/docker-library/postgres/issues/37
         # pg_upgrade doc: https://www.postgresql.org/docs/9.4/pgupgrade.html
+        # Also: https://andreas.scherbaum.la/blog/archives/1116-PostgreSQL-Upgrades-are-hard!.html#_content
         image: postgres:11.9
         container_name: flap_postgres
-        env_file: [$FLAP_DIR/postgres/postgres.env]
+        env_file: [ $FLAP_DIR/postgres/postgres.env ]
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
@@ -13,4 +14,4 @@ services:
             - ${FLAP_DATA}/postgres/data/data:/var/lib/postgresql/data # [postgres] <-> [hd] Data
         networks:
             stores-net:
-                aliases: [postgres]
+                aliases: [ postgres ]
