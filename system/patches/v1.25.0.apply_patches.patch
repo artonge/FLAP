@@ -1,0 +1,13 @@
+diff --git a/system/cli/cmd/update.sh b/system/cli/cmd/update.sh
+index 7a059b6..68860a1 100755
+--- a/system/cli/cmd/update.sh
++++ b/system/cli/cmd/update.sh
+@@ -84,6 +84,8 @@ Commands:
+ 			# Hard clean the repo.
+ 			git add . &&
+ 			git reset "${args[@]}" --hard &&
++			# Apply version's patches if any.
++			find "$FLAP_CURRENT_VERSION/system/patches/" -name "$target"'.*.patch' -exec patch --dir "$FLAP_DIR" -p1 -i {} \; &&
+ 			# Pull changes if we are on a branch.
+ 			if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]
+ 			then

@@ -1,0 +1,13 @@
+diff --git a/collabora/collabora.template.env b/collabora/collabora.template.env
+index 85e8d02..dc543f0 100644
+--- a/collabora/collabora.template.env
++++ b/collabora/collabora.template.env
+@@ -1,7 +1,7 @@
+ username=admin
+ password=$ADMIN_PWD
+ 
+-domain=office.$PRIMARY_DOMAIN
++domain=office.$PRIMARY_DOMAIN_NAME
+ server_name=office.$PRIMARY_DOMAIN_NAME
+ 
+ DONT_GEN_SSL_CERT=true
