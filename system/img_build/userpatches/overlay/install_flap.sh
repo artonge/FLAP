@@ -51,6 +51,11 @@ apt install -y \
 	python3-dev build-essential libffi-dev libssl-dev \
 	libsodium23 libsodium-dev
 
+# Fix pyopenssl/cryptography version conflict
+# https://github.com/pyca/pyopenssl/issues/728
+# Maybe remove when we update debian's version
+pip install pyopenssl>=22
+
 # Use system's libsodium to avoid long compile time.
 export SODIUM_INSTALL=system
 pip3 install docker-compose
