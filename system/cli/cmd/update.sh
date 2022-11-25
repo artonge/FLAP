@@ -37,7 +37,7 @@ Commands:
 				image=$(yq -r --arg sub_service "$sub_service" '.services[$sub_service].image' "$FLAP_DIR/$service/docker-compose.yml")
 
 				image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
-				docker-compose pull "${args[@]}" "$sub_service"
+				docker compose pull "${args[@]}" "$sub_service"
 				new_image_digest=$(docker image inspect --format '{{ index .RepoDigests 0 }}' "$image")
 
 				if [ "$image_digest" != "$new_image_digest" ]
@@ -49,7 +49,7 @@ Commands:
 
 		if [ "${services_to_restart[*]}" != "" ]
 		then
-			docker-compose restart "${services_to_restart[@]}"
+			docker compose restart "${services_to_restart[@]}"
 		fi
 		;;
 	""|*)
@@ -96,7 +96,7 @@ Commands:
 			flapctl config generate_templates &&
 			flapctl hooks generate_config system &&
 			echo '* [update] Pulling new docker images.' &&
-			docker-compose pull "${args[@]}"
+			docker compose pull "${args[@]}"
 		} || {
 			# When either the git update or the docker pull fails, it is safer to go back to the previous tag.
 			# This will prevent from:

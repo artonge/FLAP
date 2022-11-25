@@ -17,7 +17,7 @@ do
 	fi
 
 	admin_access=$(
-		docker-compose run --no-deps --rm ldap slapcat -a "(uid=$username)" 2> /dev/null | \
+		docker compose run --no-deps --rm ldap slapcat -a "(uid=$username)" 2> /dev/null | \
 		grep '^objectClass: organizationalPerson' | \
 		cat
 	)
@@ -34,6 +34,6 @@ do
 		args=(--quiet)
 	fi
 
-	docker-compose exec -T --user postgres postgres psql "${args[@]}" mailman -c "UPDATE auth_user SET is_superuser='$admin_access' WHERE username='$username';"
+	docker compose exec -T --user postgres postgres psql "${args[@]}" mailman -c "UPDATE auth_user SET is_superuser='$admin_access' WHERE username='$username';"
 
 done

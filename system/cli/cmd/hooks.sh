@@ -142,7 +142,7 @@ case $cmd in
 		exit_code=0
 		hooks_ran=()
 
-		# Go to FLAP_DIR to allow docker-compose cmds.
+		# Go to FLAP_DIR to allow docker compose cmds.
 		cd "$FLAP_DIR"
 
 		# Get services list from args.

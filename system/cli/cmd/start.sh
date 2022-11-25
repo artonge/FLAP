@@ -37,14 +37,14 @@ Commands:
 
 		flapctl hooks clean
 
-		# Go to FLAP_DIR for docker-compose.
+		# Go to FLAP_DIR for docker compose.
 		cd "$FLAP_DIR"
 		echo '* [start] Running services.'
 		if [ "${FLAP_DEBUG:-}" == "true" ]
 		then
-			docker-compose --ansi never up --quiet-pull --detach
+			docker compose --ansi never up --quiet-pull --detach
 		else
-			docker-compose --ansi never up --quiet-pull --remove-orphans --detach 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
+			docker compose --ansi never up --quiet-pull --remove-orphans --detach 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 		fi
 
 		# Wait for services to be up.
@@ -72,7 +72,7 @@ Commands:
 			sub_services+=("${tmp_services[@]}")
 		done
 
-		docker-compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
+		docker compose --ansi never up --quiet-pull --remove-orphans --detach "${sub_services[@]}" 2> /dev/stdout | { grep -v -E '(^Creating)|(is up-to-date$)' || true; }
 
 		flapctl wait_ready "${services[@]}"
 	;;

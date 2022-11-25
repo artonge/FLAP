@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-docker-compose exec -T ldap slapcat | gzip > "$FLAP_DATA/ldap/backup.ldif.gz"
+docker compose exec -T ldap slapcat | gzip > "$FLAP_DATA/ldap/backup.ldif.gz"

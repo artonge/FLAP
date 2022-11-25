@@ -17,7 +17,7 @@ do
 	fi
 
 	admin_access=$(
-		docker-compose run --no-deps --rm ldap slapcat -a "(uid=$username)" 2> /dev/null | \
+		docker compose run --no-deps --rm ldap slapcat -a "(uid=$username)" 2> /dev/null | \
 		grep '^objectClass: organizationalPerson' | \
 		cat
 	)
@@ -29,7 +29,7 @@ do
 		admin_access=1
 	fi
 
-	docker-compose exec -T mariadb mysql \
+	docker compose exec -T mariadb mysql \
 	 	--password="$ADMIN_PWD" \
 		--database "matomo" \
 		--execute "UPDATE user SET superuser_access='$admin_access' WHERE login='$username';"

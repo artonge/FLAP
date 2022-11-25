@@ -100,7 +100,7 @@ case $CMD in
 		cd "$FLAP_DIR"
 
 		users=$(
-			docker-compose exec ldap slapcat 2> /dev/null | \
+			docker compose exec ldap slapcat 2> /dev/null | \
 			grep '^uid:' | \
 			cut -d ' ' -f2 2> /dev/null
 		)
@@ -113,7 +113,7 @@ case $CMD in
 
 		cd "$FLAP_DIR"
 
-		docker-compose exec ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
+		docker compose exec ldap slapcat -a "uid=$uid" 2> /dev/null > /tmp/export.ldif
 
 		aliases=$(
 			{ grep '^mailAlias: ' /tmp/export.ldif || true; } | \

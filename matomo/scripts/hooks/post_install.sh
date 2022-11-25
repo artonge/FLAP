@@ -64,7 +64,7 @@ fi
 
 # Geolocation provider. with 'geoip2php', matomo looks for specific hardcoded databases uses misc/
 # shellcheck disable=SC2016
-docker-compose exec -T mariadb mysql \
+docker compose exec -T mariadb mysql \
 	"${args[@]}" \
 	--user matomo \
  	--password="$MATOMO_DB_PWD" \
@@ -74,7 +74,7 @@ docker-compose exec -T mariadb mysql \
 # We run archiving via a cron job. disable browser triggered archiving.
 # https://matomo.org/docs/setup-auto-archiving/#disable-browser-triggers-for-matomo-archiving-and-limit-matomo-reports-to-updating-every-hour
 # shellcheck disable=SC2016
-docker-compose exec -T mariadb mysql \
+docker compose exec -T mariadb mysql \
 	"${args[@]}" \
 	--user matomo \
  	--password="$MATOMO_DB_PWD" \
@@ -83,4 +83,4 @@ docker-compose exec -T mariadb mysql \
 
 
 debug "Finish matomo install."
-docker-compose exec -T --user www-data matomo /inner_scripts/generate_initial_config.sh
+docker compose exec -T --user www-data matomo /inner_scripts/generate_initial_config.sh

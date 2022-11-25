@@ -84,6 +84,6 @@ export -f get_saml_metadata
 is_service_up() {
 	service=$1
 
-	docker-compose ps --filter State=up | grep -E --quiet "^flap_$service "
+	docker compose ps --filter status=running | grep -E --quiet "^flap_$service "
 }
 export -f is_service_up

@@ -4,7 +4,6 @@
 
 set -euo pipefail
 
-
 # Guard to prevent executing this file on a real instance.
 if [ "$(cat "$FLAP_DATA/system/data/primary_domain.txt")" != "flap.test" ] && [ -f "$FLAP_DATA/system/data/installation_done.txt" ]
 then

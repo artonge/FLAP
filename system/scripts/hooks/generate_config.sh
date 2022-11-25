@@ -10,7 +10,7 @@ rm --force "$FLAP_DIR/docker-compose.override.yml"
 main_compose_file="$FLAP_DIR/docker-compose.yml"
 main_compose_override_file="$FLAP_DIR/docker-compose.override.yml"
 
-# Get list of docker-compose files.
+# Get list of docker compose files.
 mapfile -t compose_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")
 mapfile -t compose_monitoring_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.monitoring.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")
 mapfile -t compose_override_files < <(find "$FLAP_DIR" -maxdepth 2 -mindepth 2 -name docker-compose.override.yml -printf '%P\n' | grep -E "(${FLAP_SERVICES// /|})\/")

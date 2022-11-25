@@ -12,7 +12,7 @@ debug "Deleting ldap data."
 rm -rf "$FLAP_DATA"/ldap/data/*
 
 debug "Restoring ldap users."
-gzip --decompress --stdout "$FLAP_DATA/ldap/backup.ldif.gz" | docker-compose exec --user openldap -T ldap slapadd -n1 -F /etc/ldap/slapd.d
+gzip --decompress --stdout "$FLAP_DATA/ldap/backup.ldif.gz" | docker compose exec --user openldap -T ldap slapadd -n1 -F /etc/ldap/slapd.d
 
 debug "Stopping ldap container."
 flapctl stop ldap

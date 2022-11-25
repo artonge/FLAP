@@ -4,7 +4,7 @@ set -euo pipefail
 
 
 debug "Install SAML auth plugin."
-docker-compose exec -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2 --plugin-version "$PEERTUBE_SAML_PLUGIN_VERSION"
+docker compose exec -T peertube npm run plugin:install -- --npm-name peertube-plugin-auth-saml2 --plugin-version "$PEERTUBE_SAML_PLUGIN_VERSION"
 
 debug "Update auth-saml2 plugin config."
 saml_config=$(jq \
@@ -20,7 +20,7 @@ then
 	args=(--quiet)
 fi
 
-docker-compose exec -T --user postgres postgres psql "${args[@]}" peertube --command "UPDATE public.plugin SET settings='$saml_config' WHERE name='auth-saml2';"
+docker compose exec -T --user postgres postgres psql "${args[@]}" peertube --command "UPDATE public.plugin SET settings='$saml_config' WHERE name='auth-saml2';"
 
 # Restart peertube so the plugin is activated.
 flapctl restart peertube

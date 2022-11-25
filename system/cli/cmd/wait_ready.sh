@@ -33,8 +33,8 @@ Commands:
 				i=$((i+1))
 				if [ $((i % 50)) = 0 ] && [ "${FLAP_DEBUG:-}" = "true" ]
 				then
-					docker-compose ps
-					yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml" | xargs -I {} docker-compose logs {}
+					docker compose ps
+					yq -r '.services | keys[]' "$FLAP_DIR/$service/docker-compose.yml" | xargs -I {} docker compose logs {}
 				fi
 
 				debug "$service is unavailable - waiting (attempt #$i)."

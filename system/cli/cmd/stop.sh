@@ -15,7 +15,7 @@ Commands:
 	[<service-name> ...] | | Stop the given services, or stop them all if nothing is provided." | column -t -s "|"
 	;;
 	"")
-		# Go to FLAP_DIR for docker-compose.
+		# Go to FLAP_DIR for docker compose.
 		cd "$FLAP_DIR"
 
 		# Stop all services and grep-out output. If an error occurs:
@@ -25,23 +25,23 @@ Commands:
 		{
 			if [ "${FLAP_DEBUG:-}" == "true" ]
 			then
-				docker-compose --ansi never down --remove-orphans
+				docker compose --ansi never down --remove-orphans
 			else
-				docker-compose --ansi never down --remove-orphans 2> /dev/stdout | { grep -v -E '^(Stopping)|^(Removing)|(not found\.)$' || true; }
+				docker compose --ansi never down --remove-orphans 2> /dev/stdout | { grep -v -E '^(Stopping)|^(Removing)|(not found\.)$' || true; }
 			fi
 		} || {
 			# shellcheck disable=SC2016
 			sleep 10 &&
 			flapctl config generate &&
-			docker-compose ps &&
+			docker compose ps &&
 			docker ps -a &&
 			docker network ls &&
 			docker volume ls &&
 			docker network ls --format '{{ .Name }}' | xargs --verbose -I{} docker network inspect --format "{{range \$cid,\$v := .Containers}}{{printf \"%s: %s\n\" \$cid \$v.Name}}{{end}}" {} &&
-			docker-compose down --remove-orphans
+			docker compose down --remove-orphans
 		} || {
 			systemctl restart docker &&
-			docker-compose down --remove-orphans
+			docker compose down --remove-orphans
 		}
 		;;
 	*)

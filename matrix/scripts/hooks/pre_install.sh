@@ -4,7 +4,7 @@ set -euo pipefail
 
 
 debug "Generating Synapse's homeserver.yaml configuration file."
-docker-compose run -T --rm --no-deps synapse generate
+docker compose run -T --rm --no-deps synapse generate
 
 flapctl hooks generate_config matrix
 

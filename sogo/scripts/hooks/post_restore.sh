@@ -3,7 +3,7 @@
 set -euo pipefail
 
 
-docker-compose --ansi never up --detach sogo
+docker compose --ansi never up --detach sogo
 
 for user in "$FLAP_DIR"/sogo/backup/*
 do

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 
-docker-compose up --detach postgres
+docker compose up --detach postgres
 flapctl wait_ready postgres
 
 if [ "${FLAP_DEBUG:-}" != "true" ]

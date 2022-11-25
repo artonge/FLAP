@@ -8,7 +8,7 @@ then
 	args=(--quiet)
 fi
 
-docker-compose up --detach postgres
+docker compose up --detach postgres
 flapctl wait_ready postgres
 
 docker exec --user postgres flap_postgres psql "${args[@]}" --command "DROP DATABASE funkwhale;"

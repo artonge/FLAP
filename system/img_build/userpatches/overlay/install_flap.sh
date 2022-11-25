@@ -34,7 +34,8 @@ apt update
 apt install -y \
 	docker-ce \
 	docker-ce-cli \
-	containerd.io
+	containerd.io \
+	docker-compose-plugin
 
 # Start docker on boot.
 # Check if we are in a docker container with systemctl.
@@ -45,20 +46,7 @@ fi
 
 ################################################################################
 echo "INSTALLING DOCKER-COMPOSE"
-apt install -y \
-	python3 python3-pip \
-	python3-setuptools python3-wheel \
-	python3-dev build-essential libffi-dev libssl-dev \
-	libsodium23 libsodium-dev
-
-# Fix pyopenssl/cryptography version conflict
-# https://github.com/pyca/pyopenssl/issues/728
-# Maybe remove when we update debian's version
-pip install pyopenssl>=22
-
-# Use system's libsodium to avoid long compile time.
-export SODIUM_INSTALL=system
-pip3 install docker-compose
+apt install -y python3 python3-pip
 
 ################################################################################
 echo "ENABLING AUTO UPDATE"
@@ -109,7 +97,6 @@ echo "INSTALLING FLAP DEPENDENCIES"
 # git: fetch updates
 # iproute2: use the ip cmd
 # jq: manipulate json text files
-# libssl-dev: to install docker-compose
 # mdadm: setup RAID
 # miniupnpc: open ports
 # msmtp msmtp-mta: to send mail with sendmail
