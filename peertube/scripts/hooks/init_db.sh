@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-
 if [ "${FLAP_DEBUG:-}" != "true" ]
 then
 	args=(--quiet)

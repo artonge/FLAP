@@ -1,6 +1,6 @@
 services:
     peertube:
-        image: chocobozzz/peertube:v4.1.1-bullseye
+        image: chocobozzz/peertube:v4.3.1-bullseye
         container_name: flap_peertube
         # 1935: live video port
         ports: [ "1935:1935" ]

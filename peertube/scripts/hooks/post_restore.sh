@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-
 docker-compose up --detach postgres
 flapctl wait_ready postgres
 
