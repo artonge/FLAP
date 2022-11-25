@@ -1,6 +1,6 @@
 services:
     mail:
-        image: mailserver/docker-mailserver:11.0
+        image: mailserver/docker-mailserver:11.2
         container_name: flap_mail
         env_file: [ ./mail/mail.env ]
         restart: unless-stopped
@@ -9,6 +9,11 @@ services:
         depends_on: [ ldap ]
         ports: [ "25:25", "143:143", "587:587" ]
         cap_add: [ NET_ADMIN ]
+        stop_grace_period: 1m
+        healthcheck:
+            test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+            timeout: 3s
+            retries: 0
         networks:
             stores-net: null
             apps-net:
