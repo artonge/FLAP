@@ -10,8 +10,10 @@ case $CMD in
 		do
 			echo "* [checkup] Checking $(basename "$check")"
 
-			"$check" || true
-
+			if ! "$check"
+			then
+				echo "[ERROR] $check failed."
+			fi
 		done
 	;;
 	summarize)
