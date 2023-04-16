@@ -1,14 +1,14 @@
 services:
     # Frontend
     jitsi:
-        image: jitsi/web:latest
+        image: jitsi/web:latestweb-1.0.7184-1
         container_name: flap_jitsi
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:
             - ${FLAP_DATA}/jitsi/jitsi:/config
-        env_file: [$FLAP_DIR/jitsi/jitsi.env]
+        env_file: [ $FLAP_DIR/jitsi/jitsi.env ]
         networks:
             apps-net:
                 aliases:
@@ -19,15 +19,15 @@ services:
 
     # XMPP server
     prosody:
-        image: jitsi/prosody:latest
+        image: jitsi/prosody:prosody-0.12.3
         container_name: flap_prosody
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
-        expose: ["5222", "5347", "5280"]
+        expose: [ "5222", "5347", "5280" ]
         volumes:
             - ${FLAP_DATA}/jitsi/prosody:/config
-        env_file: [$FLAP_DIR/jitsi/jitsi.env]
+        env_file: [ $FLAP_DIR/jitsi/jitsi.env ]
         networks:
             jitsi-net:
                 aliases:
@@ -35,21 +35,21 @@ services:
 
     # Focus component
     jicofo:
-        image: jitsi/jicofo:latest
+        image: jitsi/jicofo:jicofo-1.0-1021-1
         container_name: flap_jicofo
         restart: unless-stopped
         logging:
             driver: ${LOG_DRIVER:-journald}
         volumes:
             - ${FLAP_DATA}/jitsi/jicofo:/config
-        env_file: [$FLAP_DIR/jitsi/jitsi.env]
-        depends_on: [prosody]
+        env_file: [ $FLAP_DIR/jitsi/jitsi.env ]
+        depends_on: [ prosody ]
         networks:
             jitsi-net:
 
-    # Video bridge
+                # Video bridge
     jvb:
-        image: jitsi/jvb:latest
+        image: jitsi/jvb:jvb-2.3-13-g4fb50820-1
         container_name: flap_jvb
         restart: unless-stopped
         logging:
@@ -59,10 +59,11 @@ services:
             - "4443:4443"
         volumes:
             - ${FLAP_DATA}/jitsi/jvb:/config
-        env_file: [$FLAP_DIR/jitsi/jitsi.env]
-        depends_on: [prosody]
+        env_file: [ $FLAP_DIR/jitsi/jitsi.env ]
+        depends_on: [ prosody ]
         networks:
             jitsi-net:
+
 
     coturn:
         image: instrumentisto/coturn:4
