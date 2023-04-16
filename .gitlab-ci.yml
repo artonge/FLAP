@@ -91,7 +91,7 @@ build_docker_image:
               ENABLE_COLLABORA: "true"
               ENABLE_SOGO: "true"
               ENABLE_MATRIX: "true"
-              ENABLE_JITSI: "true"
+              ENABLE_JITSI: "false"
               ENABLE_MONITORING: "true"
             - SERVICE_BUNDLE_NAME: social
               ENABLE_PEERTUBE: "true"
