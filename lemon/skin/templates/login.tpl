@@ -4,7 +4,7 @@
 
   <TMPL_INCLUDE NAME="customLoginHeader.tpl">
 
-  <div id="errormsg">
+  <div id="errormsg" class="flapskin-center">
     <TMPL_IF NAME="AUTH_ERROR">
       <div class="message message-<TMPL_VAR NAME="AUTH_ERROR_TYPE"> alert" role="<TMPL_VAR NAME="AUTH_ERROR_ROLE">"><span trmsg="<TMPL_VAR NAME="AUTH_ERROR">"></span>
         <TMPL_IF LOCKTIME>
