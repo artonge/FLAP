@@ -14,6 +14,3 @@ services:
             stores-net: null
             apps-net:
                 aliases: [ home ]
-
-x-nginx-extra-volumes:
-    - ${FLAP_DIR}/home/src/front/public/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.
