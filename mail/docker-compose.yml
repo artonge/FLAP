@@ -1,6 +1,6 @@
 services:
     mail:
-        image: mailserver/docker-mailserver:11.2
+        image: mailserver/docker-mailserver:12.0
         container_name: flap_mail
         env_file: [ ./mail/mail.env ]
         restart: unless-stopped

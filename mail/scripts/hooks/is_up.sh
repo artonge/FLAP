@@ -3,4 +3,4 @@
 set -euo pipefail
 
 logs=$(docker-compose logs mail)
-echo "$logs" | grep "daemon started"
+echo "$logs" | grep "is up and running"
