@@ -12,7 +12,7 @@ services:
             driver: ${LOG_DRIVER:-journald}
         networks:
             stores-net:
-                aliases: [memcached]
+                aliases: [ memcached ]
 
 networks:
     apps-net:
@@ -20,3 +20,6 @@ networks:
     stores-net:
         name: flap_stores-net
         internal: true
+
+x-nginx-extra-volumes:
+    - ${FLAP_DIR}/system/logo.svg:/var/www/logo.svg:ro # [emmc] -> [nginx] logo.svg so it can be used by every app.

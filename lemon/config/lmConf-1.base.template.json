@@ -249,6 +249,7 @@
 	"SMTPServer": "mail",
 	"SMTPTLS": "",
 	"SMTPTLSOpts": {},
+	"scrollTop": false,
 	"storePassword": 1,
 	"successLoginNumber": 20,
 	"timeout": 2592000,

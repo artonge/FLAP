@@ -1,7 +1,7 @@
 services:
     lemon:
         # Release notes: https://lemonldap-ng.org/documentation/latest/upgrade
-        image: registry.gitlab.com/flap-box/lemon:2.0.14-flap.1
+        image: registry.gitlab.com/flap-box/lemon:2.0.15-flap.1
         container_name: flap_lemon
         env_file: [ $FLAP_DIR/lemon/lemon.env ]
         restart: unless-stopped

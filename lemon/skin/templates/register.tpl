@@ -28,7 +28,7 @@
 		      <input name="login" type="text" value="<TMPL_VAR NAME="LOGIN">" class="form-control" trplaceholder="login" required aria-required="true"/>
 		    </div>
 		</TMPL_IF>
-
+    
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text"><label for="firstnamefield" class="mb-0"><i class="fa fa-user"></i></label></span>
@@ -50,8 +50,8 @@
       <input id="mailfield" name="mail" type="text" value="<TMPL_VAR NAME="MAIL">" class="form-control" trplaceholder="mail" required aria-required="true" autocomplete="email" />
     </div>
 
-    <TMPL_IF NAME=CAPTCHA_SRC>
-      <TMPL_INCLUDE NAME="captcha.tpl">
+    <TMPL_IF NAME=CAPTCHA_HTML>
+      <TMPL_VAR NAME=CAPTCHA_HTML>
     </TMPL_IF>
     <TMPL_IF NAME="TOKEN">
       <input id="token" type="hidden" name="token" value="<TMPL_VAR NAME="TOKEN">" />
