@@ -58,9 +58,6 @@ php occ "${args[@]}" background:cron
 # ENABLE PREVIEW PRE-GENERATOR
 php occ "${args[@]}" app:enable previewgenerator
 
-# ENABLE RANSOMWARE PLUGINS
-php occ "${args[@]}" app:enable ransomware_protection
-
 # MAIL
 php occ "${args[@]}" config:system:set mail_smtpmode --value "smtp"
 php occ "${args[@]}" config:system:set mail_sendmailmode --value "smtp"
