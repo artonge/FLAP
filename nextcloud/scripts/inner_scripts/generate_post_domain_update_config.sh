@@ -9,12 +9,13 @@ fi
 
 # ENABLE SAML
 # HACK: there is a white space before the $(cat ...) because occ will interpret "-- BEGIN..." as a cli arg.
-php occ "${args[@]}" config:app:set user_saml idp-x509cert --value " $(cat /saml/idp/cert.pem)"
-php occ "${args[@]}" config:app:set user_saml sp-privateKey --value " $(cat /saml/nextcloud/private_key.pem)"
-php occ "${args[@]}" config:app:set user_saml sp-x509cert --value " $(cat /saml/nextcloud/cert.pem)"
-php occ "${args[@]}" config:app:set user_saml idp-entityId --value "https://auth.$PRIMARY_DOMAIN_NAME/saml/metadata"
-php occ "${args[@]}" config:app:set user_saml idp-singleSignOnService.url --value "https://auth.$PRIMARY_DOMAIN_NAME/saml/singleSignOn"
-php occ "${args[@]}" config:app:set user_saml idp-singleLogoutService.url --value "https://auth.$PRIMARY_DOMAIN_NAME/saml/singleLogout"
+php ./occ saml:config:set 1 \
+	--idp-x509cert " $(cat /saml/idp/cert.pem)" \
+	--sp-privateKey " $(cat /saml/nextcloud/private_key.pem)" \
+	--sp-x509cert " $(cat /saml/nextcloud/cert.pem)" \
+	--idp-entityId "https://auth.$PRIMARY_DOMAIN_NAME/saml/metadata" \
+	--idp-singleSignOnService.url "https://auth.$PRIMARY_DOMAIN_NAME/saml/singleSignOn" \
+	--idp-singleLogoutService.url "https://auth.$PRIMARY_DOMAIN_NAME/saml/singleLogout"
 
 # SET TRUSTED DOMAINS
 php occ "${args[@]}" config:system:delete trusted_domains

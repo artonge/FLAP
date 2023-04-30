@@ -33,23 +33,24 @@ php occ "${args[@]}" ldap:test-config s01
 
 # ENABLE SAML
 php occ "${args[@]}" app:enable user_saml
+php occ "${args[@]}" saml:config:create
 php occ "${args[@]}" config:app:set user_saml type --value "saml"
 php occ "${args[@]}" config:app:set user_saml general-require_provisioned_account --value "1"
-php occ "${args[@]}" config:app:set user_saml general-uid_mapping --value "uid"
-php occ "${args[@]}" config:app:set user_saml general-idp0_display_name --value "FLAP SSO"
-php occ "${args[@]}" config:app:set user_saml providerIds --value "1"
-php occ "${args[@]}" config:app:set user_saml sp-name-id-format --value "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-php occ "${args[@]}" config:app:set user_saml security-wantMessagesSigned --value "1",
-php occ "${args[@]}" config:app:set user_saml security-logoutResponseSigned --value "1",
-php occ "${args[@]}" config:app:set user_saml security-nameIdEncrypted --value "0",
-php occ "${args[@]}" config:app:set user_saml security-wantNameIdEncrypted --value "0",
-php occ "${args[@]}" config:app:set user_saml security-wantAssertionsEncrypted --value "0",
-php occ "${args[@]}" config:app:set user_saml security-lowercaseUrlencoding --value "0",
-php occ "${args[@]}" config:app:set user_saml security-wantXMLValidation --value "1",
-php occ "${args[@]}" config:app:set user_saml security-wantNameId --value "1",
-php occ "${args[@]}" config:app:set user_saml security-wantAssertionsSigned --value "1",
-php occ "${args[@]}" config:app:set user_saml security-signMetadata --value "0",
-php occ "${args[@]}" config:app:set user_saml security-logoutRequestSigned --value "1"
+php occ "${args[@]}" saml:config:set 1 \
+    --general-uid_mapping "uid" \
+    --general-idp0_display_name "FLAP SSO" \
+    --sp-name-id-format "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" \
+    --security-wantMessagesSigned "1", \
+    --security-logoutResponseSigned "1", \
+    --security-nameIdEncrypted "0", \
+    --security-wantNameIdEncrypted "0", \
+    --security-wantAssertionsEncrypted "0", \
+    --security-lowercaseUrlencoding "0", \
+    --security-wantXMLValidation "1", \
+    --security-wantNameId "1", \
+    --security-wantAssertionsSigned "1", \
+    --security-signMetadata "0", \
+    --security-logoutRequestSigned "1"
 
 # CHOOSE CRON MODE
 php occ "${args[@]}" background:cron
