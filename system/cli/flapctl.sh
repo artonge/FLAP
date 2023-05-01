@@ -41,7 +41,7 @@ child_nb=$(pgrep flapctl -g 0 -c)
 OLD_GREP_COLOR=${GREP_COLOR:-"1;$i"}
 
 # Highlight FLAP's logs with grep.
-export GREP_COLOR="1;$i"
+export GREP_COLOR="mt=1;$i"
 
 # Prevent synchronous flapctl calls.
 if [ "$child_nb" == 1 ]
