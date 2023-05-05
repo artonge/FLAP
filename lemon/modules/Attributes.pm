@@ -6,7 +6,7 @@
 
 package Lemonldap::NG::Manager::Build::Attributes;
 
-our $VERSION = '2.0.15';
+our $VERSION = '2.16.1';
 use strict;
 use Regexp::Common qw/URI/;
 
@@ -462,17 +462,19 @@ sub attributes {
             type          => 'int',
             default       => 31536000,
             documentation => 'lifetime of the remember auth choice cookie',
-            flags => 'm',
+            flags         => 'm',
         },
         rememberDefaultChecked => {
             type          => 'bool',
             default       => 0,
-            documentation => 'Is remember auth choice checkbox enabled by default?',
+            documentation =>
+              'Is remember auth choice checkbox enabled by default?',
         },
         rememberTimer => {
             type          => 'int',
             default       => 5,
-            documentation => 'timer before automatic authentication with remembered choice',
+            documentation =>
+              'timer before automatic authentication with remembered choice',
             flags => 'm',
         },
         stayConnected => {
@@ -499,6 +501,11 @@ sub attributes {
             default       => 'llngconnection',
             documentation => 'Name of the stayConnected plugin cookie',
             flags         => 'p',
+        },
+        stayConnectedSingleSession => {
+            default       => 0,
+            type          => 'bool',
+            documentation => 'Allow only one permanent session per user',
         },
         checkState => {
             type          => 'bool',
@@ -531,6 +538,24 @@ sub attributes {
             default       => 1,
             type          => 'bool',
             documentation => 'Check if session attributes exist',
+            flags         => 'p',
+        },
+        checkHIBP => {
+            default       => 0,
+            type          => 'bool',
+            documentation => 'Enable check HIBP',
+            flags         => 'p',
+        },
+        checkHIBPURL => {
+            default       => 'https://api.pwnedpasswords.com/range/',
+            type          => 'url',
+            documentation => 'URL of Have I Been Pwned API',
+            flags         => 'p',
+        },
+        checkHIBPRequired => {
+            default       => 1,
+            type          => 'bool',
+            documentation => 'Require HIBP check to pass',
             flags         => 'p',
         },
         checkUser => {
@@ -798,6 +823,7 @@ sub attributes {
         },
         refreshSessions => {
             type          => 'bool',
+            help          => "refreshsessionapi.html",
             documentation => 'Refresh sessions plugin',
         },
         forceGlobalStorageIssuerOTT => {
@@ -940,7 +966,7 @@ sub attributes {
             help          => 'portalcustom.html',
             keyTest       => sub { return perlExpr(@_) },
             keyMsgFail    => '__badSkinRule__',
-            test          => qr/^\w+$/,
+            test          => sub { 1 },
             msgFail       => '__badValue__',
             documentation => 'Rules to choose portal skin',
         },
@@ -1280,6 +1306,7 @@ sub attributes {
             default       => 1,
             documentation => 'Display login history tab in portal',
         },
+
         successLoginNumber => {
             default       => 5,
             type          => 'int',
@@ -1298,8 +1325,8 @@ sub attributes {
             documentation => 'Display password tab in portal',
         },
         portalDisplayLogout => {
-            default       => 1,
             type          => 'boolOrExpr',
+            default       => 1,
             documentation => 'Display logout tab in portal',
         },
         portalDisplayCertificateResetByMail => {
@@ -1318,15 +1345,16 @@ sub attributes {
             type          => 'bool',
             documentation => 'Display reset password button in portal',
         },
-        passwordResetAllowedRetries => {
-            default       => 3,
-            type          => 'int',
-            documentation => 'Maximum number of retries to reset password',
-        },
         portalDisplayOidcConsents => {
             type          => 'boolOrExpr',
             default       => '$_oidcConsents && $_oidcConsents =~ /\w+/',
-            documentation => 'Display OIDC consent tab in portal',
+            documentation => 'Display OIDC consents tab in portal',
+        },
+        portalDisplayOrder => {
+            type    => 'text',
+            default =>
+              'Appslist ChangePassword LoginHistory OidcConsents Logout',
+            documentation => 'List for ordering tabs in portal',
         },
         portalDisplayGeneratePassword => {
             default       => 1,
@@ -1343,6 +1371,11 @@ sub attributes {
             default       => 0,
             type          => 'bool',
             documentation => 'Allow to display password in login form',
+        },
+        passwordResetAllowedRetries => {
+            default       => 3,
+            type          => 'int',
+            documentation => 'Maximum number of retries to reset password',
         },
 
         # Cookies
@@ -1826,7 +1859,6 @@ sub attributes {
 
         mailUrl => {
             type          => 'url',
-            default       => 'http://auth.example.com/resetpwd',
             documentation => 'URL of password reset page',
         },
 
@@ -1857,7 +1889,6 @@ sub attributes {
         },
         certificateResetByMailURL => {
             type          => 'url',
-            default       => 'http://auth.example.com/certificateReset',
             documentation => 'URL of certificate reset page',
         },
         certificateResetByMailValidityDelay => {
@@ -1888,8 +1919,7 @@ sub attributes {
             documentation => 'Register session timeout',
         },
         registerUrl => {
-            type          => 'text',
-            default       => 'http://auth.example.com/register',
+            type          => 'url',
             documentation => 'URL of register page',
         },
         registerDB => {
@@ -1942,6 +1972,41 @@ sub attributes {
             default       => 20,
             type          => 'int',
             documentation => 'Maximum 2F devices name length',
+        },
+
+        # Password 2FA
+        password2fActivation => {
+            type          => 'boolOrExpr',
+            default       => 0,
+            documentation => 'Password2F activation',
+        },
+        password2fSelfRegistration => {
+            type          => 'boolOrExpr',
+            default       => 0,
+            documentation => 'Password2F self registration activation',
+        },
+        password2fAuthnLevel => {
+            type          => 'int',
+            documentation =>
+              'Authentication level for users authentified by Password2F'
+        },
+        password2fLabel => {
+            type          => 'text',
+            documentation => 'Portal label for Password2F'
+        },
+        password2fLogo => {
+            type          => 'text',
+            documentation => 'Custom logo for Password 2F',
+        },
+        password2fUserCanRemoveKey => {
+            type          => 'bool',
+            default       => 1,
+            documentation =>
+              'Authorize users to remove existing Password2F secret',
+        },
+        password2fTTL => {
+            type          => 'int',
+            documentation => 'Password2F device time to live ',
         },
 
         # U2F
@@ -2258,7 +2323,7 @@ sub attributes {
             documentation => 'Yubico nonce',
         },
         yubikey2fUrl => {
-            type          => 'text',
+            type          => 'url',
             documentation => 'Yubico server',
         },
         yubikey2fPublicIDSize => {
@@ -2429,20 +2494,43 @@ sub attributes {
         # AutoSignin
         autoSigninRules => {
             type          => 'keyTextContainer',
+            keyTest       => sub { return perlExpr(@_) },
+            test          => sub { 1 },
+            help          => 'autosignin.html',
             documentation => 'List of auto signin rules',
         },
 
-        # Adaptative Authentication Level plugin
+        # Adaptative Authentication Level
         adaptativeAuthenticationLevelRules => {
-            type    => 'keyTextContainer',
-            keyTest => sub {
-                eval { qr/$_[0]/ };
-                return $@ ? 0 : 1;
-            },
-            keyMsgFail    => '__badRegexp__',
+            type          => 'keyTextContainer',
+            keyTest       => sub { return perlExpr(@_) },
+            test          => sub { 1 },
             help          => "adaptativeauthenticationlevel.html",
             documentation => 'Adaptative authentication level rules',
-            flags         => 'p',
+        },
+
+        # LocationDetect plugin
+        locationDetect => {
+            default       => 0,
+            type          => 'bool',
+            documentation => 'Enable LocationDetect plugin',
+        },
+        locationDetectGeoIpDatabase => {
+            type          => 'text',
+            documentation => 'Path to GeoIP database',
+        },
+        locationDetectGeoIpLanguages => {
+            default       => 'en, fr',
+            type          => 'text',
+            documentation => 'Languages for GeoIP database',
+        },
+        locationDetectIpDetail => {
+            type          => 'text',
+            documentation => 'Information requested for IP',
+        },
+        locationDetectUaDetail => {
+            type          => 'text',
+            documentation => 'Information requested for User Agent',
         },
 
         ## Virtualhosts
@@ -2522,6 +2610,10 @@ sub attributes {
             type    => 'int',
             default => -1,
         },
+        vhostComment => {
+            type    => 'longtext',
+            default => '',
+        },
         vhostAccessToTrace => { type => 'text', default => '' },
         vhostAliases       => { type => 'text', default => '' },
         vhostType          => {
@@ -2531,6 +2623,7 @@ sub attributes {
                 { k => 'CDA',           v => 'CDA' },
                 { k => 'DevOps',        v => 'DevOps' },
                 { k => 'DevOpsST',      v => 'DevOpsST' },
+                { k => 'DevOpsCDA',     v => 'DevOpsCDA' },
                 { k => 'Main',          v => 'Main' },
                 { k => 'OAuth2',        v => 'OAuth2' },
                 { k => 'SecureToken',   v => 'SecureToken' },
@@ -2637,6 +2730,11 @@ sub attributes {
             type          => 'int',
             documentation => 'Expiration time of Service and Proxy tickets',
         },
+        casBackChannelSingleLogout => {
+            default       => 0,
+            type          => 'bool',
+            documentation => 'Enable CAS (Back-Channel) Single Logout',
+        },
         issuerDBCASActivation => {
             default       => 0,
             type          => 'bool',
@@ -2663,23 +2761,27 @@ sub attributes {
             default       => { cn => 'cn', mail => 'mail', uid => 'uid', },
             documentation => 'CAS exported variables',
         },
-        casAppMetaDataOptionsService => {
-            type          => 'text',
-            documentation => 'CAS App service',
-        },
-        casAppMetaDataOptionsUserAttribute => {
-            type          => 'text',
-            documentation => 'CAS User attribute',
-        },
         casAppMetaDataOptionsAuthnLevel => {
             type          => 'int',
             documentation =>
               'Authentication level requires to access to this CAS application',
         },
+        casAppMetaDataOptionsComment => {
+            type          => 'longtext',
+            documentation => 'Comment for this CAS application',
+        },
         casAppMetaDataOptionsRule => {
             type          => 'text',
             test          => sub { return perlExpr(@_) },
-            documentation => 'CAS App rule',
+            documentation => 'CAS application rule',
+        },
+        casAppMetaDataOptionsService => {
+            type          => 'text',
+            documentation => 'CAS application service',
+        },
+        casAppMetaDataOptionsUserAttribute => {
+            type          => 'text',
+            documentation => 'CAS User attribute',
         },
         casAppMetaDataMacros => {
             type => 'keyTextContainer',
@@ -2913,6 +3015,10 @@ sub attributes {
             type          => 'bool',
             documentation => 'SAML Discovery Protocol Is Passive',
         },
+        samlFederationFiles => {
+            type          => 'text',
+            documentation => 'Path to SAML Federation Metadata',
+        },
         samlRelayStateTimeout => {
             type          => 'int',
             default       => 600,
@@ -3007,36 +3113,14 @@ sub attributes {
         },
         samlIDPMetaDataXML => {
             type => 'file',
-            test => sub {
-                my $v = shift;
-                return 1 unless ( $v and %$v );
-                my @msg;
-                my $res = 1;
-                my %entityIds;
-                foreach my $idpId ( keys %$v ) {
-                    unless ( $v->{$idpId}->{samlIDPMetaDataXML} =~
-                        /entityID="(.+?)"/si )
-                    {
-                        push @msg, "$idpId SAML metadata has no EntityID";
-                        $res = 0;
-                        next;
-                    }
-                    my $eid = $1;
-                    if ( defined $entityIds{$eid} ) {
-                        push @msg,
-"$idpId and $entityIds{$eid} have the same SAML EntityID";
-                        $res = 0;
-                        next;
-                    }
-                    $entityIds{$eid} = $idpId;
-                }
-                return ( $res, join( ', ', @msg ) );
-            },
         },
         samlIDPMetaDataOptions => {
             type       => 'keyTextContainer',
             keyTest    => qr/^[a-zA-Z](?:[a-zA-Z0-9_\-\.]*\w)?$/,
             keyMsgFail => '__badMetadataName__',
+        },
+        samlIDPMetaDataOptionsFederationEntityID => {
+            type => 'text',
         },
         samlIDPMetaDataOptionsNameIDFormat => {
             type   => 'select',
@@ -3062,10 +3146,6 @@ sub attributes {
             type    => 'bool',
             default => 0,
         },
-        samlIDPMetaDataOptionsAllowProxiedAuthn => {
-            type    => 'bool',
-            default => 0,
-        },
         samlIDPMetaDataOptionsAllowLoginFromIDP => {
             type    => 'bool',
             default => 0,
@@ -3088,6 +3168,13 @@ sub attributes {
             type    => 'bool',
             default => 0,
         },
+        samlIDPMetaDataOptionsCheckSSOMessageSignature => {
+            type    => 'bool',
+            default => 1,
+        },
+        samlIDPMetaDataOptionsComment => {
+            type => 'longtext'
+        },
         samlIDPMetaDataOptionsForceUTF8 => {
             type    => 'bool',
             default => 0,
@@ -3095,10 +3182,6 @@ sub attributes {
         samlIDPMetaDataOptionsSignSSOMessage => {
             type    => 'trool',
             default => -1,
-        },
-        samlIDPMetaDataOptionsCheckSSOMessageSignature => {
-            type    => 'bool',
-            default => 1,
         },
         samlIDPMetaDataOptionsSignSLOMessage => {
             type    => 'trool',
@@ -3171,6 +3254,7 @@ sub attributes {
         samlIDPMetaDataOptionsUserAttribute => { type => 'text', },
         samlIDPMetaDataOptionsDisplayName   => { type => 'text', },
         samlIDPMetaDataOptionsIcon          => { type => 'text', },
+        samlIDPMetaDataOptionsTooltip       => { type => 'text', },
         samlIDPMetaDataOptionsSortNumber    => { type => 'int', },
 
         # SP keys
@@ -3188,6 +3272,24 @@ sub attributes {
             type       => 'keyTextContainer',
             keyTest    => qr/^[a-zA-Z](?:[a-zA-Z0-9_\-\.]*\w)?$/,
             keyMsgFail => '__badMetadataName__',
+        },
+        samlSPMetaDataOptionsFederationEntityID => {
+            type => 'text',
+        },
+        samlSPMetaDataOptionsFederationOptionalAttributes => {
+            type   => 'select',
+            select =>
+              [ { k => '', v => 'keep' }, { k => 'ignore', v => 'ignore' }, ],
+            default => '',
+        },
+        samlSPMetaDataOptionsFederationRequiredAttributes => {
+            type   => 'select',
+            select => [
+                { k => '',         v => 'keep' },
+                { k => 'optional', v => 'makeoptional' },
+                { k => 'ignore',   v => 'ignore' },
+            ],
+            default => '',
         },
         samlSPSSODescriptorAuthnRequestsSigned => {
             default       => 1,
@@ -3238,6 +3340,9 @@ sub attributes {
               . '#PORTAL#/saml/artifact',
             documentation => 'SAML SP artifact resolution service ',
         },
+        samlSPMetaDataOptionsComment => {
+            type => 'longtext'
+        },
         samlSPMetaDataOptionsNameIDFormat => {
             type   => 'select',
             select => [
@@ -3254,16 +3359,16 @@ sub attributes {
             ],
             default => '',
         },
-        samlSPMetaDataOptionsNameIDSessionKey => { type => 'text', },
-        samlSPMetaDataOptionsOneTimeUse       => {
+        samlSPMetaDataOptionsNameIDSessionKey    => { type => 'text' },
+        samlSPMetaDataOptionsNotOnOrAfterTimeout => {
+            type    => 'int',
+            default => 72000,
+        },
+        samlSPMetaDataOptionsOneTimeUse => {
             type    => 'bool',
             default => 0,
         },
         samlSPMetaDataOptionsSessionNotOnOrAfterTimeout => {
-            type    => 'int',
-            default => 72000,
-        },
-        samlSPMetaDataOptionsNotOnOrAfterTimeout => {
             type    => 'int',
             default => 72000,
         },
@@ -3464,13 +3569,14 @@ sub attributes {
         },
         available2F => {
             type    => 'text',
-            default =>
-              'UTOTP,TOTP,U2F,REST,Mail2F,Ext2F,WebAuthn,Yubikey,Radius',
+            default => join( ',',
+                qw/UTOTP TOTP U2F REST Mail2F Ext2F WebAuthn Yubikey Radius Password/
+            ),
             documentation => 'Available second factor modules',
         },
         available2FSelfRegistration => {
-            type          => 'text',
-            default       => 'TOTP,U2F,WebAuthn,Yubikey',
+            type    => 'text',
+            default => join( ',', qw/Password TOTP U2F WebAuthn Yubikey/ ),
             documentation =>
               'Available self-registration modules for second factor',
         },
@@ -3708,6 +3814,10 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
             type    => 'text',
             default => 'SSL_CLIENT_S_DN_Email'
         },
+        SSLIssuerVar => {
+            type    => 'text',
+            default => 'SSL_CLIENT_I_DN'
+        },
         SSLVarIf => {
             type    => 'keyTextContainer',
             keyTest => sub { 1 },
@@ -3750,13 +3860,17 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
             test    => $url,
             msgFail => '__badUrl__',
         },
+        casSrvMetaDataOptionsComment => {
+            type          => 'longtext',
+            documentation => 'Comment for this CAS server',
+        },
         casSrvMetaDataOptionsDisplayName => {
             type          => 'text',
-            documentation => 'Name to display for CAS server',
+            documentation => 'Name to display for this CAS server',
         },
         casSrvMetaDataOptionsIcon => {
             type          => 'text',
-            documentation => 'Path of CAS Server Icon',
+            documentation => 'Path of CAS server icon',
         },
         casSrvMetaDataOptionsSortNumber => {
             type          => 'int',
@@ -3765,6 +3879,10 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
         casSrvMetaDataOptionsResolutionRule => {
             type    => 'longtext',
             default => '',
+        },
+        casSrvMetaDataOptionsTooltip => {
+            type          => 'text',
+            documentation => 'Tooltip for this CAS Server',
         },
 
         # Fake attribute: used by manager REST API to agglomerate all nodes
@@ -3807,6 +3925,21 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
         },
         radiusSecret => { type => 'text' },
         radiusServer => { type => 'text' },
+
+        radiusExportedVars => {
+            type => 'keyTextContainer',
+
+            # session key name
+            keyTest    => qr/^!?[a-zA-Z][a-zA-Z0-9_-]*$/,
+            keyMsgFail => '__badVariableName__',
+
+            # radius attribue name (from discitonary)
+            test          => qr/^[a-zA-Z][a-zA-Z0-9_:\-]*$/,
+            msgFail       => '__badValue__',
+            default       => {},
+            documentation => 'RADIUS exported variables',
+        },
+        radiusDictionaryFile => { type => 'text' },
 
         # REST
         restAuthUrl       => { type => 'url' },
@@ -4326,7 +4459,7 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
             documentation => 'OpenID Connect Authentication Context Class Ref',
         },
         oidcServicePrivateKeySig => { type => 'RSAPrivateKey', },
-        oidcServicePublicKeySig  => { type => 'RSAPublicKey', },
+        oidcServicePublicKeySig  => { type => 'RSAPublicKeyOrCertificate', },
         oidcServiceKeyIdSig      => {
             type          => 'text',
             documentation => 'OpenID Connect Signature Key ID',
@@ -4340,6 +4473,12 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
             type          => 'bool',
             default       => 0,
             documentation => 'OpenID Connect allow only declared scopes',
+        },
+        oidcServiceIgnoreScopeForClaims => {
+            type          => 'bool',
+            default       => 0,
+            documentation =>
+'OpenID Connect release all attributes even when not allowed by scope',
         },
         oidcServiceAllowAuthorizationCodeFlow => {
             type          => 'bool',
@@ -4465,6 +4604,8 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
         oidcOPMetaDataOptionsIcon          => { type => 'text', },
         oidcOPMetaDataOptionsStoreIDToken  => { type => 'bool', default => 0 },
         oidcOPMetaDataOptionsSortNumber    => { type => 'int', },
+        oidcOPMetaDataOptionsTooltip       => { type => 'text', },
+        oidcOPMetaDataOptionsComment       => { type => 'longtext', },
         oidcOPMetaDataOptionsResolutionRule => {
             type    => 'longtext',
             default => '',
@@ -4472,7 +4613,7 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
 
         # OpenID Connect relying parties
         oidcRPMetaDataExportedVars => {
-            help    => 'idpopenidconnect.html#oidcexportedattr',
+            help    => 'idpopenidconnect.html#exported-attributes',
             type    => 'oidcAttributeContainer',
             keyTest => qr/\w/,
             test    => qr/\w/,
@@ -4532,9 +4673,10 @@ m{^(?:ldapi://[^/]*/?|\w[\w\-\.]*(?::\d{1,5})?|ldap(?:s|\+tls)?://\w[\w\-\.]*(?:
         oidcRPMetaDataOptionsAdditionalAudiences         => { type => 'text' },
         oidcRPMetaDataOptionsAccessTokenExpiration       => { type => 'int' },
         oidcRPMetaDataOptionsAuthorizationCodeExpiration => { type => 'int' },
-        oidcRPMetaDataOptionsOfflineSessionExpiration    => { type => 'int' },
-        oidcRPMetaDataOptionsRedirectUris                => { type => 'text', },
-        oidcRPMetaDataOptionsExtraClaims                 => {
+        oidcRPMetaDataOptionsComment                  => { type => 'longtext' },
+        oidcRPMetaDataOptionsOfflineSessionExpiration => { type => 'int' },
+        oidcRPMetaDataOptionsRedirectUris             => { type => 'text', },
+        oidcRPMetaDataOptionsExtraClaims              => {
             type    => 'keyTextContainer',
             keyTest => qr/^[\x21\x23-\x5B\x5D-\x7E]+$/,
             default => {},
