@@ -70,7 +70,7 @@ test_dockerfile_sanity:
 
 build_docker_image:
     stage: build
-    image: docker:stable
+    image: docker:latest
     services: ["docker:dind"]
     script:
         - DOCKER_DRIVER=overlay2
@@ -83,7 +83,7 @@ build_docker_image:
         - docker push $CI_REGISTRY_IMAGE/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
 
 .start_flap:
-    image: docker:stable
+    image: docker:latest
     parallel:
         matrix:
             - SERVICE_BUNDLE_NAME: office
