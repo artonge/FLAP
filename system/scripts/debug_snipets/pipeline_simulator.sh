@@ -55,13 +55,13 @@ docker run \
 	--add-host="music.flap.test:$FLAP_IP" \
 	--add-host="lists.flap.test:$FLAP_IP" \
 	--add-host="office.flap.test:$FLAP_IP" \
-	docker:stable \
+	docker:latest \
 	sh
 
 # Specify the image we want to debug.
 CI_REGISTRY_IMAGE=registry.gitlab.com/flap-box/flap
 CI_COMMIT_REF_SLUG=
-CI_COMMIT_SHA=v1.21.0
+CI_COMMIT_SHA=v1.30.0
 
 FLAP_IP=$(grep docker /etc/hosts | cut -f1)
 
@@ -103,15 +103,15 @@ docker run \
 	--env FLAP_DATA=/flap_data \
 	--env FLAP_DEBUG="${FLAP_DEBUG:-true}" \
 	--env ENABLE_NEXTCLOUD="${ENABLE_NEXTCLOUD:-true}" \
-	--env ENABLE_COLLABORA="${ENABLE_COLLABORA:-true}" \
-	--env ENABLE_SOGO="${ENABLE_SOGO:-true}" \
-	--env ENABLE_MATRIX="${ENABLE_MATRIX:-true}" \
-	--env ENABLE_JITSI="${ENABLE_JITSI:-true}" \
-	--env ENABLE_PEERTUBE="${ENABLE_PEERTUBE:-true}" \
-	--env ENABLE_FUNKWHALE="${ENABLE_FUNKWHALE:-true}" \
-	--env ENABLE_MAILMAN="${ENABLE_MAILMAN:-true}" \
-	--env ENABLE_MONITORING="${ENABLE_MONITORING:-true}" \
-	--env ENABLE_MATOMO="${ENABLE_MATOMO:-true}" \
+	--env ENABLE_COLLABORA="${ENABLE_COLLABORA:-false}" \
+	--env ENABLE_SOGO="${ENABLE_SOGO:-false}" \
+	--env ENABLE_MATRIX="${ENABLE_MATRIX:-false}" \
+	--env ENABLE_JITSI="${ENABLE_JITSI:-false}" \
+	--env ENABLE_PEERTUBE="${ENABLE_PEERTUBE:-false}" \
+	--env ENABLE_FUNKWHALE="${ENABLE_FUNKWHALE:-false}" \
+	--env ENABLE_MAILMAN="${ENABLE_MAILMAN:-false}" \
+	--env ENABLE_MONITORING="${ENABLE_MONITORING:-false}" \
+	--env ENABLE_MATOMO="${ENABLE_MATOMO:-false}" \
 	--workdir /flap_dir \
 	"$CI_REGISTRY_IMAGE${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}" \
 	/bin/sh -c "while true; do sleep 1000; done"
@@ -154,7 +154,7 @@ apk add --no-cache \
       ttf-freefont
 
 # Install nodejs and npm.
-apk add nodejs npm make python
+apk add nodejs npm make python3
 
 # Don't download chromium during puppeteer installation.
 # shellcheck disable=SC2034
