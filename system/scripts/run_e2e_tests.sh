@@ -47,4 +47,6 @@ do
 done
 
 echo "Running e2e..."
+node --version
+npm --version
 npx codeceptjs run "${debug_args[@]}" "${ci_args[@]}" "${service_args[@]}"
