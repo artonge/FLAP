@@ -226,7 +226,7 @@ case $CMD in
 		do
 			echo "Waiting for DNS propagation"
 			sleep 60
-			elapse+=60
+			((elapse+=60))
 
 			if [ "$elapse" -gt $(( 60 * 30 )) ]
 			then
